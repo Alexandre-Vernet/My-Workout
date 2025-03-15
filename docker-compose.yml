@@ -1,0 +1,43 @@
+version: '3'
+services:
+  my-workout-app:
+    image: alexv31/my-workout:app
+    networks:
+      - my-workout-network
+    ports:
+      - "3008:80"
+      - "3009:443"
+
+  my-workout-api:
+    image: alexv31/my-workout:api
+    depends_on:
+      - my-workout-db
+    environment:
+      - NODE_ENV=
+      - PORT=
+      - ALLOWED_ORIGIN=
+    networks:
+      - my-workout-network
+    ports:
+      - "4008:80"
+      - "4009:443"
+
+  my-workout-db:
+    image: postgres
+    restart: always
+    networks:
+      - my-workout-network
+    environment:
+      - POSTGRES_DB=my-workout-local
+      - POSTGRES_USER=my-workout-dev
+      - POSTGRES_PASSWORD=my-workout-dev
+    ports:
+      - "5008:5432"
+      - "5009:443"
+
+volumes:
+  postgres_data:
+
+networks:
+  my-workout-network:
+    driver: bridge

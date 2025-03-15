@@ -8,12 +8,16 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/my-workout",
         "index": "apps/my-workout/src/index.html",
         "browser": "apps/my-workout/src/main.ts",
-        "polyfills": ["zone.js"],
+        "polyfills": [
+          "zone.js"
+        ],
         "tsConfig": "apps/my-workout/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
@@ -22,7 +26,9 @@
             "input": "apps/my-workout/public"
           }
         ],
-        "styles": ["apps/my-workout/src/styles.scss"],
+        "styles": [
+          "apps/my-workout/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -39,7 +45,13 @@
               "maximumError": "8kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "./apps/my-workout/src/environments/environment.ts",
+              "with": "./apps/my-workout/src/environments/environment.prod.ts"
+            }
+          ]
         },
         "development": {
           "optimization": false,
