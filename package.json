@@ -5,8 +5,8 @@
   "scripts": {
     "start:app": "nx serve my-workout",
     "start:api": "nx serve api",
-    "build:app": "nx build my-workout --verbose",
-    "build:api": "nx build api --verbose"
+    "build:app": "nx build my-workout",
+    "build:api": "nx build api"
   },
   "private": true,
   "dependencies": {
