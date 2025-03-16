@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build images app and api
         run: |
-          docker build -t  ${{ env.APP_NAME }}:app -f apps/my-workout/Dockerfile .
+          docker build -t  ${{ env.APP_NAME }}:app -f apps/${{ env.APP_NAME }}/Dockerfile .
           docker build -t  ${{ env.APP_NAME }}:api -f apps/api/Dockerfile .
 
       - name: Login to Docker Hub
@@ -40,7 +40,7 @@ jobs:
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
         with:
           context: .
-          file: apps/my-workout/Dockerfile
+          file: apps/${{ env.APP_NAME }}/Dockerfile
           push: true
           tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:app
 
