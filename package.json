@@ -1,11 +1,11 @@
 {
-  "name": "my-workout",
+  "name": "app",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start:app": "nx serve my-workout",
+    "start:app": "nx serve app",
     "start:api": "nx serve api",
-    "build:app": "nx build my-workout",
+    "build:app": "nx build app",
     "build:api": "nx build api"
   },
   "private": true,
