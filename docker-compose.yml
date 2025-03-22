@@ -16,6 +16,11 @@ services:
       - NODE_ENV=
       - PORT=
       - ALLOWED_ORIGIN=
+      - POSTGRES_HOST=
+      - POSTGRES_PORT=
+      - POSTGRES_USERNAME=
+      - POSTGRES_PASSWORD=
+      - POSTGRES_DATABASE=
     networks:
       - my-workout-network
     ports:
