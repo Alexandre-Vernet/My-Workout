@@ -24,13 +24,16 @@
     "@nestjs/common": "^10.0.2",
     "@nestjs/core": "^10.0.2",
     "@nestjs/platform-express": "^10.0.2",
+    "@nestjs/typeorm": "^11.0.0",
+    "@nrwl/webpack": "15.9.7",
     "axios": "^1.6.0",
     "nx": "20.6.0",
+    "pg": "^8.14.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0",
-    "zone.js": "~0.15.0",
-    "@nrwl/webpack": "15.9.7",
-    "webpack-cli": "^6.0.1"
+    "typeorm": "^0.3.21",
+    "webpack-cli": "^6.0.1",
+    "zone.js": "~0.15.0"
   },
   "devDependencies": {
     "@angular/compiler-cli": "~19.2.0",
