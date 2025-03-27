@@ -1,1 +1,9 @@
-<p>list-exercises works!</p>
+<h1>Exercises</h1>
+
+<div class="list-muscle-group">
+  <ng-container *ngFor="let exercise of exercises">
+      <div class="muscle-group">
+        <span>{{ exercise.name }}</span>
+      </div>
+  </ng-container>
+</div>
