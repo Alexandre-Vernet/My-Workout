@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { MuscleEntity } from './muscle.entity';
+import { MuscleEntity } from '../muscle.entity';
 
 @Entity({ name: 'muscle_group', schema: 'public' })
 export class MuscleGroupEntity {
@@ -9,6 +9,6 @@ export class MuscleGroupEntity {
   @Column()
   name: string;
 
-  @OneToMany(() => MuscleEntity, (muscle) => muscle.id, { onDelete: 'CASCADE' })
+  @OneToMany(() => MuscleEntity, (muscle) => muscle.muscleGroup, { onDelete: 'CASCADE' })
   muscle: MuscleEntity[];
 }

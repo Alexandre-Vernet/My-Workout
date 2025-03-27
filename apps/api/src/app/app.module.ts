@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ExerciseEntity } from './exercise.entity';
+import { ExercisesEntity } from './exercises/exercises.entity';
 import { MuscleEntity } from './muscle.entity';
 import { ExerciseMuscleEntity } from './exerciseMuscle.entity';
-import { MuscleGroupEntity } from './muscleGroup.entity';
+import { MuscleGroupEntity } from './muscle-group/muscle-group.entity';
+import { MuscleGroupModule } from './muscle-group/muscle-group.module';
+import { ExercisesModule } from './exercises/exercises.module';
 
 const {
   POSTGRES_HOST,
@@ -25,15 +25,15 @@ const {
       password: POSTGRES_PASSWORD,
       database: POSTGRES_DATABASE,
       entities: [
-        ExerciseEntity,
+        ExercisesEntity,
         MuscleEntity,
         ExerciseMuscleEntity,
-        MuscleGroupEntity
+        MuscleGroupEntity,
       ],
       ssl: false,
-    })
+    }),
+    MuscleGroupModule,
+    ExercisesModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

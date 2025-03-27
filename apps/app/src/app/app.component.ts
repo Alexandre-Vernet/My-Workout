@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { NxWelcomeComponent } from './nx-welcome.component';
+import { ListMuscleGroupComponent } from './muscle-group/list-muscle-group/list-muscle-group.component';
+import { ListExercisesComponent } from './exercise/list-exercises/list-exercises.component';
 
 @Component({
-  imports: [NxWelcomeComponent, RouterModule],
+  imports: [RouterModule, ListMuscleGroupComponent, ListExercisesComponent],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
-  title = 'my-workout';
-}
+export class AppComponent {}

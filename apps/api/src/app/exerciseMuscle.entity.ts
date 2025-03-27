@@ -1,5 +1,5 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { ExerciseEntity } from './exercise.entity';
+import { ExercisesEntity } from './exercises/exercises.entity';
 import { MuscleEntity } from './muscle.entity';
 
 @Entity({ name: 'exercise_muscle', schema: 'public' })
@@ -7,12 +7,12 @@ export class ExerciseMuscleEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => ExerciseEntity, (exercise) => exercise.id, {
+  @ManyToOne(() => ExercisesEntity, (exercise) => exercise.id, {
     cascade: true,
     eager: true,
   })
   @JoinColumn({ name: 'exercise_id' })
-  exercise: ExerciseEntity;
+  exercise: ExercisesEntity;
 
   @ManyToOne(() => MuscleEntity, (muscle) => muscle.id, {
     cascade: true,
