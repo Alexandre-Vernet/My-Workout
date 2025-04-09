@@ -37,7 +37,8 @@ VALUES ('Pectoraux'),
        ('Épaules'),
        ('Dos'),
        ('Biceps'),
-       ('Abdominaux');
+       ('Abdominaux'),
+       ('Cardio');
 
 INSERT INTO muscle (name, muscle_group_id)
 VALUES
@@ -50,6 +51,7 @@ VALUES
 -- Jambes
 ('Quadriceps', (SELECT id FROM muscle_group WHERE name = 'Jambes')),
 ('Ischio-jambiers', (SELECT id FROM muscle_group WHERE name = 'Jambes')),
+('Fessier', (SELECT id FROM muscle_group WHERE name = 'Jambes')),
 ('Mollets', (SELECT id FROM muscle_group WHERE name = 'Jambes')),
 
 -- Épaules
@@ -73,7 +75,11 @@ VALUES
 ('Grand droit - Haut', (SELECT id FROM muscle_group WHERE name = 'Abdominaux')),
 ('Grand droit - Bas', (SELECT id FROM muscle_group WHERE name = 'Abdominaux')),
 ('Obliques', (SELECT id FROM muscle_group WHERE name = 'Abdominaux')),
-('Transverse', (SELECT id FROM muscle_group WHERE name = 'Abdominaux'));
+('Transverse', (SELECT id FROM muscle_group WHERE name = 'Abdominaux')),
+
+-- Cardio
+('Cardio', (SELECT id FROM muscle_group WHERE name = 'Cardio'));
+
 
 INSERT INTO exercise (name)
 VALUES
@@ -116,7 +122,10 @@ VALUES
 ('Relevé jambes barre'),
 ('Crunch'),
 ('Gainage sur 1 main'),
-('Gainage sur 2 mains');
+('Gainage sur 2 mains'),
+
+-- Cardio
+('Course à pied');
 
 -- Pectoraux
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
@@ -138,7 +147,9 @@ VALUES ((SELECT id FROM exercise WHERE name = 'Extension verticale'), (SELECT id
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
 VALUES ((SELECT id FROM exercise WHERE name = 'Squats'), (SELECT id FROM muscle WHERE name = 'Quadriceps')),
        ((SELECT id FROM exercise WHERE name = 'Squats'), (SELECT id FROM muscle WHERE name = 'Ischio-jambiers')),
+       ((SELECT id FROM exercise WHERE name = 'Squats'), (SELECT id FROM muscle WHERE name = 'Fessier')),
        ((SELECT id FROM exercise WHERE name = 'Leg curl'), (SELECT id FROM muscle WHERE name = 'Ischio-jambiers')),
+       ((SELECT id FROM exercise WHERE name = 'Fentes (barre)'), (SELECT id FROM muscle WHERE name = 'Quadriceps')),
        ((SELECT id FROM exercise WHERE name = 'Fentes (barre)'), (SELECT id FROM muscle WHERE name = 'Quadriceps')),
        ((SELECT id FROM exercise WHERE name = 'Extension mollets'), (SELECT id FROM muscle WHERE name = 'Mollets'));
 
@@ -182,5 +193,12 @@ VALUES ((SELECT id FROM exercise WHERE name = 'Crunch à la poulie haute'),
        ((SELECT id FROM exercise WHERE name = 'Gainage sur 1 main'), (SELECT id FROM muscle WHERE name = 'Transverse')),
        ((SELECT id FROM exercise WHERE name = 'Gainage sur 2 mains'),
         (SELECT id FROM muscle WHERE name = 'Transverse'));
+
+
+
+-- Cardio
+INSERT INTO exercise_muscle (exercise_id, muscle_id)
+VALUES ((SELECT id FROM exercise WHERE name = 'Course à pied'), (SELECT id FROM muscle WHERE name = 'Cardio'));
+
 
 
