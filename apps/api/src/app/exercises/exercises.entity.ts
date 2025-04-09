@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ExerciseMuscleEntity } from './exerciseMuscle.entity';
+import { ExerciseMuscleEntity } from '../exerciseMuscle.entity';
 
 @Entity({ name: 'exercise', schema: 'public' })
-export class ExerciseEntity {
+export class ExercisesEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
@@ -12,10 +12,6 @@ export class ExerciseEntity {
   @Column()
   description: string;
 
-  @OneToMany(
-    () => ExerciseMuscleEntity,
-    (exerciseMuscle) => exerciseMuscle.id,
-    { onDelete: 'CASCADE' }
-  )
+  @OneToMany(() => ExerciseMuscleEntity, (exerciseMuscle) => exerciseMuscle.exercise, { onDelete: 'CASCADE' })
   exerciseMuscle: ExerciseMuscleEntity[];
 }

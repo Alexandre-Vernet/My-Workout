@@ -1,0 +1,11 @@
+<h1>Catégories</h1>
+
+<div class="list-muscle-group">
+  <ng-container *ngFor="let muscleGroup of muscleGroups">
+    <a [routerLink]="'exercise/' + muscleGroup.id">
+      <div class="muscle-group">
+        <span>{{ muscleGroup.name }}</span>
+      </div>
+    </a>
+  </ng-container>
+</div>

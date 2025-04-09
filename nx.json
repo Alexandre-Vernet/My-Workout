@@ -53,6 +53,9 @@
     },
     "@nrwl/angular:component": {
       "style": "scss"
+    },
+    "@nx/angular:component": {
+      "style": "scss"
     }
   }
 }
