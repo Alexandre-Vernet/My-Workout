@@ -15,6 +15,7 @@ services:
     environment:
       - NODE_ENV=
       - PORT=
+      - JWT_SECRET=
       - ALLOWED_ORIGIN=
       - POSTGRES_HOST=
       - POSTGRES_PORT=

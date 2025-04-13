@@ -1,0 +1,57 @@
+<div class="container">
+    <div class="screen">
+        <div class="screen__content">
+            <form [formGroup]="formSignUp" (ngSubmit)="signUp()" class="login">
+                <div>
+                    <div class="login__field">
+                        <fa-icon class="login__icon" [icon]="faIcons.faUser"></fa-icon>
+                        <input formControlName="email" type="text" class="login__input" placeholder="Email">
+                    </div>
+                    <span *ngIf="formSignUp.hasError('emailAlreadyInUse')" class="text-red-600 text-xs error-form">
+                      {{ formSignUp.getError('emailAlreadyInUse') }}
+                    </span>
+                </div>
+
+                <div>
+                    <div class="login__field">
+                        <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
+                        <input formControlName="password" type="password" class="login__input" placeholder="Password">
+                    </div>
+                    <span *ngIf="formSignUp.hasError('passwordNotMatch')" class="text-red-600 text-xs error-form">
+                        {{ formSignUp.getError('passwordNotMatch') }}
+                    </span>
+                </div>
+
+                <div>
+                    <div class="login__field">
+                        <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
+                        <input formControlName="confirmPassword" type="password" class="login__input"
+                               placeholder="Confirm password">
+                    </div>
+                    <span *ngIf="formSignUp.hasError('passwordNotMatch')" class="text-red-600 text-xs error-form">
+                        {{ formSignUp.getError('passwordNotMatch') }}
+                    </span>
+                </div>
+
+                <button type="submit" class="button login__submit" [ngClass]="{
+        'disabled': formSignUp.invalid
+        }"
+                        [disabled]="formSignUp.invalid">
+                    <span class="button__text">Sign Up Now</span>
+                    <fa-icon class="button__icon" [icon]="faIcons.faChevronRight"></fa-icon>
+                </button>
+            </form>
+            <div class="sign-up">
+                <a routerLink="/auth/sign-in">
+                    <h3>Still have an account ? Sign-in here</h3>
+                </a>
+            </div>
+        </div>
+        <div class="screen__background">
+            <span class="screen__background__shape screen__background__shape4"></span>
+            <span class="screen__background__shape screen__background__shape3"></span>
+            <span class="screen__background__shape screen__background__shape2"></span>
+            <span class="screen__background__shape screen__background__shape1"></span>
+        </div>
+    </div>
+</div>

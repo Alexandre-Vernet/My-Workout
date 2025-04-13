@@ -1,0 +1,39 @@
+<div class="container">
+    <div class="screen">
+        <div class="screen__content">
+            <form [formGroup]="formSignIn" (ngSubmit)="signIn()" class="login">
+                <div>
+                    <div class="login__field">
+                        <fa-icon class="login__icon" [icon]="faIcons.faUser"></fa-icon>
+                        <input formControlName="email" type="text" class="login__input" placeholder="Email">
+                    </div>
+                    <span *ngIf="formSignIn.hasError('invalidCredential')" class="text-red-600 text-xs error-form">
+                      {{ formSignIn.getError('invalidCredential') }}
+                    </span>
+                </div>
+                <div class="login__field">
+                    <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
+                    <input formControlName="password" type="password" class="login__input" placeholder="Password">
+                </div>
+                <button class="button login__submit" [ngClass]="{
+                    'disabled': formSignIn.invalid
+                    }"
+                    [disabled]="formSignIn.invalid">
+                    <span class="button__text">Log In Now</span>
+                    <fa-icon class="button__icon" [icon]="faIcons.faChevronRight"></fa-icon>
+                </button>
+            </form>
+            <div class="sign-up">
+                <a routerLink="/auth/sign-up">
+                    <h3>No account ? Sign-up here</h3>
+                </a>
+            </div>
+        </div>
+        <div class="screen__background">
+            <span class="screen__background__shape screen__background__shape4"></span>
+            <span class="screen__background__shape screen__background__shape3"></span>
+            <span class="screen__background__shape screen__background__shape2"></span>
+            <span class="screen__background__shape screen__background__shape1"></span>
+        </div>
+    </div>
+</div>
