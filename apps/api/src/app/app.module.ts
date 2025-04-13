@@ -6,6 +6,9 @@ import { ExerciseMuscleEntity } from './exerciseMuscle.entity';
 import { MuscleGroupEntity } from './muscle-group/muscle-group.entity';
 import { MuscleGroupModule } from './muscle-group/muscle-group.module';
 import { ExercisesModule } from './exercises/exercises.module';
+import { UserEntity } from './user/user.entity';
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 const {
   POSTGRES_HOST,
@@ -13,6 +16,7 @@ const {
   POSTGRES_USERNAME,
   POSTGRES_PASSWORD,
   POSTGRES_DATABASE,
+  JWT_SECRET
 } = process.env;
 
 @Module({
@@ -29,11 +33,18 @@ const {
         MuscleEntity,
         ExerciseMuscleEntity,
         MuscleGroupEntity,
+        UserEntity
       ],
       ssl: false,
     }),
+    JwtModule.register({
+      global: true,
+      secret: JWT_SECRET,
+      signOptions: { expiresIn: '1d' }
+    }),
     MuscleGroupModule,
     ExercisesModule,
+    AuthModule
   ],
 })
 export class AppModule {}

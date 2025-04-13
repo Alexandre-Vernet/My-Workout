@@ -29,6 +29,16 @@ CREATE TABLE exercise_muscle
 );
 
 
+CREATE TABLE users
+(
+  id         SERIAL PRIMARY KEY,
+  email      VARCHAR(50),
+  password   VARCHAR(200),
+  created_at DATE,
+  updated_at DATE
+);
+
+
 
 INSERT INTO muscle_group (name)
 VALUES ('Pectoraux'),
