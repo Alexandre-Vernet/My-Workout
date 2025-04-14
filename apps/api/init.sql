@@ -1,43 +1,50 @@
 CREATE TABLE muscle_group
 (
-  id   SERIAL PRIMARY KEY,
-  name VARCHAR(20) UNIQUE NOT NULL
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(20) UNIQUE NOT NULL
 );
 
 
 CREATE TABLE exercise
 (
-  id          SERIAL PRIMARY KEY,
-  name        VARCHAR(50) NOT NULL,
-  description TEXT
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(50) NOT NULL,
+    description TEXT
 );
 
 
 CREATE TABLE muscle
 (
-  id              SERIAL PRIMARY KEY,
-  muscle_group_id INT REFERENCES muscle_group (id) ON DELETE cascade,
-  name            VARCHAR(30) UNIQUE NOT NULL
+    id              SERIAL PRIMARY KEY,
+    muscle_group_id INT REFERENCES muscle_group (id) ON DELETE cascade,
+    name            VARCHAR(30) UNIQUE NOT NULL
 );
 
 
 CREATE TABLE exercise_muscle
 (
-  id          SERIAL PRIMARY KEY,
-  exercise_id INT REFERENCES exercise (id) ON DELETE cascade,
-  muscle_id   INT REFERENCES muscle (id) ON DELETE CASCADE
+    id          SERIAL PRIMARY KEY,
+    exercise_id INT REFERENCES exercise (id) ON DELETE cascade,
+    muscle_id   INT REFERENCES muscle (id) ON DELETE CASCADE
 );
 
 
 CREATE TABLE users
 (
-  id         SERIAL PRIMARY KEY,
-  email      VARCHAR(50),
-  password   VARCHAR(200),
-  created_at DATE,
-  updated_at DATE
+    id         SERIAL PRIMARY KEY,
+    email      VARCHAR(50),
+    password   VARCHAR(200),
+    created_at DATE,
+    updated_at DATE
 );
 
+
+CREATE TABLE workout
+(
+    id          SERIAL PRIMARY KEY,
+    user_id     INT REFERENCES users (id) ON DELETE CASCADE,
+    exercise_id INT REFERENCES exercise (id) ON DELETE CASCADE
+);
 
 
 INSERT INTO muscle_group (name)
@@ -166,10 +173,12 @@ VALUES ((SELECT id FROM exercise WHERE name = 'Squats'), (SELECT id FROM muscle 
 -- Épaules
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
 VALUES ((SELECT id FROM exercise WHERE name = 'Élévation latérales'),
-        (SELECT id FROM muscle WHERE name = 'Deltoïdes antérieurs')),
+        (SELECT id FROM muscle WHERE name = 'Deltoïdes moyens')),
+
        ((SELECT id FROM exercise WHERE name = 'Développé militaire (45°)'),
         (SELECT id FROM muscle WHERE name = 'Deltoïdes antérieurs')),
-       ((SELECT id FROM exercise WHERE name = 'Rameur'), (SELECT id FROM muscle WHERE name = 'Deltoïdes moyens'));
+
+       ((SELECT id FROM exercise WHERE name = 'Rameur'), (SELECT id FROM muscle WHERE name = 'Deltoïdes postérieurs'));
 
 -- Dos
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
@@ -203,7 +212,6 @@ VALUES ((SELECT id FROM exercise WHERE name = 'Crunch à la poulie haute'),
        ((SELECT id FROM exercise WHERE name = 'Gainage sur 1 main'), (SELECT id FROM muscle WHERE name = 'Transverse')),
        ((SELECT id FROM exercise WHERE name = 'Gainage sur 2 mains'),
         (SELECT id FROM muscle WHERE name = 'Transverse'));
-
 
 
 -- Cardio
