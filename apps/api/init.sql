@@ -217,6 +217,3 @@ VALUES ((SELECT id FROM exercises WHERE name = 'Crunch à la poulie haute'),
 -- Cardio
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
 VALUES ((SELECT id FROM exercises WHERE name = 'Course à pied'), (SELECT id FROM muscles WHERE name = 'Cardio'));
-
-
-
