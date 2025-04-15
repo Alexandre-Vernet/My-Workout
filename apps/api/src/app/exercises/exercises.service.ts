@@ -19,12 +19,12 @@ export class ExercisesService {
                            ELSE false
                            END                  AS "addedToWorkout",
                        STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"
-                FROM exercise e
+                FROM exercises e
                          LEFT JOIN workout w ON
                     e.id = w.exercise_id AND w.user_id = $1
                          JOIN exercise_muscle em ON
                     em.exercise_id = e.id
-                         JOIN muscle m ON
+                         JOIN muscles m ON
                     em.muscle_id = m.id
                          JOIN muscle_group mg ON m.muscle_group_id = mg.id
                 WHERE m.muscle_group_id = $2

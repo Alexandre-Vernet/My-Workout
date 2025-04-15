@@ -2,7 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ExerciseMuscleEntity } from '../exerciseMuscle.entity';
 import { WorkoutEntity } from '../workout/workout.entity';
 
-@Entity({ name: 'exercise', schema: 'public' })
+@Entity({ name: 'exercises', schema: 'public' })
 export class ExercisesEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;

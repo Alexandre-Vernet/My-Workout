@@ -9,7 +9,7 @@ import {
 import { MuscleGroupEntity } from './muscle-group/muscle-group.entity';
 import { ExerciseMuscleEntity } from './exerciseMuscle.entity';
 
-@Entity({ name: 'muscle', schema: 'public' })
+@Entity({ name: 'muscles', schema: 'public' })
 export class MuscleEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
