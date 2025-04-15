@@ -5,7 +5,7 @@ CREATE TABLE muscle_group
 );
 
 
-CREATE TABLE exercise
+CREATE TABLE exercises
 (
     id          SERIAL PRIMARY KEY,
     name        VARCHAR(50) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE muscle
 CREATE TABLE exercise_muscle
 (
     id          SERIAL PRIMARY KEY,
-    exercise_id INT REFERENCES exercise (id) ON DELETE cascade,
+    exercise_id INT REFERENCES exercises (id) ON DELETE cascade,
     muscle_id   INT REFERENCES muscle (id) ON DELETE CASCADE
 );
 
@@ -43,7 +43,7 @@ CREATE TABLE workout
 (
     id          SERIAL PRIMARY KEY,
     user_id     INT REFERENCES users (id) ON DELETE CASCADE,
-    exercise_id INT REFERENCES exercise (id) ON DELETE CASCADE
+    exercise_id INT REFERENCES exercises (id) ON DELETE CASCADE
 );
 
 
@@ -98,7 +98,7 @@ VALUES
 ('Cardio', (SELECT id FROM muscle_group WHERE name = 'Cardio'));
 
 
-INSERT INTO exercise (name)
+INSERT INTO exercises (name)
 VALUES
 -- Pectoraux
 ('Développé couché'),
@@ -146,77 +146,77 @@ VALUES
 
 -- Pectoraux
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
-VALUES ((SELECT id FROM exercise WHERE name = 'Développé couché'), (SELECT id FROM muscle WHERE name = 'Pectoraux')),
-       ((SELECT id FROM exercise WHERE name = 'Développé incliné (30°)'),
+VALUES ((SELECT id FROM exercises WHERE name = 'Développé couché'), (SELECT id FROM muscle WHERE name = 'Pectoraux')),
+       ((SELECT id FROM exercises WHERE name = 'Développé incliné (30°)'),
         (SELECT id FROM muscle WHERE name = 'Pectoraux')),
-       ((SELECT id FROM exercise WHERE name = 'Écartés poulie haute'),
+       ((SELECT id FROM exercises WHERE name = 'Écartés poulie haute'),
         (SELECT id FROM muscle WHERE name = 'Pectoraux')),
-       ((SELECT id FROM exercise WHERE name = 'Écarté unilatéral'), (SELECT id FROM muscle WHERE name = 'Pectoraux'));
+       ((SELECT id FROM exercises WHERE name = 'Écarté unilatéral'), (SELECT id FROM muscle WHERE name = 'Pectoraux'));
 
 -- Triceps
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
-VALUES ((SELECT id FROM exercise WHERE name = 'Extension verticale'), (SELECT id FROM muscle WHERE name = 'Triceps')),
-       ((SELECT id FROM exercise WHERE name = 'Tirage poulie haute'), (SELECT id FROM muscle WHERE name = 'Triceps')),
-       ((SELECT id FROM exercise WHERE name = 'Tirage poulie basse'), (SELECT id FROM muscle WHERE name = 'Triceps')),
-       ((SELECT id FROM exercise WHERE name = 'Pompes serrées'), (SELECT id FROM muscle WHERE name = 'Triceps'));
+VALUES ((SELECT id FROM exercises WHERE name = 'Extension verticale'), (SELECT id FROM muscle WHERE name = 'Triceps')),
+       ((SELECT id FROM exercises WHERE name = 'Tirage poulie haute'), (SELECT id FROM muscle WHERE name = 'Triceps')),
+       ((SELECT id FROM exercises WHERE name = 'Tirage poulie basse'), (SELECT id FROM muscle WHERE name = 'Triceps')),
+       ((SELECT id FROM exercises WHERE name = 'Pompes serrées'), (SELECT id FROM muscle WHERE name = 'Triceps'));
 
 -- Jambes
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
-VALUES ((SELECT id FROM exercise WHERE name = 'Squats'), (SELECT id FROM muscle WHERE name = 'Quadriceps')),
-       ((SELECT id FROM exercise WHERE name = 'Squats'), (SELECT id FROM muscle WHERE name = 'Ischio-jambiers')),
-       ((SELECT id FROM exercise WHERE name = 'Squats'), (SELECT id FROM muscle WHERE name = 'Fessier')),
-       ((SELECT id FROM exercise WHERE name = 'Leg curl'), (SELECT id FROM muscle WHERE name = 'Ischio-jambiers')),
-       ((SELECT id FROM exercise WHERE name = 'Fentes (barre)'), (SELECT id FROM muscle WHERE name = 'Quadriceps')),
-       ((SELECT id FROM exercise WHERE name = 'Fentes (barre)'), (SELECT id FROM muscle WHERE name = 'Quadriceps')),
-       ((SELECT id FROM exercise WHERE name = 'Extension mollets'), (SELECT id FROM muscle WHERE name = 'Mollets'));
+VALUES ((SELECT id FROM exercises WHERE name = 'Squats'), (SELECT id FROM muscle WHERE name = 'Quadriceps')),
+       ((SELECT id FROM exercises WHERE name = 'Squats'), (SELECT id FROM muscle WHERE name = 'Ischio-jambiers')),
+       ((SELECT id FROM exercises WHERE name = 'Squats'), (SELECT id FROM muscle WHERE name = 'Fessier')),
+       ((SELECT id FROM exercises WHERE name = 'Leg curl'), (SELECT id FROM muscle WHERE name = 'Ischio-jambiers')),
+       ((SELECT id FROM exercises WHERE name = 'Fentes (barre)'), (SELECT id FROM muscle WHERE name = 'Quadriceps')),
+       ((SELECT id FROM exercises WHERE name = 'Fentes (barre)'), (SELECT id FROM muscle WHERE name = 'Quadriceps')),
+       ((SELECT id FROM exercises WHERE name = 'Extension mollets'), (SELECT id FROM muscle WHERE name = 'Mollets'));
 
 -- Épaules
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
-VALUES ((SELECT id FROM exercise WHERE name = 'Élévation latérales'),
+VALUES ((SELECT id FROM exercises WHERE name = 'Élévation latérales'),
         (SELECT id FROM muscle WHERE name = 'Deltoïdes moyens')),
 
-       ((SELECT id FROM exercise WHERE name = 'Développé militaire (45°)'),
+       ((SELECT id FROM exercises WHERE name = 'Développé militaire (45°)'),
         (SELECT id FROM muscle WHERE name = 'Deltoïdes antérieurs')),
 
-       ((SELECT id FROM exercise WHERE name = 'Rameur'), (SELECT id FROM muscle WHERE name = 'Deltoïdes postérieurs'));
+       ((SELECT id FROM exercises WHERE name = 'Rameur'), (SELECT id FROM muscle WHERE name = 'Deltoïdes postérieurs'));
 
 -- Dos
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
-VALUES ((SELECT id FROM exercise WHERE name = 'Tractions prise large'),
+VALUES ((SELECT id FROM exercises WHERE name = 'Tractions prise large'),
         (SELECT id FROM muscle WHERE name = 'Grand dorsal')),
-       ((SELECT id FROM exercise WHERE name = 'Tractions prise large'),
+       ((SELECT id FROM exercises WHERE name = 'Tractions prise large'),
         (SELECT id FROM muscle WHERE name = 'Trapèzes')),
-       ((SELECT id FROM exercise WHERE name = 'Tractions prise neutre'),
+       ((SELECT id FROM exercises WHERE name = 'Tractions prise neutre'),
         (SELECT id FROM muscle WHERE name = 'Grand dorsal')),
-       ((SELECT id FROM exercise WHERE name = 'Tractions prise neutre'),
+       ((SELECT id FROM exercises WHERE name = 'Tractions prise neutre'),
         (SELECT id FROM muscle WHERE name = 'Trapèzes')),
-       ((SELECT id FROM exercise WHERE name = 'Tractions prise serrée'),
+       ((SELECT id FROM exercises WHERE name = 'Tractions prise serrée'),
         (SELECT id FROM muscle WHERE name = 'Grand dorsal')),
-       ((SELECT id FROM exercise WHERE name = 'Tractions prise serrée'),
+       ((SELECT id FROM exercises WHERE name = 'Tractions prise serrée'),
         (SELECT id FROM muscle WHERE name = 'Grand rond'));
 
 -- Biceps
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
-VALUES ((SELECT id FROM exercise WHERE name = 'Curl'), (SELECT id FROM muscle WHERE name = 'Biceps')),
-       ((SELECT id FROM exercise WHERE name = 'Traction supination'), (SELECT id FROM muscle WHERE name = 'Biceps')),
-       ((SELECT id FROM exercise WHERE name = 'Curl haltères marteau'), (SELECT id FROM muscle WHERE name = 'Biceps')),
-       ((SELECT id FROM exercise WHERE name = 'Curl inversé barre'), (SELECT id FROM muscle WHERE name = 'Biceps'));
+VALUES ((SELECT id FROM exercises WHERE name = 'Curl'), (SELECT id FROM muscle WHERE name = 'Biceps')),
+       ((SELECT id FROM exercises WHERE name = 'Traction supination'), (SELECT id FROM muscle WHERE name = 'Biceps')),
+       ((SELECT id FROM exercises WHERE name = 'Curl haltères marteau'), (SELECT id FROM muscle WHERE name = 'Biceps')),
+       ((SELECT id FROM exercises WHERE name = 'Curl inversé barre'), (SELECT id FROM muscle WHERE name = 'Biceps'));
 
 -- Abdominaux
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
-VALUES ((SELECT id FROM exercise WHERE name = 'Crunch à la poulie haute'),
+VALUES ((SELECT id FROM exercises WHERE name = 'Crunch à la poulie haute'),
         (SELECT id FROM muscle WHERE name = 'Grand droit - Haut')),
-       ((SELECT id FROM exercise WHERE name = 'Relevé jambes barre'),
+       ((SELECT id FROM exercises WHERE name = 'Relevé jambes barre'),
         (SELECT id FROM muscle WHERE name = 'Grand droit - Bas')),
-       ((SELECT id FROM exercise WHERE name = 'Crunch'), (SELECT id FROM muscle WHERE name = 'Grand droit - Haut')),
-       ((SELECT id FROM exercise WHERE name = 'Gainage sur 1 main'), (SELECT id FROM muscle WHERE name = 'Transverse')),
-       ((SELECT id FROM exercise WHERE name = 'Gainage sur 2 mains'),
+       ((SELECT id FROM exercises WHERE name = 'Crunch'), (SELECT id FROM muscle WHERE name = 'Grand droit - Haut')),
+       ((SELECT id FROM exercises WHERE name = 'Gainage sur 1 main'), (SELECT id FROM muscle WHERE name = 'Transverse')),
+       ((SELECT id FROM exercises WHERE name = 'Gainage sur 2 mains'),
         (SELECT id FROM muscle WHERE name = 'Transverse'));
 
 
 -- Cardio
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
-VALUES ((SELECT id FROM exercise WHERE name = 'Course à pied'), (SELECT id FROM muscle WHERE name = 'Cardio'));
+VALUES ((SELECT id FROM exercises WHERE name = 'Course à pied'), (SELECT id FROM muscle WHERE name = 'Cardio'));
 
 
 
