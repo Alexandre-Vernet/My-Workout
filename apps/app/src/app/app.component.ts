@@ -4,9 +4,10 @@ import { AuthService } from './auth/auth.service';
 import { take } from 'rxjs';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @Component({
-    imports: [RouterModule],
+    imports: [RouterModule, NavbarComponent],
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'
