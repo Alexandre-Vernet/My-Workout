@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Exercise } from '../../../../../libs/interfaces/exercise';
+import { Exercise } from '../../../../../../libs/interfaces/exercise';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
-import { Workout } from '../../../../../libs/interfaces/workout';
-import { AuthService } from '../auth/auth.service';
+import { environment } from '../../../environments/environment';
+import { Workout } from '../../../../../../libs/interfaces/workout';
+import { AuthService } from '../../auth/auth.service';
 import { map, switchMap, take } from 'rxjs';
 
 @Injectable({

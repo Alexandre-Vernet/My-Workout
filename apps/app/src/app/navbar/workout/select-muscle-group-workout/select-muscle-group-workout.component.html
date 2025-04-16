@@ -1,0 +1,60 @@
+<div class="select-muscle-group-workout">
+    <p-splitter layout="vertical" [panelSizes]="[33, 33, 34]" [style]="{ height: '600px' }" styleClass="mb-8">
+
+        <ng-template #panel>
+            <p-splitter [panelSizes]="[33, 33, 34]">
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center" (click)="selectMuscleGroup(muscleGroups[0])">
+                        {{ muscleGroups[0]?.name }}
+                    </div>
+                </ng-template>
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center" (click)="selectMuscleGroup(muscleGroups[1])">
+                        {{ muscleGroups[1]?.name }}
+                    </div>
+                </ng-template>
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center" (click)="selectMuscleGroup(muscleGroups[2])">
+                        {{ muscleGroups[2]?.name }}
+                    </div>
+                </ng-template>
+            </p-splitter>
+        </ng-template>
+
+        <ng-template #panel>
+            <p-splitter [panelSizes]="[33, 33, 34]">
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center" (click)="selectMuscleGroup(muscleGroups[3])">
+                        {{ muscleGroups[3]?.name }}
+                    </div>
+                </ng-template>
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center" (click)="selectMuscleGroup(muscleGroups[4])">
+                        {{ muscleGroups[4]?.name }}
+                    </div>
+                </ng-template>
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center" (click)="selectMuscleGroup(muscleGroups[5])">
+                        {{ muscleGroups[5]?.name }}
+                    </div>
+                </ng-template>
+            </p-splitter>
+        </ng-template>
+
+        <ng-template #panel>
+            <p-splitter [panelSizes]="[50, 50]">
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center" (click)="selectMuscleGroup(muscleGroups[6])">
+                        {{ muscleGroups[6]?.name }}
+                    </div>
+                </ng-template>
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center" (click)="selectMuscleGroup(muscleGroups[7])">
+                        {{ muscleGroups[7]?.name }}
+                    </div>
+                </ng-template>
+            </p-splitter>
+        </ng-template>
+
+    </p-splitter>
+</div>

@@ -1,14 +1,34 @@
 import { Route } from '@angular/router';
 import { ListExercisesComponent } from './exercise/list-exercises/list-exercises.component';
-import { ListMuscleGroupComponent } from './muscle-group/list-muscle-group/list-muscle-group.component';
+import {
+    ListMuscleGroupLibraryComponent
+} from './navbar/librairy/list-muscle-group-library/list-muscle-group-library.component';
 import { SignInComponent } from './auth/sign-in/sign-in.component';
 import { SignUpComponent } from './auth/sign-up/sign-up.component';
 import { authGuard } from './auth/auth.guard';
+import {
+    SelectMuscleGroupWorkoutComponent
+} from './navbar/workout/select-muscle-group-workout/select-muscle-group-workout.component';
 
 export const appRoutes: Route[] = [
     {
-        path: '',
-        component: ListMuscleGroupComponent,
+        path: 'library',
+        component: ListMuscleGroupLibraryComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: 'workout',
+        children: [
+            {
+                path: '**',
+                redirectTo: 'select-muscle-group-workout'
+            },
+            {
+                path: 'select-muscle-group-workout',
+                component: SelectMuscleGroupWorkoutComponent
+
+            }
+        ],
         canActivate: [authGuard]
     },
     {
@@ -28,5 +48,10 @@ export const appRoutes: Route[] = [
                 component: SignUpComponent
             }
         ]
+    },
+    {
+        path: '**',
+        redirectTo: '/workout',
+        pathMatch: 'full'
     }
 ];

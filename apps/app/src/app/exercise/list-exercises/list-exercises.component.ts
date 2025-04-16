@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Exercise } from '../../../../../../libs/interfaces/exercise';
 import { switchMap, take } from 'rxjs';
 import { DataView } from 'primeng/dataview';
-import { WorkoutService } from '../../workout/workout.service';
+import { WorkoutService } from '../../navbar/workout/workout.service';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 
