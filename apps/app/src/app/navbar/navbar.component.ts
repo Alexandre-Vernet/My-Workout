@@ -1,6 +1,8 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { MenuUrls } from '../shared/menu-urls';
+import { filter } from 'rxjs';
 
 @Component({
     selector: 'app-navbar',
@@ -11,33 +13,57 @@ import { RouterLink } from '@angular/router';
 })
 export class NavbarComponent implements AfterViewInit {
 
-    ngAfterViewInit(): void {
-        const activeIndex = 2;
+    constructor(
+        private router: Router
+    ) {
+    }
 
+    ngAfterViewInit(): void {
         const body = document.body;
         const menu = body.querySelector('.menu') as HTMLElement;
         const menuItems = menu.querySelectorAll('.menu__item');
         const menuBorder = menu.querySelector('.menu__border') as HTMLElement;
-        let activeItem = menuItems[activeIndex] as HTMLElement;
+        const icons = menu.querySelectorAll('.icon') as NodeListOf<HTMLElement>;
+        let activeItem;
+
 
         menuItems.forEach(item => {
             item.classList.remove('active');
         });
 
-        activeItem.classList.add('active');
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationEnd)
+        )
+            .subscribe((event: NavigationEnd) => {
+                const url = event.urlAfterRedirects;
+                let activeIndex = 0;
 
-        offsetMenuBorder(activeItem, menuBorder);
+                if (url.includes(MenuUrls.library)) {
+                    activeIndex = 0;
+                } else if (url.includes(MenuUrls.workout)) {
+                    activeIndex = 2;
+                }
+
+                activeItem = menuItems[activeIndex] as HTMLElement;
+                activeItem.classList.add('active');
+                offsetMenuBorder(activeItem, menuBorder);
+            });
 
         function clickItem(item: HTMLElement) {
             menu.style.removeProperty('--timeOut');
+            menuBorder.classList.add('menu__border_transition');
+
+            icons.forEach(icon => {
+                icon.classList.add('icon-stroke-dasharray');
+                icon.classList.add('active');
+            });
 
             if (activeItem === item) return;
 
             activeItem.classList.remove('active');
-
             item.classList.add('active');
-
-
+            item.classList.add('menu__item_active');
+            item.classList.add('menu__item_active_before');
             activeItem = item;
 
             offsetMenuBorder(activeItem, menuBorder);

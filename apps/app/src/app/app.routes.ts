@@ -9,15 +9,16 @@ import { authGuard } from './auth/auth.guard';
 import {
     SelectMuscleGroupWorkoutComponent
 } from './navbar/workout/select-muscle-group-workout/select-muscle-group-workout.component';
+import { MenuUrls } from './shared/menu-urls';
 
 export const appRoutes: Route[] = [
     {
-        path: 'library',
+        path: MenuUrls.library,
         component: ListMuscleGroupLibraryComponent,
         canActivate: [authGuard]
     },
     {
-        path: 'workout',
+        path: MenuUrls.workout,
         children: [
             {
                 path: '**',
