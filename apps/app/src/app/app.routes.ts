@@ -10,6 +10,7 @@ import {
     SelectMuscleGroupWorkoutComponent
 } from './navbar/workout/select-muscle-group-workout/select-muscle-group-workout.component';
 import { MenuUrls } from './shared/menu-urls';
+import { WorkoutSessionComponent } from './navbar/workout/workout-session/workout-session.component';
 
 export const appRoutes: Route[] = [
     {
@@ -21,14 +22,17 @@ export const appRoutes: Route[] = [
         path: MenuUrls.workout,
         children: [
             {
+                path: 'select-muscle-group-workout',
+                component: SelectMuscleGroupWorkoutComponent
+            },
+            {
+                path: 'workout-session/:muscleId',
+                component: WorkoutSessionComponent
+            },
+            {
                 path: '**',
                 redirectTo: 'select-muscle-group-workout'
             },
-            {
-                path: 'select-muscle-group-workout',
-                component: SelectMuscleGroupWorkoutComponent
-
-            }
         ],
         canActivate: [authGuard]
     },
@@ -52,7 +56,7 @@ export const appRoutes: Route[] = [
     },
     {
         path: '**',
-        redirectTo: '/workout',
+        redirectTo: MenuUrls.workout,
         pathMatch: 'full'
     }
 ];
