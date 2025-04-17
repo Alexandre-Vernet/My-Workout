@@ -1,4 +1,4 @@
-<span routerLink="/">Retour</span>
+<span [routerLink]="['/', 'library']">Retour</span>
 
 <p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
 

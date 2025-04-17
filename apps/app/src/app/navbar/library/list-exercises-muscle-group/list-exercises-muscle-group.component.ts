@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ExerciseService } from '../exercise.service';
+import { ExerciseService } from '../../../exercise/exercise.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Exercise } from '../../../../../../libs/interfaces/exercise';
+import { Exercise } from '../../../../../../../libs/interfaces/exercise';
 import { switchMap, take } from 'rxjs';
 import { DataView } from 'primeng/dataview';
-import { WorkoutService } from '../../navbar/workout/workout.service';
+import { WorkoutService } from '../../workout/workout.service';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 
 @Component({
     selector: 'app-list-exercises',
     imports: [CommonModule, DataView, RouterLink, Button, Message],
-    templateUrl: './list-exercises.component.html',
-    styleUrl: './list-exercises.component.scss'
+    templateUrl: './list-exercises-muscle-group.component.html',
+    styleUrl: './list-exercises-muscle-group.component.scss'
 })
-export class ListExercisesComponent implements OnInit {
+export class ListExercisesMuscleGroupComponent implements OnInit {
 
     exercises: Exercise[];
 
@@ -31,7 +31,7 @@ export class ListExercisesComponent implements OnInit {
     ngOnInit() {
         this.route.params.pipe(
           take(1),
-          switchMap((params: { exerciseId: number }) => this.exerciseService.listExercise(Number(params.exerciseId)))
+          switchMap((params: { muscleGroupId: number }) => this.exerciseService.findExercisesByMuscleGroupId(Number(params.muscleGroupId)))
         )
           .subscribe(exercises => {
               this.exercises = exercises;

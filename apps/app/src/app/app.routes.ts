@@ -1,8 +1,8 @@
 import { Route } from '@angular/router';
-import { ListExercisesComponent } from './exercise/list-exercises/list-exercises.component';
+import { ListExercisesMuscleGroupComponent } from './navbar/library/list-exercises-muscle-group/list-exercises-muscle-group.component';
 import {
-    ListMuscleGroupLibraryComponent
-} from './navbar/librairy/list-muscle-group-library/list-muscle-group-library.component';
+    ListMusclesGroupsComponent
+} from './navbar/library/list-muscles-groups/list-muscles-groups.component';
 import { SignInComponent } from './auth/sign-in/sign-in.component';
 import { SignUpComponent } from './auth/sign-up/sign-up.component';
 import { authGuard } from './auth/auth.guard';
@@ -15,9 +15,23 @@ import { WorkoutSessionComponent } from './navbar/workout/workout-session/workou
 export const appRoutes: Route[] = [
     {
         path: MenuUrls.library,
-        component: ListMuscleGroupLibraryComponent,
+        children: [
+            {
+                path: 'list-muscles-group',
+                component: ListMusclesGroupsComponent
+            },
+            {
+                path: 'exercise/:muscleGroupId',
+                component: ListExercisesMuscleGroupComponent
+            },
+            {
+                path: '**',
+                redirectTo: 'list-muscles-group'
+            }
+        ],
         canActivate: [authGuard]
     },
+
     {
         path: MenuUrls.workout,
         children: [
@@ -26,19 +40,14 @@ export const appRoutes: Route[] = [
                 component: SelectMuscleGroupWorkoutComponent
             },
             {
-                path: 'workout-session/:muscleId',
+                path: 'workout-session/:muscleGroupId',
                 component: WorkoutSessionComponent
             },
             {
                 path: '**',
                 redirectTo: 'select-muscle-group-workout'
-            },
+            }
         ],
-        canActivate: [authGuard]
-    },
-    {
-        path: 'exercise/:exerciseId',
-        component: ListExercisesComponent,
         canActivate: [authGuard]
     },
     {

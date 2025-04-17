@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SelectMuscleGroupWorkoutComponent } from './select-muscle-group-workout.component';
 
-describe('ListMuscleGroupComponent', () => {
+describe('ListMusclesGroupsComponent', () => {
     let component: SelectMuscleGroupWorkoutComponent;
     let fixture: ComponentFixture<SelectMuscleGroupWorkoutComponent>;
 

@@ -17,7 +17,7 @@ export class ExerciseService {
         private readonly authService: AuthService) {
     }
 
-    listExercise(muscleGroupId: number) {
+    findExercisesByMuscleGroupId(muscleGroupId: number) {
         return this.authService.user$
             .pipe(
                 take(1),

@@ -9,6 +9,6 @@ export class ExercisesController {
     @Post()
     @HttpCode(200)
     findOne(@Body() { muscleGroupId, userId }: { muscleGroupId: number, userId: number }) {
-        return this.exercisesService.findExercisesByMuscleGroupId(userId, muscleGroupId);
+        return this.exercisesService.findExercisesByMuscleGroupIdAndUserId(userId, muscleGroupId);
     }
 }

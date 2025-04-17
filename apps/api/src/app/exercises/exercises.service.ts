@@ -8,7 +8,7 @@ export class ExercisesService {
     ) {
     }
 
-    async findExercisesByMuscleGroupId(userId: number, muscleGroupId: number) {
+    async findExercisesByMuscleGroupIdAndUserId(userId: number, muscleGroupId: number) {
         return this.dataSource.query(
             `
                 SELECT e.id,

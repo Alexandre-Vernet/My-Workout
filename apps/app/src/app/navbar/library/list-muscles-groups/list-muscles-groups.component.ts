@@ -7,11 +7,11 @@ import { RouterLink } from '@angular/router';
 @Component({
     selector: 'app-list-muscle-group',
     imports: [CommonModule, RouterLink],
-    templateUrl: './list-muscle-group-library.component.html',
-    styleUrl: './list-muscle-group-library.component.scss',
+    templateUrl: './list-muscles-groups.component.html',
+    styleUrl: './list-muscles-groups.component.scss',
     standalone: true
 })
-export class ListMuscleGroupLibraryComponent implements OnInit {
+export class ListMusclesGroupsComponent implements OnInit {
 
     muscleGroups: MuscleGroup[];
 
