@@ -1,1 +1,55 @@
-<p>workout-session works!</p>
+<div class="workout-session">
+    <p-stepper [(value)]="activeStep" class="basis-[40rem]">
+        <p-step-list>
+            <ng-container *ngFor="let exercise of exercises; let index = index">
+                <p-step [value]="index + 1" class="flex flex-row flex-auto gap-2">
+                    <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                        <button class="step-button"
+                                [ngClass]="{
+                                'bg-primary text-primary-contrast border-primary': value === activeStep,
+                                'border-surface': value > activeStep
+                            }"
+                                (click)="activateCallback()">
+                            <span class="step-button-span">{{ index + 1 }}</span>
+                        </button>
+                    </ng-template>
+                </p-step>
+            </ng-container>
+        </p-step-list>
+
+        <p-step-panels>
+            <ng-container *ngFor="let exercise of exercises; let index = index">
+                <p-step-panel [value]="index + 1">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex-1 flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
+                            <div class="text-center mt-4 mb-4 text-xl font-semibold">
+                                {{ exercise.name }}
+                            </div>
+                            <p-inputNumber [(ngModel)]="weight"
+                                           [showButtons]="true"
+                                           buttonLayout="horizontal"
+                                           inputId="horizontal"
+                                           spinnerMode="horizontal"
+                                           [step]="1.25"
+                                           [min]="0"
+                                           [max]="500"
+                                           [suffix]="' kg'">
+                                <ng-template #incrementbuttonicon>
+                                    <span class="pi pi-plus"></span>
+                                </ng-template>
+                                <ng-template #decrementbuttonicon>
+                                    <span class="pi pi-minus"></span>
+                                </ng-template>
+                            </p-inputNumber>
+                        </div>
+                        <div class="flex pt-6 justify-end">
+                            <p-button (onClick)="activateCallback(index + 2)" label="Next" icon="pi pi-arrow-right"
+                                      iconPos="right" />
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+            </ng-container>
+        </p-step-panels>
+    </p-stepper>
+    <p-button class="button-go" label="Pause" />
+</div>

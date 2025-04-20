@@ -31,7 +31,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     ngOnInit() {
         this.route.params.pipe(
           take(1),
-          switchMap((params: { muscleGroupId: number }) => this.exerciseService.findExercisesByMuscleGroupId(Number(params.muscleGroupId)))
+          switchMap((params: { muscleGroupId: number }) => this.exerciseService.findAllExercisesByMuscleGroupIdAndUserId(Number(params.muscleGroupId)))
         )
           .subscribe(exercises => {
               this.exercises = exercises;

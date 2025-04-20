@@ -8,7 +8,7 @@ export class ExercisesService {
     ) {
     }
 
-    async findExercisesByMuscleGroupIdAndUserId(userId: number, muscleGroupId: number) {
+    findAllExercisesByMuscleGroupIdAndUserId(userId: number, muscleGroupId: number) {
         return this.dataSource.query(
             `
                 SELECT e.id,
@@ -29,6 +29,32 @@ export class ExercisesService {
                          JOIN muscle_group mg ON m.muscle_group_id = mg.id
                 WHERE m.muscle_group_id = $2
                 GROUP BY e.id, e.name, e.description, w.id;
+            `,
+            [userId, muscleGroupId]
+        );
+    }
+
+    findExercisesByMuscleGroupIdAndUserId(userId: number, muscleGroupId: number) {
+        return this.dataSource.query(
+            `
+                select e.id,
+                       e.name,
+                       e.description
+                from exercises e
+                         left join workout w on
+                    e.id = w.exercise_id
+                         join exercise_muscle em on
+                    em.exercise_id = e.id
+                         join muscles m on
+                    em.muscle_id = m.id
+                         join muscle_group mg on
+                    m.muscle_group_id = mg.id
+                where w.user_id = $1
+                  and m.muscle_group_id = $2
+                group by e.id,
+                         e.name,
+                         e.description,
+                         w.id;
             `,
             [userId, muscleGroupId]
         );

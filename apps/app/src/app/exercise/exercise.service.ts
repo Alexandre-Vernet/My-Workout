@@ -17,11 +17,25 @@ export class ExerciseService {
         private readonly authService: AuthService) {
     }
 
-    findExercisesByMuscleGroupId(muscleGroupId: number) {
+    findAllExercisesByMuscleGroupIdAndUserId(muscleGroupId: number) {
         return this.authService.user$
             .pipe(
                 take(1),
-                switchMap(user => this.httpClient.post<Exercise[]>(this.exerciseUrl, { userId: user.id, muscleGroupId }))
+                switchMap(user => this.httpClient.post<Exercise[]>(`${ this.exerciseUrl }/find-all-exercises-by-muscle-group-id-and-user-id`, {
+                    userId: user.id,
+                    muscleGroupId
+                }))
+            );
+    }
+
+    findExercisesByMuscleGroupIdAndUserId(muscleGroupId: number) {
+        return this.authService.user$
+            .pipe(
+                take(1),
+                switchMap(user => this.httpClient.post<Exercise[]>(`${ this.exerciseUrl }/find-exercises-by-muscle-group-id-and-user-id`, {
+                    userId: user.id,
+                    muscleGroupId
+                }))
             );
     }
 }
