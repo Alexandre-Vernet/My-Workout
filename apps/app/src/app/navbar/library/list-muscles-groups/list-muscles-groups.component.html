@@ -2,7 +2,7 @@
 
 <div class="list-muscle-group">
     <ng-container *ngFor="let muscleGroup of muscleGroups">
-        <a [routerLink]="['/', 'library', 'exercise', muscleGroup.id]">
+        <a [routerLink]="['/', 'library', 'muscle-group', muscleGroup.id]">
             <div class="muscle-group">
                 <span>{{ muscleGroup.name }}</span>
             </div>

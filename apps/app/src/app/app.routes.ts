@@ -21,7 +21,7 @@ export const appRoutes: Route[] = [
                 component: ListMusclesGroupsComponent
             },
             {
-                path: 'exercise/:muscleGroupId',
+                path: 'muscle-group/:muscleGroupId',
                 component: ListExercisesMuscleGroupComponent
             },
             {

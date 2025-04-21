@@ -1,4 +1,7 @@
 <div class="workout-session">
+    <p-confirmdialog />
+
+
     <p-stepper [(value)]="activeStep" class="basis-[40rem]">
         <p-step-list>
             <ng-container *ngFor="let exercise of exercises; let index = index">
