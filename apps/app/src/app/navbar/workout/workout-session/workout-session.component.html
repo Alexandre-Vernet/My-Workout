@@ -51,5 +51,26 @@
             </ng-container>
         </p-step-panels>
     </p-stepper>
-    <p-button class="button-go" label="Pause" />
+
+    <div *ngIf="exercisesMade.length > 0" class="card">
+        <p-table [value]="exercisesMade" scrollable="true" scrollHeight="200px">
+            <ng-template #header>
+                <tr>
+                    <th>N°</th>
+                    <th>Weight</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-exercise>
+                <tr>
+                    <td>{{ exercise.id }}</td>
+                    <td>{{ exercise.weight }} kg</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+
+    <p-button (click)="saveExercise()"
+              [disabled]="!weight"
+              class="button-go" label="Pause" />
 </div>

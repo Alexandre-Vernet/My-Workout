@@ -6,12 +6,13 @@ import { ExerciseService } from '../../../exercise/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
 import { FormsModule } from '@angular/forms';
 import { Button } from 'primeng/button';
-import { Exercise } from '../../../../../../../libs/interfaces/exercise';
+import { Exercise, ExerciseMade } from '../../../../../../../libs/interfaces/exercise';
 import { InputNumber } from 'primeng/inputnumber';
+import { TableModule } from 'primeng/table';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, Button, InputNumber],
+    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, Button, InputNumber, TableModule],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true
@@ -19,10 +20,11 @@ import { InputNumber } from 'primeng/inputnumber';
 export class WorkoutSessionComponent implements OnInit {
 
     exercises: Exercise[] = [];
+    exercisesMade: ExerciseMade[] = [];
 
     activeStep: number = 1;
 
-    weight: string | undefined = null;
+    weight: number = null;
 
     constructor(
         private readonly activatedRoute: ActivatedRoute,
@@ -41,5 +43,14 @@ export class WorkoutSessionComponent implements OnInit {
             .subscribe(exercises => {
                 this.exercises = exercises;
             });
+    }
+
+    saveExercise() {
+        const exercise: ExerciseMade = {
+            id: this.exercisesMade.length + 1,
+            weight: this.weight
+        }
+
+        this.exercisesMade.push(exercise);
     }
 }
