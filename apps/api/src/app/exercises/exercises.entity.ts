@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ExerciseMuscleEntity } from '../exerciseMuscle.entity';
-import { WorkoutEntity } from '../workout/workout.entity';
+import { ExerciseMuscleEntity } from '../exercise-muscle/exercise-muscle.entity';
+import { UserExerciseEntity } from '../user-exercise/user-exercise.entity';
 
 @Entity({ name: 'exercises', schema: 'public' })
 export class ExercisesEntity {
@@ -16,6 +16,6 @@ export class ExercisesEntity {
     @OneToMany(() => ExerciseMuscleEntity, (exerciseMuscle) => exerciseMuscle.exercise, { onDelete: 'CASCADE' })
     exerciseMuscle: ExerciseMuscleEntity[];
 
-    @OneToMany(() => WorkoutEntity, workout => workout.id, { onDelete: 'CASCADE' })
-    workout: WorkoutEntity[];
+    @OneToMany(() => UserExerciseEntity, userExercise => userExercise.id, { onDelete: 'CASCADE' })
+    userExercise: UserExerciseEntity[];
 }

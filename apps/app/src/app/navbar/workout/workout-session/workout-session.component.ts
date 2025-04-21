@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { switchMap, take } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { ExerciseService } from '../../../exercise/exercise.service';
+import { ExerciseService } from '../../../services/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
 import { FormsModule } from '@angular/forms';
 import { Button } from 'primeng/button';

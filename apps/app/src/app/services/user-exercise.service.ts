@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Exercise } from '../../../../../../libs/interfaces/exercise';
+import { Exercise } from '../../../../../libs/interfaces/exercise';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-import { Workout } from '../../../../../../libs/interfaces/workout';
-import { AuthService } from '../../auth/auth.service';
+import { environment } from '../../environments/environment';
+import { Workout } from '../../../../../libs/interfaces/workout';
+import { AuthService } from '../auth/auth.service';
 import { map, switchMap, take } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
-export class WorkoutService {
+export class UserExerciseService {
 
-    workoutUrl = environment.workoutUrl();
+    userExerciseUrl = environment.userExerciseUrl();
 
     constructor(
         private readonly http: HttpClient,
@@ -31,7 +31,7 @@ export class WorkoutService {
 
                     return workout;
                 }),
-                switchMap(workout => this.http.post<Workout>(this.workoutUrl, workout))
+                switchMap(workout => this.http.post<Workout>(this.userExerciseUrl, workout))
             );
     }
 }

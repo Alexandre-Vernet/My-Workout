@@ -6,8 +6,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { MuscleGroupEntity } from './muscle-group/muscle-group.entity';
-import { ExerciseMuscleEntity } from './exerciseMuscle.entity';
+import { MuscleGroupEntity } from '../muscle-group/muscle-group.entity';
+import { ExerciseMuscleEntity } from '../exercise-muscle/exercise-muscle.entity';
 
 @Entity({ name: 'muscles', schema: 'public' })
 export class MuscleEntity {

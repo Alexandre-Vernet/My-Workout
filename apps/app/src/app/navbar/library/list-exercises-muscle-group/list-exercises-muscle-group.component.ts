@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ExerciseService } from '../../../exercise/exercise.service';
+import { ExerciseService } from '../../../services/exercise.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
 import { switchMap, take } from 'rxjs';
 import { DataView } from 'primeng/dataview';
-import { WorkoutService } from '../../workout/workout.service';
+import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 
@@ -24,7 +24,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     constructor(
       private readonly route: ActivatedRoute,
       private readonly exerciseService: ExerciseService,
-      private readonly workoutService: WorkoutService
+      private readonly workoutService: UserExerciseService
     ) {
     }
 

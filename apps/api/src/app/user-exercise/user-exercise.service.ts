@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Workout } from '../../../../../libs/interfaces/workout';
 import { InjectRepository } from '@nestjs/typeorm';
-import { WorkoutEntity } from './workout.entity';
+import { UserExerciseEntity } from './user-exercise.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class WorkoutService {
+export class UserExerciseService {
 
     constructor(
-        @InjectRepository(WorkoutEntity)
-        private readonly workoutRepository: Repository<WorkoutEntity>
+        @InjectRepository(UserExerciseEntity)
+        private readonly workoutRepository: Repository<UserExerciseEntity>
     ) {
     }
 

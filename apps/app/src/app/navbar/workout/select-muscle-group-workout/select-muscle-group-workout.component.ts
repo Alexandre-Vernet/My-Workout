@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Splitter } from 'primeng/splitter';
 import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
-import { MuscleGroupService } from '../../../muscle-group/muscle-group.service';
+import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { RouterLink } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
 
