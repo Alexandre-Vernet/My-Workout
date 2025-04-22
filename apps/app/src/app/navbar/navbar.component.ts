@@ -1,13 +1,13 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MenuUrls } from '../shared/menu-urls';
-import { filter } from 'rxjs';
+import { delay, filter } from 'rxjs';
 
 @Component({
     selector: 'app-navbar',
     standalone: true,
-    imports: [CommonModule, RouterLink],
+    imports: [CommonModule, RouterLink, RouterLinkActive],
     templateUrl: './navbar.component.html',
     styleUrls: ['./navbar.component.scss']
 })
@@ -26,21 +26,21 @@ export class NavbarComponent implements AfterViewInit {
         const icons = menu.querySelectorAll('.icon') as NodeListOf<HTMLElement>;
         let activeItem;
 
-
-        menuItems.forEach(item => {
-            item.classList.remove('active');
-        });
-
-        this.router.events.pipe(
-            filter(event => event instanceof NavigationEnd)
-        )
+        this.router.events
+            .pipe(
+                filter(event => event instanceof NavigationEnd),
+                delay(5)
+            )
             .subscribe((event: NavigationEnd) => {
                 const url = event.urlAfterRedirects;
-                let activeIndex = 0;
+
+                let activeIndex: number;
 
                 if (url.includes(MenuUrls.library)) {
                     activeIndex = 0;
                 } else if (url.includes(MenuUrls.workout)) {
+                    activeIndex = 2;
+                } else {
                     activeIndex = 2;
                 }
 

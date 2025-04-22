@@ -5,10 +5,10 @@ import { filter, take } from 'rxjs';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { NavbarComponent } from './navbar/navbar.component';
-import { NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 
 @Component({
-    imports: [RouterModule, NavbarComponent, NgIf],
+    imports: [RouterModule, NavbarComponent, NgClass],
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'
