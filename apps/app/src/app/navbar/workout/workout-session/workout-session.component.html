@@ -3,15 +3,15 @@
 
 
     <p-stepper [(value)]="activeStep" class="basis-[40rem]">
-        <p-step-list>
+        <p-step-list class="flex justify-center w-full">
             <ng-container *ngFor="let exercise of exercises; let index = index">
-                <p-step [value]="index + 1" class="flex flex-row flex-auto gap-2">
+                <p-step [value]="index + 1">
                     <ng-template #content let-activateCallback="activateCallback" let-value="value">
                         <button class="step-button"
                                 [ngClass]="{
-                                'bg-primary text-primary-contrast border-primary': value === activeStep,
-                                'border-surface': value > activeStep
-                            }"
+                        'bg-primary text-primary-contrast border-primary': value === activeStep,
+                        'border-surface': value > activeStep
+                    }"
                                 (click)="switchPanel(activateCallback)">
                             <span class="step-button-span">{{ index + 1 }}</span>
                         </button>
@@ -19,6 +19,7 @@
                 </p-step>
             </ng-container>
         </p-step-list>
+
 
         <p-step-panels>
             <ng-container *ngFor="let exercise of exercises; let index = index">
