@@ -30,6 +30,14 @@ export class WorkoutSessionComponent implements OnInit {
 
     weight: number = null;
 
+    timer = {
+        text: '00:00:00',
+        minutes: 0,
+        seconds: 0,
+        centiseconds: 0,
+        interval: null
+    };
+
     constructor(
         private readonly activatedRoute: ActivatedRoute,
         private readonly exerciseService: ExerciseService,
@@ -44,11 +52,7 @@ export class WorkoutSessionComponent implements OnInit {
                 take(1),
                 map((params: { muscleGroupId: number }) => params.muscleGroupId),
                 switchMap((muscleGroupId) => this.exerciseService.findExercisesByMuscleGroupIdAndUserId(muscleGroupId)
-                    .pipe(
-                        map(exercises => ({
-                            exercises, muscleGroupId
-                        }))
-                    )
+                    .pipe(map(exercises => ({ exercises, muscleGroupId })))
                 )
             )
             .subscribe(({ exercises, muscleGroupId }) => {
@@ -84,7 +88,7 @@ export class WorkoutSessionComponent implements OnInit {
     saveExercise() {
         const exercise: ExerciseMade = {
             id: this.exercisesMade.length + 1,
-            weight: this.weight
+            weight: this.weight,
         };
 
         this.exercisesMade.push(exercise);
@@ -92,5 +96,58 @@ export class WorkoutSessionComponent implements OnInit {
 
     clearExercisesMade() {
         this.exercisesMade = [];
+    }
+
+    toggleTimer() {
+        if (this.timer.interval !== null) {
+            this.stopTimer();
+        } else {
+            this.startTimer();
+        }
+    }
+
+    switchPanel(switchPanel: () => void) {
+        switchPanel();
+        this.clearExercisesMade();
+        this.stopTimer();
+        this.weight = 0;
+    }
+
+
+    private startTimer() {
+        this.saveExercise();
+
+        this.timer.interval = setInterval(() => {
+
+            this.timer.centiseconds++;
+
+            if (this.timer.centiseconds === 100) {
+                this.timer.seconds++;
+                this.timer.centiseconds = 0;
+            }
+
+            if (this.timer.seconds === 60) {
+                this.timer.minutes++;
+                this.timer.seconds = 0;
+            }
+            this.formatTimer();
+        }, 10);
+    }
+
+    private stopTimer() {
+        clearInterval(this.timer.interval);
+        this.timer.interval = null;
+        this.timer = {
+            ...this.timer,
+            minutes: 0,
+            seconds: 0,
+            centiseconds: 0
+        };
+
+        this.formatTimer();
+    }
+
+    private formatTimer() {
+        this.timer.text = `${ this.timer.minutes.toString().padStart(2, '0') }:${ this.timer.seconds.toString().padStart(2, '0') }:${ this.timer.centiseconds.toString().padStart(2, '0') }`;
     }
 }

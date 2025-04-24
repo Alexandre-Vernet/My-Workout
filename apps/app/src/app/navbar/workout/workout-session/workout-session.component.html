@@ -12,7 +12,7 @@
                                 'bg-primary text-primary-contrast border-primary': value === activeStep,
                                 'border-surface': value > activeStep
                             }"
-                                (click)="activateCallback(); clearExercisesMade()">
+                                (click)="switchPanel(activateCallback)">
                             <span class="step-button-span">{{ index + 1 }}</span>
                         </button>
                     </ng-template>
@@ -26,23 +26,26 @@
                     <ng-template #content let-activateCallback="activateCallback">
                         <div class="flex-1 flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
                             <div class="text-center mt-4 mb-4 text-xl font-semibold">
-                                {{ exercise.name }}
+                                <h3>{{ exercise.name | uppercase }}</h3>
                             </div>
                             <p-inputNumber [(ngModel)]="weight"
                                            [showButtons]="true"
                                            buttonLayout="horizontal"
                                            inputId="horizontal"
                                            spinnerMode="horizontal"
+                                           [disabled]="timer.interval"
                                            [step]="1.25"
                                            [min]="0"
                                            [max]="500"
                                            [suffix]="' kg'">
-                                <ng-template #incrementbuttonicon>
-                                    <span class="pi pi-plus"></span>
-                                </ng-template>
-                                <ng-template #decrementbuttonicon>
-                                    <span class="pi pi-minus"></span>
-                                </ng-template>
+                                <ng-container *ngIf="timer.interval !== 0">
+                                    <ng-template #incrementbuttonicon>
+                                        <span class="pi pi-plus"></span>
+                                    </ng-template>
+                                    <ng-template #decrementbuttonicon>
+                                        <span class="pi pi-minus"></span>
+                                    </ng-template>
+                                </ng-container>
                             </p-inputNumber>
                         </div>
                     </ng-template>
@@ -55,8 +58,8 @@
         <p-table [value]="exercisesMade" scrollable="true" scrollHeight="200px">
             <ng-template #header>
                 <tr>
-                    <th>N°</th>
-                    <th>Weight</th>
+                    <th id="id">N°</th>
+                    <th id="weight">Poids</th>
                 </tr>
             </ng-template>
             <ng-template #body let-exercise>
@@ -68,8 +71,14 @@
         </p-table>
     </div>
 
+    <div class="bottom-page">
+        <div class="stopwatch text-primary">
+            <span>{{ timer.text }}</span>
+        </div>
 
-    <p-button (click)="saveExercise()"
-              [disabled]="!weight"
-              class="button-go" label="Pause" />
+        <p-button (click)="toggleTimer()"
+                  [disabled]="!weight"
+                  size="large"
+                  [label]="timer.interval != null ? 'Stop' : 'Pause'" />
+    </div>
 </div>
