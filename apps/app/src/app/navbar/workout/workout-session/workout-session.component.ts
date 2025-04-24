@@ -6,7 +6,7 @@ import { ExerciseService } from '../../../services/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
 import { FormsModule } from '@angular/forms';
 import { Button } from 'primeng/button';
-import { Exercise, ExerciseMade } from '../../../../../../../libs/interfaces/exercise';
+import { Exercise } from '../../../../../../../libs/interfaces/exercise';
 import { InputNumber } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
 import { ConfirmationService } from 'primeng/api';
@@ -24,7 +24,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 export class WorkoutSessionComponent implements OnInit {
 
     exercises: Exercise[] = [];
-    exercisesMade: ExerciseMade[] = [];
+    exercisesMade: Exercise[] = [];
 
     activeStep: number = 1;
 
@@ -86,7 +86,7 @@ export class WorkoutSessionComponent implements OnInit {
     }
 
     saveExercise() {
-        const exercise: ExerciseMade = {
+        const exercise: Exercise = {
             id: this.exercisesMade.length + 1,
             weight: this.weight,
             restTime: '/'
