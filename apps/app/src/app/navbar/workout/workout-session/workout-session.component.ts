@@ -50,8 +50,8 @@ export class WorkoutSessionComponent implements OnInit {
                         }))
                     )
                 )
-)
-            .subscribe(({exercises, muscleGroupId}) => {
+            )
+            .subscribe(({ exercises, muscleGroupId }) => {
                 this.exercises = exercises;
 
                 if (exercises.length === 0) {
@@ -88,5 +88,9 @@ export class WorkoutSessionComponent implements OnInit {
         };
 
         this.exercisesMade.push(exercise);
+    }
+
+    clearExercisesMade() {
+        this.exercisesMade = [];
     }
 }

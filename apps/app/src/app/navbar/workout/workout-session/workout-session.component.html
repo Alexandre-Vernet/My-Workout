@@ -12,7 +12,7 @@
                                 'bg-primary text-primary-contrast border-primary': value === activeStep,
                                 'border-surface': value > activeStep
                             }"
-                                (click)="activateCallback()">
+                                (click)="activateCallback(); clearExercisesMade()">
                             <span class="step-button-span">{{ index + 1 }}</span>
                         </button>
                     </ng-template>
