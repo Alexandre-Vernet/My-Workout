@@ -136,8 +136,10 @@ export class WorkoutSessionComponent implements OnInit {
     }
 
     private stopTimer() {
-        const { minutes, seconds, centiseconds } = this.timer;
-        this.exercisesMade[this.exercisesMade.length - 1].restTime = this.formatTimer(minutes, seconds, centiseconds);
+        if (this.exercisesMade.length > 0) {
+            const { minutes, seconds, centiseconds } = this.timer;
+            this.exercisesMade[this.exercisesMade.length - 1].restTime = this.formatTimer(minutes, seconds, centiseconds);
+        }
 
         clearInterval(this.timer.interval);
         this.timer.interval = null;
