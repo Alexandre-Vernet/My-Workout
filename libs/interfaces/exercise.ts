@@ -10,4 +10,5 @@ export class Exercise {
 export class ExerciseMade {
     id: number;
     weight: number;
+    restTime: string;
 }

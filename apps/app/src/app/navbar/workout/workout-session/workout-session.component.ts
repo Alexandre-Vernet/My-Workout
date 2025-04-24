@@ -89,6 +89,7 @@ export class WorkoutSessionComponent implements OnInit {
         const exercise: ExerciseMade = {
             id: this.exercisesMade.length + 1,
             weight: this.weight,
+            restTime: '/'
         };
 
         this.exercisesMade.push(exercise);
@@ -130,11 +131,14 @@ export class WorkoutSessionComponent implements OnInit {
                 this.timer.minutes++;
                 this.timer.seconds = 0;
             }
-            this.formatTimer();
+            this.timer.text = this.formatTimer(this.timer.minutes, this.timer.seconds, this.timer.centiseconds);
         }, 10);
     }
 
     private stopTimer() {
+        const { minutes, seconds, centiseconds } = this.timer;
+        this.exercisesMade[this.exercisesMade.length - 1].restTime = this.formatTimer(minutes, seconds, centiseconds);
+
         clearInterval(this.timer.interval);
         this.timer.interval = null;
         this.timer = {
@@ -144,10 +148,14 @@ export class WorkoutSessionComponent implements OnInit {
             centiseconds: 0
         };
 
-        this.formatTimer();
+        this.timer.text = this.formatTimer(this.timer.minutes, this.timer.seconds, this.timer.centiseconds);
     }
 
-    private formatTimer() {
-        this.timer.text = `${ this.timer.minutes.toString().padStart(2, '0') }:${ this.timer.seconds.toString().padStart(2, '0') }:${ this.timer.centiseconds.toString().padStart(2, '0') }`;
+    /*
+        Format : MM:SS:CS
+        Exemple : 02:05:72
+     */
+    private formatTimer(minutes: number, seconds: number, centiseconds: number) {
+        return `${ minutes.toString().padStart(2, '0') }:${ seconds.toString().padStart(2, '0') }:${ centiseconds.toString().padStart(2, '0') }`;
     }
 }

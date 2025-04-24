@@ -60,12 +60,14 @@
                 <tr>
                     <th id="id">N°</th>
                     <th id="weight">Poids</th>
+                    <th id="restTime">Temps de repos</th>
                 </tr>
             </ng-template>
             <ng-template #body let-exercise>
                 <tr>
                     <td>{{ exercise.id }}</td>
                     <td>{{ exercise.weight }} kg</td>
+                    <td>{{ exercise.restTime }}</td>
                 </tr>
             </ng-template>
         </p-table>
