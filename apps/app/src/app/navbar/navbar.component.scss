@@ -50,7 +50,7 @@
     transform: scale(0);
 }
 
-menu__item_active_before {
+.menu__item_active_before {
     transition: background-color var(--duration), transform var(--duration);
 }
 

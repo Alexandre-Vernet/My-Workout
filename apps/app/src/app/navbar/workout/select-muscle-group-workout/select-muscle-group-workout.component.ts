@@ -5,6 +5,7 @@ import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { RouterLink } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
+import { take } from 'rxjs';
 
 @Component({
     selector: 'select-muscle-group-workout',
@@ -14,6 +15,9 @@ import { MenuUrls } from '../../../shared/menu-urls';
     standalone: true
 })
 export class SelectMuscleGroupWorkoutComponent implements OnInit {
+
+    protected readonly MenuUrls = MenuUrls;
+
     muscleGroups: MuscleGroup[] = [];
 
     constructor(private readonly muscleGroupService: MuscleGroupService) {
@@ -21,14 +25,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     ngOnInit() {
         this.muscleGroupService.findAllMuscleGroup()
-            .subscribe({
-                next: muscleGroups => this.muscleGroups = muscleGroups
-            });
+            .pipe(take(1))
+            .subscribe((muscleGroups) => this.muscleGroups = muscleGroups);
     }
-
-    selectMuscleGroup(musclegroup: MuscleGroup) {
-        console.log(musclegroup);
-    }
-
-    protected readonly MenuUrls = MenuUrls;
 }

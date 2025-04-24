@@ -1,24 +1,18 @@
 @import "primeicons/primeicons.css";
 
-
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Raleway, sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-html {
-  font-size: 16px;
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
+html, body {
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    height: 100%;
 }
 
 .display-none {
-  display: none;
- }
+    display: none;
+}

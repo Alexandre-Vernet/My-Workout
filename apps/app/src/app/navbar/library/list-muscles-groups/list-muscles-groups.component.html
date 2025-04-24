@@ -1,11 +1,12 @@
-<h1>Catégories</h1>
+<h1 class="mt-2 text-center">Bibliothèque</h1>
 
-<div class="list-muscle-group">
+<div class="flex flex-wrap justify-center align-content-start gap-3" style="height: 600px;">
     <ng-container *ngFor="let muscleGroup of muscleGroups">
-        <a [routerLink]="['/', 'library', 'muscle-group', muscleGroup.id]">
-            <div class="muscle-group">
-                <span>{{ muscleGroup.name }}</span>
-            </div>
-        </a>
+        <div [routerLink]="['/', 'library', 'muscle-group', muscleGroup?.id]"
+             class="flex align-items-center justify-content-center border-round border-1 surface-border w-30rem h-6rem">
+        <span class="text-xl font-bold text-primary hover:underline">
+            {{ muscleGroup?.name }}
+        </span>
+        </div>
     </ng-container>
 </div>
