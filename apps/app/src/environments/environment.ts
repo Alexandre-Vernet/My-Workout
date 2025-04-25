@@ -4,6 +4,7 @@ export const environment = {
     authUrl: () => `${ environment.API_URL }/auth`,
     muscleGroupUrl: () => `${ environment.API_URL }/muscle-group`,
     userExerciseUrl: () => `${ environment.API_URL }/user-exercise`,
-    exerciseUrl: () => `${ environment.API_URL }/exercises`
+    exerciseUrl: () => `${ environment.API_URL }/exercises`,
+    historyUrl: () => `${ environment.API_URL }/history`,
 
 };

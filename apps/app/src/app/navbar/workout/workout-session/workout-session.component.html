@@ -30,7 +30,7 @@
                     <ng-template #content let-activateCallback="activateCallback">
                         <div class="flex-1 flex-col gap-2 mx-auto mb-6" style="max-width: 20rem">
                             <div class="text-center mt-4 mb-4 text-xl font-semibold">
-                                <h3>{{ exercise.name | uppercase }}</h3>
+                                <h3 #exerciseName>{{ exercise.name | uppercase }}</h3>
                             </div>
                             <p-inputNumber #inputNumber
                                            [(ngModel)]="weight"

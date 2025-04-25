@@ -13,6 +13,8 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { Message } from 'primeng/message';
+import { HistoryService } from '../../../services/history.service';
+import { History } from '../../../../../../../libs/interfaces/history';
 
 @Component({
     selector: 'app-workout-session',
@@ -30,6 +32,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     activeStep: number = 1;
 
+    @ViewChild('exerciseName') exerciseNameRef!: ElementRef;
     @ViewChild('inputNumber', { read: ElementRef }) inputNumberRef!: ElementRef;
     weight: number = null;
 
@@ -51,6 +54,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     constructor(
         private readonly activatedRoute: ActivatedRoute,
         private readonly exerciseService: ExerciseService,
+        private readonly historyService: HistoryService,
         private readonly confirmationService: ConfirmationService,
         private readonly router: Router
     ) {
@@ -115,13 +119,26 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
 
     saveExercise() {
-        const exercise: Exercise = {
+        const exerciseMade: Exercise = {
             id: this.exercisesMade.length + 1,
             weight: this.weight,
             restTime: '/'
         };
 
-        this.exercisesMade.push(exercise);
+        this.exercisesMade.push(exerciseMade);
+
+        const exerciseName: string = this.exerciseNameRef.nativeElement.innerText;
+        const exercise = this.exercises.find(e => e.name.toLowerCase() === exerciseName.toLowerCase());
+
+        const history: History = {
+            exercise,
+            weight: this.weight,
+            createdAt: new Date()
+        }
+
+        this.historyService.create(history).subscribe({
+            error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'enregister l\historique'
+        });
     }
 
     clearExercisesMade() {
