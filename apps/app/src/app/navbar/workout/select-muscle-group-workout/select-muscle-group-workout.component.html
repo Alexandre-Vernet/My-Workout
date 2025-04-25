@@ -1,3 +1,6 @@
+<p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
+
+
 <h1 class="mt-2 text-center">Sélectionner un entraînement</h1>
 <div class="select-muscle-group-workout">
     <p-splitter layout="vertical" [panelSizes]="[33, 33, 34]" [style]="{ height: '600px' }" styleClass="mb-8">

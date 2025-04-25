@@ -12,10 +12,11 @@ import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { Message } from 'primeng/message';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent],
+    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Message],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -42,7 +43,9 @@ export class WorkoutSessionComponent implements OnInit {
     faIcons = {
         faPause,
         faPlay
-    }
+    };
+
+    errorMessage: string;
 
     constructor(
         private readonly activatedRoute: ActivatedRoute,
@@ -61,33 +64,36 @@ export class WorkoutSessionComponent implements OnInit {
                     .pipe(map(exercises => ({ exercises, muscleGroupId })))
                 )
             )
-            .subscribe(({ exercises, muscleGroupId }) => {
-                this.exercises = exercises;
+            .subscribe({
+                next: ({ exercises, muscleGroupId }) => {
+                    this.exercises = exercises;
 
-                if (exercises.length === 0) {
-                    this.confirmationService.confirm({
-                        target: event.target as EventTarget,
-                        header: 'Attention',
-                        message: `Vous n'avez ajouté aucun exercice à votre bibliothèque.<br/>Commencez par en ajouter pour pouvoir lancer un entraînement.`,
-                        closable: false,
-                        closeOnEscape: true,
-                        icon: 'pi pi-exclamation-triangle',
-                        acceptButtonProps: {
-                            label: 'Ajouter'
-                        },
-                        rejectButtonProps: {
-                            label: 'Annuler',
-                            severity: 'secondary',
-                            outlined: true
-                        },
-                        accept: () => {
-                            this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]);
-                        },
-                        reject: () => {
-                            this.router.navigate(['/', 'workout']);
-                        }
-                    });
-                }
+                    if (exercises.length === 0) {
+                        this.confirmationService.confirm({
+                            target: event.target as EventTarget,
+                            header: 'Attention',
+                            message: `Vous n'avez ajouté aucun exercice à votre bibliothèque.<br/>Commencez par en ajouter pour pouvoir lancer un entraînement.`,
+                            closable: false,
+                            closeOnEscape: true,
+                            icon: 'pi pi-exclamation-triangle',
+                            acceptButtonProps: {
+                                label: 'Ajouter'
+                            },
+                            rejectButtonProps: {
+                                label: 'Annuler',
+                                severity: 'secondary',
+                                outlined: true
+                            },
+                            accept: () => {
+                                this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]);
+                            },
+                            reject: () => {
+                                this.router.navigate(['/', 'workout']);
+                            }
+                        });
+                    }
+                },
+                error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les exercices'
             });
     }
 

@@ -37,10 +37,13 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             switchMap((params: { muscleGroupId: number }) =>
                 this.exerciseService.findAllExercisesByMuscleGroupIdAndUserId(Number(params.muscleGroupId)))
         )
-            .subscribe(({ exercises, muscleGroup }) => {
-                this.exercises = exercises;
-                this.muscleGroup = muscleGroup;
-                this.sortExercises();
+            .subscribe({
+                next: ({ exercises, muscleGroup }) => {
+                    this.exercises = exercises;
+                    this.muscleGroup = muscleGroup;
+                    this.sortExercises();
+                },
+                error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher la liste des exercises'
             });
     }
 
@@ -52,7 +55,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
                     exercise.addedToWorkout = !exercise.addedToWorkout;
                     this.errorMessage = '';
                 },
-                error: (err) => this.errorMessage = err?.error?.message ?? 'Error while saving'
+                error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'enregistrer cet exercice'
             });
     }
 
