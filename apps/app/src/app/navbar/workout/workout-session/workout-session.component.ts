@@ -29,6 +29,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     exercises: Exercise[] = [];
     exercisesMade: Exercise[] = [];
+    currentExercise: Exercise;
 
     activeStep: number = 1;
 
@@ -72,6 +73,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             .subscribe({
                 next: ({ exercises, muscleGroupId }) => {
                     this.exercises = exercises;
+                    this.currentExercise = this.exercises[0];
+
+                    this.fillInputWeightLastSavedValue();
 
                     if (exercises.length === 0) {
                         this.confirmationService.confirm({
@@ -134,7 +138,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             exercise,
             weight: this.weight,
             createdAt: new Date()
-        }
+        };
 
         this.historyService.create(history).subscribe({
             error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'enregister l\historique'
@@ -157,13 +161,20 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         }
     }
 
-    switchPanel(switchPanel: () => void) {
+    switchPanel(switchPanel: () => void, exercise: Exercise) {
         switchPanel();
+        this.currentExercise = exercise;
+        this.fillInputWeightLastSavedValue();
         this.clearExercisesMade();
         this.stopTimer();
-        this.weight = null;
     }
 
+
+    private fillInputWeightLastSavedValue() {
+        this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise.id)
+            .pipe(take(1))
+            .subscribe(history => this.weight = history?.weight);
+    }
 
     private startTimer() {
         this.saveExercise();

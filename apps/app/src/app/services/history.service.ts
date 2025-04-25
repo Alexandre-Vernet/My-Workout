@@ -28,4 +28,14 @@ export class HistoryService {
                 })
             );
     }
+
+    findLastHistoryWeightByExerciseId(exerciseId: number) {
+        return this.authService.user$
+            .pipe(
+                take(1),
+                switchMap(user => {
+                    return this.http.get<History>(`${ this.historyUrl }/${ user.id }/${ exerciseId }`);
+                })
+            );
+    }
 }

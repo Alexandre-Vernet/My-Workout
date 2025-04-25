@@ -17,19 +17,20 @@ export class HistoryService {
         return this.historyEntity.save(history);
     }
 
-    findAll() {
-        return `This action returns all history`;
-    }
-
-    findOne(id: number) {
-        return `This action returns a #${ id } history`;
-    }
-
-    update(id: number, history: History) {
-        return `This action updates a #${ id } history`;
-    }
-
-    remove(id: number) {
-        return `This action removes a #${ id } history`;
+    findLastHistoryWeightByExerciseId(userId: number, exerciseId: number) {
+        return this.historyEntity.findOne({
+            where: {
+                exercise: {
+                    id: exerciseId
+                },
+                user: {
+                    id: userId
+                }
+            },
+            order: {
+                createdAt: 'DESC',
+                weight: 'DESC'
+            }
+        })
     }
 }

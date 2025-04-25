@@ -22,7 +22,7 @@ export class HistoryEntity {
     @JoinColumn({ name: 'user_id' })
     user: UserEntity;
 
-    @Column()
+    @Column({ type: 'float' })
     weight: number;
 
     @Column({ name: 'created_at' })
