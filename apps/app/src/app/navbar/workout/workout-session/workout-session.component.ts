@@ -33,7 +33,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     activeStep: number = 1;
 
-    @ViewChild('exerciseName') exerciseNameRef!: ElementRef;
     @ViewChild('inputNumber', { read: ElementRef }) inputNumberRef!: ElementRef;
     weight: number = null;
 
@@ -131,11 +130,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
         this.exercisesMade.push(exerciseMade);
 
-        const exerciseName: string = this.exerciseNameRef.nativeElement.innerText;
-        const exercise = this.exercises.find(e => e.name.toLowerCase() === exerciseName.toLowerCase());
-
         const history: History = {
-            exercise,
+            exercise: this.currentExercise,
             weight: this.weight,
             createdAt: new Date()
         };
