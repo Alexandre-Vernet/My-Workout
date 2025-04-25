@@ -121,7 +121,7 @@ export class WorkoutSessionComponent implements OnInit {
         switchPanel();
         this.clearExercisesMade();
         this.stopTimer();
-        this.weight = 0;
+        this.weight = null;
     }
 
 
