@@ -79,9 +79,15 @@
             <span>{{ timer.text }}</span>
         </div>
 
-        <p-button (click)="toggleTimer()"
-                  [disabled]="!weight"
-                  size="large"
-                  [label]="timer.interval != null ? 'Stop' : 'Pause'" />
+        <div (click)="toggleTimer()" class="button-toggle-timer" [ngClass]="{
+        'disabled': !this.weight
+        }">
+            <ng-container *ngIf="timer.interval !== null else play">
+                <fa-icon [icon]="faIcons.faPause"></fa-icon>
+            </ng-container>
+            <ng-template #play>
+                <fa-icon [icon]="faIcons.faPlay"></fa-icon>
+            </ng-template>
+        </div>
     </div>
 </div>

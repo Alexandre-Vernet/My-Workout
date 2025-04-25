@@ -5,16 +5,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
 import { FormsModule } from '@angular/forms';
-import { Button } from 'primeng/button';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
 import { InputNumber } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, Button, InputNumber, TableModule, ConfirmDialog],
+    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -37,6 +38,11 @@ export class WorkoutSessionComponent implements OnInit {
         centiseconds: 0,
         interval: null
     };
+
+    faIcons = {
+        faPause,
+        faPlay
+    }
 
     constructor(
         private readonly activatedRoute: ActivatedRoute,
@@ -100,6 +106,10 @@ export class WorkoutSessionComponent implements OnInit {
     }
 
     toggleTimer() {
+        if (!this.weight) {
+            return;
+        }
+
         if (this.timer.interval !== null) {
             this.stopTimer();
         } else {

@@ -29,5 +29,20 @@
             font-size: 2.5em;
             font-weight: 700;
         }
+
+        .button-toggle-timer {
+            background: #10b981;
+            border-radius: 50%;
+            padding: .1em 2em;
+
+            fa-icon {
+                color: white;
+                font-size: 24px;
+            }
+        }
+
+        .disabled {
+            opacity: .6;
+        }
     }
 }
