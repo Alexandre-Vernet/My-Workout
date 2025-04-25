@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
+import { MuscleGroupService } from '../muscle-group/muscle-group.service';
 
 @Injectable()
 export class ExercisesService {
     constructor(
-        private dataSource: DataSource
+        private dataSource: DataSource,
+        private readonly muscleGroupService: MuscleGroupService
     ) {
     }
 
-    findAllExercisesByMuscleGroupIdAndUserId(userId: number, muscleGroupId: number) {
-        return this.dataSource.query(
+    async findAllExercisesByMuscleGroupIdAndUserId(userId: number, muscleGroupId: number) {
+        const exercises = await this.dataSource.query(
             `
                 SELECT e.id,
                        e.name,
@@ -17,7 +19,7 @@ export class ExercisesService {
                        CASE
                            WHEN ue.id IS NOT NULL THEN true
                            ELSE false
-                           END                  AS "addedToWorkout",
+                           END                           AS "addedToWorkout",
                        STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"
                 FROM exercises e
                          LEFT JOIN user_exercise ue ON
@@ -32,6 +34,11 @@ export class ExercisesService {
             `,
             [userId, muscleGroupId]
         );
+
+        return {
+            exercises,
+            muscleGroup: await this.muscleGroupService.findById(muscleGroupId)
+        };
     }
 
     findExercisesByMuscleGroupIdAndUserId(userId: number, muscleGroupId: number) {
