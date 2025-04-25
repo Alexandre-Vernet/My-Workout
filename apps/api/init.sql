@@ -8,7 +8,7 @@ CREATE TABLE muscle_group
 CREATE TABLE exercises
 (
     id          SERIAL PRIMARY KEY,
-    name        VARCHAR(50) NOT NULL,
+    name        VARCHAR(50) UNIQUE NOT NULL,
     description TEXT
 );
 
@@ -32,7 +32,7 @@ CREATE TABLE exercise_muscle
 CREATE TABLE users
 (
     id         SERIAL PRIMARY KEY,
-    email      VARCHAR(50),
+    email      VARCHAR(50) UNIQUE,
     password   VARCHAR(200),
     created_at DATE,
     updated_at DATE
