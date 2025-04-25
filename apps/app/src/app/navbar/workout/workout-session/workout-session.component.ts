@@ -145,10 +145,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         });
     }
 
-    clearExercisesMade() {
-        this.exercisesMade = [];
-    }
-
     toggleTimer() {
         if (!this.weight) {
             return;
@@ -165,7 +161,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         switchPanel();
         this.currentExercise = exercise;
         this.fillInputWeightLastSavedValue();
-        this.clearExercisesMade();
+        this.exercisesMade = [];
         this.stopTimer();
     }
 
