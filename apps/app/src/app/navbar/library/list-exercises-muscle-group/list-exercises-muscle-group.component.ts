@@ -9,10 +9,11 @@ import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
+import { Badge } from 'primeng/badge';
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [CommonModule, DataView, Button, Message],
+    imports: [CommonModule, DataView, Button, Message, Badge],
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })
