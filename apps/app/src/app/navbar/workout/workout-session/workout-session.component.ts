@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { map, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,13 +23,14 @@ import { Message } from 'primeng/message';
     providers: [ConfirmationService]
 
 })
-export class WorkoutSessionComponent implements OnInit {
+export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     exercises: Exercise[] = [];
     exercisesMade: Exercise[] = [];
 
     activeStep: number = 1;
 
+    @ViewChild('inputNumber', { read: ElementRef }) inputNumberRef!: ElementRef;
     weight: number = null;
 
     timer = {
@@ -96,6 +97,22 @@ export class WorkoutSessionComponent implements OnInit {
                 error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les exercices'
             });
     }
+
+
+    ngAfterViewInit() {
+        // Disable focus input on click button increment / decrement weight
+        if (this.inputNumberRef) {
+            const el = this.inputNumberRef.nativeElement;
+            const incrementBtn = el.querySelector('.p-inputnumber-button-up');
+            const decrementBtn = el.querySelector('.p-inputnumber-button-down');
+
+            if (incrementBtn && decrementBtn) {
+                incrementBtn.addEventListener('mousedown', e => e.preventDefault());
+                decrementBtn.addEventListener('mousedown', e => e.preventDefault());
+            }
+        }
+    }
+
 
     saveExercise() {
         const exercise: Exercise = {
