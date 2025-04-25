@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { map, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +13,8 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { Message } from 'primeng/message';
+import { HistoryService } from '../../../services/history.service';
+import { History } from '../../../../../../../libs/interfaces/history';
 
 @Component({
     selector: 'app-workout-session',
@@ -23,13 +25,15 @@ import { Message } from 'primeng/message';
     providers: [ConfirmationService]
 
 })
-export class WorkoutSessionComponent implements OnInit {
+export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     exercises: Exercise[] = [];
     exercisesMade: Exercise[] = [];
+    currentExercise: Exercise;
 
     activeStep: number = 1;
 
+    @ViewChild('inputNumber', { read: ElementRef }) inputNumberRef!: ElementRef;
     weight: number = null;
 
     timer = {
@@ -50,6 +54,7 @@ export class WorkoutSessionComponent implements OnInit {
     constructor(
         private readonly activatedRoute: ActivatedRoute,
         private readonly exerciseService: ExerciseService,
+        private readonly historyService: HistoryService,
         private readonly confirmationService: ConfirmationService,
         private readonly router: Router
     ) {
@@ -67,6 +72,9 @@ export class WorkoutSessionComponent implements OnInit {
             .subscribe({
                 next: ({ exercises, muscleGroupId }) => {
                     this.exercises = exercises;
+                    this.currentExercise = this.exercises[0];
+
+                    this.fillInputWeightLastSavedValue();
 
                     if (exercises.length === 0) {
                         this.confirmationService.confirm({
@@ -97,18 +105,40 @@ export class WorkoutSessionComponent implements OnInit {
             });
     }
 
+
+    ngAfterViewInit() {
+        // Disable focus input on click button increment / decrement weight
+        if (this.inputNumberRef) {
+            const el = this.inputNumberRef.nativeElement;
+            const incrementBtn = el.querySelector('.p-inputnumber-button-up');
+            const decrementBtn = el.querySelector('.p-inputnumber-button-down');
+
+            if (incrementBtn && decrementBtn) {
+                incrementBtn.addEventListener('mousedown', e => e.preventDefault());
+                decrementBtn.addEventListener('mousedown', e => e.preventDefault());
+            }
+        }
+    }
+
+
     saveExercise() {
-        const exercise: Exercise = {
+        const exerciseMade: Exercise = {
             id: this.exercisesMade.length + 1,
             weight: this.weight,
             restTime: '/'
         };
 
-        this.exercisesMade.push(exercise);
-    }
+        this.exercisesMade.push(exerciseMade);
 
-    clearExercisesMade() {
-        this.exercisesMade = [];
+        const history: History = {
+            exercise: this.currentExercise,
+            weight: this.weight,
+            createdAt: new Date()
+        };
+
+        this.historyService.create(history).subscribe({
+            error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'enregister l\historique'
+        });
     }
 
     toggleTimer() {
@@ -123,13 +153,20 @@ export class WorkoutSessionComponent implements OnInit {
         }
     }
 
-    switchPanel(switchPanel: () => void) {
+    switchPanel(switchPanel: () => void, exercise: Exercise) {
         switchPanel();
-        this.clearExercisesMade();
+        this.currentExercise = exercise;
+        this.fillInputWeightLastSavedValue();
+        this.exercisesMade = [];
         this.stopTimer();
-        this.weight = null;
     }
 
+
+    private fillInputWeightLastSavedValue() {
+        this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise.id)
+            .pipe(take(1))
+            .subscribe(history => this.weight = history?.weight);
+    }
 
     private startTimer() {
         this.saveExercise();

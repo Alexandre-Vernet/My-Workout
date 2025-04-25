@@ -15,7 +15,7 @@
                         'bg-primary text-primary-contrast border-primary': value === activeStep,
                         'border-surface': value > activeStep
                     }"
-                                (click)="switchPanel(activateCallback)">
+                                (click)="switchPanel(activateCallback, exercise)">
                             <span class="step-button-span">{{ index + 1 }}</span>
                         </button>
                     </ng-template>
@@ -28,11 +28,12 @@
             <ng-container *ngFor="let exercise of exercises; let index = index">
                 <p-step-panel [value]="index + 1">
                     <ng-template #content let-activateCallback="activateCallback">
-                        <div class="flex-1 flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
+                        <div class="flex-1 flex-col gap-2 mx-auto mb-6" style="max-width: 20rem">
                             <div class="text-center mt-4 mb-4 text-xl font-semibold">
                                 <h3>{{ exercise.name | uppercase }}</h3>
                             </div>
-                            <p-inputNumber [(ngModel)]="weight"
+                            <p-inputNumber #inputNumber
+                                           [(ngModel)]="weight"
                                            [showButtons]="true"
                                            buttonLayout="horizontal"
                                            inputId="horizontal"

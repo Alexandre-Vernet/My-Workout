@@ -47,6 +47,16 @@ CREATE TABLE user_exercise
 );
 
 
+CREATE TABLE history
+(
+    id          SERIAL PRIMARY KEY,
+    user_id     INT REFERENCES users (id) ON DELETE CASCADE,
+    exercise_id INT REFERENCES exercises (id) ON DELETE CASCADE,
+    weight      DECIMAL NOT NULL,
+    created_at  DATE    NOT NULL
+);
+
+
 INSERT INTO muscle_group (name)
 VALUES ('Pectoraux'),
        ('Triceps'),
@@ -178,7 +188,8 @@ VALUES ((SELECT id FROM exercises WHERE name = 'Élévation latérales'),
        ((SELECT id FROM exercises WHERE name = 'Développé militaire (45°)'),
         (SELECT id FROM muscles WHERE name = 'Deltoïdes antérieurs')),
 
-       ((SELECT id FROM exercises WHERE name = 'Rameur'), (SELECT id FROM muscles WHERE name = 'Deltoïdes postérieurs'));
+       ((SELECT id FROM exercises WHERE name = 'Rameur'),
+        (SELECT id FROM muscles WHERE name = 'Deltoïdes postérieurs'));
 
 -- Dos
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
@@ -199,7 +210,8 @@ VALUES ((SELECT id FROM exercises WHERE name = 'Tractions prise large'),
 INSERT INTO exercise_muscle (exercise_id, muscle_id)
 VALUES ((SELECT id FROM exercises WHERE name = 'Curl'), (SELECT id FROM muscles WHERE name = 'Biceps')),
        ((SELECT id FROM exercises WHERE name = 'Traction supination'), (SELECT id FROM muscles WHERE name = 'Biceps')),
-       ((SELECT id FROM exercises WHERE name = 'Curl haltères marteau'), (SELECT id FROM muscles WHERE name = 'Biceps')),
+       ((SELECT id FROM exercises WHERE name = 'Curl haltères marteau'),
+        (SELECT id FROM muscles WHERE name = 'Biceps')),
        ((SELECT id FROM exercises WHERE name = 'Curl inversé barre'), (SELECT id FROM muscles WHERE name = 'Biceps'));
 
 -- Abdominaux
@@ -209,7 +221,8 @@ VALUES ((SELECT id FROM exercises WHERE name = 'Crunch à la poulie haute'),
        ((SELECT id FROM exercises WHERE name = 'Relevé jambes barre'),
         (SELECT id FROM muscles WHERE name = 'Grand droit - Bas')),
        ((SELECT id FROM exercises WHERE name = 'Crunch'), (SELECT id FROM muscles WHERE name = 'Grand droit - Haut')),
-       ((SELECT id FROM exercises WHERE name = 'Gainage sur 1 main'), (SELECT id FROM muscles WHERE name = 'Transverse')),
+       ((SELECT id FROM exercises WHERE name = 'Gainage sur 1 main'),
+        (SELECT id FROM muscles WHERE name = 'Transverse')),
        ((SELECT id FROM exercises WHERE name = 'Gainage sur 2 mains'),
         (SELECT id FROM muscles WHERE name = 'Transverse'));
 

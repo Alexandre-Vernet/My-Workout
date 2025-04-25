@@ -61,7 +61,8 @@ export class ExercisesService {
                 group by e.id,
                          e.name,
                          e.description,
-                         ue.id;
+                         ue.id
+                order by e.id;
             `,
             [userId, muscleGroupId]
         );

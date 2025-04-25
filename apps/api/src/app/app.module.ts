@@ -11,6 +11,8 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { UserExerciseModule } from './user-exercise/user-exercise.module';
 import { UserExerciseEntity } from './user-exercise/user-exercise.entity';
+import { HistoryModule } from './history/history.module';
+import { HistoryEntity } from './history/history.entity';
 
 const {
     POSTGRES_HOST,
@@ -36,7 +38,8 @@ const {
                 ExerciseMuscleEntity,
                 MuscleGroupEntity,
                 UserEntity,
-                UserExerciseEntity
+                UserExerciseEntity,
+                HistoryEntity
             ],
             ssl: false,
         }),
@@ -49,6 +52,7 @@ const {
         ExercisesModule,
         AuthModule,
         UserExerciseModule,
+        HistoryModule,
     ],
 })
 export class AppModule {}
