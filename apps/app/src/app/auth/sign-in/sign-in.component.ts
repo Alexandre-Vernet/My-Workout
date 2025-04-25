@@ -21,9 +21,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 })
 export class SignInComponent {
     faIcons = {
-        faUser: faUser,
-        faLock: faLock,
-        faChevronRight: faChevronRight
+        faUser,
+        faLock,
+        faChevronRight
     };
 
     formSignIn = new FormGroup({

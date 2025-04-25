@@ -9,9 +9,9 @@ import { map, switchMap, take } from 'rxjs';
 @Injectable({
     providedIn: 'root'
 })
-export class WorkoutService {
+export class UserExerciseService {
 
-    workoutUrl = environment.workoutUrl();
+    userExerciseUrl = environment.userExerciseUrl();
 
     constructor(
         private readonly http: HttpClient,
@@ -31,7 +31,7 @@ export class WorkoutService {
 
                     return workout;
                 }),
-                switchMap(workout => this.http.post<Workout>(this.workoutUrl, workout))
+                switchMap(workout => this.http.post<Workout>(this.userExerciseUrl, workout))
             );
     }
 }

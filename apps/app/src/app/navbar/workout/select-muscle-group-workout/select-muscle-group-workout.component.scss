@@ -1,0 +1,16 @@
+.select-muscle-group-workout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+
+    p-splitter {
+        width: 100vw;
+
+        a {
+            text-decoration: none;
+            color: #000;
+            outline: none;
+        }
+    }
+}

@@ -4,12 +4,17 @@ import { environment } from '../../environments/environment';
 import { MuscleGroup } from '../../../../../libs/interfaces/MuscleGroup';
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root'
 })
 export class MuscleGroupService {
-  constructor(private readonly httpClient: HttpClient) {}
 
-  findAllMuscleGroup() {
-    return this.httpClient.get<MuscleGroup[]>(`${environment.API_URL}/muscle-group`);
-  }
+    muscleGroupUrl = environment.muscleGroupUrl();
+
+
+    constructor(private readonly httpClient: HttpClient) {
+    }
+
+    findAllMuscleGroup() {
+        return this.httpClient.get<MuscleGroup[]>(this.muscleGroupUrl);
+    }
 }

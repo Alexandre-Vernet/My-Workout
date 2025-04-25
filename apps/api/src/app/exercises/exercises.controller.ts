@@ -6,9 +6,15 @@ export class ExercisesController {
     constructor(private readonly exercisesService: ExercisesService) {
     }
 
-    @Post()
+    @Post('find-all-exercises-by-muscle-group-id-and-user-id')
     @HttpCode(200)
-    findOne(@Body() { muscleGroupId, userId }: { muscleGroupId: number, userId: number }) {
-        return this.exercisesService.findExercisesByMuscleGroupId(userId, muscleGroupId);
+    findAllExercisesByMuscleGroupIdAndUserId(@Body() { muscleGroupId, userId }: { muscleGroupId: number, userId: number }) {
+        return this.exercisesService.findAllExercisesByMuscleGroupIdAndUserId(userId, muscleGroupId);
+    }
+
+    @Post('find-exercises-by-muscle-group-id-and-user-id')
+    @HttpCode(200)
+    findExercisesByMuscleGroupIdAndUserId(@Body() { muscleGroupId, userId }: { muscleGroupId: number, userId: number }) {
+        return this.exercisesService.findExercisesByMuscleGroupIdAndUserId(userId, muscleGroupId);
     }
 }

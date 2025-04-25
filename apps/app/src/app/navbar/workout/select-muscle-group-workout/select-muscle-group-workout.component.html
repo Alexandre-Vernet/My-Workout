@@ -1,0 +1,79 @@
+<p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
+
+
+<h1 class="mt-2 text-center">Sélectionner un entraînement</h1>
+<div class="select-muscle-group-workout">
+    <p-splitter layout="vertical" [panelSizes]="[33, 33, 34]" [style]="{ height: '600px' }" styleClass="mb-8">
+
+        <ng-template #panel>
+            <p-splitter [panelSizes]="[33, 33, 34]">
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center">
+                        <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroups[0]?.id]">
+                            {{ muscleGroups[0]?.name }}
+                        </a>
+                    </div>
+                </ng-template>
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center">
+                        <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroups[1]?.id]">
+                            {{ muscleGroups[1]?.name }}
+                        </a>
+                    </div>
+                </ng-template>
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center">
+                        <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroups[2]?.id]">
+                            {{ muscleGroups[2]?.name }}
+                        </a>
+                    </div>
+                </ng-template>
+            </p-splitter>
+        </ng-template>
+
+        <ng-template #panel>
+            <p-splitter [panelSizes]="[33, 33, 34]">
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center">
+                        <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroups[3]?.id]">
+                            {{ muscleGroups[3]?.name }}
+                        </a>
+                    </div>
+                </ng-template>
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center">
+                        <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroups[4]?.id]">
+                            {{ muscleGroups[4]?.name }}
+                        </a>
+                    </div>
+                </ng-template>
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center">
+                        <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroups[5]?.id]">
+                            {{ muscleGroups[5]?.name }}
+                        </a>
+                    </div>
+                </ng-template>
+            </p-splitter>
+        </ng-template>
+
+        <ng-template #panel>
+            <p-splitter [panelSizes]="[50, 50]">
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center">
+                        <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroups[6]?.id]">
+                            {{ muscleGroups[6]?.name }}
+                        </a>
+                    </div>
+                </ng-template>
+                <ng-template #panel>
+                    <div class="h-full flex items-center justify-center">
+                        <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroups[7]?.id]">
+                            {{ muscleGroups[7]?.name }}
+                        </a>
+                    </div>
+                </ng-template>
+            </p-splitter>
+        </ng-template>
+    </p-splitter>
+</div>

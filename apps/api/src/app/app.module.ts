@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExercisesEntity } from './exercises/exercises.entity';
-import { MuscleEntity } from './muscle.entity';
-import { ExerciseMuscleEntity } from './exerciseMuscle.entity';
+import { MuscleEntity } from './muscle/muscle.entity';
+import { ExerciseMuscleEntity } from './exercise-muscle/exercise-muscle.entity';
 import { MuscleGroupEntity } from './muscle-group/muscle-group.entity';
 import { MuscleGroupModule } from './muscle-group/muscle-group.module';
 import { ExercisesModule } from './exercises/exercises.module';
 import { UserEntity } from './user/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { WorkoutModule } from './workout/workout.module';
-import { WorkoutEntity } from './workout/workout.entity';
+import { UserExerciseModule } from './user-exercise/user-exercise.module';
+import { UserExerciseEntity } from './user-exercise/user-exercise.entity';
 
 const {
     POSTGRES_HOST,
@@ -36,7 +36,7 @@ const {
                 ExerciseMuscleEntity,
                 MuscleGroupEntity,
                 UserEntity,
-                WorkoutEntity
+                UserExerciseEntity
             ],
             ssl: false,
         }),
@@ -48,7 +48,7 @@ const {
         MuscleGroupModule,
         ExercisesModule,
         AuthModule,
-        WorkoutModule,
+        UserExerciseModule,
     ],
 })
 export class AppModule {}

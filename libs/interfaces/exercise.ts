@@ -1,7 +1,9 @@
 export class Exercise {
-  id: number;
-  name: string;
-  description: string;
-  addedToWorkout?: boolean;
-  muscleGroup?: boolean;
+    id: number;
+    name?: string;
+    description?: string;
+    addedToWorkout?: boolean;
+    muscleGroup?: boolean;
+    weight?: number;
+    restTime: string;
 }

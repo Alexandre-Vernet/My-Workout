@@ -10,5 +10,6 @@ import { MuscleGroupEntity } from './muscle-group.entity';
   ],
   controllers: [MuscleGroupController],
   providers: [MuscleGroupService],
+    exports: [MuscleGroupService]
 })
 export class MuscleGroupModule {}

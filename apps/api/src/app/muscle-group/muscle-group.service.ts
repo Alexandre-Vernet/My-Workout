@@ -5,12 +5,21 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class MuscleGroupService {
-  constructor(
-    @InjectRepository(MuscleGroupEntity)
-    private readonly muscleGroupRepository: Repository<MuscleGroupEntity>
-  ) {}
+    constructor(
+        @InjectRepository(MuscleGroupEntity)
+        private readonly muscleGroupRepository: Repository<MuscleGroupEntity>
+    ) {
+    }
 
-  findAll() {
-    return this.muscleGroupRepository.find();
-  }
+    findAll() {
+        return this.muscleGroupRepository.find();
+    }
+
+    findById(muscleGroupId: number) {
+        return this.muscleGroupRepository.findOne({
+            where: {
+                id: muscleGroupId
+            }
+        });
+    }
 }

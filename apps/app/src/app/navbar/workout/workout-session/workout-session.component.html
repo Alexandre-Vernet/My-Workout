@@ -1,0 +1,96 @@
+<p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
+
+
+<div class="workout-session">
+    <p-confirmdialog />
+
+
+    <p-stepper [(value)]="activeStep" class="basis-[40rem]">
+        <p-step-list class="flex justify-center w-full">
+            <ng-container *ngFor="let exercise of exercises; let index = index">
+                <p-step [value]="index + 1">
+                    <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                        <button class="step-button"
+                                [ngClass]="{
+                        'bg-primary text-primary-contrast border-primary': value === activeStep,
+                        'border-surface': value > activeStep
+                    }"
+                                (click)="switchPanel(activateCallback)">
+                            <span class="step-button-span">{{ index + 1 }}</span>
+                        </button>
+                    </ng-template>
+                </p-step>
+            </ng-container>
+        </p-step-list>
+
+
+        <p-step-panels>
+            <ng-container *ngFor="let exercise of exercises; let index = index">
+                <p-step-panel [value]="index + 1">
+                    <ng-template #content let-activateCallback="activateCallback">
+                        <div class="flex-1 flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
+                            <div class="text-center mt-4 mb-4 text-xl font-semibold">
+                                <h3>{{ exercise.name | uppercase }}</h3>
+                            </div>
+                            <p-inputNumber [(ngModel)]="weight"
+                                           [showButtons]="true"
+                                           buttonLayout="horizontal"
+                                           inputId="horizontal"
+                                           spinnerMode="horizontal"
+                                           [disabled]="timer.interval"
+                                           [step]="1.25"
+                                           [min]="0"
+                                           [max]="500"
+                                           [suffix]="' kg'">
+                                <ng-container *ngIf="timer.interval !== 0">
+                                    <ng-template #incrementbuttonicon>
+                                        <span class="pi pi-plus"></span>
+                                    </ng-template>
+                                    <ng-template #decrementbuttonicon>
+                                        <span class="pi pi-minus"></span>
+                                    </ng-template>
+                                </ng-container>
+                            </p-inputNumber>
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+            </ng-container>
+        </p-step-panels>
+    </p-stepper>
+
+    <div *ngIf="exercisesMade.length > 0" class="card">
+        <p-table [value]="exercisesMade" stripedRows scrollable="true" scrollHeight="200px">
+            <ng-template #header>
+                <tr>
+                    <th id="id" class="text-center">N°</th>
+                    <th id="weight" class="text-center">Poids</th>
+                    <th id="restTime" class="text-center">Temps de repos</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-exercise>
+                <tr>
+                    <td class="text-center">{{ exercise.id }}</td>
+                    <td class="text-center">{{ exercise.weight }} kg</td>
+                    <td class="text-center">{{ exercise.restTime }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div class="bottom-page">
+        <div class="stopwatch text-primary">
+            <span>{{ timer.text }}</span>
+        </div>
+
+        <div (click)="toggleTimer()" class="button-toggle-timer" [ngClass]="{
+        'disabled': !this.weight
+        }">
+            <ng-container *ngIf="timer.interval !== null else play">
+                <fa-icon [icon]="faIcons.faPause"></fa-icon>
+            </ng-container>
+            <ng-template #play>
+                <fa-icon [icon]="faIcons.faPlay"></fa-icon>
+            </ng-template>
+        </div>
+    </div>
+</div>

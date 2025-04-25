@@ -1,6 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { ExercisesEntity } from './exercises/exercises.entity';
-import { MuscleEntity } from './muscle.entity';
+import { ExercisesEntity } from '../exercises/exercises.entity';
+import { MuscleEntity } from '../muscle/muscle.entity';
 
 @Entity({ name: 'exercise_muscle', schema: 'public' })
 export class ExerciseMuscleEntity {
