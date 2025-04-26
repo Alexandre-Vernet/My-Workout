@@ -144,7 +144,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         };
 
         this.historyService.create(history).subscribe({
-            error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'enregister l\historique'
+            error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'enregister l\'historique'
         });
     }
 
