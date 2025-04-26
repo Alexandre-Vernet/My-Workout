@@ -29,7 +29,6 @@ export const appRoutes: Route[] = [
                 redirectTo: 'list-muscles-group'
             }
         ],
-        canActivate: [authGuard]
     },
 
     {

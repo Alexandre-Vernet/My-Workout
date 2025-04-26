@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../user/user.entity';
 import bcrypt from 'bcrypt';
-import { CustomBadRequestException } from '../exceptions/CustomBadRequestException';
+import { FormBadRequestException } from '../exceptions/FormBadRequestException';
 import { User } from '../../../../../libs/interfaces/user';
 import { ErrorCode } from '../../../../../libs/error-code/error-code';
 
@@ -19,12 +19,12 @@ export class AuthService {
 
     async signUp(user: User) {
         if (user.password.trim() !== user.confirmPassword.trim()) {
-            throw new CustomBadRequestException(ErrorCode.passwordNotMatch, 'Passwords do not match', 'password');
+            throw new FormBadRequestException(ErrorCode.passwordNotMatch, 'Passwords do not match', 'password');
         }
 
         const existingUser = await this.userRepository.findOne({ where: { email: user.email } });
         if (existingUser) {
-            throw new CustomBadRequestException(ErrorCode.emailAlreadyInUse, 'This email is already taken', 'email');
+            throw new FormBadRequestException(ErrorCode.emailAlreadyInUse, 'This email is already taken', 'email');
         }
 
         // Hash password
@@ -54,7 +54,7 @@ export class AuthService {
         const isValid = existingUser && await bcrypt.compare(user.password, existingUser.password);
 
         if (!isValid) {
-            throw new CustomBadRequestException(ErrorCode.invalidCredential, 'Email or password is incorrect', 'email');
+            throw new FormBadRequestException(ErrorCode.invalidCredential, 'Email or password is incorrect', 'email');
         }
 
 
@@ -90,7 +90,7 @@ export class AuthService {
 
     async updatePassword(userId: number, password: string, confirmPassword: string) {
         if (password !== confirmPassword) {
-            throw new CustomBadRequestException(ErrorCode.passwordNotMatch, 'Passwords do not match', 'password');
+            throw new FormBadRequestException(ErrorCode.passwordNotMatch, 'Passwords do not match', 'password');
         }
         const options: FindOneOptions = {
             where: {

@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Exercise } from '../../../../../libs/interfaces/exercise';
 import { AuthService } from '../auth/auth.service';
-import { switchMap, take } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { MuscleGroup } from '../../../../../libs/interfaces/MuscleGroup';
 
 @Injectable({
@@ -21,21 +21,30 @@ export class ExerciseService {
     findAllExercisesByMuscleGroupIdAndUserId(muscleGroupId: number) {
         return this.authService.user$
             .pipe(
-                take(1),
-                switchMap(user => this.httpClient.post<{
-                    exercises: Exercise[],
-                    muscleGroup: MuscleGroup
-                }>(`${ this.exerciseUrl }/find-all-exercises-by-muscle-group-id-and-user-id`, {
-                    userId: user.id,
-                    muscleGroupId
-                }))
+                switchMap(user => {
+                    if (user) {
+                        return this.httpClient.post<{
+                            exercises: Exercise[],
+                            muscleGroup: MuscleGroup
+                        }>(`${ this.exerciseUrl }/find-all-exercises-by-muscle-group-id-and-user-id`, {
+                            userId: user.id,
+                            muscleGroupId
+                        });
+                    } else {
+                        return this.httpClient.post<{
+                            exercises: Exercise[],
+                            muscleGroup: MuscleGroup
+                        }>(`${ this.exerciseUrl }/find-all-exercises-by-muscle-group-id`, {
+                            muscleGroupId
+                        });
+                    }
+                })
             );
     }
 
     findExercisesByMuscleGroupIdAndUserId(muscleGroupId: number) {
         return this.authService.user$
             .pipe(
-                take(1),
                 switchMap(user => this.httpClient.post<Exercise[]>(`${ this.exerciseUrl }/find-exercises-by-muscle-group-id-and-user-id`, {
                     userId: user.id,
                     muscleGroupId

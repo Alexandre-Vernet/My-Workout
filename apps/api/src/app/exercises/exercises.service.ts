@@ -10,6 +10,31 @@ export class ExercisesService {
     ) {
     }
 
+    async findAllExercisesByMuscleGroupId(muscleGroupId: number) {
+        const exercises = await this.dataSource.query(
+            `
+                SELECT e.id,
+                       e.name,
+                       e.description,
+                       STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"
+                FROM exercises e
+                         JOIN exercise_muscle em ON
+                    em.exercise_id = e.id
+                         JOIN muscles m ON
+                    em.muscle_id = m.id
+                         JOIN muscle_group mg ON m.muscle_group_id = mg.id
+                WHERE m.muscle_group_id = $1
+                GROUP BY e.id, e.name, e.description;
+            `,
+            [muscleGroupId]
+        );
+
+        return {
+            exercises,
+            muscleGroup: await this.muscleGroupService.findById(muscleGroupId)
+        };
+    }
+
     async findAllExercisesByMuscleGroupIdAndUserId(userId: number, muscleGroupId: number) {
         const exercises = await this.dataSource.query(
             `
