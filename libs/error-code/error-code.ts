@@ -1,5 +1,6 @@
 export enum ErrorCode {
-    emailAlreadyInUse= 'emailAlreadyInUse',
+    emailAlreadyInUse = 'emailAlreadyInUse',
     passwordNotMatch = 'passwordNotMatch',
-    invalidCredential = 'invalidCredential'
+    invalidCredential = 'invalidCredential',
+    userMustBeLoggedToContinue = 'userMustBeLoggedToContinue'
 }

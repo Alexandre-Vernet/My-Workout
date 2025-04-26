@@ -1,8 +1,8 @@
-import { Route } from '@angular/router';
-import { ListExercisesMuscleGroupComponent } from './navbar/library/list-exercises-muscle-group/list-exercises-muscle-group.component';
+import { Route, RouterOutlet } from '@angular/router';
 import {
-    ListMusclesGroupsComponent
-} from './navbar/library/list-muscles-groups/list-muscles-groups.component';
+    ListExercisesMuscleGroupComponent
+} from './navbar/library/list-exercises-muscle-group/list-exercises-muscle-group.component';
+import { ListMusclesGroupsComponent } from './navbar/library/list-muscles-groups/list-muscles-groups.component';
 import { SignInComponent } from './auth/sign-in/sign-in.component';
 import { SignUpComponent } from './auth/sign-up/sign-up.component';
 import { authGuard } from './auth/auth.guard';
@@ -11,6 +11,16 @@ import {
 } from './navbar/workout/select-muscle-group-workout/select-muscle-group-workout.component';
 import { MenuUrls } from './shared/menu-urls';
 import { WorkoutSessionComponent } from './navbar/workout/workout-session/workout-session.component';
+import { defaultRedirect } from './auth/default-redirect.guard';
+import { Component } from '@angular/core';
+
+
+
+@Component({
+    selector: 'app-empty',
+    template: ''
+})
+export class EmptyComponent {}
 
 export const appRoutes: Route[] = [
     {
@@ -28,8 +38,7 @@ export const appRoutes: Route[] = [
                 path: '**',
                 redirectTo: 'list-muscles-group'
             }
-        ],
-        canActivate: [authGuard]
+        ]
     },
 
     {
@@ -65,7 +74,7 @@ export const appRoutes: Route[] = [
     },
     {
         path: '**',
-        redirectTo: MenuUrls.workout,
-        pathMatch: 'full'
+        canActivate: [defaultRedirect],
+        component: RouterOutlet // Let the guard decide redirection
     }
 ];
