@@ -7,9 +7,9 @@
                         <fa-icon class="login__icon" [icon]="faIcons.faUser"></fa-icon>
                         <input formControlName="email" type="text" class="login__input" placeholder="Email">
                     </div>
-                    <span *ngIf="formSignUp.hasError('emailAlreadyInUse')" class="text-red-600 text-xs error-form">
-                      {{ formSignUp.getError('emailAlreadyInUse') }}
-                    </span>
+                    <p-message *ngIf="formSignUp.hasError('emailAlreadyInUse')" severity="error" variant="simple" size="small">
+                        {{ formSignUp.getError('emailAlreadyInUse') }}
+                    </p-message>
                 </div>
 
                 <div>
@@ -17,9 +17,9 @@
                         <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
                         <input formControlName="password" type="password" class="login__input" placeholder="Password">
                     </div>
-                    <span *ngIf="formSignUp.hasError('passwordNotMatch')" class="text-red-600 text-xs error-form">
+                    <p-message *ngIf="formSignUp.hasError('passwordNotMatch')" severity="error" variant="simple" size="small">
                         {{ formSignUp.getError('passwordNotMatch') }}
-                    </span>
+                    </p-message>
                 </div>
 
                 <div>
@@ -28,9 +28,9 @@
                         <input formControlName="confirmPassword" type="password" class="login__input"
                                placeholder="Confirm password">
                     </div>
-                    <span *ngIf="formSignUp.hasError('passwordNotMatch')" class="text-red-600 text-xs error-form">
+                    <p-message *ngIf="formSignUp.hasError('passwordNotMatch')" severity="error" variant="simple" size="small">
                         {{ formSignUp.getError('passwordNotMatch') }}
-                    </span>
+                    </p-message>
                 </div>
 
                 <button type="submit" class="button login__submit" [ngClass]="{
