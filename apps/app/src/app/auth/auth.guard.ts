@@ -12,18 +12,17 @@ export const authGuard = (): Observable<boolean> => {
             take(1),
             switchMap(({ user }) => {
                 if (!user) {
-                    return handleError(authService, router);
+                    return handleError(router);
                 }
                 return of(true);
             }),
             catchError(() => {
-                return handleError(authService, router);
+                return handleError(router);
             })
         );
 };
 
-const handleError = (authService: AuthService, router: Router): Observable<boolean> => {
-    authService.error = 'Your session has expired, please sign-in again';
+const handleError = (router: Router): Observable<boolean> => {
     router.navigate(['/auth/sign-in']);
     return of(false);
 };

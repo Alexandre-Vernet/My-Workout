@@ -6,6 +6,7 @@ import { User } from '../../../../../../libs/interfaces/user';
 import { NgClass, NgIf } from '@angular/common';
 import { faUser, faLock, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Message } from 'primeng/message';
 
 @Component({
     selector: 'superstore-sign-in',
@@ -16,7 +17,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
         RouterLink,
         NgIf,
         NgClass,
-        FontAwesomeModule
+        FontAwesomeModule,
+        Message
     ]
 })
 export class SignInComponent {

@@ -7,9 +7,9 @@
                         <fa-icon class="login__icon" [icon]="faIcons.faUser"></fa-icon>
                         <input formControlName="email" type="text" class="login__input" placeholder="Email">
                     </div>
-                    <span *ngIf="formSignIn.hasError('invalidCredential')" class="text-red-600 text-xs error-form">
-                      {{ formSignIn.getError('invalidCredential') }}
-                    </span>
+                    <p-message *ngIf="formSignIn.hasError('invalidCredential')" severity="error" variant="simple" size="small">
+                        {{ formSignIn.getError('invalidCredential') }}
+                    </p-message>
                 </div>
                 <div class="login__field">
                     <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
