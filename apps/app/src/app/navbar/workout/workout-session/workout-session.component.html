@@ -1,7 +1,7 @@
 <p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
 
 
-<div class="workout-session">
+<div #swipeZone class="workout-session">
     <p-confirmdialog />
 
 
@@ -15,7 +15,7 @@
                         'bg-primary text-primary-contrast border-primary': value === activeStep,
                         'border-surface': value > activeStep
                     }"
-                                (click)="switchPanel(activateCallback, exercise)">
+                                (click)="switchPanel(exercise, activateCallback)">
                             <span class="step-button-span">{{ index + 1 }}</span>
                         </button>
                     </ng-template>
