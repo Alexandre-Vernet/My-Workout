@@ -38,6 +38,7 @@
     "@tailwindcss/postcss": "^4.0.17",
     "axios": "^1.6.0",
     "bcrypt": "^5.1.1",
+    "hammerjs": "^2.0.8",
     "nx": "20.6.4",
     "pg": "^8.14.1",
     "postcss": "^8.5.3",

@@ -15,6 +15,7 @@ import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { Message } from 'primeng/message';
 import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../../../../libs/interfaces/history';
+import Hammer from 'hammerjs';
 
 @Component({
     selector: 'app-workout-session',
@@ -33,6 +34,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     activeStep: number = 1;
 
+    @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
     @ViewChild('inputNumber', { read: ElementRef }) inputNumberRef!: ElementRef;
     weight: number = null;
 
@@ -56,7 +58,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         private readonly exerciseService: ExerciseService,
         private readonly historyService: HistoryService,
         private readonly confirmationService: ConfirmationService,
-        private readonly router: Router
+        private readonly router: Router,
     ) {
     }
 
@@ -103,6 +105,11 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                 },
                 error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les exercices'
             });
+
+        const hammer = new Hammer(this.swipeZone.nativeElement);
+
+        hammer.on('swipeleft', () => this.nextStep());
+        hammer.on('swiperight', () => this.previousStep());
     }
 
 
@@ -153,12 +160,31 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         }
     }
 
-    switchPanel(switchPanel: () => void, exercise: Exercise) {
-        switchPanel();
+    switchPanel(exercise: Exercise, switchPanel?: () => void) {
+        if (switchPanel) {
+            switchPanel();
+        }
+
         this.currentExercise = exercise;
         this.fillInputWeightLastSavedValue();
         this.exercisesMade = [];
         this.stopTimer();
+    }
+
+    private nextStep() {
+        if (this.activeStep < this.exercises.length) {
+            this.activeStep++;
+            const nextExercise = this.exercises[this.activeStep - 1];
+            this.switchPanel(nextExercise);
+        }
+    }
+
+    private previousStep() {
+        if (this.activeStep > 1) {
+            this.activeStep--;
+            const previousExercise = this.exercises[this.activeStep - 1];
+            this.switchPanel(previousExercise);
+        }
     }
 
 
