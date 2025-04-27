@@ -23,7 +23,9 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     errorMessage: string;
 
-    constructor(private readonly muscleGroupService: MuscleGroupService) {
+    constructor(
+        private readonly muscleGroupService: MuscleGroupService
+    ) {
     }
 
     ngOnInit() {
@@ -35,6 +37,11 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
                     this.errorMessage = '';
                 },
                 error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les entraînements'
+            });
+
+        this.muscleGroupService.suggestMuscleGroup()
+            .subscribe(e => {
+                console.log(e);
             });
     }
 }

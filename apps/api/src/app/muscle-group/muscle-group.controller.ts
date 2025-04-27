@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { MuscleGroupService } from './muscle-group.service';
 
 @Controller('muscle-group')
@@ -9,4 +9,9 @@ export class MuscleGroupController {
   findAll() {
     return this.muscleGroupService.findAll();
   }
+
+    @Get('suggest-muscle-group')
+    suggestMuscleGroup(@Query('userId') userId: number) {
+        return this.muscleGroupService.suggestMuscleGroup(userId);
+    }
 }
