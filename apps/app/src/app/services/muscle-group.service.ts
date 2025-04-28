@@ -20,7 +20,11 @@ export class MuscleGroupService {
     }
 
     findAllMuscleGroup() {
-        return this.http.get<MuscleGroup[]>(this.muscleGroupUrl);
+        return this.authService.user$
+            .pipe(
+                take(1),
+                switchMap(user => this.http.get<MuscleGroup[]>(`${ this.muscleGroupUrl }/users/${ user.id }`))
+            );
     }
 
     suggestMuscleGroup() {
@@ -28,9 +32,7 @@ export class MuscleGroupService {
             .pipe(
                 take(1),
                 switchMap(user => {
-                    return this.http.get<MuscleGroup>(`${ this.muscleGroupUrl }/suggest-muscle-group`, {
-                        params: { userId: user.id }
-                    });
+                    return this.http.get<MuscleGroup>(`${ this.muscleGroupUrl }/suggest-muscle-group/users/${ user.id }`);
                 })
             );
     }
