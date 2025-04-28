@@ -5,7 +5,7 @@ import { MuscleGroupService } from '../muscle-group/muscle-group.service';
 @Injectable()
 export class ExercisesService {
     constructor(
-        private dataSource: DataSource,
+        private readonly dataSource: DataSource,
         private readonly muscleGroupService: MuscleGroupService
     ) {
     }

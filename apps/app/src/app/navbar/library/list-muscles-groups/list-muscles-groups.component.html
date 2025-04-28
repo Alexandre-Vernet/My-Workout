@@ -2,7 +2,7 @@
 
 <h1 class="mt-2 mb-2 text-center">Bibliothèque</h1>
 
-<div class="flex flex-wrap justify-center align-content-start gap-3" style="height: 600px;">
+<div class="flex flex-wrap justify-center align-content-start gap-3">
     <ng-container *ngFor="let muscleGroup of muscleGroups">
         <div [routerLink]="['/', 'library', 'muscle-group', muscleGroup?.id]"
              class="flex align-items-center justify-content-center border-round border-1 surface-border w-30rem h-6rem">

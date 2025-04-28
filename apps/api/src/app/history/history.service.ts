@@ -31,6 +31,6 @@ export class HistoryService {
                 createdAt: 'DESC',
                 weight: 'DESC'
             }
-        })
+        });
     }
 }

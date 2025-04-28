@@ -58,7 +58,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         private readonly exerciseService: ExerciseService,
         private readonly historyService: HistoryService,
         private readonly confirmationService: ConfirmationService,
-        private readonly router: Router,
+        private readonly router: Router
     ) {
     }
 
@@ -74,9 +74,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             .subscribe({
                 next: ({ exercises, muscleGroupId }) => {
                     this.exercises = exercises;
-                    this.currentExercise = this.exercises[0];
-
-                    this.fillInputWeightLastSavedValue();
 
                     if (exercises.length === 0) {
                         this.confirmationService.confirm({
@@ -101,6 +98,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                                 this.router.navigate(['/', 'workout']);
                             }
                         });
+                    } else {
+                        this.currentExercise = this.exercises[0];
+                        this.fillInputWeightLastSavedValue();
                     }
                 },
                 error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les exercices'

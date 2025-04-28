@@ -18,6 +18,6 @@ export class UserEntity {
     @Column({ name: 'created_at', type: 'timestamp' })
     createdAt: Date;
 
-    @OneToMany(() => UserExerciseEntity, userExercise => userExercise.id, { onDelete: 'CASCADE' })
+    @OneToMany(() => UserExerciseEntity, userExercise => userExercise.user, { onDelete: 'CASCADE' })
     userExercise: UserExerciseEntity[];
 }

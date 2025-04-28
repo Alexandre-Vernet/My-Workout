@@ -1,16 +1,29 @@
 .select-muscle-group-workout {
+    width: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
+    justify-content: center;
+    gap: 15px;
+    background: #f5f8fc;
 
-    p-splitter {
-        width: 100vw;
+    .muscle-group-card {
+        width: 100%;
+        padding: 1.2em 2em;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        background: #f9f9f9;
+
 
         a {
             text-decoration: none;
-            color: #000;
-            outline: none;
+            color: black;
         }
     }
+
+
+    .recommended {
+        background: #e8f2fd;
+    }
+
 }
