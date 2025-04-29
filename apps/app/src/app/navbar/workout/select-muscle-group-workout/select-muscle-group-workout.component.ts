@@ -7,10 +7,11 @@ import { MenuUrls } from '../../../shared/menu-urls';
 import { forkJoin, take } from 'rxjs';
 import { Message } from 'primeng/message';
 import { Tag } from 'primeng/tag';
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
     selector: 'select-muscle-group-workout',
-    imports: [CommonModule, RouterLink, Message, Tag],
+    imports: [CommonModule, RouterLink, Message, Tag, Skeleton],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
     standalone: true
@@ -22,6 +23,8 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
     muscleGroups: MuscleGroup[] = [];
 
     errorMessage: string;
+
+    isLoading = true;
 
     constructor(
         private readonly muscleGroupService: MuscleGroupService
@@ -36,6 +39,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
             .pipe(take(1))
             .subscribe({
                 next: ([muscleGroups, recommendedWorkout]) => {
+                    this.isLoading = false;
                     this.errorMessage = '';
                     this.muscleGroups = muscleGroups;
 
