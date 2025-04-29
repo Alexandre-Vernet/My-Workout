@@ -118,15 +118,26 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
 
     ngAfterViewInit() {
-        // Disable focus input on click button increment / decrement weight
         if (this.inputNumberRef) {
             const el = this.inputNumberRef.nativeElement;
+
             const incrementBtn = el.querySelector('.p-inputnumber-button-up');
             const decrementBtn = el.querySelector('.p-inputnumber-button-down');
+            const input = el.querySelector('input');
 
-            if (incrementBtn && decrementBtn) {
-                incrementBtn.addEventListener('mousedown', e => e.preventDefault());
-                decrementBtn.addEventListener('mousedown', e => e.preventDefault());
+            const preventFocus = (event: Event) => {
+                event.preventDefault();
+                input?.blur();
+            };
+
+            if (incrementBtn) {
+                incrementBtn.addEventListener('pointerdown', preventFocus);
+                incrementBtn.addEventListener('touchstart', preventFocus);
+            }
+
+            if (decrementBtn) {
+                decrementBtn.addEventListener('pointerdown', preventFocus);
+                decrementBtn.addEventListener('touchstart', preventFocus);
             }
         }
     }
