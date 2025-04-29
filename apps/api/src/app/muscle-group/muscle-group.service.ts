@@ -41,20 +41,42 @@ export class MuscleGroupService {
     }
 
 
-    suggestMuscleGroup(userId: number) {
-        return this.muscleGroupRepository.createQueryBuilder('muscleGroup')
-            .innerJoin('muscleGroup.muscle', 'm')
-            .innerJoin('m.exerciseMuscle', 'em')
-            .innerJoin('em.exercise', 'e')
-            .innerJoin('e.history', 'h')
-            .select([
-                'muscleGroup.id as id',
-                'muscleGroup.name as name'
-            ])
-            .where('h.user.id = :userId', { userId })
-            .groupBy('muscleGroup.id, muscleGroup.name')
-            .orderBy('MAX(h.createdAt)', 'ASC')
-            .limit(1)
-            .getRawOne();
+    async suggestMuscleGroup(userId: number) {
+        const result = await this.dataSource.query(
+            `
+                WITH all_muscle_groups AS (SELECT id, name
+                                           FROM muscle_group),
+                     worked_groups AS (SELECT DISTINCT mg.id AS muscle_group_id
+                                       FROM history h
+                                                JOIN exercises e ON e.id = h.exercise_id
+                                                JOIN exercise_muscle em ON em.exercise_id = e.id
+                                                JOIN muscles m ON m.id = em.muscle_id
+                                                JOIN muscle_group mg ON mg.id = m.muscle_group_id
+                                       WHERE h.user_id = $1),
+                     never_done_groups AS (SELECT id, name
+                                           FROM all_muscle_groups
+                                           WHERE id NOT IN (SELECT muscle_group_id FROM worked_groups)),
+                     ranked_worked_groups AS (SELECT mg.id,
+                                                     mg.name,
+                                                     MAX(h.created_at) AS last_worked
+                                              FROM history h
+                                                       JOIN exercises e ON e.id = h.exercise_id
+                                                       JOIN exercise_muscle em ON em.exercise_id = e.id
+                                                       JOIN muscles m ON m.id = em.muscle_id
+                                                       JOIN muscle_group mg ON mg.id = m.muscle_group_id
+                                              WHERE h.user_id = $1
+                                              GROUP BY mg.id, mg.name)
+                SELECT id, name
+                FROM ((SELECT id, name
+                       FROM never_done_groups
+                       ORDER BY random() LIMIT 1)
+                      UNION ALL
+                      (SELECT id, name
+                       FROM ranked_worked_groups
+                       ORDER BY last_worked ASC LIMIT 1)) AS combined LIMIT 1;
+            `, [userId]
+        );
+
+        return result[0];
     }
 }
