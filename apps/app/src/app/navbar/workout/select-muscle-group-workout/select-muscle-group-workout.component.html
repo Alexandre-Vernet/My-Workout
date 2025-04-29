@@ -3,17 +3,39 @@
 
 <div class="select-muscle-group-workout">
     <h1 class="mt-2 mb-3 text-center">Sélectionner un entraînement</h1>
-    <ng-container *ngFor="let muscleGroup of muscleGroups">
-        <div class="muscle-group-card" [ngClass]="{
+
+    <ng-container *ngIf="isLoading else content">
+        <ng-container *ngFor="let skeleton of [1, 2, 3, 4, 5, 6, 7]">
+            <div class="muscle-group-card">
+                <div class="flex-1 flex align-items-center justify-content-between">
+                    <h2 class="text-xl font-bold text-primary">
+                        <p-skeleton height="2rem" width="5rem" styleClass="mb-2" />
+                    </h2>
+                    <ng-container *ngIf="skeleton === 1">
+                        <p-skeleton height="2rem" width="7rem" styleClass="mb-2" />
+                    </ng-container>
+                </div>
+                <span class="text-lg">
+                    <p-skeleton height="2rem" width="10rem" styleClass="mb-2" />
+                </span>
+            </div>
+        </ng-container>
+    </ng-container>
+
+    <ng-template #content>
+        <ng-container *ngFor="let muscleGroup of muscleGroups">
+            <div class="muscle-group-card" [ngClass]="{
         'recommended': muscleGroup?.isRecommended,
         }">
-            <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroup?.id]">
-                <div class="flex-1 flex align-items-center justify-content-between">
-                    <h2 class="text-xl font-bold text-primary">{{ muscleGroup?.name }}</h2>
-                    <p-tag *ngIf="muscleGroup.isRecommended" severity="info">Recommandé</p-tag>
-                </div>
-                <span class="text-lg ">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
-            </a>
-        </div>
-    </ng-container>
+                <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroup?.id]">
+                    <div class="flex-1 flex align-items-center justify-content-between">
+                        <h2 class="text-xl font-bold text-primary">{{ muscleGroup?.name }}</h2>
+                        <p-tag *ngIf="muscleGroup.isRecommended" severity="info">Recommandé</p-tag>
+                    </div>
+                    <span
+                        class="text-lg ">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
+                </a>
+            </div>
+        </ng-container>
+    </ng-template>
 </div>

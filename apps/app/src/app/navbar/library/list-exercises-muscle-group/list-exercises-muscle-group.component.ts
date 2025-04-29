@@ -10,10 +10,11 @@ import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
 import { Badge } from 'primeng/badge';
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [CommonModule, DataView, Button, Message, Badge],
+    imports: [CommonModule, DataView, Button, Message, Badge, Skeleton],
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })
@@ -23,6 +24,8 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     exercises: Exercise[];
 
     errorMessage: string;
+
+    isLoading = true;
 
     constructor(
         private readonly route: ActivatedRoute,
@@ -39,6 +42,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
         )
             .subscribe({
                 next: ({ exercises, muscleGroup }) => {
+                    this.isLoading = false;
                     this.exercises = exercises;
                     this.muscleGroup = muscleGroup;
                     this.sortExercises();

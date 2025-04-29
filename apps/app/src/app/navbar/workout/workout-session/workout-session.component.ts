@@ -16,10 +16,11 @@ import { Message } from 'primeng/message';
 import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../../../../libs/interfaces/history';
 import Hammer from 'hammerjs';
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Message],
+    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Message, Skeleton],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -53,6 +54,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     errorMessage: string;
 
+    isLoading = true;
+
     constructor(
         private readonly activatedRoute: ActivatedRoute,
         private readonly exerciseService: ExerciseService,
@@ -73,6 +76,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             )
             .subscribe({
                 next: ({ exercises, muscleGroupId }) => {
+                    this.isLoading = false;
                     this.exercises = exercises;
 
                     if (exercises.length === 0) {
