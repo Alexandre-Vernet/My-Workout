@@ -1,25 +1,21 @@
 @import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
 
-$primary: #5D54A4;
-$secondary: #7C78B8;
+$primary: var(--p-primary-color);
+$secondary: var(--p-primary-400);
+$third: var(--p-primary-600);
+$shadow: var(--p-primary-700);
+
 $white: #FFFFFF;
-$light-purple: #7875B5;
 $border-color: #D1D1D4;
-$border-hover: #6A679E;
-$shadow: #5C5696;
-$gradient: linear-gradient(270deg, #5D54A4, #6A679E);
-$accent: #7E7BB9;
+$gradient: linear-gradient(270deg, $primary, $third);
 $input-border: #D4D3E8;
-$button-text: #4C489D;
-$background-primary: #C7C5F4;
-$background-secondary: #776BCC;
 
 .container {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(90deg, $background-primary, $background-secondary);
+  background: linear-gradient(90deg, $secondary, $third);
   overflow: hidden;
 }
 
@@ -83,7 +79,7 @@ $background-secondary: #776BCC;
 .screen__background__shape4 {
   height: 400px;
   width: 200px;
-  background: $accent;
+  background: $primary;
   top: 420px;
   right: 50px;
   border-radius: 60px;
@@ -103,7 +99,7 @@ $background-secondary: #776BCC;
 .login__icon {
   position: absolute;
   top: 30px;
-  color: $light-purple;
+  color: $primary;
 }
 
 .login__input {
@@ -120,7 +116,7 @@ $background-secondary: #776BCC;
   &:focus,
   &:hover {
     outline: none;
-    border-bottom-color: $border-hover;
+    border-bottom-color: $third;
   }
 }
 
@@ -136,7 +132,7 @@ $background-secondary: #776BCC;
   display: flex;
   align-items: center;
   width: 100%;
-  color: $button-text;
+  color: $primary;
   box-shadow: 0px 2px 2px $shadow;
   cursor: pointer;
   transition: .2s;
@@ -144,7 +140,7 @@ $background-secondary: #776BCC;
   &:active,
   &:focus,
   &:hover {
-    border-color: $border-hover;
+    border-color: $third;
     outline: none;
   }
 }
@@ -152,7 +148,7 @@ $background-secondary: #776BCC;
 .button__icon {
   font-size: 24px;
   margin-left: auto;
-  color: $light-purple;
+  color: $primary;
 }
 
 .disabled {
