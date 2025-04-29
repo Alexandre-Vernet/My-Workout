@@ -69,6 +69,10 @@ export const appRoutes: Route[] = [
             {
                 path: 'sign-up',
                 component: SignUpComponent
+            },
+            {
+                path: '**',
+                redirectTo: 'sign-in'
             }
         ]
     },
