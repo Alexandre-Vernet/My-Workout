@@ -38,9 +38,12 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
                 next: ([muscleGroups, recommendedWorkout]) => {
                     this.errorMessage = '';
                     this.muscleGroups = muscleGroups;
-                    const muscleGroupRecommended = this.muscleGroups.find(m => m.id === recommendedWorkout.id);
-                    muscleGroupRecommended.isRecommended = true;
-                    this.muscleGroups.sort(m => m.isRecommended ? -1 : 1);
+
+                    if (recommendedWorkout) {
+                        const muscleGroupRecommended = this.muscleGroups.find(m => m.id === recommendedWorkout.id);
+                        muscleGroupRecommended.isRecommended = true;
+                        this.muscleGroups.sort(m => m.isRecommended ? -1 : 1);
+                    }
                 },
                 error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les entraînements'
             });
