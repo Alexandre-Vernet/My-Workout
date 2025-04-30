@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { map, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,17 +17,19 @@ import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../../../../libs/interfaces/history';
 import Hammer from 'hammerjs';
 import { Skeleton } from 'primeng/skeleton';
+import { ButtonDirective } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Message, Skeleton],
+    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Message, Skeleton, ButtonDirective, Ripple],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
     providers: [ConfirmationService]
 
 })
-export class WorkoutSessionComponent implements OnInit, AfterViewInit {
+export class WorkoutSessionComponent implements OnInit {
 
     exercises: Exercise[] = [];
     exercisesMade: Exercise[] = [];
@@ -36,7 +38,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     activeStep: number = 1;
 
     @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
-    @ViewChild('inputNumber', { read: ElementRef }) inputNumberRef!: ElementRef;
     weight: number = null;
 
     timer = {
@@ -116,30 +117,18 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         hammer.on('swiperight', () => this.previousStep());
     }
 
-
-    ngAfterViewInit() {
-        if (this.inputNumberRef) {
-            const el = this.inputNumberRef.nativeElement;
-
-            const incrementBtn = el.querySelector('.p-inputnumber-button-up');
-            const decrementBtn = el.querySelector('.p-inputnumber-button-down');
-            const input = el.querySelector('input');
-
-            const preventFocus = (event: Event) => {
-                event.preventDefault();
-                input?.blur();
-            };
-
-            if (incrementBtn) {
-                incrementBtn.addEventListener('pointerdown', preventFocus);
-                incrementBtn.addEventListener('touchstart', preventFocus);
-            }
-
-            if (decrementBtn) {
-                decrementBtn.addEventListener('pointerdown', preventFocus);
-                decrementBtn.addEventListener('touchstart', preventFocus);
-            }
+    decreaseWeight() {
+        if (!this.weight) {
+            return;
         }
+        this.weight = Number(this.weight) - 1.25;
+    }
+
+    increaseWeight() {
+        if (this.weight >= 500) {
+            return;
+        }
+        this.weight = Number(this.weight) + 1.25;
     }
 
 
@@ -164,7 +153,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     toggleTimer() {
-        if (!this.weight) {
+        if (!this.weight || this.weight <= 0 || this.weight >= 500 ) {
             return;
         }
 

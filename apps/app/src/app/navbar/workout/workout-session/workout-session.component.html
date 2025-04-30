@@ -59,26 +59,19 @@
                                 <div class="text-center mt-4 mb-4 text-xl font-semibold">
                                     <h3>{{ exercise.name | uppercase }}</h3>
                                 </div>
-                                <p-inputNumber #inputNumber
-                                               [(ngModel)]="weight"
-                                               [showButtons]="true"
-                                               buttonLayout="horizontal"
-                                               inputId="horizontal"
-                                               spinnerMode="horizontal"
-                                               [disabled]="timer.interval"
-                                               [step]="1.25"
-                                               [min]="0"
-                                               [max]="500"
-                                               [suffix]="' kg'">
-                                    <ng-container *ngIf="timer.interval !== 0">
-                                        <ng-template #incrementbuttonicon>
-                                            <span class="pi pi-plus"></span>
-                                        </ng-template>
-                                        <ng-template #decrementbuttonicon>
-                                            <span class="pi pi-minus"></span>
-                                        </ng-template>
-                                    </ng-container>
-                                </p-inputNumber>
+                                <div class="flex items-center mt-2">
+                                    <button (click)="decreaseWeight()" pButton pRipple type="button" icon="pi pi-minus" class="button-increase-decrease-weight"
+                                            [disabled]="timer.interval"></button>
+
+                                    <p-inputNumber
+                                        [(ngModel)]="weight"
+                                        [disabled]="timer.interval"
+                                        [suffix]="' kg'">
+                                    </p-inputNumber>
+
+                                    <button (click)="increaseWeight()" pButton pRipple type="button" icon="pi pi-plus" class="button-increase-decrease-weight"
+                                            [disabled]="timer.interval"></button>
+                                </div>
                             </div>
                         </ng-template>
                     </p-step-panel>
@@ -111,7 +104,7 @@
             </div>
 
             <div (click)="toggleTimer()" class="button-toggle-timer" [ngClass]="{
-        'disabled': !this.weight
+        'disabled': !this.weight || this.weight <= 0 || this.weight >= 500
         }">
                 <ng-container *ngIf="timer.interval !== null else play">
                     <fa-icon [icon]="faIcons.faPause"></fa-icon>
