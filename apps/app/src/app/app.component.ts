@@ -6,6 +6,7 @@ import { SwPush, SwUpdate } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { NavbarComponent } from './navbar/navbar.component';
 import { NgClass } from '@angular/common';
+import { PrimeNG } from 'primeng/config';
 
 @Component({
     imports: [RouterModule, NavbarComponent, NgClass],
@@ -21,7 +22,8 @@ export class AppComponent implements OnInit {
         private readonly authService: AuthService,
         private readonly sw: SwPush,
         private readonly swUpdate: SwUpdate,
-        private router: Router
+        private router: Router,
+        private primeng: PrimeNG
     ) {
         if (environment.production) {
             // Force refresh PWA
@@ -49,6 +51,8 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.primeng.ripple.set(true);
+
         this.authService.signInWithAccessToken()
             .pipe(take(1))
             .subscribe();
