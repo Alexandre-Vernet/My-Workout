@@ -1,1 +1,19 @@
-<p>view-profile works!</p>
+<div class="view-profile flex-1 flex justify-center align-items-center flex-column gap-3">
+    <i class="pi pi-user" style="font-size: 5rem; color: var(--p-primary-900)"></i>
+
+    <p-floatlabel variant="on">
+        <input [formControl]="formControlEmail" pInputText id="email" autocomplete="off" />
+        <label for="email">Email</label>
+    </p-floatlabel>
+
+    <p-floatlabel variant="on">
+        <input [formControl]="formControlPassword" pInputText id="password" autocomplete="off" />
+        <label for="password">Mot de passe</label>
+    </p-floatlabel>
+
+    <p-select
+        [options]="themeOptions"
+        [(ngModel)]="selectedTheme"
+        (onChange)="updatePreset($event.value)">
+    </p-select>
+</div>
