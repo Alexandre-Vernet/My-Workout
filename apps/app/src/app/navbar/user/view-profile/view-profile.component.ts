@@ -9,10 +9,11 @@ import { ThemeService } from '../../../theme/theme.service';
 import { presets } from '../../../theme/presets';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
+import { ToggleSwitch } from 'primeng/toggleswitch';
 
 @Component({
     selector: 'app-view-profile',
-    imports: [CommonModule, FloatLabel, InputText, ReactiveFormsModule, DropdownModule, FormsModule, Select],
+    imports: [CommonModule, FloatLabel, InputText, ReactiveFormsModule, DropdownModule, FormsModule, Select, ToggleSwitch],
     templateUrl: './view-profile.component.html',
     styleUrl: './view-profile.component.scss',
     standalone: true
@@ -23,9 +24,9 @@ export class ViewProfileComponent implements OnInit {
     formControlPassword = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(255)]);
 
     presets = presets;
-
-
     selectedTheme: string;
+
+    isCheckedDarkMode: boolean;
 
     constructor(
         private readonly authService: AuthService,
@@ -39,7 +40,8 @@ export class ViewProfileComponent implements OnInit {
     }));
 
     ngOnInit() {
-        this.selectedTheme = localStorage.getItem("theme");
+        this.selectedTheme = localStorage.getItem('theme');
+        this.isCheckedDarkMode = localStorage.getItem('dark-mode') === 'true';
 
         this.authService.user$
             .pipe(take(1))
@@ -52,5 +54,9 @@ export class ViewProfileComponent implements OnInit {
     updatePreset(presetName: string) {
         const preset = this.presets[presetName];
         this.themeService.updateTheme(preset, presetName);
+    }
+
+    toggleDarkMode() {
+        this.themeService.toggleDarkMode(this.isCheckedDarkMode);
     }
 }

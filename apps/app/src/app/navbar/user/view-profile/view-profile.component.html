@@ -16,4 +16,7 @@
         [(ngModel)]="selectedTheme"
         (onChange)="updatePreset($event.value)">
     </p-select>
+
+    <p-toggleswitch (click)="toggleDarkMode()" [(ngModel)]="isCheckedDarkMode" />
+
 </div>

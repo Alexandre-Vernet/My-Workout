@@ -9,15 +9,38 @@ export class ThemeService {
 
     loadTheme() {
         const presetName = localStorage.getItem('theme');
-        if (presetName) {
-            this.updateTheme(presets[presetName], presetName);
-        } else {
-            this.updateTheme(presets['cyan'], 'cyan');
+        if (!presetName) {
+            localStorage.setItem('theme', 'cyan');
+            return;
         }
+
+        this.updateTheme(presets[presetName], presetName);
     }
 
     updateTheme(preset: string, presetName: string) {
         updatePreset(preset);
         localStorage.setItem('theme', presetName);
+    }
+
+
+    loadDarkMode() {
+        const darkModeEnable = localStorage.getItem('dark-mode');
+        if (!darkModeEnable) {
+            localStorage.setItem('dark-mode', 'false');
+        }
+
+        if (darkModeEnable === 'true') {
+            this.toggleDarkMode(true);
+        }
+    }
+
+    toggleDarkMode(isCheckedDarkMode: boolean) {
+        const element = document.querySelector('html');
+        element.classList.toggle('dark-mode');
+        if (isCheckedDarkMode) {
+            localStorage.setItem('dark-mode', 'true');
+        } else {
+            localStorage.setItem('dark-mode', 'false');
+        }
     }
 }

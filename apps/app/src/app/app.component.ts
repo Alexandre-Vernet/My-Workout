@@ -55,6 +55,7 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         this.primeng.ripple.set(true);
         this.themeService.loadTheme();
+        this.themeService.loadDarkMode();
 
         this.authService.signInWithAccessToken()
             .pipe(take(1))

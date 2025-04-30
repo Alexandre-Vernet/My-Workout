@@ -17,7 +17,10 @@ export const appConfig: ApplicationConfig = {
         provideAnimationsAsync(),
         providePrimeNG({
             theme: {
-                preset: presetCyan
+                preset: presetCyan,
+                options: {
+                    darkModeSelector: '.dark-mode'
+                }
             }
         }), provideServiceWorker('ngsw-worker.js', {
             enabled: !isDevMode(),
