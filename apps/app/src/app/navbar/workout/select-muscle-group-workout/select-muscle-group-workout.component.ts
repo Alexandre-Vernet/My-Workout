@@ -26,6 +26,8 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     isLoading = true;
 
+    isDarkMode = localStorage.getItem('dark-mode') === 'true';
+
     constructor(
         private readonly muscleGroupService: MuscleGroupService
     ) {

@@ -26,14 +26,16 @@
         <ng-container *ngFor="let muscleGroup of muscleGroups">
             <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroup?.id]">
                 <div class="muscle-group-card" [ngClass]="{
-                    'recommended': muscleGroup?.isRecommended,
+                    'recommended-light': !isDarkMode && muscleGroup?.isRecommended,
+                    'recommended-dark': isDarkMode && muscleGroup?.isRecommended,
+                    'shadow-dark': isDarkMode,
+                    'shadow-light': !isDarkMode,
                 }">
                     <div class="flex-1 flex align-items-center justify-content-between">
                         <h2 class="text-xl font-bold text-primary">{{ muscleGroup?.name }}</h2>
                         <p-tag *ngIf="muscleGroup.isRecommended" severity="info">Recommandé</p-tag>
                     </div>
-                    <span
-                        class="text-lg ">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
+                    <span class="text-lg">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
                 </div>
             </a>
         </ng-container>

@@ -15,9 +15,16 @@
     }
 
     .button-increase-decrease-weight {
-        background: white;
-        border: 1px solid #e4eaf0;
-        color: #97a9bc;
+        background: var(--color-primary-contrast);
+        color: var(--p-text-muted-color);
+    }
+
+    .border-light {
+        border: 1px solid var(--p-gray-300);
+    }
+
+    .border-dark {
+        border: 1px solid var(--p-gray-500);
     }
 
     .bottom-page {

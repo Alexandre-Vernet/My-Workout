@@ -57,6 +57,8 @@ export class WorkoutSessionComponent implements OnInit {
 
     isLoading = true;
 
+    isDarkMode = localStorage.getItem('dark-mode') === 'true';
+
     constructor(
         private readonly activatedRoute: ActivatedRoute,
         private readonly exerciseService: ExerciseService,
