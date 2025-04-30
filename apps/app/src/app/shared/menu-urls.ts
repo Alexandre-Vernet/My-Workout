@@ -1,4 +1,5 @@
 export enum MenuUrls {
     library = 'library',
-    workout = 'workout'
+    workout = 'workout',
+    user = 'user',
 }
