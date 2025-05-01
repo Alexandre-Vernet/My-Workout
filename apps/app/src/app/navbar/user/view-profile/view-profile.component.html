@@ -1,22 +1,115 @@
-<div class="view-profile flex-1 flex justify-center align-items-center flex-column gap-3">
-    <i class="pi pi-user" style="font-size: 5rem; color: var(--p-primary-900)"></i>
+<p-message [life]="alert.severity === 'success' ? 3000 : 0" *ngIf="alert.message"
+           [severity]="alert.severity">
+    {{ alert.message }}
+</p-message>
+<p-confirmdialog />
 
-    <p-floatlabel variant="on">
-        <input [formControl]="formControlEmail" pInputText id="email" autocomplete="off" />
-        <label for="email">Email</label>
-    </p-floatlabel>
 
-    <p-floatlabel variant="on">
-        <input [formControl]="formControlPassword" pInputText id="password" autocomplete="off" />
-        <label for="password">Mot de passe</label>
-    </p-floatlabel>
+<div class="view-profile">
+    <div class="flex-1 flex justify-center align-items-center flex-column gap-3">
+        <i class="pi pi-user mt-2 mb-5" style="font-size: 6rem; color: var(--p-primary-900)"></i>
+    </div>
 
-    <p-select
-        [options]="themeOptions"
-        [(ngModel)]="selectedTheme"
-        (onChange)="updatePreset($event.value)">
-    </p-select>
+    <div class="view-profile-container flex-1 flex justify-center flex-column gap-3"
+         [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+        <span class="text-lg text-color-secondary">Gérer mon compte</span>
+        <p-floatlabel variant="on">
+            <input class="w-full" [formControl]="formControlEmail" pInputText id="email" autocomplete="off" />
+            <label for="email">Email</label>
+        </p-floatlabel>
 
-    <p-toggleswitch (click)="toggleDarkMode()" [(ngModel)]="isCheckedDarkMode" />
+        <div class="mt-2 flex-1 flex justify-content-around align-items-center gap-8">
+            <label for="change-password" class="text-lg text-color-secondary">Changer le mot de passe</label>
+            <p-toggleswitch inputId="change-password" (click)="toggleChangePassword()" />
+        </div>
 
+        <ng-container *ngIf="isCheckedChangePassword">
+            <p-floatlabel variant="on">
+                <p-password [formControl]="formControlPassword" autocomplete="off">
+                    <ng-template #header>
+                        <div class="font-semibold text-xm mb-4">Tapez un mot de passe</div>
+                    </ng-template>
+                    <ng-template #footer>
+                        <p-divider />
+                        <ul class="pl-2 ml-2 my-0 leading-normal">
+                            <li>Minimum 6 caractères</li>
+                        </ul>
+                    </ng-template>
+                </p-password>
+                <label for="password">Mot de passe</label>
+            </p-floatlabel>
+
+            <p-floatlabel variant="on">
+                <p-password [formControl]="formControlConfirmPassword"
+                            autocomplete="off">
+                    <ng-template #header>
+                        <div class="font-semibold text-xm mb-4">Tapez un mot de passe</div>
+                    </ng-template>
+                    <ng-template #footer>
+                        <p-divider />
+                        <ul class="pl-2 ml-2 my-0 leading-normal">
+                            <li>Minimum 6 caractères</li>
+                        </ul>
+                    </ng-template>
+                </p-password>
+                <label for="confirmPassword">Confirmer le mot de passe</label>
+            </p-floatlabel>
+
+
+            <p-message *ngIf="formControlPassword.value !== formControlConfirmPassword.value"
+                       severity="error" variant="simple" size="small">
+                Les mot de passe ne correspondent pas
+            </p-message>
+        </ng-container>
+
+        <p-button
+            [disabled]="isCheckedChangePassword && (formControlEmail.invalid || formControlPassword.invalid ||
+            formControlConfirmPassword.invalid ||
+            formControlPassword.value !== formControlConfirmPassword.value) ||
+            currentEmail === formControlEmail.value"
+            class="mt-2"
+            label="Mettre à jour" [loading]="isLoading" (onClick)="updateUser()" />
+    </div>
+
+
+    <div class="view-profile-container flex-1 flex justify-center align-items-center flex-column gap-3"
+         [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+        <div class="palette-container">
+            <div class="palette-label mb-2">
+                <span class="text-lg text-color-secondary">Theme</span>
+            </div>
+            <div class="palette flex">
+                <div *ngFor="let color of presetsArray"
+                     [style.background-color]="color.value.color"
+                     class="color flex-1"
+                     (click)="updatePreset(color.key)"
+                     title="{{ color.key }}">
+                </div>
+            </div>
+
+            <div class="mt-5 flex-1 flex justify-content-around align-items-center gap-8">
+                <label for="dark-mode" class="text-lg text-color-secondary">Mode sombre</label>
+                <p-toggleswitch inputId="dark-mode" (click)="toggleDarkMode()" [(ngModel)]="isCheckedDarkMode" />
+            </div>
+        </div>
+    </div>
+
+
+    <div class="view-profile-container"
+         [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+        <div class="m-1 flex-1 flex flex-column gap-3">
+            <p-button pRipple icon="pi pi-lock" label="Déconnexion" severity="secondary" (onClick)="signOut()" />
+            <p-button pRipple icon="pi pi-trash" label="Supprimer mon compte" severity="danger"
+                      (onClick)="openDialogConfirmDeleteAccount()" />
+        </div>
+    </div>
 </div>

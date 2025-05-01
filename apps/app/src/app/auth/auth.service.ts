@@ -25,7 +25,7 @@ export class AuthService {
             .pipe(
                 tap(({ user, accessToken }) => {
                     this.userSubject.next(user);
-                    localStorage.setItem('accessToken', accessToken);
+                    localStorage.setItem('access-token', accessToken);
                 })
             );
     }
@@ -33,12 +33,12 @@ export class AuthService {
     signUp(user: User): Observable<{ accessToken: string, user: User }> {
         return this.http.post<{ accessToken: string, user: User }>(`${ this.authUrl }/sign-up`, user)
             .pipe(
-                tap(({ accessToken }) => localStorage.setItem('accessToken', accessToken))
+                tap(({ accessToken }) => localStorage.setItem('access-token', accessToken))
             );
     }
 
     signInWithAccessToken(): Observable<{ user: User, accessToken: string }> {
-        const accessToken = localStorage.getItem('accessToken');
+        const accessToken = localStorage.getItem('access-token');
         return this.http.post<{
             user: User,
             accessToken: string
@@ -46,22 +46,25 @@ export class AuthService {
             .pipe(
                 tap(({ user, accessToken }) => {
                     this.userSubject.next(user);
-                    localStorage.setItem('accessToken', accessToken);
+                    localStorage.setItem('access-token', accessToken);
                 })
             );
     }
 
-    updatePassword(password: string, confirmPassword: string): Observable<void> {
-        const userId = this.userSubject.value.id;
-        return this.http.put<void>(`${ this.authUrl }/update-password`, { userId, password, confirmPassword });
+    updateUser(user: User) {
+        return this.http.put<User>(`${ this.authUrl }`, { user });
     }
 
     sendEmailForgotPassword(email: string): Observable<void> {
         return this.http.post<void>(`${ this.authUrl }/send-email-reset-password`, { email });
     }
 
+    deleteAccount() {
+        return this.http.delete<void>(`${ this.authUrl }`);
+    }
+
     signOut(): void {
         this.userSubject.next(null);
-        localStorage.removeItem('accessToken');
+        localStorage.removeItem('access-token');
     }
 }

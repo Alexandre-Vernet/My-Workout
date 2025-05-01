@@ -1,11 +1,12 @@
 import { ApplicationConfig, isDevMode, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { appRoutes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import { provideServiceWorker } from '@angular/service-worker';
 import { presetCyan } from './theme/preset-cyan';
+import { authInterceptor } from './auth/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -13,7 +14,7 @@ export const appConfig: ApplicationConfig = {
         provideRouter(appRoutes, withInMemoryScrolling({
             scrollPositionRestoration: 'top'
         })),
-        provideHttpClient(),
+        provideHttpClient(withInterceptors([authInterceptor])),
         provideAnimationsAsync(),
         providePrimeNG({
             theme: {

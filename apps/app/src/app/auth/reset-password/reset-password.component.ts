@@ -37,7 +37,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
             takeUntil(this.unsubscribe$),
             distinctUntilChanged(),
             map((param: { token: string }) => {
-                localStorage.setItem('accessToken', param.token);
+                localStorage.setItem('access-token', param.token);
                 return param.token;
             }),
             switchMap(() => this.authService.signInWithAccessToken())
@@ -70,17 +70,17 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     resetPassword() {
         const { newPassword: password, confirmPassword } = this.formResetPassword.value;
 
-        this.authService.updatePassword(password, confirmPassword)
-            .subscribe({
-                next: () => {
-                    this.formResetPassword.reset();
-                    void this.router.navigateByUrl('/');
-                },
-                error: (err) => {
-                    if (err.error?.message) {
-                        this.formResetPassword.setErrors({ error: err.error.message });
-                    }
-                }
-            });
+        // this.authService.updatePassword(password, confirmPassword)
+        //     .subscribe({
+        //         next: () => {
+        //             this.formResetPassword.reset();
+        //             void this.router.navigateByUrl('/');
+        //         },
+        //         error: (err) => {
+        //             if (err.error?.message) {
+        //                 this.formResetPassword.setErrors({ error: err.error.message });
+        //             }
+        //         }
+        //     });
     }
 }
