@@ -5,8 +5,6 @@ import { AuthService } from '../../../auth/auth.service';
 import { take } from 'rxjs';
 import { InputText } from 'primeng/inputtext';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ThemeService } from '../../../theme/theme.service';
-import { presets } from '../../../theme/presets';
 import { DropdownModule } from 'primeng/dropdown';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { Button } from 'primeng/button';
@@ -18,10 +16,11 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Ripple } from 'primeng/ripple';
 import { Password } from 'primeng/password';
 import { Divider } from 'primeng/divider';
+import { ChangeThemeComponent } from '../change-theme/change-theme.component';
 
 @Component({
     selector: 'app-view-profile',
-    imports: [CommonModule, FloatLabel, InputText, ReactiveFormsModule, DropdownModule, FormsModule, ToggleSwitch, Button, Message, ConfirmDialog, Ripple, Password, Divider],
+    imports: [CommonModule, FloatLabel, InputText, ReactiveFormsModule, DropdownModule, FormsModule, ToggleSwitch, Button, Message, ConfirmDialog, Ripple, Password, Divider, ChangeThemeComponent],
     templateUrl: './view-profile.component.html',
     styleUrl: './view-profile.component.scss',
     standalone: true,
@@ -34,13 +33,10 @@ export class ViewProfileComponent implements OnInit {
     formControlPassword = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(255)]);
     formControlConfirmPassword = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(255)]);
 
-    presets = presets;
-    selectedTheme: string;
+
+    isCheckedChangePassword: boolean;
 
     isLoading: boolean;
-
-    isCheckedDarkMode: boolean;
-    isCheckedChangePassword: boolean;
 
     alert: {
         severity: 'success' | 'info' | 'warn' | 'error' | 'secondary' | 'contrast' | undefined | null,
@@ -54,27 +50,23 @@ export class ViewProfileComponent implements OnInit {
 
     constructor(
         private readonly authService: AuthService,
-        private readonly themeService: ThemeService,
         private readonly router: Router,
         private readonly confirmationService: ConfirmationService
     ) {
     }
 
-    presetsArray = Object.entries(this.presets).map(([key, value]) => ({
-        key,
-        value
-    }));
 
     ngOnInit() {
-        this.selectedTheme = localStorage.getItem('theme');
-        this.isCheckedDarkMode = localStorage.getItem('dark-mode') === 'true';
-
         this.authService.user$
             .pipe(take(1))
             .subscribe(user => {
                 this.currentEmail = user?.email;
                 this.formControlEmail.setValue(user?.email);
             });
+    }
+
+    updateDarkMode(value: boolean) {
+        this.isDarkMode = value;
     }
 
     toggleChangePassword(){
@@ -92,10 +84,6 @@ export class ViewProfileComponent implements OnInit {
             password: this.formControlPassword.value,
             confirmPassword: this.formControlConfirmPassword.value
         };
-
-        if (user.password !== user.confirmPassword) {
-
-        }
 
         this.isLoading = true;
 
@@ -127,16 +115,6 @@ export class ViewProfileComponent implements OnInit {
                     this.isLoading = false;
                 }
             });
-    }
-
-    updatePreset(presetName: string) {
-        const preset = this.presets[presetName].preset;
-        this.themeService.updateTheme(preset, presetName);
-    }
-
-    toggleDarkMode() {
-        this.themeService.toggleDarkMode(this.isCheckedDarkMode);
-        this.isDarkMode = this.isCheckedDarkMode;
     }
 
     signOut() {

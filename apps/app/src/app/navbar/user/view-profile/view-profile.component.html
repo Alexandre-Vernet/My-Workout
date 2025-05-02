@@ -75,29 +75,12 @@
     </div>
 
 
-    <div class="view-profile-container flex-1 flex justify-center align-items-center flex-column gap-3"
+    <div class="view-profile-container"
          [ngClass]="{
             'shadow-dark': isDarkMode,
             'shadow-light': !isDarkMode,
         }">
-        <div class="palette-container">
-            <div class="palette-label mb-2">
-                <span class="text-lg text-color-secondary">Theme</span>
-            </div>
-            <div class="palette flex">
-                <div *ngFor="let color of presetsArray"
-                     [style.background-color]="color.value.color"
-                     class="color flex-1"
-                     (click)="updatePreset(color.key)"
-                     title="{{ color.key }}">
-                </div>
-            </div>
-
-            <div class="mt-5 flex-1 flex justify-content-around align-items-center gap-8">
-                <label for="dark-mode" class="text-lg text-color-secondary">Mode sombre</label>
-                <p-toggleswitch inputId="dark-mode" (click)="toggleDarkMode()" [(ngModel)]="isCheckedDarkMode" />
-            </div>
-        </div>
+        <app-change-theme (isDarkMode)="updateDarkMode($event)"></app-change-theme>
     </div>
 
 
