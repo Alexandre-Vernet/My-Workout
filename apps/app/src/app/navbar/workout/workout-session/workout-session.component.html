@@ -1,4 +1,5 @@
 <p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
+<p-confirmdialog />
 
 <div #swipeZone class="workout-session">
     <ng-container *ngIf="isLoading else content">
