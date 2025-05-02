@@ -9,7 +9,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Message } from 'primeng/message';
 
 @Component({
-    selector: 'superstore-sign-in',
+    selector: 'app-sign-in',
     templateUrl: './sign-in.component.html',
     styleUrls: ['../auth.component.scss'],
     imports: [

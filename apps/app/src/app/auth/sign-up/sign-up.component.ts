@@ -7,9 +7,11 @@ import { NgClass, NgIf } from '@angular/common';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronRight, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Message } from 'primeng/message';
+import { Password } from 'primeng/password';
+import { Divider } from 'primeng/divider';
 
 @Component({
-    selector: 'superstore-sign-up',
+    selector: 'app-sign-up',
     templateUrl: './sign-up.component.html',
     styleUrls: ['../auth.component.scss'],
     imports: [
@@ -18,7 +20,9 @@ import { Message } from 'primeng/message';
         NgIf,
         NgClass,
         FaIconComponent,
-        Message
+        Message,
+        Password,
+        Divider
     ]
 })
 export class SignUpComponent {

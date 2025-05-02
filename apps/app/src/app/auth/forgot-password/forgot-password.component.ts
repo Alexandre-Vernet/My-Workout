@@ -4,7 +4,7 @@ import { AuthService } from "../auth.service";
 import { NgClass, NgIf } from '@angular/common';
 
 @Component({
-  selector: 'superstore-forgot-password',
+  selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss'],
   imports: [

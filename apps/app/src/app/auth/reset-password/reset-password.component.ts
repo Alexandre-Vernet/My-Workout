@@ -6,7 +6,7 @@ import { distinctUntilChanged, map, Subject, switchMap, takeUntil } from 'rxjs';
 import { NgClass, NgIf } from '@angular/common';
 
 @Component({
-    selector: 'superstore-reset-password',
+    selector: 'app-reset-password',
     templateUrl: './reset-password.component.html',
     imports: [
         ReactiveFormsModule,
