@@ -10,7 +10,7 @@ $border-color: #D1D1D4;
 $gradient: linear-gradient(270deg, $primary, $third);
 $input-border: #D4D3E8;
 
-.container {
+.auth-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -157,7 +157,7 @@ $input-border: #D4D3E8;
 
 .sign-up {
   position: absolute;
-  height: 100px;
+  height: 90px;
   width: 160px;
   text-align: center;
   bottom: 0px;
