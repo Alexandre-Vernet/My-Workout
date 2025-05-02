@@ -1,0 +1,59 @@
+<div class="flex-1 flex flex-column gap-2">
+    <span class="text-lg text-color-secondary">Gérer mon compte</span>
+    <p-floatlabel variant="on">
+        <input class="w-full" [formControl]="formControlEmail" pInputText id="email" autocomplete="off" />
+        <label for="email">Email</label>
+    </p-floatlabel>
+
+    <div class="mt-2 flex-1 flex justify-content-around align-items-center">
+        <label for="change-password" class="text-lg text-color-secondary">Changer le mot de passe</label>
+        <p-toggleswitch inputId="change-password" (click)="toggleChangePassword()" />
+    </div>
+
+    <ng-container *ngIf="isCheckedChangePassword">
+        <p-floatlabel variant="on">
+            <p-password [formControl]="formControlPassword" autocomplete="off">
+                <ng-template #header>
+                    <div class="font-semibold text-xm mb-4">Tapez un mot de passe</div>
+                </ng-template>
+                <ng-template #footer>
+                    <p-divider />
+                    <ul class="pl-2 ml-2 my-0 leading-normal">
+                        <li>Minimum 6 caractères</li>
+                    </ul>
+                </ng-template>
+            </p-password>
+            <label for="password">Mot de passe</label>
+        </p-floatlabel>
+
+        <p-floatlabel variant="on">
+            <p-password [formControl]="formControlConfirmPassword"
+                        autocomplete="off">
+                <ng-template #header>
+                    <div class="font-semibold text-xm mb-4">Tapez un mot de passe</div>
+                </ng-template>
+                <ng-template #footer>
+                    <p-divider />
+                    <ul class="pl-2 ml-2 my-0 leading-normal">
+                        <li>Minimum 6 caractères</li>
+                    </ul>
+                </ng-template>
+            </p-password>
+            <label for="confirmPassword">Confirmer le mot de passe</label>
+        </p-floatlabel>
+
+
+        <p-message *ngIf="formControlPassword.value !== formControlConfirmPassword.value"
+                   severity="error" variant="simple" size="small">
+            Les mot de passe ne correspondent pas
+        </p-message>
+    </ng-container>
+
+    <p-button
+        [disabled]="isCheckedChangePassword && (formControlEmail.invalid || formControlPassword.invalid ||
+            formControlConfirmPassword.invalid ||
+            formControlPassword.value !== formControlConfirmPassword.value) ||
+            currentEmail === formControlEmail.value"
+        class="mt-2"
+        label="Mettre à jour" [loading]="isLoading" (onClick)="updateUser()" />
+</div>
