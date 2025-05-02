@@ -1,0 +1,18 @@
+.palette-container {
+    width: 100%;
+
+    .palette-label {
+        font-size: 14px;
+    }
+
+    .palette {
+        height: 12px;
+        border-radius: 9999px;
+        overflow: hidden;
+
+        div {
+            flex: 1;
+            border-radius: 1px;
+        }
+    }
+}

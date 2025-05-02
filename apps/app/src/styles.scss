@@ -16,3 +16,12 @@ html, body {
 .display-none {
     display: none;
 }
+
+
+.shadow-light {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-dark {
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+}

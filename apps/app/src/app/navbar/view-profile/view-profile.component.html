@@ -1,0 +1,37 @@
+<p-message [life]="alert?.severity === 'success' ? 3000 : 0" *ngIf="alert?.message"
+           [severity]="alert?.severity">
+    {{ alert?.message }}
+</p-message>
+
+
+<div class="view-profile">
+    <div class="flex-1 flex justify-center align-items-center flex-column gap-3">
+        <i class="pi pi-user mt-2 mb-5" style="font-size: 6rem; color: var(--p-primary-900)"></i>
+    </div>
+
+    <div class="view-profile-container"
+         [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+        <app-manage-account (showAlert)="displayAlert($event)"></app-manage-account>
+    </div>
+
+
+    <div class="view-profile-container"
+         [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+        <app-change-theme (isDarkMode)="updateDarkMode($event)"></app-change-theme>
+    </div>
+
+
+    <div class="view-profile-container"
+         [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+        <app-account-actions (showAlert)="displayAlert($event)"></app-account-actions>
+    </div>
+</div>

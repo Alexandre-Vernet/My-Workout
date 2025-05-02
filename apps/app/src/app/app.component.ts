@@ -7,6 +7,7 @@ import { environment } from '../environments/environment';
 import { NavbarComponent } from './navbar/navbar.component';
 import { NgClass } from '@angular/common';
 import { PrimeNG } from 'primeng/config';
+import { ThemeService } from './theme/theme.service';
 
 @Component({
     imports: [RouterModule, NavbarComponent, NgClass],
@@ -23,7 +24,8 @@ export class AppComponent implements OnInit {
         private readonly sw: SwPush,
         private readonly swUpdate: SwUpdate,
         private router: Router,
-        private primeng: PrimeNG
+        private primeng: PrimeNG,
+        private readonly themeService: ThemeService
     ) {
         if (environment.production) {
             // Force refresh PWA
@@ -52,6 +54,8 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.primeng.ripple.set(true);
+        this.themeService.loadTheme();
+        this.themeService.loadDarkMode();
 
         this.authService.signInWithAccessToken()
             .pipe(take(1))

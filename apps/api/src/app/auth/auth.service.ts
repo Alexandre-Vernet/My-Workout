@@ -88,27 +88,64 @@ export class AuthService {
     }
 
 
-    async updatePassword(userId: number, password: string, confirmPassword: string) {
-        if (password !== confirmPassword) {
-            throw new FormBadRequestException(ErrorCode.passwordNotMatch, 'Passwords do not match', 'password');
+    async updateUser(token: string, user: User) {
+        const decoded = this.jwtService.verify(token);
+        if (!decoded) {
+            throw new ConflictException('Invalid credentials');
         }
-        const options: FindOneOptions = {
-            where: {
-                id: userId
-            }
-        };
+        user.id = decoded.user.id;
 
-        const user = this.userRepository.findOne(options);
+        const existingUser = await this.userRepository.findOne({
+            where: {
+                id: user.id
+            }
+        });
+        if (!existingUser) {
+            throw new ConflictException('Invalid credentials');
+        }
+
+        if (user.email && existingUser.email !== user.email) {
+            await this.userRepository.update(user.id, {
+                email: user.email
+            });
+        }
+
+
+        if (user.password && user.password !== user.confirmPassword) {
+            if (user.password !== user.confirmPassword) {
+                throw new FormBadRequestException(ErrorCode.passwordNotMatch, 'Passwords do not match', 'password');
+            }
+
+            const hashedPassword = await bcrypt.hash(user.password, 10);
+            if (!hashedPassword) {
+                throw new ConflictException('Something went wrong. Please try again later.');
+            }
+            await this.userRepository.update(user.id, {
+                email: user.email,
+                password: hashedPassword
+            });
+        }
+
+        return user;
+    }
+
+    async deleteUser(token: string) {
+        const decoded = this.jwtService.verify(token);
+        if (!decoded) {
+            throw new ConflictException('Invalid credentials');
+        }
+
+        const user = await this.userRepository.findOne({
+            where: {
+                id: decoded.user.id
+            }
+        });
+
         if (!user) {
             throw new ConflictException('Invalid credentials');
         }
 
-        // Hash security
-        const hashedPassword = await bcrypt.hash(password, 10);
-        if (!hashedPassword) {
-            throw new ConflictException('Something went wrong. Please try again later.');
-        }
-        return this.userRepository.update(userId, { password: hashedPassword });
+        return this.userRepository.remove(user);
     }
 
     // sendEmailForgotPassword(email: string) {

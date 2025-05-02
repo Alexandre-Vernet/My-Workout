@@ -13,14 +13,15 @@ import { MenuUrls } from './shared/menu-urls';
 import { WorkoutSessionComponent } from './navbar/workout/workout-session/workout-session.component';
 import { defaultRedirect } from './auth/default-redirect.guard';
 import { Component } from '@angular/core';
-
+import { ViewProfileComponent } from './navbar/view-profile/view-profile.component';
 
 
 @Component({
     selector: 'app-empty',
     template: ''
 })
-export class EmptyComponent {}
+export class EmptyComponent {
+}
 
 export const appRoutes: Route[] = [
     {
@@ -55,6 +56,20 @@ export const appRoutes: Route[] = [
             {
                 path: '**',
                 redirectTo: 'select-muscle-group-workout'
+            }
+        ],
+        canActivate: [authGuard]
+    },
+    {
+        path: MenuUrls.user,
+        children: [
+            {
+                path: 'view-profile',
+                component: ViewProfileComponent
+            },
+            {
+                path: '**',
+                redirectTo: 'view-profile'
             }
         ],
         canActivate: [authGuard]

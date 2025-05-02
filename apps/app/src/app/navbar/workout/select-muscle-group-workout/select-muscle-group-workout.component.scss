@@ -5,25 +5,25 @@
     align-items: center;
     justify-content: center;
     gap: 15px;
-    background: #f5f8fc;
 
-    .muscle-group-card {
+    a {
         width: 100%;
-        padding: 1.2em 2em;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        background: #f9f9f9;
+        text-decoration: none;
+        color: var(--p-text-color);
+        text-underline: none;
 
-
-        a {
-            text-decoration: none;
-            color: black;
+        .muscle-group-card {
+            padding: 1.2em 2em;
+            border-radius: 8px;
         }
     }
 
-
-    .recommended {
+    .recommended-light {
         background: #e8f2fd;
+    }
+
+    .recommended-dark {
+        background: #1f2a36;
     }
 
 }

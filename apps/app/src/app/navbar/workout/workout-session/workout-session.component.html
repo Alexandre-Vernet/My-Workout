@@ -1,4 +1,5 @@
 <p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
+<p-confirmdialog />
 
 <div #swipeZone class="workout-session">
     <ng-container *ngIf="isLoading else content">
@@ -57,11 +58,17 @@
                         <ng-template #content let-activateCallback="activateCallback">
                             <div class="flex-1 flex-col gap-2 mx-auto mb-6" style="max-width: 20rem">
                                 <div class="text-center mt-4 mb-4 text-xl font-semibold">
-                                    <h3>{{ exercise.name | uppercase }}</h3>
+                                    <h3 class="text-2xl">{{ exercise.name | uppercase }}</h3>
                                 </div>
                                 <div class="flex items-center mt-2">
-                                    <button (click)="decreaseWeight()" pButton pRipple type="button" icon="pi pi-minus" class="button-increase-decrease-weight"
-                                            [disabled]="timer.interval"></button>
+                                    <button (click)="decreaseWeight()" pButton pRipple type="button" icon="pi pi-minus"
+                                            class="button-increase-decrease-weight"
+                                            [disabled]="timer.interval"
+                                            [ngClass]="{
+                                            'border-dark': isDarkMode,
+                                            'border-light': !isDarkMode,
+                                            }"
+                                    ></button>
 
                                     <p-inputNumber
                                         [(ngModel)]="weight"
@@ -69,8 +76,13 @@
                                         [suffix]="' kg'">
                                     </p-inputNumber>
 
-                                    <button (click)="increaseWeight()" pButton pRipple type="button" icon="pi pi-plus" class="button-increase-decrease-weight"
-                                            [disabled]="timer.interval"></button>
+                                    <button (click)="increaseWeight()" pButton pRipple type="button" icon="pi pi-plus"
+                                            class="button-increase-decrease-weight"
+                                            [disabled]="timer.interval"
+                                            [ngClass]="{
+                                            'border-dark': isDarkMode,
+                                            'border-light': !isDarkMode,
+                                            }"></button>
                                 </div>
                             </div>
                         </ng-template>
@@ -80,22 +92,7 @@
         </p-stepper>
 
         <div *ngIf="exercisesMade.length > 0" class="card">
-            <p-table [value]="exercisesMade" stripedRows scrollable="true" scrollHeight="200px">
-                <ng-template #header>
-                    <tr>
-                        <th id="id" class="text-center">N°</th>
-                        <th id="weight" class="text-center">Poids</th>
-                        <th id="restTime" class="text-center">Temps de repos</th>
-                    </tr>
-                </ng-template>
-                <ng-template #body let-exercise>
-                    <tr>
-                        <td class="text-center">{{ exercise.id }}</td>
-                        <td class="text-center">{{ exercise.weight }} kg</td>
-                        <td class="text-center">{{ exercise.restTime }}</td>
-                    </tr>
-                </ng-template>
-            </p-table>
+           <app-exercises-table [exercisesMade]="exercisesMade"></app-exercises-table>
         </div>
 
         <div class="bottom-page">
