@@ -2,7 +2,6 @@
            [severity]="alert?.severity">
     {{ alert?.message }}
 </p-message>
-<p-confirmdialog />
 
 
 <div class="view-profile">
@@ -33,10 +32,6 @@
             'shadow-dark': isDarkMode,
             'shadow-light': !isDarkMode,
         }">
-        <div class="m-1 flex-1 flex flex-column gap-3">
-            <p-button pRipple icon="pi pi-lock" label="Déconnexion" severity="secondary" (onClick)="signOut()" />
-            <p-button pRipple icon="pi pi-trash" label="Supprimer mon compte" severity="danger"
-                      (onClick)="openDialogConfirmDeleteAccount()" />
-        </div>
+        <app-account-actions (showAlert)="displayAlert($event)"></app-account-actions>
     </div>
 </div>

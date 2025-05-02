@@ -54,6 +54,7 @@
             formControlConfirmPassword.invalid ||
             formControlPassword.value !== formControlConfirmPassword.value) ||
             currentEmail === formControlEmail.value"
+        pRipple
         class="mt-2"
         label="Mettre à jour" [loading]="isLoading" (onClick)="updateUser()" />
 </div>

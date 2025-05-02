@@ -1,0 +1,7 @@
+<p-confirmdialog />
+
+<div class="m-1 flex-1 flex flex-column gap-3">
+    <p-button pRipple icon="pi pi-lock" label="Déconnexion" severity="secondary" (onClick)="signOut()" />
+    <p-button pRipple icon="pi pi-trash" label="Supprimer mon compte" severity="danger"
+              (onClick)="openDialogConfirmDeleteAccount()" />
+</div>

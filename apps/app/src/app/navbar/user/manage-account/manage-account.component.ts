@@ -12,10 +12,11 @@ import { User } from '../../../../../../../libs/interfaces/user';
 import { Subject, take } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { Alert } from '../../../../../../../libs/interfaces/alert';
+import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-manage-account',
-    imports: [CommonModule, Button, Divider, FloatLabel, FormsModule, InputText, Message, Password, ToggleSwitch, ReactiveFormsModule],
+    imports: [CommonModule, Button, Divider, FloatLabel, FormsModule, InputText, Message, Password, ToggleSwitch, ReactiveFormsModule, Ripple],
     templateUrl: './manage-account.component.html',
     styleUrl: './manage-account.component.scss',
     standalone: true
