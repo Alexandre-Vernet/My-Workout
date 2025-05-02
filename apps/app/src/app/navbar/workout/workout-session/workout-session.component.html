@@ -92,22 +92,7 @@
         </p-stepper>
 
         <div *ngIf="exercisesMade.length > 0" class="card">
-            <p-table [value]="exercisesMade" stripedRows scrollable="true" scrollHeight="200px">
-                <ng-template #header>
-                    <tr>
-                        <th id="id" class="text-center">N°</th>
-                        <th id="weight" class="text-center">Poids</th>
-                        <th id="restTime" class="text-center">Temps de repos</th>
-                    </tr>
-                </ng-template>
-                <ng-template #body let-exercise>
-                    <tr>
-                        <td class="text-center">{{ exercise.id }}</td>
-                        <td class="text-center">{{ exercise.weight }} kg</td>
-                        <td class="text-center">{{ exercise.restTime }}</td>
-                    </tr>
-                </ng-template>
-            </p-table>
+           <app-exercises-table [exercisesMade]="exercisesMade"></app-exercises-table>
         </div>
 
         <div class="bottom-page">

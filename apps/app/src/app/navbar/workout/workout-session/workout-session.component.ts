@@ -19,10 +19,11 @@ import Hammer from 'hammerjs';
 import { Skeleton } from 'primeng/skeleton';
 import { ButtonDirective } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
+import { ExercisesTableComponent } from './exercises-table/exercises-table.component';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Message, Skeleton, ButtonDirective, Ripple],
+    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Message, Skeleton, ButtonDirective, Ripple, ExercisesTableComponent],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -38,7 +39,7 @@ export class WorkoutSessionComponent implements OnInit {
     activeStep: number = 1;
 
     @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
-    weight: number = null;
+    weight: number = 0;
 
     timer = {
         text: '00:00:00',
@@ -155,7 +156,7 @@ export class WorkoutSessionComponent implements OnInit {
     }
 
     toggleTimer() {
-        if (!this.weight || this.weight <= 0 || this.weight >= 500 ) {
+        if (!this.weight || this.weight <= 0 || this.weight >= 500) {
             return;
         }
 
@@ -197,7 +198,11 @@ export class WorkoutSessionComponent implements OnInit {
     private fillInputWeightLastSavedValue() {
         this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise.id)
             .pipe(take(1))
-            .subscribe(history => this.weight = history?.weight);
+            .subscribe(history => {
+                if (history) {
+                    this.weight = history?.weight;
+                }
+            });
     }
 
     private startTimer() {
