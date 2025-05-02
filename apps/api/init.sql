@@ -34,8 +34,8 @@ CREATE TABLE users
     id         SERIAL PRIMARY KEY,
     email      VARCHAR(50) UNIQUE,
     password   VARCHAR(200),
-    created_at DATE,
-    updated_at DATE
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
 );
 
 
@@ -52,8 +52,8 @@ CREATE TABLE history
     id          SERIAL PRIMARY KEY,
     user_id     INT REFERENCES users (id) ON DELETE CASCADE,
     exercise_id INT REFERENCES exercises (id) ON DELETE CASCADE,
-    weight      DECIMAL NOT NULL,
-    created_at  DATE    NOT NULL
+    weight      DECIMAL   NOT NULL,
+    created_at  TIMESTAMP NOT NULL
 );
 
 
