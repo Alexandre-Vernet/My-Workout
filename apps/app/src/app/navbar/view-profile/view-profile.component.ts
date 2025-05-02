@@ -4,10 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { Message } from 'primeng/message';
 import { ConfirmationService } from 'primeng/api';
-import { ChangeThemeComponent } from '../change-theme/change-theme.component';
-import { ManageAccountComponent } from '../manage-account/manage-account.component';
-import { Alert } from '../../../../../../../libs/interfaces/alert';
-import { AccountActionsComponent } from '../account-actions/account-actions.component';
+import { ChangeThemeComponent } from './change-theme/change-theme.component';
+import { ManageAccountComponent } from './manage-account/manage-account.component';
+import { Alert } from '../../../../../../libs/interfaces/alert';
+import { AccountActionsComponent } from './account-actions/account-actions.component';
 
 @Component({
     selector: 'app-view-profile',

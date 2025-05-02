@@ -13,7 +13,7 @@ import { MenuUrls } from './shared/menu-urls';
 import { WorkoutSessionComponent } from './navbar/workout/workout-session/workout-session.component';
 import { defaultRedirect } from './auth/default-redirect.guard';
 import { Component } from '@angular/core';
-import { ViewProfileComponent } from './navbar/user/view-profile/view-profile.component';
+import { ViewProfileComponent } from './navbar/view-profile/view-profile.component';
 
 
 @Component({
