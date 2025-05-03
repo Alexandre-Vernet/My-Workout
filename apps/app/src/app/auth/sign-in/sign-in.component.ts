@@ -9,7 +9,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Message } from 'primeng/message';
 
 @Component({
-    selector: 'superstore-sign-in',
+    selector: 'app-sign-in',
     templateUrl: './sign-in.component.html',
     styleUrls: ['../auth.component.scss'],
     imports: [
@@ -30,7 +30,7 @@ export class SignInComponent {
 
     formSignIn = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl('', [Validators.required, Validators.minLength(6)])
+        password: new FormControl('', [Validators.required])
     });
 
     constructor(

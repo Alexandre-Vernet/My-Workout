@@ -1,4 +1,4 @@
-<div class="container">
+<div class="auth-container">
     <div class="screen">
         <div class="screen__content">
             <form [formGroup]="formSignIn" (ngSubmit)="signIn()" class="login">
@@ -7,25 +7,28 @@
                         <fa-icon class="login__icon" [icon]="faIcons.faUser"></fa-icon>
                         <input formControlName="email" type="text" class="login__input" placeholder="Email">
                     </div>
+                    <p-message *ngIf="formSignIn.controls.email.touched && formSignIn.controls.email.errors?.['email']" severity="error" variant="simple" size="small">
+                        L'email n'est pas valide
+                    </p-message>
                     <p-message *ngIf="formSignIn.hasError('invalidCredential')" severity="error" variant="simple" size="small">
                         {{ formSignIn.getError('invalidCredential') }}
                     </p-message>
                 </div>
                 <div class="login__field">
                     <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
-                    <input formControlName="password" type="password" class="login__input" placeholder="Password">
+                    <input formControlName="password" type="password" class="login__input" placeholder="Mot de passe">
                 </div>
                 <button class="button login__submit" [ngClass]="{
                     'disabled': formSignIn.invalid
                     }"
                     [disabled]="formSignIn.invalid">
-                    <span class="button__text">Log In Now</span>
+                    <span class="button__text">Connexion</span>
                     <fa-icon class="button__icon" [icon]="faIcons.faChevronRight"></fa-icon>
                 </button>
             </form>
             <div class="sign-up">
                 <a routerLink="/auth/sign-up">
-                    <h3>No account ? Sign-up here</h3>
+                    <h3>Pas encore inscrit ? Créez un compte ici</h3>
                 </a>
             </div>
         </div>
