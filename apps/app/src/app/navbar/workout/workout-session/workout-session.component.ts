@@ -136,9 +136,11 @@ export class WorkoutSessionComponent implements OnInit {
 
 
     saveExercise() {
+        const weightNumber = Number(this.weight) > 0 ? this.weight : null;
+
         const exerciseMade: Exercise = {
             id: this.exercisesMade.length + 1,
-            weight: this.weight,
+            weight: weightNumber,
             restTime: '/'
         };
 
@@ -146,17 +148,18 @@ export class WorkoutSessionComponent implements OnInit {
 
         const history: History = {
             exercise: this.currentExercise,
-            weight: this.weight,
+            weight: weightNumber,
             createdAt: new Date()
         };
 
-        this.historyService.create(history).subscribe({
-            error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'enregister l\'historique'
-        });
+        this.historyService.create(history)
+            .subscribe({
+                error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'enregister l\'historique'
+            });
     }
 
     toggleTimer() {
-        if (!this.weight || this.weight <= 0 || this.weight >= 500) {
+        if (this.weight < 0 || this.weight >= 500) {
             return;
         }
 

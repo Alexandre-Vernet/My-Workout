@@ -101,8 +101,8 @@
             </div>
 
             <div (click)="toggleTimer()" class="button-toggle-timer" [ngClass]="{
-        'disabled': !this.weight || this.weight <= 0 || this.weight >= 500
-        }">
+                'disabled': this.weight < 0 || this.weight >= 500
+            }">
                 <ng-container *ngIf="timer.interval !== null else play">
                     <fa-icon [icon]="faIcons.faPause"></fa-icon>
                 </ng-container>
