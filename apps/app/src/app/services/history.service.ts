@@ -4,6 +4,7 @@ import { History } from '../../../../../libs/interfaces/history';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth/auth.service';
 import { switchMap, take } from 'rxjs';
+import { MuscleGroup } from '../../../../../libs/interfaces/MuscleGroup';
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +26,16 @@ export class HistoryService {
                 switchMap(user => {
                     history.user = user;
                     return this.http.post<History>(this.historyUrl, history);
+                })
+            );
+    }
+
+    getHistoryAndMuscleGroupByUserId() {
+        return this.authService.user$
+            .pipe(
+                take(1),
+                switchMap(user => {
+                    return this.http.get<MuscleGroup[]>(`${ this.historyUrl }/${ user.id }`);
                 })
             );
     }

@@ -11,6 +11,11 @@ export class HistoryController {
         return this.historyService.create(history);
     }
 
+    @Get(':userId')
+    getHistoryAndMuscleGroupByUserId(@Param() { userId }: {userId: string}) {
+        return this.historyService.getHistoryAndMuscleGroupByUserId(Number(userId));
+    }
+
     @Get(':userId/:exerciseId')
     findLastHistoryWeightByExerciseId(@Param('userId') userId: number, @Param('exerciseId') exerciseId: number) {
         return this.historyService.findLastHistoryWeightByExerciseId(userId, exerciseId);
