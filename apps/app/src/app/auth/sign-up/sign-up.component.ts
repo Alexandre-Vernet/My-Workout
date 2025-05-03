@@ -7,8 +7,6 @@ import { NgClass, NgIf } from '@angular/common';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronRight, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Message } from 'primeng/message';
-import { Password } from 'primeng/password';
-import { Divider } from 'primeng/divider';
 
 @Component({
     selector: 'app-sign-up',
@@ -20,9 +18,7 @@ import { Divider } from 'primeng/divider';
         NgIf,
         NgClass,
         FaIconComponent,
-        Message,
-        Password,
-        Divider
+        Message
     ]
 })
 export class SignUpComponent {
