@@ -14,6 +14,7 @@ import { WorkoutSessionComponent } from './navbar/workout/workout-session/workou
 import { defaultRedirect } from './auth/default-redirect.guard';
 import { Component } from '@angular/core';
 import { ViewProfileComponent } from './navbar/view-profile/view-profile.component';
+import { CalendarComponent } from './navbar/calendar/calendar.component';
 
 
 @Component({
@@ -41,7 +42,10 @@ export const appRoutes: Route[] = [
             }
         ]
     },
-
+    {
+        path: MenuUrls.calendar,
+        component: CalendarComponent
+    },
     {
         path: MenuUrls.workout,
         children: [
