@@ -44,7 +44,8 @@ export const appRoutes: Route[] = [
     },
     {
         path: MenuUrls.calendar,
-        component: CalendarComponent
+        component: CalendarComponent,
+        canActivate: [authGuard]
     },
     {
         path: MenuUrls.workout,
