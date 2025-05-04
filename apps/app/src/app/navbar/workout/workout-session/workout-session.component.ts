@@ -205,6 +205,8 @@ export class WorkoutSessionComponent implements OnInit {
             .subscribe(history => {
                 if (history) {
                     this.weight = history?.weight;
+                } else {
+                    this.weight = null;
                 }
             });
     }
