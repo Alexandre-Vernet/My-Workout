@@ -22,7 +22,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         weekends: true,
         events: [],
         firstDay: 1,
-        height: 500,
+        height: 600,
         buttonText: {
             today: 'Aujourd\'hui'
         }
