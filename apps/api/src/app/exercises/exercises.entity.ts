@@ -14,6 +14,9 @@ export class ExercisesEntity {
     @Column()
     description: string;
 
+    @Column({name: 'is_smart_workout'})
+    isSmartWorkout: boolean;
+
     @OneToMany(() => ExerciseMuscleEntity, exerciseMuscle => exerciseMuscle.exercise, { onDelete: 'CASCADE' })
     exerciseMuscle: ExerciseMuscleEntity[];
 
