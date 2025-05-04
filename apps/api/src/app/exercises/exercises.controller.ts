@@ -1,5 +1,6 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseInterceptors } from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
+import { AuthInterceptor } from '../auth/auth.interceptor';
 
 @Controller('exercises')
 export class ExercisesController {
@@ -12,6 +13,7 @@ export class ExercisesController {
         return this.exercisesService.findAllExercisesByMuscleGroupId(muscleGroupId);
     }
 
+    @UseInterceptors(AuthInterceptor)
     @Post('find-all-exercises-by-muscle-group-id-and-user-id')
     @HttpCode(200)
     findAllExercisesByMuscleGroupIdAndUserId(@Body() { muscleGroupId, userId }: {
@@ -21,7 +23,7 @@ export class ExercisesController {
         return this.exercisesService.findAllExercisesByMuscleGroupIdAndUserId(userId, muscleGroupId);
     }
 
-
+    @UseInterceptors(AuthInterceptor)
     @Post('find-exercises-by-muscle-group-id-and-user-id')
     @HttpCode(200)
     findExercisesByMuscleGroupIdAndUserId(@Body() { muscleGroupId, userId }: {

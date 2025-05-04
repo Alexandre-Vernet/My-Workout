@@ -4,11 +4,13 @@ import { ExercisesController } from './exercises.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExercisesEntity } from './exercises.entity';
 import { MuscleGroupModule } from '../muscle-group/muscle-group.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([ExercisesEntity]),
-        MuscleGroupModule
+        MuscleGroupModule,
+        AuthModule
     ],
     controllers: [ExercisesController],
     providers: [ExercisesService]
