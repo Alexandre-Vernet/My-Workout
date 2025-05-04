@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core';
@@ -13,7 +13,7 @@ import { take } from 'rxjs';
     styleUrl: './calendar.component.scss',
     standalone: true
 })
-export class CalendarComponent implements OnInit {
+export class CalendarComponent implements OnInit, AfterViewInit {
 
     calendarOptions: CalendarOptions = {
         locale: 'fr',
@@ -27,6 +27,10 @@ export class CalendarComponent implements OnInit {
             today: 'Aujourd\'hui'
         }
     };
+
+    @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
+    swipeStartX = 0;
+    swipeEndX = 0;
 
     constructor(
         private readonly historyService: HistoryService
@@ -48,7 +52,46 @@ export class CalendarComponent implements OnInit {
     }
 
 
+    ngAfterViewInit() {
+        const el = this.swipeZone.nativeElement;
+
+        el.addEventListener('touchstart', (e: TouchEvent) => {
+            this.swipeStartX = e.changedTouches[0].screenX;
+        });
+
+        el.addEventListener('touchend', (e: TouchEvent) => {
+            this.swipeEndX = e.changedTouches[0].screenX;
+            this.handleSwipe();
+        });
+    }
+
+    handleSwipe() {
+        const deltaX = this.swipeEndX - this.swipeStartX;
+
+        if (Math.abs(deltaX) < 50) return; // Ignore small swipes
+
+        if (deltaX < 0) {
+            this.nextMonth();
+        } else {
+            this.previousMonth();
+        }
+    }
+
+
     handleDateClick(arg) {
-        console.log(arg);
+    }
+
+    private previousMonth() {
+        const btnPreviousMonth = document.querySelector('.fc-prev-button') as HTMLButtonElement;
+        if (btnPreviousMonth) {
+            btnPreviousMonth.click();
+        }
+    }
+
+    private nextMonth() {
+        const btnNextMonth = document.querySelector('.fc-next-button') as HTMLButtonElement;
+        if (btnNextMonth) {
+            btnNextMonth.click();
+        }
     }
 }
