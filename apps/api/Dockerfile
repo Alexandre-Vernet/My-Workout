@@ -4,9 +4,11 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --production
+RUN npm install
 
 COPY . .
+
+ENV NX_NATIVE=false
 
 RUN npm run build:api
 
