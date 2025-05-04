@@ -7,6 +7,6 @@ export class MuscleGroup {
 }
 
 export const renameMuscleGroupMap: Record<string, string> = {
-    'Pectoraux': 'Pec',
+    'Pectoraux': 'Pecs',
     'Abdominaux': 'Abdos'
 };
