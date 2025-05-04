@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core';
@@ -11,7 +11,8 @@ import { take } from 'rxjs';
     imports: [CommonModule, FullCalendarModule],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
-    standalone: true
+    standalone: true,
+    encapsulation: ViewEncapsulation.None
 })
 export class CalendarComponent implements OnInit, AfterViewInit {
 
@@ -25,6 +26,11 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         height: 600,
         buttonText: {
             today: 'Aujourd\'hui'
+        },
+        headerToolbar: {
+            left: 'title,prev,next',
+            center: '',
+            right: 'today'
         }
     };
 
