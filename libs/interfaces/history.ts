@@ -1,7 +1,7 @@
 import { Exercise } from './exercise';
 import { User } from './user';
 
-export class History {
+export interface History {
     id?: number;
     user?: User;
     exercise: Exercise;
