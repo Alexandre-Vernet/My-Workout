@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { map, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -27,7 +27,8 @@ import { ExercisesTableComponent } from './exercises-table/exercises-table.compo
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
-    providers: [ConfirmationService]
+    providers: [ConfirmationService],
+    encapsulation: ViewEncapsulation.None
 
 })
 export class WorkoutSessionComponent implements OnInit {
