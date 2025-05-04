@@ -155,10 +155,6 @@ $input-border: #D4D3E8;
     color: $primary;
 }
 
-.disabled {
-    opacity: .6;
-}
-
 .sign-up {
     position: absolute;
     height: 90px;
@@ -167,13 +163,16 @@ $input-border: #D4D3E8;
     bottom: 0px;
     right: 18px;
     color: $white;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
 
     h3 {
         font-size: .9em;
     }
-}
 
-a {
-    text-decoration: none;
-    color: $white;
+    span, a {
+        text-decoration: none;
+        color: $white;
+    }
 }

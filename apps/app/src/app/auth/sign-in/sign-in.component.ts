@@ -7,6 +7,10 @@ import { NgClass, NgIf } from '@angular/common';
 import { faUser, faLock, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Message } from 'primeng/message';
+import { Dialog } from 'primeng/dialog';
+import { InputText } from 'primeng/inputtext';
+import { Button } from 'primeng/button';
+import { FloatLabel } from 'primeng/floatlabel';
 
 @Component({
     selector: 'app-sign-in',
@@ -18,7 +22,11 @@ import { Message } from 'primeng/message';
         NgIf,
         NgClass,
         FontAwesomeModule,
-        Message
+        Message,
+        Dialog,
+        InputText,
+        Button,
+        FloatLabel
     ]
 })
 export class SignInComponent {
@@ -32,6 +40,10 @@ export class SignInComponent {
         email: new FormControl('', [Validators.required, Validators.email]),
         password: new FormControl('', [Validators.required])
     });
+
+    formResetPasswordEmail = new FormControl(this.formSignIn.controls.email.value, Validators.email);
+
+    showDialogResetPassword: boolean;
 
     constructor(
         private readonly authService: AuthService,
@@ -55,5 +67,9 @@ export class SignInComponent {
                 next: () => this.router.navigateByUrl('/'),
                 error: (err) => this.formSignIn.setErrors({ [err.error.errorCode]: err.error.message })
             });
+    }
+
+    resetPassword() {
+
     }
 }
