@@ -71,7 +71,8 @@ export class ExercisesService {
             `
                 select e.id,
                        e.name,
-                       e.description
+                       e.description,
+                       e.is_smart_workout as "isSmartWorkout"
                 from exercises e
                          left join user_exercise ue on
                     e.id = ue.exercise_id
