@@ -9,7 +9,7 @@
     <ng-template #body let-exercise>
         <tr>
             <td class="text-center">{{ exercise.id }}</td>
-            <td class="text-center">{{ exercise.weight }} kg</td>
+            <td class="text-center">{{ exercise.weight > 0 ? exercise.weight + ' kg' : '/' }}</td>
             <td class="text-center">{{ exercise.restTime }}</td>
         </tr>
     </ng-template>
