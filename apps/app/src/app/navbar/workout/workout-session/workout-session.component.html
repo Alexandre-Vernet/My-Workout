@@ -65,8 +65,8 @@
                                             class="button-increase-decrease-weight"
                                             [disabled]="timer.interval"
                                             [ngClass]="{
-                                            'border-dark': isDarkMode,
-                                            'border-light': !isDarkMode,
+                                                'border-dark': isDarkMode,
+                                                'border-light': !isDarkMode,
                                             }"
                                     ></button>
 
@@ -80,9 +80,12 @@
                                             class="button-increase-decrease-weight"
                                             [disabled]="timer.interval"
                                             [ngClass]="{
-                                            'border-dark': isDarkMode,
-                                            'border-light': !isDarkMode,
+                                                'border-dark': isDarkMode,
+                                                'border-light': !isDarkMode,
                                             }"></button>
+
+                                    <i *ngIf="weight % 5 === 0" (click)="dialogConvertWeightToElastics.toggle($event)"
+                                       class="ml-1 pi pi-info-circle"></i>
                                 </div>
                             </div>
                         </ng-template>
@@ -92,7 +95,7 @@
         </p-stepper>
 
         <div *ngIf="exercisesMade.length > 0" class="card">
-           <app-exercises-table [exercisesMade]="exercisesMade"></app-exercises-table>
+            <app-exercises-table [exercisesMade]="exercisesMade"></app-exercises-table>
         </div>
 
         <div class="bottom-page">
@@ -112,4 +115,19 @@
             </div>
         </div>
     </ng-template>
+</div>
+
+<div class="card flex justify-center">
+    <p-popover #dialogConvertWeightToElastics>
+        <div class="p-3">
+            <h4 class="mb-2 font-semibold text-lg">Élastiques utilisés</h4>
+            <ul>
+                <li *ngFor="let elastic of weightToElastics"
+                    class="flex items-center justify-between p-2 gap-1 rounded">
+                    <span class="font-medium text-primary">{{ elastic.name }}</span>
+                    <span class="text-sm"> ({{ elastic.weight }} kg)</span>
+                </li>
+            </ul>
+        </div>
+    </p-popover>
 </div>
