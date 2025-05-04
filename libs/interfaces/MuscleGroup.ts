@@ -1,4 +1,4 @@
-export class MuscleGroup {
+export interface MuscleGroup {
     id: number;
     name: string;
     exerciseCount?: number;
