@@ -1,4 +1,4 @@
-FROM node:18-slim
+FROM node:alpine
 
 WORKDIR /app
 
@@ -7,8 +7,6 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-
-ENV NX_NATIVE=false
 
 RUN npm run build:api
 
