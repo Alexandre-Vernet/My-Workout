@@ -1,6 +1,8 @@
 <div class="auth-container">
     <div class="screen">
         <div class="screen__content">
+            <p-message *ngIf="alert?.message" [severity]="alert?.severity">{{ alert?.message }}</p-message>
+
             <form [formGroup]="formSignIn" (ngSubmit)="signIn()" class="login">
                 <div>
                     <div class="login__field">

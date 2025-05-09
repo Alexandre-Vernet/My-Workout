@@ -1,29 +1,39 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { distinctUntilChanged, map, Subject, switchMap, takeUntil } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { take } from 'rxjs';
 import { NgClass, NgIf } from '@angular/common';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { FloatLabel } from 'primeng/floatlabel';
+import { Message } from 'primeng/message';
+import { Password } from 'primeng/password';
+import { User } from '../../../../../../libs/interfaces/user';
 
 @Component({
     selector: 'app-reset-password',
     templateUrl: './reset-password.component.html',
+    styleUrls: ['./reset-password.component.scss'],
     imports: [
         ReactiveFormsModule,
         NgClass,
         NgIf,
-        RouterLink
+        Button,
+        Dialog,
+        FloatLabel,
+        Message,
+        Password
     ],
-    styleUrls: ['./reset-password.component.scss']
+    standalone: true
 })
-export class ResetPasswordComponent implements OnInit, OnDestroy {
+export class ResetPasswordComponent implements OnInit {
     formResetPassword = new FormGroup({
-        newPassword: new FormControl('', [Validators.required, Validators.min(6)]),
-        confirmPassword: new FormControl('', [Validators.required, Validators.min(6)])
+        newPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
+        confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     });
-    token: string;
 
-    unsubscribe$ = new Subject<void>();
+    user: User;
 
     constructor(
         private readonly authService: AuthService,
@@ -33,26 +43,24 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.activatedRoute.queryParams.pipe(
-            takeUntil(this.unsubscribe$),
-            distinctUntilChanged(),
-            map((param: { token: string }) => {
-                localStorage.setItem('access-token', param.token);
-                return param.token;
-            }),
-            switchMap(() => this.authService.signInWithAccessToken())
-        ).subscribe({
-            next: ({ accessToken }) => this.token = accessToken,
-            error: () => {
-                this.authService.error = 'Invalid token';
-                void this.router.navigate(['/sign-in']);
-            }
-        });
+        const token = this.activatedRoute.snapshot.queryParamMap.get('token');
+        this.verifyToken(token);
     }
 
-    ngOnDestroy() {
-        this.unsubscribe$.next();
-        this.unsubscribe$.complete();
+    private verifyToken(token: string) {
+        this.authService.verifyToken(token)
+            .pipe(take(1))
+            .subscribe({
+                next: (user) => this.user = user,
+                error: () => {
+                    // TODO Add pop-up : invalid token
+                    this.redirectToSignIn();
+                }
+            });
+    }
+
+    redirectToSignIn() {
+        this.router.navigate(['/auth/sign-in']);
     }
 
     submitForm() {
@@ -68,19 +76,20 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     }
 
     resetPassword() {
-        const { newPassword: password, confirmPassword } = this.formResetPassword.value;
+        const userId = this.user.id;
+        const password = this.formResetPassword.controls.newPassword.value;
 
-        // this.authService.updatePassword(password, confirmPassword)
-        //     .subscribe({
-        //         next: () => {
-        //             this.formResetPassword.reset();
-        //             void this.router.navigateByUrl('/');
-        //         },
-        //         error: (err) => {
-        //             if (err.error?.message) {
-        //                 this.formResetPassword.setErrors({ error: err.error.message });
-        //             }
-        //         }
-        //     });
+        this.authService.updatePassword(userId, password)
+            .subscribe({
+                next: () => {
+                    this.formResetPassword.reset();
+                    this.router.navigate(['/']);
+                },
+                error: (err) => {
+                    if (err.error?.message) {
+                        this.formResetPassword.setErrors({ error: err.error.message });
+                    }
+                }
+            });
     }
 }

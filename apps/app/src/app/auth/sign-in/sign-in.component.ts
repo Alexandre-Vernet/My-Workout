@@ -11,6 +11,9 @@ import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
 import { FloatLabel } from 'primeng/floatlabel';
+import emailjs from '@emailjs/browser';
+import { environment } from '../../../environments/environment';
+import { Alert } from '../../../../../../libs/interfaces/alert';
 
 @Component({
     selector: 'app-sign-in',
@@ -44,6 +47,7 @@ export class SignInComponent {
     formResetPasswordEmail = new FormControl(this.formSignIn.controls.email.value, Validators.email);
 
     showDialogResetPassword: boolean;
+    alert: Alert;
 
     constructor(
         private readonly authService: AuthService,
@@ -70,6 +74,33 @@ export class SignInComponent {
     }
 
     resetPassword() {
+        const email = this.formResetPasswordEmail.value;
 
+        this.authService.sendEmailForgotPassword(email)
+            .subscribe({
+                next: ({ linkResetPassword }) => {
+                    this.showDialogResetPassword = false;
+
+                    emailjs.send(environment.EMAIL_JS.SERVICE_ID, environment.EMAIL_JS.TEMPLATE_ID, {
+                            linkResetPassword,
+                            email
+                        },
+                        environment.EMAIL_JS.PUBLIC_KEY
+                    ).then(
+                        () => {
+                            this.alert = {
+                                severity: 'success',
+                                message: 'Un email vous a été envoyé pour réinitialiser votre mot de passe'
+                            };
+                        },
+                        () => {
+                            this.alert = {
+                                severity: 'error',
+                                message: 'Une erreur s`est produite lors de l`envoi de l`email'
+                            };
+                        }
+                    );
+                }
+            });
     }
 }

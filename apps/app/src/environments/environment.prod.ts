@@ -6,4 +6,9 @@ export const environment = {
     userExerciseUrl: () => `${ environment.API_URL }/user-exercise`,
     exerciseUrl: () => `${ environment.API_URL }/exercises`,
     historyUrl: () => `${ environment.API_URL }/history`,
+    EMAIL_JS: {
+        PUBLIC_KEY: 'd3gvz9u7Hm4sLnK2e',
+        SERVICE_ID: 'service_4b174bh',
+        TEMPLATE_ID: 'template_6oukjrr'
+    }
 };

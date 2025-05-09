@@ -15,6 +15,7 @@ import { defaultRedirect } from './auth/default-redirect.guard';
 import { Component } from '@angular/core';
 import { ViewProfileComponent } from './navbar/view-profile/view-profile.component';
 import { CalendarComponent } from './navbar/calendar/calendar.component';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 
 
 @Component({
@@ -89,6 +90,10 @@ export const appRoutes: Route[] = [
             {
                 path: 'sign-up',
                 component: SignUpComponent
+            },
+            {
+                path: 'reset-password',
+                component: ResetPasswordComponent
             },
             {
                 path: '**',

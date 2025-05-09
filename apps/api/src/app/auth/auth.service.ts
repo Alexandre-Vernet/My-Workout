@@ -13,7 +13,7 @@ export class AuthService {
     constructor(
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
-        private jwtService: JwtService
+        private readonly jwtService: JwtService
     ) {
     }
 
@@ -148,22 +148,49 @@ export class AuthService {
         return this.userRepository.remove(user);
     }
 
-    // sendEmailForgotPassword(email: string) {
-    //   const options: FindOneOptions = {
-    //     where: {
-    //       email
-    //     }
-    //   };
-    //
-    //   this.userRepository.findOne(options)
-    //     .then(user => {
-    //       if (user) {
-    //         // Generate URL with token
-    //         const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
-    //         const token = this.jwtService.sign({ user });
-    //         const linkResetPassword = `${ ALLOWED_ORIGIN }/auth/reset-password?token=${ token }`;
-    //         return this.emailService.sendEmailResetPassword(user, linkResetPassword);
-    //       }
-    //     });
-    // }
+    async sendEmailForgotPassword(email: string) {
+        const options: FindOneOptions = {
+            where: {
+                email
+            }
+        };
+
+        const existingUser = await this.userRepository.findOne(options);
+
+        const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
+        const token = this.jwtService.sign({ existingUser });
+        return { linkResetPassword: `${ ALLOWED_ORIGIN }/auth/reset-password?token=${ token }` };
+    }
+
+    async updatePassword(id: number, password: string) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        if (!hashedPassword) {
+            throw new ConflictException('Something went wrong. Please try again later.');
+        }
+        await this.userRepository.update(id, {
+            password: hashedPassword
+        });
+
+        const user = await this.userRepository.find({
+            where: {
+                id: id
+            }
+        });
+
+        return {
+            accessToken: await this.jwtService.signAsync({ user }),
+            user
+        };
+    }
+
+    verifyToken(token: string) {
+        const decoded = this.jwtService.verify(token);
+        if (!decoded) {
+            throw new ConflictException('Invalid credentials');
+        }
+
+        const user: User = decoded.existingUser;
+
+        return user;
+    }
 }

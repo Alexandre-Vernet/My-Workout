@@ -55,8 +55,22 @@ export class AuthService {
         return this.http.put<User>(`${ this.authUrl }`, { user });
     }
 
-    sendEmailForgotPassword(email: string): Observable<void> {
-        return this.http.post<void>(`${ this.authUrl }/send-email-reset-password`, { email });
+    sendEmailForgotPassword(email: string) {
+        return this.http.post<{ linkResetPassword: string }>(`${ this.authUrl }/send-email-reset-password`, { email });
+    }
+
+    updatePassword(userId: number, password: string) {
+        return this.http.put<{ user: User, accessToken: string }>(`${ this.authUrl }/reset-password/${ userId }`, { password })
+            .pipe(
+                tap(({ user, accessToken }) => {
+                    this.userSubject.next(user);
+                    localStorage.setItem('access-token', accessToken);
+                })
+            );
+    }
+
+    verifyToken(token: string) {
+        return this.http.post<User>(`${ this.authUrl }/verify-token`, { token });
     }
 
     deleteAccount() {
