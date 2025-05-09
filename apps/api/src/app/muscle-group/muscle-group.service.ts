@@ -20,6 +20,7 @@ export class MuscleGroupService {
                      left join exercise_muscle em on em.muscle_id = m.id
                      left join exercises e on e.id = em.exercise_id
             group by mg.id, mg.name
+            order by mg.id
         `);
     }
 
