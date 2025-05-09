@@ -24,16 +24,16 @@ export class HistoryService {
             .innerJoin('e.exerciseMuscle', 'em')
             .innerJoin('em.muscle', 'm')
             .innerJoin('m.muscleGroup', 'mg')
-            .select('mg.id', 'id')
-            .addSelect('mg.name', 'name')
-            .addSelect('h.createdAt', 'createdAt')
-            .groupBy('h.id, mg.id, mg.name, h.createdAt')
+            .select("DATE_TRUNC('day', h.createdAt)", 'date')
+            .addSelect("ARRAY_AGG(DISTINCT mg.name)", 'muscleGroups')
             .where('h.user.id = :userId', { userId })
+            .groupBy("DATE_TRUNC('day', h.createdAt)")
+            .orderBy("DATE_TRUNC('day', h.createdAt)", 'DESC')
             .getRawMany();
 
 
         muscleGroups.forEach(m => {
-            m.name = renameMuscleGroupMap[m.name] ?? m.name;
+            m.muscleGroups = m.muscleGroups.map(name => renameMuscleGroupMap[name] ?? name);
         });
 
         return muscleGroups;

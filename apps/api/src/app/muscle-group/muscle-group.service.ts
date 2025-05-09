@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MuscleGroupEntity } from './muscle-group.entity';
 import { DataSource, Repository } from 'typeorm';
+import { MuscleGroup } from '../../../../../libs/interfaces/MuscleGroup';
 
 @Injectable()
 export class MuscleGroupService {
@@ -25,8 +26,8 @@ export class MuscleGroupService {
     }
 
     async findAllMuscleGroupAndCountExercisesByUserId(userId: number) {
-        const muscleGroup: any[] = await this.dataSource.query(`
-            select mg.id, mg.name, COUNT(distinct ue.exercise_id) as exercise_count
+        const muscleGroup: MuscleGroup[] = await this.dataSource.query(`
+            select mg.id, mg.name, COUNT(distinct ue.exercise_id) as exerciseCount
             from muscle_group mg
                      left join muscles m on m.muscle_group_id = mg.id
                      left join exercise_muscle em on em.muscle_id = m.id
@@ -39,7 +40,7 @@ export class MuscleGroupService {
             return {
                 id: m.id,
                 name: m.name,
-                exerciseCount: Number(m.exercise_count)
+                exerciseCount: Number(m.exerciseCount)
             };
         });
     }
