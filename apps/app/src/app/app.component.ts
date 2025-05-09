@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuthService } from './auth/auth.service';
-import { filter, take } from 'rxjs';
+import { filter } from 'rxjs';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -56,10 +56,6 @@ export class AppComponent implements OnInit {
         this.primeng.ripple.set(true);
         this.themeService.loadTheme();
         this.themeService.loadDarkMode();
-
-        this.authService.signInWithAccessToken()
-            .pipe(take(1))
-            .subscribe();
 
         this.router.events.pipe(
             filter(event => event instanceof NavigationEnd)

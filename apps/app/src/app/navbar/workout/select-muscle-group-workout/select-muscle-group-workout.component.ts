@@ -35,7 +35,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     ngOnInit() {
         forkJoin([
-            this.muscleGroupService.findAllMuscleGroup(),
+            this.muscleGroupService.findAllMuscleGroupAndCountExercisesByUserId(),
             this.muscleGroupService.suggestMuscleGroup()
         ])
             .pipe(take(1))
