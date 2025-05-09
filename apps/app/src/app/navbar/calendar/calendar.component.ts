@@ -48,12 +48,13 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         this.historyService.getHistoryAndMuscleGroupByUserId()
             .pipe(take(1))
             .subscribe(history => {
-                this.calendarOptions.events = history.map(h => {
-                    return {
-                        title: h.name,
-                        start: h.createdAt
-                    };
+                this.calendarOptions.events = history.flatMap(h => {
+                    return h.muscleGroups.map(name => ({
+                        title: name,
+                        start: h.date
+                    }));
                 });
+
             });
     }
 
