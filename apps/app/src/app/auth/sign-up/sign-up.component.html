@@ -40,9 +40,9 @@
                 </div>
 
                 <button type="submit" class="button login__submit" [ngClass]="{
-        'disabled': formSignUp.invalid
-        }"
-                        [disabled]="formSignUp.invalid">
+                    'disabled': formSignUp.invalid || formSignUp.controls.password.value !== formSignUp.controls.confirmPassword.value
+                    }"
+                        [disabled]="formSignUp.invalid || formSignUp.controls.password.value !== formSignUp.controls.confirmPassword.value">
                     <span class="button__text">S'inscrire</span>
                     <fa-icon class="button__icon" [icon]="faIcons.faChevronRight"></fa-icon>
                 </button>
