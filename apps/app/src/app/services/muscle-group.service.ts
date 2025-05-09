@@ -20,6 +20,10 @@ export class MuscleGroupService {
     }
 
     findAllMuscleGroup() {
+        return this.http.get<MuscleGroup[]>(this.muscleGroupUrl);
+    }
+
+    findAllMuscleGroupAndCountExercisesByUserId() {
         return this.authService.user$
             .pipe(
                 take(1),

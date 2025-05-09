@@ -5,9 +5,14 @@ import { MuscleGroupService } from './muscle-group.service';
 export class MuscleGroupController {
   constructor(private readonly muscleGroupService: MuscleGroupService) {}
 
+  @Get()
+  findAll() {
+    return this.muscleGroupService.findAllMuscleGroupByUserId();
+  }
+
   @Get('users/:userId')
-  findAll(@Param('userId') userId: number) {
-    return this.muscleGroupService.findAllMuscleGroupByUserId(userId);
+  findAllMuscleGroupAndCountExercisesByUserId(@Param('userId') userId: number) {
+    return this.muscleGroupService.findAllMuscleGroupAndCountExercisesByUserId(userId);
   }
 
     @Get('suggest-muscle-group/users/:userId')

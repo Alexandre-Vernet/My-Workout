@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, Put, Delete, Req, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, Param, Post, Put, Req, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthInterceptor } from './auth.interceptor';
 import { User } from '../../../../../libs/interfaces/user';
@@ -43,9 +43,19 @@ export class AuthController {
         return this.authService.deleteUser(token);
     }
 
-    // @HttpCode(200)
-    // @Post('send-email-reset-password')
-    // sendEmailForgotPassword(@Body() body: { email: string }) {
-    //   return this.authService.sendEmailForgotPassword(body.email);
-    // }
+    @HttpCode(200)
+    @Post('send-email-reset-password')
+    sendEmailForgotPassword(@Body() { email }: { email: string }) {
+        return this.authService.sendEmailForgotPassword(email);
+    }
+
+    @Put('reset-password/:userId')
+    updatePassword(@Param('userId') userId: number, @Body() { password }: { password: string }) {
+        return this.authService.updatePassword(Number(userId), password);
+    }
+
+    @Post('verify-token')
+    verifyToken(@Body() { token }: { token: string }) {
+        return this.authService.verifyToken(token);
+    }
 }
