@@ -56,11 +56,11 @@
                 <ng-container *ngFor="let exercise of exercises; let index = index">
                     <p-step-panel [value]="index + 1">
                         <ng-template #content let-activateCallback="activateCallback">
-                            <div class="flex-1 flex-col gap-2 mx-auto mb-6" style="max-width: 20rem">
+                            <div class="flex-1 flex flex-column justify-content-center mb-6">
                                 <div class="text-center mt-4 mb-4 text-xl font-semibold">
                                     <h3 class="text-2xl">{{ exercise.name | uppercase }}</h3>
                                 </div>
-                                <div class="flex items-center mt-2">
+                                <div class="flex-1 flex justify-content-center items-center mt-2">
                                     <button (click)="decreaseWeight()" pButton pRipple type="button" icon="pi pi-minus"
                                             class="button-increase-decrease-weight"
                                             [disabled]="timer.interval"
@@ -84,7 +84,7 @@
                                                 'border-light': !isDarkMode,
                                             }"></button>
 
-                                    <i *ngIf="exercise.isSmartWorkout && this.weight % 5 === 0" (click)="dialogConvertWeightToElastics.toggle($event)"
+                                    <i *ngIf="exercise.isSmartWorkout && this.weight % 5 === 0 && this.weight > 0" (click)="dialogConvertWeightToElastics.toggle($event)"
                                        class="ml-1 pi pi-info-circle"></i>
                                 </div>
                             </div>

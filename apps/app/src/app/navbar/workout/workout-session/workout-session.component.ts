@@ -129,7 +129,7 @@ export class WorkoutSessionComponent implements OnInit {
         if (!this.weight) {
             return;
         }
-        this.weight = Number(this.weight) - 1.25;
+        this.weight = Number(this.weight) - 2.5;
         this.convertWeightToElastics();
     }
 
@@ -137,7 +137,7 @@ export class WorkoutSessionComponent implements OnInit {
         if (this.weight >= 500) {
             return;
         }
-        this.weight = Number(this.weight) + 1.25;
+        this.weight = Number(this.weight) + 2.5;
         this.convertWeightToElastics();
     }
 
