@@ -1,4 +1,6 @@
-<div class="router">
+<div class="router" [ngClass]="{
+ 'iphone': isIphone
+}">
     <router-outlet></router-outlet>
 </div>
 <app-navbar [ngClass]="{
