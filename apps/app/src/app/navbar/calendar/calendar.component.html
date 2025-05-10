@@ -1,7 +1,11 @@
 <div #swipeZone class="p-4">
     <full-calendar [options]="calendarOptions">
         <ng-template #eventContent let-arg>
-            <span class="text-sm" (click)="handleDateClick(arg)">{{ arg.event.title }}</span>
+            <span class="text-sm">{{ arg.event.title }}</span>
         </ng-template>
     </full-calendar>
 </div>
+
+
+
+<p-confirmdialog />

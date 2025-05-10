@@ -1,5 +1,6 @@
 export interface MuscleGroup {
     id: number;
+    ids: number[];
     name: string;
     exerciseCount?: number;
     isRecommended?: boolean;

@@ -1,18 +1,22 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { CalendarOptions } from '@fullcalendar/core';
+import { CalendarOptions, EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { HistoryService } from '../../services/history.service';
 import { take } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
     selector: 'app-calendar',
-    imports: [CommonModule, FullCalendarModule],
+    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    providers: [ConfirmationService]
 })
 export class CalendarComponent implements OnInit, AfterViewInit {
 
@@ -31,6 +35,12 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             left: 'title,prev,next',
             center: '',
             right: 'today'
+        },
+        eventClick: (info) => {
+            const { title, start } = info.event;
+            const ids = info.event.id.split(',').map(e => Number(e));
+
+            this.deleteEvent(title, start, ids);
         }
     };
 
@@ -39,7 +49,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     swipeEndX = 0;
 
     constructor(
-        private readonly historyService: HistoryService
+        private readonly historyService: HistoryService,
+        private readonly confirmationService: ConfirmationService
     ) {
 
     }
@@ -49,12 +60,16 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             .pipe(take(1))
             .subscribe(history => {
                 this.calendarOptions.events = history.flatMap(h => {
-                    return h.muscleGroups.map(name => ({
-                        title: name,
-                        start: h.date
-                    }));
+                    return h.ids.flatMap((id, index) => {
+                        const group = h.muscleGroups[index];
+                        if (!group) return []; // ← ignore empty or undefined
+                        return [{
+                            id: id.toString(),
+                            title: group,
+                            start: h.date
+                        }];
+                    });
                 });
-
             });
     }
 
@@ -84,8 +99,33 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         }
     }
 
-
-    handleDateClick(arg) {
+    private deleteEvent(eventName: string, eventDate: Date, ids: number[]) {
+        this.confirmationService.confirm({
+            target: event.target as EventTarget,
+            header: 'Attention',
+            message: `Voulez-vous vraiment supprimer la séance ${ eventName } du ${ eventDate.toLocaleDateString('fr-FR') } ?`,
+            closable: false,
+            closeOnEscape: true,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {
+                label: 'Supprimer'
+            },
+            rejectButtonProps: {
+                label: 'Annuler',
+                severity: 'secondary',
+                outlined: true
+            },
+            accept: () => {
+                this.historyService.delete(ids)
+                    .subscribe({
+                        next: ({ deletedIds }) => {
+                            if (deletedIds) {
+                                this.calendarOptions.events = (this.calendarOptions.events as EventInput[]).filter(event => !deletedIds.includes(Number(event.id)));
+                            }
+                        }
+                    });
+            }
+        });
     }
 
     private previousMonth() {
