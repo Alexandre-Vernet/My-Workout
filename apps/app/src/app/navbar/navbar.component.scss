@@ -21,7 +21,11 @@
     align-items: center;
     justify-content: center;
     background-color: var(--bgColorMenu);
+}
 
+.iphone {
+    height: 100px;
+    align-items: baseline;
 }
 
 .menu__item {

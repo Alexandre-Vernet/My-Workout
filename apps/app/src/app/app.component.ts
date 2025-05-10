@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { AuthService } from './auth/auth.service';
 import { filter } from 'rxjs';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { environment } from '../environments/environment';
@@ -8,6 +7,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { NgClass } from '@angular/common';
 import { PrimeNG } from 'primeng/config';
 import { ThemeService } from './theme/theme.service';
+import { DeviceDetectionService } from './services/device-detection.service';
 
 @Component({
     imports: [RouterModule, NavbarComponent, NgClass],
@@ -18,14 +18,15 @@ import { ThemeService } from './theme/theme.service';
 export class AppComponent implements OnInit {
 
     isLoginPage = false;
+    isIphone: boolean = false;
 
     constructor(
-        private readonly authService: AuthService,
         private readonly sw: SwPush,
         private readonly swUpdate: SwUpdate,
         private router: Router,
         private primeng: PrimeNG,
-        private readonly themeService: ThemeService
+        private readonly themeService: ThemeService,
+        private readonly deviceDetection: DeviceDetectionService
     ) {
         if (environment.production) {
             // Force refresh PWA
@@ -56,6 +57,8 @@ export class AppComponent implements OnInit {
         this.primeng.ripple.set(true);
         this.themeService.loadTheme();
         this.themeService.loadDarkMode();
+
+        this.isIphone = this.deviceDetection.isIphone();
 
         this.router.events.pipe(
             filter(event => event instanceof NavigationEnd)
