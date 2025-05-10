@@ -49,4 +49,14 @@ export class HistoryService {
                 })
             );
     }
+
+    delete(historyIds: number[]) {
+        return this.authService.user$
+            .pipe(
+                take(1),
+                switchMap(user => {
+                    return this.http.delete<{ deletedIds: number[] }>(`${ this.historyUrl }/${ user.id }`, { body: historyIds });
+                })
+            );
+    }
 }
