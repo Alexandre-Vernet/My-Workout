@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { map, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,7 +15,6 @@ import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { Message } from 'primeng/message';
 import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../../../../libs/interfaces/history';
-import Hammer from 'hammerjs';
 import { Skeleton } from 'primeng/skeleton';
 import { ButtonDirective } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
@@ -33,7 +32,7 @@ import { Popover } from 'primeng/popover';
     encapsulation: ViewEncapsulation.None
 
 })
-export class WorkoutSessionComponent implements OnInit {
+export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     exercises: Exercise[] = [];
     exercisesMade: Exercise[] = [];
@@ -41,7 +40,6 @@ export class WorkoutSessionComponent implements OnInit {
 
     activeStep: number = 1;
 
-    @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
     weight: number = 0;
 
     timer = {
@@ -64,6 +62,10 @@ export class WorkoutSessionComponent implements OnInit {
     isDarkMode = localStorage.getItem('dark-mode') === 'true';
 
     weightToElastics: Elastic[] = [];
+
+    @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
+    swipeStartX = 0;
+    swipeEndX = 0;
 
     constructor(
         private readonly activatedRoute: ActivatedRoute,
@@ -118,11 +120,31 @@ export class WorkoutSessionComponent implements OnInit {
                 },
                 error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les exercices'
             });
+    }
 
-        const hammer = new Hammer(this.swipeZone.nativeElement);
+    ngAfterViewInit() {
+        const swipeZoneElement = this.swipeZone.nativeElement;
 
-        hammer.on('swipeleft', () => this.nextStep());
-        hammer.on('swiperight', () => this.previousStep());
+        swipeZoneElement.addEventListener('touchstart', (e: TouchEvent) => {
+            this.swipeStartX = e.changedTouches[0].screenX;
+        });
+
+        swipeZoneElement.addEventListener('touchend', (e: TouchEvent) => {
+            this.swipeEndX = e.changedTouches[0].screenX;
+            this.handleSwipe();
+        });
+    }
+
+    handleSwipe() {
+        const deltaX = this.swipeEndX - this.swipeStartX;
+
+        if (Math.abs(deltaX) < 50) return; // Ignore small swipes
+
+        if (deltaX < 0) {
+            this.nextStep();
+        } else {
+            this.previousStep();
+        }
     }
 
     decreaseWeight() {
