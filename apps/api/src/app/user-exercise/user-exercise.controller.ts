@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
 import { UserExerciseService } from './user-exercise.service';
-import { Workout } from '../../../../../libs/interfaces/workout';
+import { UserExercise } from '../../../../../libs/interfaces/user-exercise';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 
 @UseInterceptors(AuthInterceptor)
@@ -10,7 +10,7 @@ export class UserExerciseController {
     }
 
     @Post()
-    create(@Body() workout: Workout) {
-        return this.userExerciseService.create(workout);
+    create(@Body() userExercise: UserExercise) {
+        return this.userExerciseService.create(userExercise);
     }
 }

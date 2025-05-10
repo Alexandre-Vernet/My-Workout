@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Exercise } from '../../../../../libs/interfaces/exercise';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Workout } from '../../../../../libs/interfaces/workout';
+import { UserExercise } from '../../../../../libs/interfaces/user-exercise';
 import { AuthService } from '../auth/auth.service';
 import { map, switchMap, take } from 'rxjs';
 
@@ -24,14 +24,14 @@ export class UserExerciseService {
             .pipe(
                 take(1),
                 map(user => {
-                    const workout: Workout = {
+                    const userExercise: UserExercise = {
                         user,
                         exercise,
                     }
 
-                    return workout;
+                    return userExercise;
                 }),
-                switchMap(workout => this.http.post<Workout>(this.userExerciseUrl, workout))
+                switchMap(workout => this.http.post<UserExercise>(this.userExerciseUrl, workout))
             );
     }
 }
