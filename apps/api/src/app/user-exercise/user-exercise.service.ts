@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Workout } from '../../../../../libs/interfaces/workout';
+import { UserExercise } from '../../../../../libs/interfaces/user-exercise';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserExerciseEntity } from './user-exercise.entity';
 import { Repository } from 'typeorm';
@@ -15,17 +15,17 @@ export class UserExerciseService {
     ) {
     }
 
-    async create(workout: Workout) {
-        if (!workout?.user?.id || !workout?.exercise?.id) {
+    async create(userExercise: UserExercise) {
+        if (!userExercise?.user?.id || !userExercise?.exercise?.id) {
             throw new CustomBadRequestException(ErrorCode.userMustBeLoggedToContinue, 'Vous devez être connecté pour continuer');
         } else {
             const existingWorkout = await this.workoutRepository.findOne({
                 where: {
                     user: {
-                        id: workout.user.id
+                        id: userExercise.user.id
                     },
                     exercise: {
-                        id: workout.exercise.id
+                        id: userExercise.exercise.id
                     }
                 }
             });
@@ -33,7 +33,7 @@ export class UserExerciseService {
                 return await this.workoutRepository.remove(existingWorkout);
             }
 
-            return await this.workoutRepository.save(workout);
+            return await this.workoutRepository.save(userExercise);
         }
     }
 }
