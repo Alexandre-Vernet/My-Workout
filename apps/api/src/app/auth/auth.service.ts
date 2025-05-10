@@ -60,7 +60,7 @@ export class AuthService {
 
         delete user.password;
         return {
-            accessToken: await this.jwtService.signAsync({ user }),
+            accessToken: await this.jwtService.signAsync({ user: existingUser }),
             user
         };
     }

@@ -27,7 +27,7 @@ export class MuscleGroupService {
 
     async findAllMuscleGroupAndCountExercisesByUserId(userId: number) {
         const muscleGroup: MuscleGroup[] = await this.dataSource.query(`
-            select mg.id, mg.name, COUNT(distinct ue.exercise_id) as exerciseCount
+            select mg.id, mg.name, COUNT(distinct ue.exercise_id) as "exerciseCount"
             from muscle_group mg
                      left join muscles m on m.muscle_group_id = mg.id
                      left join exercise_muscle em on em.muscle_id = m.id
