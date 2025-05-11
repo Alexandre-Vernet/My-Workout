@@ -21,6 +21,7 @@ import { Ripple } from 'primeng/ripple';
 import { ExercisesTableComponent } from './exercises-table/exercises-table.component';
 import { Elastic, elastics } from '../../../../../../../libs/interfaces/elastic';
 import { Popover } from 'primeng/popover';
+import { DeviceDetectionService } from '../../../services/device-detection.service';
 
 @Component({
     selector: 'app-workout-session',
@@ -67,12 +68,15 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     swipeStartX = 0;
     swipeEndX = 0;
 
+    isIphone = false;
+
     constructor(
         private readonly activatedRoute: ActivatedRoute,
         private readonly exerciseService: ExerciseService,
         private readonly historyService: HistoryService,
         private readonly confirmationService: ConfirmationService,
-        private readonly router: Router
+        private readonly router: Router,
+        private readonly deviceDetectionService: DeviceDetectionService
     ) {
     }
 
@@ -120,6 +124,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                 },
                 error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les exercices'
             });
+
+        this.isIphone = this.deviceDetectionService.isIphone();
     }
 
     ngAfterViewInit() {
