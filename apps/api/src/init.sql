@@ -118,6 +118,16 @@ CREATE TABLE public.exercise_muscle
 );
 
 
+CREATE TABLE public.workout
+(
+    id              serial4 NOT null primary KEY,
+    user_id         int4    NOT NULL,
+    muscle_group_id int4    NOT NULL,
+    date            DATE    NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES public.users (id) ON DELETE CASCADE,
+    FOREIGN KEY (muscle_group_id) REFERENCES public.muscle_group (id) ON DELETE CASCADE
+);
+
 
 INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
                                                                (1,1),
