@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ExercisesEntity } from '../exercises/exercises.entity';
-import { UserEntity } from '../user/user.entity';
+import { WorkoutEntity } from '../workout/workout.entity';
 
 @Entity({ name: 'history', schema: 'public' })
 export class HistoryEntity {
@@ -15,12 +15,12 @@ export class HistoryEntity {
     @JoinColumn({ name: 'exercise_id' })
     exercise: ExercisesEntity;
 
-    @ManyToOne(() => UserEntity, (user) => user.id, {
+    @ManyToOne(() => WorkoutEntity, (workout) => workout.id, {
         cascade: true,
         eager: true
     })
-    @JoinColumn({ name: 'user_id' })
-    user: UserEntity;
+    @JoinColumn({ name: 'workout_id' })
+    workout: WorkoutEntity;
 
     @Column({ type: 'float' })
     weight: number;

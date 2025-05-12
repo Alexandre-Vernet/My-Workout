@@ -1,6 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
-import { ExercisesEntity } from '../exercises/exercises.entity';
 import { MuscleGroupEntity } from '../muscle-group/muscle-group.entity';
 
 @Entity({ name: 'workout', schema: 'public' })
@@ -12,10 +11,10 @@ export class WorkoutEntity {
     @JoinColumn({ name: 'user_id' })
     user: UserEntity;
 
-    @ManyToOne(() => MuscleGroupEntity, muscleGroupEntity => muscleGroupEntity.id, { onDelete: 'CASCADE' })
+    @ManyToOne(() => MuscleGroupEntity, muscleGroupEntity => muscleGroupEntity.id, { onDelete: 'CASCADE', eager: true })
     @JoinColumn({ name: 'muscle_group_id' })
-    exercise: ExercisesEntity;
-    
+    muscleGroup: MuscleGroupEntity;
+
     @Column()
     date: Date;
 }

@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { HistoryService } from '../../services/history.service';
 import { take } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { WorkoutService } from '../../services/workout.service';
 
 @Component({
     selector: 'app-calendar',
@@ -37,10 +37,9 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             right: 'today'
         },
         eventClick: (info) => {
-            const { title, start } = info.event;
-            const ids = info.event.id.split(',').map(e => Number(e));
+            const { id, title, start } = info.event;
 
-            this.deleteEvent(title, start, ids);
+            this.deleteEvent(Number(id), title, start);
         }
     };
 
@@ -49,27 +48,22 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     swipeEndX = 0;
 
     constructor(
-        private readonly historyService: HistoryService,
+        private readonly workoutService: WorkoutService,
         private readonly confirmationService: ConfirmationService
     ) {
 
     }
 
     ngOnInit() {
-        this.historyService.getHistoryAndMuscleGroupByUserId()
+        this.workoutService.getWorkoutFromUserId()
             .pipe(take(1))
-            .subscribe(history => {
-                this.calendarOptions.events = history.flatMap(h => {
-                    return h.ids.flatMap((id, index) => {
-                        const group = h.muscleGroups[index];
-                        if (!group) return []; // ← ignore empty or undefined
-                        return [{
-                            id: id.toString(),
-                            title: group,
-                            start: h.date
-                        }];
-                    });
-                });
+            .subscribe(workout => {
+                this.calendarOptions.events = workout.map(w => ({
+                        id: w.id.toString(),
+                        title: w.muscleGroup.name,
+                        start: w.date
+                    })
+                );
             });
     }
 
@@ -99,7 +93,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         }
     }
 
-    private deleteEvent(eventName: string, eventDate: Date, ids: number[]) {
+    private deleteEvent(id: number, eventName: string, eventDate: Date) {
         this.confirmationService.confirm({
             target: event.target as EventTarget,
             header: 'Attention',
@@ -116,11 +110,11 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                 outlined: true
             },
             accept: () => {
-                this.historyService.delete(ids)
+                this.workoutService.delete(id)
                     .subscribe({
-                        next: ({ deletedIds }) => {
-                            if (deletedIds) {
-                                this.calendarOptions.events = (this.calendarOptions.events as EventInput[]).filter(event => !deletedIds.includes(Number(event.id)));
+                        next: ({ deletedId }) => {
+                            if (deletedId) {
+                                this.calendarOptions.events = (this.calendarOptions.events as EventInput[]).filter(event => Number(event.id) !== deletedId);
                             }
                         }
                     });

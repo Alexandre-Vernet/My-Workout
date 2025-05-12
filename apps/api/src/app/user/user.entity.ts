@@ -1,6 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserExerciseEntity } from '../user-exercise/user-exercise.entity';
-import { HistoryEntity } from '../history/history.entity';
 
 @Entity({ name: 'users', schema: 'public' })
 export class UserEntity {
@@ -21,7 +20,4 @@ export class UserEntity {
 
     @OneToMany(() => UserExerciseEntity, userExercise => userExercise.user, { onDelete: 'CASCADE' })
     userExercise: UserExerciseEntity[];
-
-    @OneToMany(() => HistoryEntity, history => history.user, { onDelete: 'CASCADE' })
-    history: HistoryEntity[];
 }
