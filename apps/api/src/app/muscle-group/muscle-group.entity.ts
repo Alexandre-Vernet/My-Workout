@@ -10,9 +10,9 @@ export class MuscleGroupEntity {
     @Column()
     name: string;
 
-    @OneToMany(() => MuscleEntity, (muscle) => muscle.muscleGroup, { onDelete: 'CASCADE' })
+    @OneToMany(() => MuscleEntity, (muscle) => muscle.muscleGroup)
     muscle: MuscleEntity[];
 
-    @OneToMany(() => WorkoutEntity, workoutEntity => workoutEntity.muscleGroup, { onDelete: 'CASCADE' })
+    @OneToMany(() => WorkoutEntity, workoutEntity => workoutEntity.muscleGroup)
     workout: WorkoutEntity[];
 }

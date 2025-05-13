@@ -14,15 +14,15 @@ export class ExercisesEntity {
     @Column()
     description: string;
 
-    @Column({name: 'is_smart_workout'})
+    @Column({ name: 'is_smart_workout' })
     isSmartWorkout: boolean;
 
-    @OneToMany(() => ExerciseMuscleEntity, exerciseMuscle => exerciseMuscle.exercise, { onDelete: 'CASCADE' })
+    @OneToMany(() => ExerciseMuscleEntity, exerciseMuscle => exerciseMuscle.exercise)
     exerciseMuscle: ExerciseMuscleEntity[];
 
-    @OneToMany(() => UserExerciseEntity, userExercise => userExercise.user, { onDelete: 'CASCADE' })
+    @OneToMany(() => UserExerciseEntity, userExercise => userExercise.exercise)
     userExercise: UserExerciseEntity[];
 
-    @OneToMany(() => HistoryEntity, history => history.exercise, { onDelete: 'CASCADE' })
+    @OneToMany(() => HistoryEntity, history => history.exercise)
     history: HistoryEntity[];
 }

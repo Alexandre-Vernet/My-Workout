@@ -1,20 +1,24 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { MuscleGroupEntity } from '../muscle-group/muscle-group.entity';
+import { HistoryEntity } from '../history/history.entity';
 
 @Entity({ name: 'workout', schema: 'public' })
 export class WorkoutEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @ManyToOne(() => UserEntity, user => user.userExercise, { onDelete: 'CASCADE' })
+    @ManyToOne(() => UserEntity, user => user.workout, { onDelete: 'CASCADE', eager: true })
     @JoinColumn({ name: 'user_id' })
     user: UserEntity;
 
-    @ManyToOne(() => MuscleGroupEntity, muscleGroupEntity => muscleGroupEntity.id, { onDelete: 'CASCADE', eager: true })
+    @ManyToOne(() => MuscleGroupEntity, muscleGroup => muscleGroup.workout, { onDelete: 'CASCADE', eager: true })
     @JoinColumn({ name: 'muscle_group_id' })
     muscleGroup: MuscleGroupEntity;
 
-    @Column()
+    @CreateDateColumn()
     date: Date;
+
+    @OneToMany(() => HistoryEntity, history => history.workout)
+    history: HistoryEntity[];
 }

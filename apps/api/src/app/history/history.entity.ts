@@ -8,17 +8,11 @@ export class HistoryEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @ManyToOne(() => ExercisesEntity, (exercise) => exercise.id, {
-        cascade: true,
-        eager: true
-    })
+    @ManyToOne(() => ExercisesEntity, (exercise) => exercise.history, { eager: true })
     @JoinColumn({ name: 'exercise_id' })
     exercise: ExercisesEntity;
 
-    @ManyToOne(() => WorkoutEntity, (workout) => workout.id, {
-        cascade: true,
-        eager: true
-    })
+    @ManyToOne(() => WorkoutEntity, workout => workout.history, { eager: true })
     @JoinColumn({ name: 'workout_id' })
     workout: WorkoutEntity;
 

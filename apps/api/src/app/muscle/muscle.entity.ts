@@ -14,13 +14,13 @@ export class MuscleEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @ManyToOne(() => MuscleGroupEntity, (muscleGroup) => muscleGroup.id, { cascade: true, eager: true })
+    @ManyToOne(() => MuscleGroupEntity, (muscleGroup) => muscleGroup.muscle, { eager: true })
     @JoinColumn({ name: 'muscle_group_id' })
     muscleGroup: MuscleGroupEntity;
 
     @Column()
     name: string;
 
-    @OneToMany(() => ExerciseMuscleEntity, (exerciseMuscle) => exerciseMuscle.muscle, { onDelete: 'CASCADE' })
+    @OneToMany(() => ExerciseMuscleEntity, (exerciseMuscle) => exerciseMuscle.muscle)
     exerciseMuscle: ExerciseMuscleEntity[];
 }
