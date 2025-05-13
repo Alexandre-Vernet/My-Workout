@@ -7,7 +7,7 @@ export class MuscleGroupController {
 
   @Get()
   findAll() {
-    return this.muscleGroupService.findAllMuscleGroupByUserId();
+    return this.muscleGroupService.findAll();
   }
 
   @Get('users/:userId')
