@@ -24,12 +24,13 @@ export class HistoryService {
                     id: exerciseId
                 },
                 workout: {
-                    id: userId
+                    user: {
+                        id: userId
+                    }
                 }
             },
             order: {
                 createdAt: 'DESC',
-                weight: 'DESC'
             }
         });
     }

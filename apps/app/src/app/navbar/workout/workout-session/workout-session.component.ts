@@ -22,6 +22,9 @@ import { ExercisesTableComponent } from './exercises-table/exercises-table.compo
 import { Elastic, elastics } from '../../../../../../../libs/interfaces/elastic';
 import { Popover } from 'primeng/popover';
 import { DeviceDetectionService } from '../../../services/device-detection.service';
+import { WorkoutService } from '../../../services/workout.service';
+import { Workout } from '../../../../../../../libs/interfaces/workout';
+import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
 
 @Component({
     selector: 'app-workout-session',
@@ -35,6 +38,7 @@ import { DeviceDetectionService } from '../../../services/device-detection.servi
 })
 export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
+    workout: Workout;
     exercises: Exercise[] = [];
     exercisesMade: Exercise[] = [];
     currentExercise: Exercise;
@@ -72,6 +76,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     constructor(
         private readonly activatedRoute: ActivatedRoute,
+        private readonly workoutService: WorkoutService,
         private readonly exerciseService: ExerciseService,
         private readonly historyService: HistoryService,
         private readonly confirmationService: ConfirmationService,
@@ -84,7 +89,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.activatedRoute.params
             .pipe(
                 take(1),
-                map((params: { muscleGroupId: number }) => params.muscleGroupId),
+                switchMap((params: { muscleGroupId: number }) => this.createWorkout(Number(params.muscleGroupId))),
                 switchMap((muscleGroupId) => this.exerciseService.findExercisesByMuscleGroupIdAndUserId(muscleGroupId)
                     .pipe(map(exercises => ({ exercises, muscleGroupId })))
                 )
@@ -95,28 +100,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     this.exercises = exercises;
 
                     if (exercises.length === 0) {
-                        this.confirmationService.confirm({
-                            target: event.target as EventTarget,
-                            header: 'Attention',
-                            message: `Vous n'avez ajouté aucun exercice à votre bibliothèque.<br/>Commencez par en ajouter pour pouvoir lancer un entraînement.`,
-                            closable: false,
-                            closeOnEscape: true,
-                            icon: 'pi pi-exclamation-triangle',
-                            acceptButtonProps: {
-                                label: 'Ajouter'
-                            },
-                            rejectButtonProps: {
-                                label: 'Annuler',
-                                severity: 'secondary',
-                                outlined: true
-                            },
-                            accept: () => {
-                                this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]);
-                            },
-                            reject: () => {
-                                this.router.navigate(['/', 'workout']);
-                            }
-                        });
+                        this.showDialogNoExercisesAdded(muscleGroupId);
                     } else {
                         this.currentExercise = this.exercises[0];
                         this.fillInputWeightLastSavedValue();
@@ -182,6 +166,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.exercisesMade.push(exerciseMade);
 
         const history: History = {
+            workout: this.workout,
             exercise: this.currentExercise,
             weight: weightNumber,
             createdAt: new Date()
@@ -377,5 +362,46 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
      */
     private formatTimer(minutes: number, seconds: number, centiseconds: number) {
         return `${ minutes.toString().padStart(2, '0') }:${ seconds.toString().padStart(2, '0') }:${ centiseconds.toString().padStart(2, '0') }`;
+    }
+
+
+    private showDialogNoExercisesAdded(muscleGroupId: number) {
+        this.confirmationService.confirm({
+            header: 'Attention',
+            message: `Vous n'avez ajouté aucun exercice à votre bibliothèque.<br/>Commencez par en ajouter pour pouvoir lancer un entraînement.`,
+            closable: false,
+            closeOnEscape: true,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {
+                label: 'Ajouter'
+            },
+            rejectButtonProps: {
+                label: 'Annuler',
+                severity: 'secondary',
+                outlined: true
+            },
+            accept: () => {
+                this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]);
+            },
+            reject: () => {
+                this.router.navigate(['/', 'workout']);
+            }
+        });
+    }
+
+    private createWorkout(muscleGroupId: number) {
+        const muscleGroup: MuscleGroup = {
+            id: muscleGroupId
+        };
+
+        const workout: Workout = {
+            muscleGroup,
+            date: new Date()
+        };
+        return this.workoutService.create(workout)
+            .pipe(map((workout) => {
+                this.workout = workout;
+                return muscleGroupId;
+            }));
     }
 }

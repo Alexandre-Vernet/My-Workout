@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WorkoutEntity } from './workout.entity';
 import { Repository } from 'typeorm';
 import { renameMuscleGroupMap } from '../../../../../libs/interfaces/MuscleGroup';
+import { Workout } from '../../../../../libs/interfaces/workout';
 
 @Injectable()
 export class WorkoutService {
@@ -12,6 +13,10 @@ export class WorkoutService {
         @InjectRepository(WorkoutEntity)
         private readonly workoutRepository: Repository<WorkoutEntity>
     ) {
+    }
+
+    create(workout: Workout) {
+        return this.workoutRepository.save(workout);
     }
 
     async getWorkoutFromUserId(userId: number) {

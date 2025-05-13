@@ -1,9 +1,9 @@
 export interface MuscleGroup {
     id: number;
-    name: string;
+    name?: string;
     exerciseCount?: number;
     isRecommended?: boolean;
-    date: Date;
+    date?: Date;
 }
 
 export const renameMuscleGroupMap: Record<string, string> = {
