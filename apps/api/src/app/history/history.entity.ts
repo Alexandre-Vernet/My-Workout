@@ -19,6 +19,6 @@ export class HistoryEntity {
     @Column({ type: 'float' })
     weight: number;
 
-    @Column({ name: 'created_at' })
-    createdAt: Date;
+    @Column()
+    date: Date;
 }

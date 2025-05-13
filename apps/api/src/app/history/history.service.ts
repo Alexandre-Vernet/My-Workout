@@ -30,7 +30,7 @@ export class HistoryService {
                 }
             },
             order: {
-                createdAt: 'DESC',
+                date: 'DESC',
             }
         });
     }
