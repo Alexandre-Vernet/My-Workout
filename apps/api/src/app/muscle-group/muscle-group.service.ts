@@ -13,6 +13,14 @@ export class MuscleGroupService {
     ) {
     }
 
+    checkMuscleGroupIdExist(muscleGroupId: number) {
+        return this.muscleGroupRepository.findOne({
+            where: {
+                id: muscleGroupId
+            }
+        });
+    }
+
     async findAllMuscleGroupByUserId() {
         return this.dataSource.query(`
             select mg.id, mg.name

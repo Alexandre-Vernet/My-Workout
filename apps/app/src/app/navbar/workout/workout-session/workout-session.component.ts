@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { combineLatest, take } from 'rxjs';
+import { map, of, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
@@ -25,6 +25,7 @@ import { DeviceDetectionService } from '../../../services/device-detection.servi
 import { WorkoutService } from '../../../services/workout.service';
 import { Workout } from '../../../../../../../libs/interfaces/workout';
 import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
+import { ErrorCode } from '../../../../../../../libs/error-code/error-code';
 
 @Component({
     selector: 'app-workout-session',
@@ -88,25 +89,32 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         const muscleGroupId = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
 
-        combineLatest([
-            this.exerciseService.findExercisesByMuscleGroupIdAndUserId(muscleGroupId),
-            this.createWorkout(muscleGroupId)
-        ])
-            .pipe(take(1))
-            .subscribe({
-                next: ([exercises, workout ]) => {
-                    this.isLoading = false;
-                    this.exercises = exercises;
-                    this.workout = workout;
-
-                    if (exercises.length === 0) {
+        this.exerciseService.findExercisesByMuscleGroupIdAndUserId(muscleGroupId)
+            .pipe(
+                take(1),
+                switchMap(exercises => {
+                    if (!exercises || exercises.length === 0) {
                         this.showDialogNoExercisesAdded(muscleGroupId);
-                    } else {
-                        this.currentExercise = this.exercises[0];
-                        this.fillInputWeightLastSavedValue();
+                        return of(null);
                     }
+                    return this.createWorkout(muscleGroupId)
+                        .pipe(map(workout => ({ workout, exercises })));
+                })
+            )
+            .subscribe({
+                next: ({ exercises, workout }) => {
+                    this.isLoading = false;
+                    this.workout = workout;
+                    this.exercises = exercises;
+                    this.currentExercise = this.exercises[0];
+                    this.fillInputWeightLastSavedValue();
                 },
-                error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les exercices'
+                error: (err) => {
+                    if (err?.error?.errorCode === ErrorCode.muscleGroupDoesntExist) {
+                        this.router.navigate(['/', 'workout', 'select-muscle-group-workout']);
+                    }
+                    return this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les exercices';
+                }
             });
 
         this.isIphone = this.deviceDetectionService.isIphone();
