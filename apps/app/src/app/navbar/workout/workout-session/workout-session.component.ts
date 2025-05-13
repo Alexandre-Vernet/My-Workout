@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { map, switchMap, take } from 'rxjs';
+import { combineLatest, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
@@ -86,18 +86,18 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.activatedRoute.params
-            .pipe(
-                take(1),
-                switchMap((params: { muscleGroupId: number }) => this.createWorkout(Number(params.muscleGroupId))),
-                switchMap((muscleGroupId) => this.exerciseService.findExercisesByMuscleGroupIdAndUserId(muscleGroupId)
-                    .pipe(map(exercises => ({ exercises, muscleGroupId })))
-                )
-            )
+        const muscleGroupId = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
+
+        combineLatest([
+            this.exerciseService.findExercisesByMuscleGroupIdAndUserId(muscleGroupId),
+            this.createWorkout(muscleGroupId)
+        ])
+            .pipe(take(1))
             .subscribe({
-                next: ({ exercises, muscleGroupId }) => {
+                next: ([exercises, workout ]) => {
                     this.isLoading = false;
                     this.exercises = exercises;
+                    this.workout = workout;
 
                     if (exercises.length === 0) {
                         this.showDialogNoExercisesAdded(muscleGroupId);
@@ -398,10 +398,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             muscleGroup,
             date: new Date()
         };
-        return this.workoutService.create(workout)
-            .pipe(map((workout) => {
-                this.workout = workout;
-                return muscleGroupId;
-            }));
+        return this.workoutService.create(workout);
     }
 }
