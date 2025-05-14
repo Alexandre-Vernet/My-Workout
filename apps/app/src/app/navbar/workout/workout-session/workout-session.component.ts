@@ -98,7 +98,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                         return of(null);
                     }
                     return this.createWorkout(muscleGroupId)
-                        .pipe(map(workout => ({ workout, exercises })));
+                        .pipe(
+                            take(1),
+                            map(workout => ({ workout, exercises }))
+                        );
                 })
             )
             .subscribe({
