@@ -4,6 +4,8 @@ import { WorkoutEntity } from './workout.entity';
 import { Repository } from 'typeorm';
 import { renameMuscleGroupMap } from '../../../../../libs/interfaces/MuscleGroup';
 import { Workout } from '../../../../../libs/interfaces/workout';
+import { CustomBadRequestException } from '../exceptions/CustomBadRequestException';
+import { ErrorCode } from '../../../../../libs/error-code/error-code';
 
 @Injectable()
 export class WorkoutService {
@@ -15,7 +17,17 @@ export class WorkoutService {
     ) {
     }
 
-    create(workout: Workout) {
+    async create(workout: Workout, forceCreateWorkout = false) {
+        const existingWorkoutToday = await this.workoutRepository
+            .createQueryBuilder('w')
+            .where('w.muscleGroup.id = :muscleGroupId', { muscleGroupId: workout.muscleGroup.id })
+            .andWhere('DATE(w.date) = DATE(:date)', { date: workout.date })
+            .getOne();
+
+
+        if (existingWorkoutToday && !forceCreateWorkout) {
+            throw new CustomBadRequestException(ErrorCode.duplicateWorkout, 'Vous avez déjà réalisé cette séance aujourd’hui.');
+        }
         return this.workoutRepository.save(workout);
     }
 

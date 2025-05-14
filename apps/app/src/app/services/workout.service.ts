@@ -18,12 +18,12 @@ export class WorkoutService {
     ) {
     }
 
-    create(workout: Workout) {
+    create(workout: Workout, forceCreateWorkout = false) {
         return this.authService.user$
             .pipe(
                 switchMap(user => {
                     workout.user = user;
-                    return this.http.post<Workout>(this.workoutUrl, workout);
+                    return this.http.post<Workout>(this.workoutUrl, { workout, forceCreateWorkout });
                 })
             );
     }
@@ -40,9 +40,7 @@ export class WorkoutService {
             .pipe(
                 take(1),
                 switchMap(user => {
-                    return this.http.delete<{
-                        deletedId: number
-                    }>(`${ this.workoutUrl }/${ user.id }`, { body: { id } });
+                    return this.http.delete<{deletedId: number}>(`${ this.workoutUrl }`, { params: { id, userId: user.id } });
                 })
             );
     }

@@ -3,5 +3,6 @@ export enum ErrorCode {
     passwordNotMatch = 'passwordNotMatch',
     invalidCredential = 'invalidCredential',
     userMustBeLoggedToContinue = 'userMustBeLoggedToContinue',
-    muscleGroupDoesntExist = 'muscleGroupDoesntExist'
+    muscleGroupDoesntExist = 'muscleGroupDoesntExist',
+    duplicateWorkout = 'duplicateWorkout'
 }
