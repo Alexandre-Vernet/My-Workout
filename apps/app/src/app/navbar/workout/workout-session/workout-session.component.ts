@@ -286,8 +286,12 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                 })
             )
             .subscribe({
-                next: ({ exercises, workout }) => {
+                next: (result) => {
+                    if (!result) {
+                        return;
+                    }
                     this.isLoading = false;
+                    const { exercises, workout } = result;
                     this.workout = workout;
                     this.exercises = exercises;
                     this.currentExercise = this.exercises[0];
