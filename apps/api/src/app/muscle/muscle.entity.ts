@@ -1,26 +1,26 @@
 import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn
 } from 'typeorm';
 import { MuscleGroupEntity } from '../muscle-group/muscle-group.entity';
 import { ExerciseMuscleEntity } from '../exercise-muscle/exercise-muscle.entity';
 
 @Entity({ name: 'muscles', schema: 'public' })
 export class MuscleEntity {
-  @PrimaryGeneratedColumn('increment')
-  id: number;
+    @PrimaryGeneratedColumn('increment')
+    id: number;
 
-  @ManyToOne(() => MuscleGroupEntity, (muscleGroup) => muscleGroup.id, { cascade: true, eager: true })
-  @JoinColumn({ name: 'muscle_group_id' })
-  muscleGroup: MuscleGroupEntity;
+    @ManyToOne(() => MuscleGroupEntity, (muscleGroup) => muscleGroup.muscle, { eager: true })
+    @JoinColumn({ name: 'muscle_group_id' })
+    muscleGroup: MuscleGroupEntity;
 
-  @Column()
-  name: string;
+    @Column()
+    name: string;
 
-  @OneToMany(() => ExerciseMuscleEntity, (exerciseMuscle) => exerciseMuscle.muscle, { onDelete: 'CASCADE' })
-  exerciseMuscle: ExerciseMuscleEntity[];
+    @OneToMany(() => ExerciseMuscleEntity, (exerciseMuscle) => exerciseMuscle.muscle)
+    exerciseMuscle: ExerciseMuscleEntity[];
 }

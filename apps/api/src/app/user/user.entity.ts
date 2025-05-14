@@ -1,6 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserExerciseEntity } from '../user-exercise/user-exercise.entity';
-import { HistoryEntity } from '../history/history.entity';
+import { WorkoutEntity } from '../workout/workout.entity';
 
 @Entity({ name: 'users', schema: 'public' })
 export class UserEntity {
@@ -16,12 +16,12 @@ export class UserEntity {
     @Column({ name: 'updated_at', type: 'timestamp' })
     updatedAt: Date;
 
-    @Column({ name: 'created_at', type: 'timestamp' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt: Date;
 
-    @OneToMany(() => UserExerciseEntity, userExercise => userExercise.user, { onDelete: 'CASCADE' })
+    @OneToMany(() => UserExerciseEntity, userExercise => userExercise.user)
     userExercise: UserExerciseEntity[];
 
-    @OneToMany(() => HistoryEntity, history => history.user, { onDelete: 'CASCADE' })
-    history: HistoryEntity[];
+    @OneToMany(() => WorkoutEntity, workout => workout.user)
+    workout: WorkoutEntity[];
 }

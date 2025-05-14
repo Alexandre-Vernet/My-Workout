@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { MuscleGroupService } from '../muscle-group/muscle-group.service';
+import { CustomBadRequestException } from '../exceptions/CustomBadRequestException';
+import { ErrorCode } from '../../../../../libs/error-code/error-code';
 
 @Injectable()
 export class ExercisesService {
     constructor(
         private readonly dataSource: DataSource,
-        private readonly muscleGroupService: MuscleGroupService
+        private readonly muscleGroupService: MuscleGroupService,
     ) {
     }
 
@@ -66,7 +68,12 @@ export class ExercisesService {
         };
     }
 
-    findExercisesByMuscleGroupIdAndUserId(userId: number, muscleGroupId: number) {
+    async findExercisesByMuscleGroupIdAndUserId(userId: number, muscleGroupId: number) {
+        const muscleGroupExist = await this.muscleGroupService.checkMuscleGroupIdExist(muscleGroupId);
+        if (!muscleGroupExist) {
+            throw new CustomBadRequestException(ErrorCode.muscleGroupDoesntExist, 'Ce groupe musculaire n\'existe pas');
+        }
+
         return this.dataSource.query(
             `
                 select e.id,

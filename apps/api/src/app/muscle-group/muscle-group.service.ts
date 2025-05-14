@@ -13,16 +13,16 @@ export class MuscleGroupService {
     ) {
     }
 
-    async findAllMuscleGroupByUserId() {
-        return this.dataSource.query(`
-            select mg.id, mg.name
-            from muscle_group mg
-                     left join muscles m on m.muscle_group_id = mg.id
-                     left join exercise_muscle em on em.muscle_id = m.id
-                     left join exercises e on e.id = em.exercise_id
-            group by mg.id, mg.name
-            order by mg.id
-        `);
+    checkMuscleGroupIdExist(muscleGroupId: number) {
+        return this.muscleGroupRepository.findOne({
+            where: {
+                id: muscleGroupId
+            }
+        });
+    }
+
+    async findAll() {
+        return this.muscleGroupRepository.find();
     }
 
     async findAllMuscleGroupAndCountExercisesByUserId(userId: number) {
@@ -60,24 +60,26 @@ export class MuscleGroupService {
                 WITH all_muscle_groups AS (SELECT id, name
                                            FROM muscle_group),
                      worked_groups AS (SELECT DISTINCT mg.id AS muscle_group_id
-                                       FROM history h
+                                       FROM workout w
+                                                JOIN history h ON w.id = h.workout_id
                                                 JOIN exercises e ON e.id = h.exercise_id
                                                 JOIN exercise_muscle em ON em.exercise_id = e.id
                                                 JOIN muscles m ON m.id = em.muscle_id
                                                 JOIN muscle_group mg ON mg.id = m.muscle_group_id
-                                       WHERE h.user_id = $1),
+                                       WHERE w.user_id = $1),
                      never_done_groups AS (SELECT id, name
                                            FROM all_muscle_groups
                                            WHERE id NOT IN (SELECT muscle_group_id FROM worked_groups)),
                      ranked_worked_groups AS (SELECT mg.id,
                                                      mg.name,
-                                                     MAX(h.created_at) AS last_worked
-                                              FROM history h
+                                                     MAX(h.date) AS last_worked
+                                              FROM workout w
+                                                       JOIN history h ON w.id = h.workout_id
                                                        JOIN exercises e ON e.id = h.exercise_id
                                                        JOIN exercise_muscle em ON em.exercise_id = e.id
                                                        JOIN muscles m ON m.id = em.muscle_id
                                                        JOIN muscle_group mg ON mg.id = m.muscle_group_id
-                                              WHERE h.user_id = $1
+                                              WHERE w.user_id = $1
                                               GROUP BY mg.id, mg.name)
                 SELECT id, name
                 FROM ((SELECT id, name

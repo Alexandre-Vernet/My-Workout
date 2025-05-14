@@ -13,6 +13,8 @@ import { UserExerciseModule } from './user-exercise/user-exercise.module';
 import { UserExerciseEntity } from './user-exercise/user-exercise.entity';
 import { HistoryModule } from './history/history.module';
 import { HistoryEntity } from './history/history.entity';
+import { WorkoutEntity } from './workout/workout.entity';
+import { WorkoutModule } from './workout/workout.module';
 
 const {
     POSTGRES_HOST,
@@ -39,7 +41,8 @@ const {
                 MuscleGroupEntity,
                 UserEntity,
                 UserExerciseEntity,
-                HistoryEntity
+                HistoryEntity,
+                WorkoutEntity
             ],
             ssl: false,
         }),
@@ -53,6 +56,7 @@ const {
         AuthModule,
         UserExerciseModule,
         HistoryModule,
+        WorkoutModule
     ],
 })
 export class AppModule {}
