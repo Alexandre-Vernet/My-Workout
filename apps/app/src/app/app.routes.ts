@@ -16,6 +16,7 @@ import { Component } from '@angular/core';
 import { ViewProfileComponent } from './navbar/view-profile/view-profile.component';
 import { CalendarComponent } from './navbar/calendar/calendar.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
+import { HistoryComponent } from './navbar/history/history.component';
 
 
 @Component({
@@ -65,6 +66,10 @@ export const appRoutes: Route[] = [
             }
         ],
         canActivate: [authGuard]
+    },
+    {
+        path: MenuUrls.history,
+        component: HistoryComponent
     },
     {
         path: MenuUrls.user,
