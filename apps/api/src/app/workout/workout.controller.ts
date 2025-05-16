@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query, UseInterceptors } from '@nestjs/common';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { WorkoutService } from './workout.service';
 import { Workout } from '../../../../../libs/interfaces/workout';
@@ -17,9 +17,9 @@ export class WorkoutController {
         return this.workoutService.create(workout, forceCreateWorkout);
     }
 
-    @Get(':userId')
-    getHistoryAndMuscleGroupByUserId(@Param() { userId }: { userId: string }) {
-        return this.workoutService.getWorkoutFromUserId(Number(userId));
+    @Get()
+    findByUserId(@Query() { userId }: { userId: string }) {
+        return this.workoutService.findByUserId(Number(userId));
     }
 
     @Delete()

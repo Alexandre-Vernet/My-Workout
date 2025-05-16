@@ -7,6 +7,10 @@ import { presets } from './presets';
 })
 export class ThemeService {
 
+    isDarkMode() {
+        return localStorage.getItem('dark-mode') === 'true';
+    }
+
     loadTheme() {
         const presetName = localStorage.getItem('theme');
         if (!presetName) {

@@ -8,7 +8,7 @@ export class WorkoutEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @ManyToOne(() => UserEntity, user => user.workout, { onDelete: 'CASCADE', eager: true })
+    @ManyToOne(() => UserEntity, user => user.workout, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'user_id' })
     user: UserEntity;
 

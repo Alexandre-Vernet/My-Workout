@@ -7,6 +7,7 @@ import { providePrimeNG } from 'primeng/config';
 import { provideServiceWorker } from '@angular/service-worker';
 import { presetCyan } from './theme/preset-cyan';
 import { authInterceptor } from './auth/auth.interceptor';
+import { LOCALE_ID } from '@angular/core';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -26,7 +27,8 @@ export const appConfig: ApplicationConfig = {
         }), provideServiceWorker('ngsw-worker.js', {
             enabled: !isDevMode(),
             registrationStrategy: 'registerWhenStable:30000'
-        })
+        }),
+        { provide: LOCALE_ID, useValue: 'fr-FR' },
     ]
 };
 

@@ -34,8 +34,20 @@ export class HistoryService {
             .pipe(
                 take(1),
                 switchMap(user => {
-                    return this.http.get<History>(`${ this.historyUrl }/${ user.id }/${ exerciseId }`);
+                    return this.http.get<History>(`${this.historyUrl}/last`, {
+                        params: {
+                            userId: user.id,
+                            exerciseId
+                        }
+                    });
                 })
+            );
+    }
+
+    findByUserId() {
+        return this.authService.user$
+            .pipe(
+                switchMap(user => this.http.get<History[]>(this.historyUrl, { params: { userId: user.id } }))
             );
     }
 }

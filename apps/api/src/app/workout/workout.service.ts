@@ -31,7 +31,7 @@ export class WorkoutService {
         return this.workoutRepository.save(workout);
     }
 
-    async getWorkoutFromUserId(userId: number) {
+    async findByUserId(userId: number) {
         const workout = await this.workoutRepository.find({
             where: {
                 user: {

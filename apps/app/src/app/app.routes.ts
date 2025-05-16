@@ -69,7 +69,8 @@ export const appRoutes: Route[] = [
     },
     {
         path: MenuUrls.history,
-        component: HistoryComponent
+        component: HistoryComponent,
+        canActivate: [authGuard]
     },
     {
         path: MenuUrls.user,

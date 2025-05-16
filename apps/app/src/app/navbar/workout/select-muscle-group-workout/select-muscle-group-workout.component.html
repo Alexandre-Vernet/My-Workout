@@ -26,8 +26,8 @@
         <ng-container *ngFor="let muscleGroup of muscleGroups">
             <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroup?.id]">
                 <div class="muscle-group-card" [ngClass]="{
-                    'recommended-light': !isDarkMode && muscleGroup?.isRecommended,
-                    'recommended-dark': isDarkMode && muscleGroup?.isRecommended,
+                    'selected-light': !isDarkMode && muscleGroup?.isRecommended,
+                    'selected-dark': isDarkMode && muscleGroup?.isRecommended,
                     'shadow-dark': isDarkMode,
                     'shadow-light': !isDarkMode,
                 }">

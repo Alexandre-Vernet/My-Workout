@@ -33,7 +33,7 @@ export class ChangeThemeComponent implements OnInit {
 
     ngOnInit() {
         this.selectedTheme = localStorage.getItem('theme');
-        this.isCheckedDarkMode = localStorage.getItem('dark-mode') === 'true';
+        this.isCheckedDarkMode = this.themeService.isDarkMode();
     }
 
 

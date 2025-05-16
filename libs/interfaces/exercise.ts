@@ -6,5 +6,5 @@ export interface Exercise {
     addedToWorkout?: boolean;
     muscleGroup?: boolean;
     weight?: number;
-    restTime: string;
+    restTime?: string;
 }

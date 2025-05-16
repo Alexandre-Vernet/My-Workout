@@ -4,6 +4,6 @@ import { MuscleGroup } from './MuscleGroup';
 export class Workout {
     id?: number;
     user?: User;
-    muscleGroup: MuscleGroup;
+    muscleGroup?: MuscleGroup;
     date: Date;
 }

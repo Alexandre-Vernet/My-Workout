@@ -55,7 +55,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.workoutService.getWorkoutFromUserId()
+        this.workoutService.findWorkoutFromUserId()
             .pipe(take(1))
             .subscribe(workout => {
                 this.calendarOptions.events = workout.map(w => ({
@@ -95,9 +95,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     private deleteEvent(id: number, eventName: string, eventDate: Date) {
         this.confirmationService.confirm({
-            target: event.target as EventTarget,
             header: 'Attention',
-            message: `Voulez-vous vraiment supprimer la séance ${ eventName } du ${ eventDate.toLocaleDateString('fr-FR') } ?`,
+            message: `Voulez-vous vraiment supprimer la séance ${ eventName } du ${ eventDate.toLocaleDateString() } ?`,
             closable: false,
             closeOnEscape: true,
             icon: 'pi pi-exclamation-triangle',
