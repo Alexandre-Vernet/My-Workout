@@ -17,7 +17,7 @@ export class UserExerciseService {
 
     async create(userExercise: UserExercise) {
         if (!userExercise?.user?.id || !userExercise?.exercise?.id) {
-            throw new CustomBadRequestException(ErrorCode.userMustBeLoggedToContinue, 'Vous devez être connecté pour continuer');
+            throw new CustomBadRequestException(ErrorCode.userMustBeLoggedToContinue);
         } else {
             const existingWorkout = await this.workoutRepository.findOne({
                 where: {

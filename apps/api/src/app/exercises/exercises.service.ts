@@ -71,7 +71,7 @@ export class ExercisesService {
     async findExercisesByMuscleGroupIdAndUserId(userId: number, muscleGroupId: number) {
         const muscleGroupExist = await this.muscleGroupService.checkMuscleGroupIdExist(muscleGroupId);
         if (!muscleGroupExist) {
-            throw new CustomBadRequestException(ErrorCode.muscleGroupDoesntExist, 'Ce groupe musculaire n\'existe pas');
+            throw new CustomBadRequestException(ErrorCode.muscleGroupDoesntExist);
         }
 
         return this.dataSource.query(

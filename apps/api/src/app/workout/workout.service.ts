@@ -26,10 +26,11 @@ export class WorkoutService {
 
 
         if (existingWorkoutToday && !forceCreateWorkout) {
-            throw new CustomBadRequestException(ErrorCode.duplicateWorkout, 'Vous avez déjà réalisé cette séance aujourd’hui.');
+            throw new CustomBadRequestException(ErrorCode.duplicateWorkout);
         }
         return this.workoutRepository.save(workout);
     }
+
 
     async findById(id: number) {
         const workout = await this.workoutRepository.findOne({
