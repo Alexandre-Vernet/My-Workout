@@ -47,7 +47,8 @@ export class HistoryComponent implements OnInit {
         this.isDarkMode = this.themeService.isDarkMode();
     }
 
-    deleteWorkout(muscleGroupName: string, date: Date, id: number) {
+    deleteWorkout(id: number, muscleGroupName: string, date: Date) {
+        console.log(id);
         const newDate = new Date(date);
         this.confirmationService.confirm({
             header: 'Attention',

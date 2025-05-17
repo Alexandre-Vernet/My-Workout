@@ -62,14 +62,14 @@
                             </div>
 
                             <!-- Weight -->
-                            <div class="flex flex-column text-right text-sm text-color-secondary">
+                            <div *ngIf="exercise.weight" class="flex flex-column text-right text-sm text-color-secondary">
                                 {{ exercise.weight }} kg
                             </div>
                         </div>
                     </ng-container>
                     <div class="flex justify-content-end mt-3">
                         <p-button pRipple icon="pi pi-trash" severity="danger"
-                                  (onClick)="deleteWorkout(group.muscleGroup.name, h.workout.date, h.workout.id)" />
+                                  (onClick)="deleteWorkout( h.workout.id, group.muscleGroup.name, h.workout.date)" />
                     </div>
                 </div>
             </div>
@@ -77,4 +77,4 @@
     </ng-template>
 </div>
 
-<p-confirmdialog />
+<p-confirmdialog></p-confirmdialog>
