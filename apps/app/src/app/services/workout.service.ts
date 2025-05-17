@@ -28,7 +28,11 @@ export class WorkoutService {
             );
     }
 
-    findWorkoutFromUserId() {
+    findById(id: number) {
+        return this.http.get<Workout>(`${ this.workoutUrl }/${ id }`);
+    }
+
+    findByUserId() {
         return this.authService.user$
             .pipe(
                 switchMap(user => this.http.get<Workout[]>(this.workoutUrl, {

@@ -49,8 +49,9 @@ export class HistoryComponent implements OnInit {
         this.confirmationService.confirm({
             header: 'Attention',
             message: `Voulez-vous vraiment supprimer l\'entraînement ${ muscleGroupName } du ${ newDate.toLocaleDateString() } ?`,
-            closable: false,
+            closable: true,
             closeOnEscape: true,
+            dismissableMask: true,
             icon: 'pi pi-exclamation-triangle',
             acceptButtonProps: {
                 label: 'Supprimer'

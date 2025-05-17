@@ -8,10 +8,13 @@ import { FormsModule } from '@angular/forms';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { WorkoutService } from '../../services/workout.service';
+import { Workout } from '../../../../../../libs/interfaces/workout';
+import { Dialog } from 'primeng/dialog';
+import { Button } from 'primeng/button';
 
 @Component({
     selector: 'app-calendar',
-    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog],
+    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
@@ -37,15 +40,20 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             right: 'today'
         },
         eventClick: (info) => {
-            const { id, title, start } = info.event;
-
-            this.deleteEvent(Number(id), title, start);
+            const id = info.event.id;
+            this.viewHistory(Number(id));
         }
     };
+
+    workout: Workout;
+    showModalViewWorkout = false;
 
     @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
     swipeStartX = 0;
     swipeEndX = 0;
+
+
+    isDarkMode = false;
 
     constructor(
         private readonly workoutService: WorkoutService,
@@ -55,7 +63,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.workoutService.findWorkoutFromUserId()
+        this.workoutService.findByUserId()
             .pipe(take(1))
             .subscribe(workout => {
                 this.calendarOptions.events = workout.map(w => ({
@@ -93,12 +101,14 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         }
     }
 
-    private deleteEvent(id: number, eventName: string, eventDate: Date) {
+    openModalDeleteWorkout(id: number, muscleGroupName: string, date: Date) {
+        const formattedDate = new Date(date);
         this.confirmationService.confirm({
             header: 'Attention',
-            message: `Voulez-vous vraiment supprimer la séance ${ eventName } du ${ eventDate.toLocaleDateString() } ?`,
-            closable: false,
+            message: `Voulez-vous vraiment supprimer l'entraînement ${ muscleGroupName } du ${ formattedDate.toLocaleDateString() } ?`,
+            closable: true,
             closeOnEscape: true,
+            dismissableMask: true,
             icon: 'pi pi-exclamation-triangle',
             acceptButtonProps: {
                 label: 'Supprimer'
@@ -117,8 +127,18 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                             }
                         }
                     });
+                this.showModalViewWorkout = false;
             }
         });
+    }
+
+    private viewHistory(id: number) {
+        this.workoutService.findById(id)
+            .pipe(take(1))
+            .subscribe(workout => {
+                this.showModalViewWorkout = true;
+                this.workout = workout;
+            });
     }
 
     private previousMonth() {
