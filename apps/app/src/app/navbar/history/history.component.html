@@ -44,6 +44,7 @@
                     <div *ngFor="let exercise of group.exercises" class="flex justify-content-between mb-2">
                         <!-- Exercise name -->
                         <div class="text-primary text-lg">
+                            <span *ngIf="exercise.count > 1">{{ exercise.count }}x</span>
                             {{ exercise.name }}
                         </div>
 

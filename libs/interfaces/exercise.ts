@@ -7,4 +7,5 @@ export interface Exercise {
     muscleGroup?: boolean;
     weight?: number;
     restTime?: string;
+    count?: number;
 }

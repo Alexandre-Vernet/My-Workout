@@ -69,12 +69,24 @@ export class HistoryService {
                 dataEntry.groups.push(groupEntry);
             }
 
-            // Add the exercise to the corresponding muscle group
-            groupEntry.exercises.push({
-                ...exercise,
-                weight
-            });
+            // Find if exercise with same id and weight already exists in this group
+            let existingExercise = groupEntry.exercises.find(e => e.id === exercise.id && e.weight === weight);
+
+            if (existingExercise) {
+                // Increase the count
+                if (existingExercise.count) {
+                    existingExercise.count++;
+                }
+            } else {
+                // Add new exercise with count = 1
+                groupEntry.exercises.push({
+                    ...exercise,
+                    weight,
+                    count: 1
+                });
+            }
         }
+
 
         // Order by workout date
         history.sort((a, b) => b.workout.date.getTime() - a.workout.date.getTime());
