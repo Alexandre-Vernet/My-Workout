@@ -402,8 +402,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.confirmationService.confirm({
             header: 'Attention',
             message: `Vous n'avez ajouté aucun exercice à votre bibliothèque.<br/>Commencez par en ajouter pour pouvoir lancer un entraînement.`,
-            closable: false,
+            closable: true,
             closeOnEscape: true,
+            dismissableMask: true,
             icon: 'pi pi-exclamation-triangle',
             acceptButtonProps: {
                 label: 'Ajouter'
@@ -426,8 +427,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.confirmationService.confirm({
             header: 'Attention',
             message: `${ message }<br/>Souhaitez-vous la refaire ?`,
-            closable: false,
+            closable: true,
             closeOnEscape: true,
+            dismissableMask: true,
             icon: 'pi pi-exclamation-triangle',
             acceptButtonProps: {
                 label: 'Confirmer'
