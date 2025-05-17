@@ -27,22 +27,22 @@ export class HistoryComponent implements OnInit {
     isDarkMode = false;
 
     constructor(
-        private readonly historyService: HistoryService,
-        private readonly workoutService: WorkoutService,
-        private readonly themeService: ThemeService,
-        private readonly confirmationService: ConfirmationService
+      private readonly historyService: HistoryService,
+      private readonly workoutService: WorkoutService,
+      private readonly themeService: ThemeService,
+      private readonly confirmationService: ConfirmationService
     ) {
     }
 
     ngOnInit() {
         this.historyService.findByUserId()
-            .pipe(take(1))
-            .subscribe({
-                next: (history) => {
-                    this.isLoading = false;
-                    this.history = history;
-                }
-            });
+          .pipe(take(1))
+          .subscribe({
+              next: (history) => {
+                  this.isLoading = false;
+                  this.history = history;
+              }
+          });
 
         this.isDarkMode = this.themeService.isDarkMode();
     }
@@ -67,10 +67,15 @@ export class HistoryComponent implements OnInit {
             },
             accept: () => {
                 this.workoutService.delete(id)
-                    .pipe(take(1))
-                    .subscribe({
-                        next: () => this.history = this.history.filter(h => h.workout.id !== id)
-                    });
+                  .pipe(take(1))
+                  .subscribe({
+                      next: () => {
+                          this.history = this.history.map(h => {
+                              h.groups = h.groups.filter(g => g.workoutId !== id);
+                              return h;
+                          });
+                      }
+                  });
             }
         });
     }

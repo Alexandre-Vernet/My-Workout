@@ -11,6 +11,7 @@ export interface History {
     weight?: number;
     date?: Date,
     groups?: {
+        workoutId: number;
         muscleGroup: MuscleGroup,
         exercises: Exercise[]
     }[]

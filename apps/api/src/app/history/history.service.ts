@@ -36,7 +36,7 @@ export class HistoryService {
 
         for (const h of historyEntity) {
             const { workout, exercise, weight } = h;
-            const { id, muscleGroup, date } = workout;
+            const { muscleGroup, date } = workout;
 
 
             // Find the entry for the current date (without time)
@@ -51,7 +51,6 @@ export class HistoryService {
             if (!dataEntry) {
                 dataEntry = {
                     workout: {
-                        id,
                         date
                     },
                     groups: []
@@ -60,11 +59,12 @@ export class HistoryService {
             }
 
             // Find the muscle group within the date
-            let groupEntry = dataEntry.groups.find(g => g.muscleGroup.id === muscleGroup.id);
+            let groupEntry: any = dataEntry.groups.find(g => g.muscleGroup.id === muscleGroup.id);
             if (!groupEntry) {
                 groupEntry = {
                     muscleGroup,
-                    exercises: []
+                    exercises: [],
+                    workoutId: workout.id
                 };
                 dataEntry.groups.push(groupEntry);
             }

@@ -52,7 +52,8 @@
 
                     <!-- List exercises -->
                     <ng-container *ngFor="let exercise of group.exercises; let i = index">
-                        <hr class="mt-3 mb-3" *ngIf="i > 0 && group.exercises[i].id  === group.exercises[i - 1].id" />
+                      <!-- If not the first exercise and the current exercise is different from the previous one -->
+                      <hr *ngIf="i > 0 && exercise.id !== group.exercises[i - 1].id" class="mt-3 mb-3" />
 
                         <div class="flex justify-content-between mb-2">
                             <!-- Exercise name -->
@@ -69,7 +70,7 @@
                     </ng-container>
                     <div class="flex justify-content-end mt-3">
                         <p-button pRipple icon="pi pi-trash" severity="danger"
-                                  (onClick)="deleteWorkout( h.workout.id, group.muscleGroup.name, h.workout.date)" />
+                                  (onClick)="deleteWorkout(group.workoutId, group.muscleGroup.name, h.workout.date)" />
                     </div>
                 </div>
             </div>
