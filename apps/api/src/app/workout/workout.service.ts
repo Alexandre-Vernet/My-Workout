@@ -12,17 +12,17 @@ export class WorkoutService {
 
 
     constructor(
-        @InjectRepository(WorkoutEntity)
-        private readonly workoutRepository: Repository<WorkoutEntity>
+      @InjectRepository(WorkoutEntity)
+      private readonly workoutRepository: Repository<WorkoutEntity>
     ) {
     }
 
     async create(workout: Workout, forceCreateWorkout = false) {
         const existingWorkoutToday = await this.workoutRepository
-            .createQueryBuilder('w')
-            .where('w.muscleGroup.id = :muscleGroupId', { muscleGroupId: workout.muscleGroup.id })
-            .andWhere('DATE(w.date) = DATE(:date)', { date: workout.date })
-            .getOne();
+          .createQueryBuilder('w')
+          .where('w.muscleGroup.id = :muscleGroupId', { muscleGroupId: workout.muscleGroup.id })
+          .andWhere('DATE(w.date) = DATE(:date)', { date: workout.date })
+          .getOne();
 
 
         if (existingWorkoutToday && !forceCreateWorkout) {
@@ -34,7 +34,12 @@ export class WorkoutService {
     async findById(id: number) {
         const workout = await this.workoutRepository.findOne({
             where: { id },
-            relations: { history: true }
+            relations: {
+                history: {
+                    exercise: true
+                },
+                muscleGroup: true
+            }
         });
 
         if (!workout) {
@@ -91,6 +96,9 @@ export class WorkoutService {
                 user: {
                     id: userId
                 }
+            },
+            relations: {
+                muscleGroup: true
             }
         });
 

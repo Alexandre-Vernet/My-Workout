@@ -48,7 +48,6 @@ export class HistoryComponent implements OnInit {
     }
 
     deleteWorkout(id: number, muscleGroupName: string, date: Date) {
-        console.log(id);
         const newDate = new Date(date);
         this.confirmationService.confirm({
             header: 'Attention',

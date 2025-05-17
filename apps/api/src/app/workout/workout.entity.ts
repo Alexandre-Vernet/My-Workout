@@ -12,7 +12,7 @@ export class WorkoutEntity {
     @JoinColumn({ name: 'user_id' })
     user: UserEntity;
 
-    @ManyToOne(() => MuscleGroupEntity, muscleGroup => muscleGroup.workout, { onDelete: 'CASCADE', eager: true })
+    @ManyToOne(() => MuscleGroupEntity, muscleGroup => muscleGroup.workout, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'muscle_group_id' })
     muscleGroup: MuscleGroupEntity;
 

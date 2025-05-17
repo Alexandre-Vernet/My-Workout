@@ -27,8 +27,10 @@ export class HistoryService {
                 }
             },
             relations: {
-                workout: true,
-                exercise: true
+                workout: {
+                    muscleGroup: true
+                },
+                exercise: true,
             }
         });
 

@@ -7,11 +7,11 @@ export class ExerciseMuscleEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @ManyToOne(() => ExercisesEntity, (exercise) => exercise.exerciseMuscle, { eager: true })
+    @ManyToOne(() => ExercisesEntity, (exercise) => exercise.exerciseMuscle)
     @JoinColumn({ name: 'exercise_id' })
     exercise: ExercisesEntity;
 
-    @ManyToOne(() => MuscleEntity, (muscle) => muscle.exerciseMuscle, { eager: true })
+    @ManyToOne(() => MuscleEntity, (muscle) => muscle.exerciseMuscle)
     @JoinColumn({ name: 'muscle_id' })
     muscle: MuscleEntity;
 }
