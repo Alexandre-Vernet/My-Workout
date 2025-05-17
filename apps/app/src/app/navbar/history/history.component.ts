@@ -22,7 +22,7 @@ import { ConfirmationService } from 'primeng/api';
 export class HistoryComponent implements OnInit {
 
     history: History[];
-    isLoading = false;
+    isLoading = true;
 
     isDarkMode = false;
 
@@ -38,7 +38,10 @@ export class HistoryComponent implements OnInit {
         this.historyService.findByUserId()
             .pipe(take(1))
             .subscribe({
-                next: history => this.history = history
+                next: (history) => {
+                    this.isLoading = false;
+                    this.history = history;
+                }
             });
 
         this.isDarkMode = this.themeService.isDarkMode();
