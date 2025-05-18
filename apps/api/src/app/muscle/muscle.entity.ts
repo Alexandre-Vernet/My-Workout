@@ -14,7 +14,7 @@ export class MuscleEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @ManyToOne(() => MuscleGroupEntity, (muscleGroup) => muscleGroup.muscle, { eager: true })
+    @ManyToOne(() => MuscleGroupEntity, (muscleGroup) => muscleGroup.muscle)
     @JoinColumn({ name: 'muscle_group_id' })
     muscleGroup: MuscleGroupEntity;
 

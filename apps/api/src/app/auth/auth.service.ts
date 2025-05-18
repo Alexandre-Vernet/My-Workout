@@ -19,12 +19,12 @@ export class AuthService {
 
     async signUp(user: User) {
         if (user.password.trim() !== user.confirmPassword.trim()) {
-            throw new FormBadRequestException(ErrorCode.passwordNotMatch, 'Passwords do not match', 'password');
+            throw new FormBadRequestException(ErrorCode.passwordNotMatch, 'password');
         }
 
         const existingUser = await this.userRepository.findOne({ where: { email: user.email } });
         if (existingUser) {
-            throw new FormBadRequestException(ErrorCode.emailAlreadyInUse, 'This email is already taken', 'email');
+            throw new FormBadRequestException(ErrorCode.emailAlreadyInUse, 'email');
         }
 
         // Hash password
@@ -54,7 +54,7 @@ export class AuthService {
         const isValid = existingUser && await bcrypt.compare(user.password, existingUser.password);
 
         if (!isValid) {
-            throw new FormBadRequestException(ErrorCode.invalidCredential, 'Email or password is incorrect', 'email');
+            throw new FormBadRequestException(ErrorCode.invalidCredential, 'email');
         }
 
 
@@ -113,7 +113,7 @@ export class AuthService {
 
         if (user.password && user.password !== user.confirmPassword) {
             if (user.password !== user.confirmPassword) {
-                throw new FormBadRequestException(ErrorCode.passwordNotMatch, 'Passwords do not match', 'password');
+                throw new FormBadRequestException(ErrorCode.passwordNotMatch, 'password');
             }
 
             const hashedPassword = await bcrypt.hash(user.password, 10);

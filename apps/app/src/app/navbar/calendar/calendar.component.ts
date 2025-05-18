@@ -8,10 +8,15 @@ import { FormsModule } from '@angular/forms';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { WorkoutService } from '../../services/workout.service';
+import { Workout } from '../../../../../../libs/interfaces/workout';
+import { Dialog } from 'primeng/dialog';
+import { Button } from 'primeng/button';
+import { Message } from 'primeng/message';
+import { ThemeService } from '../../theme/theme.service';
 
 @Component({
     selector: 'app-calendar',
-    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog],
+    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, Message],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
@@ -36,26 +41,31 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             center: '',
             right: 'today'
         },
-        eventClick: (info) => {
-            const { id, title, start } = info.event;
-
-            this.deleteEvent(Number(id), title, start);
-        }
+        eventClick: (info) => this.viewHistory(Number(info.event.id))
     };
+
+    workout: Workout;
+    showModalViewWorkout = false;
 
     @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
     swipeStartX = 0;
     swipeEndX = 0;
 
+
+    isDarkMode = false;
+
+    errorMessage: string;
+
     constructor(
         private readonly workoutService: WorkoutService,
-        private readonly confirmationService: ConfirmationService
+        private readonly confirmationService: ConfirmationService,
+        private readonly themeService: ThemeService
     ) {
 
     }
 
     ngOnInit() {
-        this.workoutService.getWorkoutFromUserId()
+        this.workoutService.findByUserId()
             .pipe(take(1))
             .subscribe(workout => {
                 this.calendarOptions.events = workout.map(w => ({
@@ -65,6 +75,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                     })
                 );
             });
+
+        this.isDarkMode = this.themeService.isDarkMode();
     }
 
 
@@ -93,13 +105,14 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         }
     }
 
-    private deleteEvent(id: number, eventName: string, eventDate: Date) {
+    openModalDeleteWorkout(id: number, muscleGroupName: string, date: Date) {
+        const formattedDate = new Date(date);
         this.confirmationService.confirm({
-            target: event.target as EventTarget,
             header: 'Attention',
-            message: `Voulez-vous vraiment supprimer la séance ${ eventName } du ${ eventDate.toLocaleDateString('fr-FR') } ?`,
-            closable: false,
+            message: `Voulez-vous vraiment supprimer l'entraînement ${ muscleGroupName } du ${ formattedDate.toLocaleDateString() } ?`,
+            closable: true,
             closeOnEscape: true,
+            dismissableMask: true,
             icon: 'pi pi-exclamation-triangle',
             acceptButtonProps: {
                 label: 'Supprimer'
@@ -112,14 +125,24 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             accept: () => {
                 this.workoutService.delete(id)
                     .subscribe({
-                        next: ({ deletedId }) => {
-                            if (deletedId) {
-                                this.calendarOptions.events = (this.calendarOptions.events as EventInput[]).filter(event => Number(event.id) !== deletedId);
-                            }
-                        }
+                        next: () => {
+                            this.errorMessage = '';
+                            this.calendarOptions.events = (this.calendarOptions.events as EventInput[]).filter(event => Number(event.id) !== id);
+                        },
+                        error: (err) => this.errorMessage = err?.error?.message ?? 'Une erreur est survenue lors de la suppression de l\'entraînement'
                     });
+                this.showModalViewWorkout = false;
             }
         });
+    }
+
+    private viewHistory(id: number) {
+        this.workoutService.findById(id)
+            .pipe(take(1))
+            .subscribe(workout => {
+                this.showModalViewWorkout = true;
+                this.workout = workout;
+            });
     }
 
     private previousMonth() {

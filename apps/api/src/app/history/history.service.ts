@@ -17,6 +17,85 @@ export class HistoryService {
         return this.historyEntity.save(history);
     }
 
+    async findByUserId(userId: number) {
+        const historyEntity = await this.historyEntity.find({
+            where: {
+                workout: {
+                    user: {
+                        id: userId
+                    }
+                }
+            },
+            relations: {
+                workout: {
+                    muscleGroup: true
+                },
+                exercise: true,
+            }
+        });
+
+        const history: History[] = [];
+
+        for (const h of historyEntity) {
+            const { workout, exercise, weight } = h;
+            const { muscleGroup, date } = workout;
+
+
+            // Find the entry for the current date (without time)
+            let dataEntry = history.find(h => {
+                const resultDateWithoutTime = new Date(h.workout.date);
+                resultDateWithoutTime.setHours(0, 0, 0, 0);
+                const dateWithoutTime = new Date(date);
+                dateWithoutTime.setHours(0, 0, 0, 0);
+
+                return resultDateWithoutTime.getTime() === dateWithoutTime.getTime();
+            });
+            if (!dataEntry) {
+                dataEntry = {
+                    workout: {
+                        date
+                    },
+                    groups: []
+                };
+                history.push(dataEntry);
+            }
+
+            // Find the muscle group within the date
+            let groupEntry: any = dataEntry.groups.find(g => g.muscleGroup.id === muscleGroup.id);
+            if (!groupEntry) {
+                groupEntry = {
+                    muscleGroup,
+                    exercises: [],
+                    workoutId: workout.id
+                };
+                dataEntry.groups.push(groupEntry);
+            }
+
+            // Find if exercise with same id and weight already exists in this group
+            let existingExercise = groupEntry.exercises.find(e => e.id === exercise.id && e.weight === weight);
+
+            if (existingExercise) {
+                // Increase the count
+                if (existingExercise.count) {
+                    existingExercise.count++;
+                }
+            } else {
+                // Add new exercise with count = 1
+                groupEntry.exercises.push({
+                    ...exercise,
+                    weight,
+                    count: 1
+                });
+            }
+        }
+
+
+        // Order by workout date
+        history.sort((a, b) => b.workout.date.getTime() - a.workout.date.getTime());
+
+        return history;
+    }
+
     findLastHistoryWeightByExerciseId(userId: number, exerciseId: number) {
         return this.historyEntity.findOne({
             where: {
@@ -28,9 +107,6 @@ export class HistoryService {
                         id: userId
                     }
                 }
-            },
-            order: {
-                date: 'DESC',
             }
         });
     }

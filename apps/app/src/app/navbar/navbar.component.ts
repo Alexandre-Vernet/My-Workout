@@ -48,6 +48,8 @@ export class NavbarComponent implements AfterViewInit {
                     activeIndex = 1;
                 } else if (url.includes(MenuUrls.workout)) {
                     activeIndex = 2;
+                } else if (url.includes(MenuUrls.history)) {
+                    activeIndex = 3;
                 } else if (url.includes(MenuUrls.user)) {
                     activeIndex = 4;
                 } else {

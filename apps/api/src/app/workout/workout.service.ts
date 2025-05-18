@@ -12,31 +12,94 @@ export class WorkoutService {
 
 
     constructor(
-        @InjectRepository(WorkoutEntity)
-        private readonly workoutRepository: Repository<WorkoutEntity>
+      @InjectRepository(WorkoutEntity)
+      private readonly workoutRepository: Repository<WorkoutEntity>
     ) {
     }
 
     async create(workout: Workout, forceCreateWorkout = false) {
         const existingWorkoutToday = await this.workoutRepository
-            .createQueryBuilder('w')
-            .where('w.muscleGroup.id = :muscleGroupId', { muscleGroupId: workout.muscleGroup.id })
-            .andWhere('DATE(w.date) = DATE(:date)', { date: workout.date })
-            .getOne();
+          .createQueryBuilder('w')
+          .where('w.muscleGroup.id = :muscleGroupId', { muscleGroupId: workout.muscleGroup.id })
+          .andWhere('DATE(w.date) = DATE(:date)', { date: workout.date })
+          .getOne();
 
 
         if (existingWorkoutToday && !forceCreateWorkout) {
-            throw new CustomBadRequestException(ErrorCode.duplicateWorkout, 'Vous avez déjà réalisé cette séance aujourd’hui.');
+            throw new CustomBadRequestException(ErrorCode.duplicateWorkout);
         }
         return this.workoutRepository.save(workout);
     }
 
-    async getWorkoutFromUserId(userId: number) {
+
+    async findById(id: number) {
+        const workout = await this.workoutRepository.findOne({
+            where: { id },
+            relations: {
+                history: {
+                    exercise: true
+                },
+                muscleGroup: true
+            }
+        });
+
+        if (!workout) {
+            return null;
+        }
+
+        // 1. Count the number of occurrences for each unique combination of exercise ID and weight
+        const counts: Record<string, number> = {};
+        workout.history.forEach(h => {
+            const key = `${ h.exercise.id }-${ h.weight }`;
+            counts[key] = (counts[key] || 0) + 1;
+        });
+
+        // 2. Remove duplicates by keeping only the first occurrence of each unique key
+        const seen = new Set<string>();
+        const uniqueHistory = workout.history.filter(h => {
+            const key = `${ h.exercise.id }-${ h.weight }`;
+            if (seen.has(key)) {
+                return false; // duplicate => skip
+            }
+            seen.add(key);
+            return true; // first occurrence => keep
+        });
+
+        // 3. Add the count to each exercise in the deduplicated list
+        const historyWithCount = uniqueHistory.map(h => {
+            const key = `${ h.exercise.id }-${ h.weight }`;
+            return {
+                ...h,
+                exercise: {
+                    ...h.exercise,
+                    count: counts[key]
+                }
+            };
+        });
+
+        workout.history = historyWithCount;
+
+        // 4. Sort by exercise ID first, then by weight if IDs match
+        workout.history.sort((a, b) => {
+            if (a.exercise.id === b.exercise.id) {
+                return Number(a.weight) - Number(b.weight);
+            }
+            return a.exercise.id - b.exercise.id;
+        });
+
+        return workout;
+    }
+
+
+    async findByUserId(userId: number) {
         const workout = await this.workoutRepository.find({
             where: {
                 user: {
                     id: userId
                 }
+            },
+            relations: {
+                muscleGroup: true
             }
         });
 
@@ -58,8 +121,8 @@ export class WorkoutService {
             }
         });
 
-        await this.workoutRepository.delete({ id: historyToDelete.id });
-
-        return { deletedId: id };
+        if (historyToDelete) {
+            return this.workoutRepository.delete({ id: historyToDelete.id });
+        }
     }
 }

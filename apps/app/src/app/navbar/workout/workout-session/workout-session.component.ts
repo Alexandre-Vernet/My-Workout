@@ -26,6 +26,7 @@ import { WorkoutService } from '../../../services/workout.service';
 import { Workout } from '../../../../../../../libs/interfaces/workout';
 import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
 import { ErrorCode } from '../../../../../../../libs/error-code/error-code';
+import { ThemeService } from '../../../theme/theme.service';
 
 @Component({
     selector: 'app-workout-session',
@@ -66,7 +67,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     isLoading = true;
 
-    isDarkMode = localStorage.getItem('dark-mode') === 'true';
+    isDarkMode = false;
 
     weightToElastics: Elastic[] = [];
 
@@ -76,11 +77,13 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     isIphone = false;
 
+
     constructor(
         private readonly activatedRoute: ActivatedRoute,
         private readonly workoutService: WorkoutService,
         private readonly exerciseService: ExerciseService,
         private readonly historyService: HistoryService,
+        private readonly themeService: ThemeService,
         private readonly confirmationService: ConfirmationService,
         private readonly router: Router,
         private readonly deviceDetectionService: DeviceDetectionService
@@ -90,6 +93,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.findExercisesAndCreateWorkout();
         this.isIphone = this.deviceDetectionService.isIphone();
+        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     ngAfterViewInit() {
@@ -148,8 +152,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         const history: History = {
             workout: this.workout,
             exercise: this.currentExercise,
-            weight: weightNumber,
-            createdAt: new Date()
+            weight: weightNumber
         };
 
         this.historyService.create(history)
@@ -398,8 +401,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.confirmationService.confirm({
             header: 'Attention',
             message: `Vous n'avez ajouté aucun exercice à votre bibliothèque.<br/>Commencez par en ajouter pour pouvoir lancer un entraînement.`,
-            closable: false,
+            closable: true,
             closeOnEscape: true,
+            dismissableMask: true,
             icon: 'pi pi-exclamation-triangle',
             acceptButtonProps: {
                 label: 'Ajouter'
@@ -422,8 +426,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.confirmationService.confirm({
             header: 'Attention',
             message: `${ message }<br/>Souhaitez-vous la refaire ?`,
-            closable: false,
+            closable: true,
             closeOnEscape: true,
+            dismissableMask: true,
             icon: 'pi pi-exclamation-triangle',
             acceptButtonProps: {
                 label: 'Confirmer'
@@ -440,7 +445,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         });
     }
 
-    private createWorkout(muscleGroupId: number, forceCreateWorkout= false) {
+    private createWorkout(muscleGroupId: number, forceCreateWorkout = false) {
         const muscleGroup: MuscleGroup = {
             id: muscleGroupId
         };

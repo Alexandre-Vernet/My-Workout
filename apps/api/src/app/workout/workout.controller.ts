@@ -17,9 +17,14 @@ export class WorkoutController {
         return this.workoutService.create(workout, forceCreateWorkout);
     }
 
-    @Get(':userId')
-    getHistoryAndMuscleGroupByUserId(@Param() { userId }: { userId: string }) {
-        return this.workoutService.getWorkoutFromUserId(Number(userId));
+    @Get(':id')
+    findById(@Param('id') id: string) {
+        return this.workoutService.findById(Number(id));
+    }
+
+    @Get()
+    findByUserId(@Query('userId') userId: string) {
+        return this.workoutService.findByUserId(Number(userId));
     }
 
     @Delete()

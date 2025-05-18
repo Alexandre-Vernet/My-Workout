@@ -8,11 +8,11 @@ export class WorkoutEntity {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @ManyToOne(() => UserEntity, user => user.workout, { onDelete: 'CASCADE', eager: true })
+    @ManyToOne(() => UserEntity, user => user.workout, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'user_id' })
     user: UserEntity;
 
-    @ManyToOne(() => MuscleGroupEntity, muscleGroup => muscleGroup.workout, { onDelete: 'CASCADE', eager: true })
+    @ManyToOne(() => MuscleGroupEntity, muscleGroup => muscleGroup.workout, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'muscle_group_id' })
     muscleGroup: MuscleGroupEntity;
 

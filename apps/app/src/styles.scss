@@ -19,7 +19,7 @@ html, body {
 
 
 .shadow-light {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 1px 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .shadow-dark {
@@ -27,6 +27,18 @@ html, body {
 }
 
 
+.selected-light {
+    background: #e8f2fd;
+}
+
+.selected-dark {
+    background: #1f2a36;
+}
+
 .disabled {
     opacity: .6;
+}
+
+.mr-2-5 {
+    margin-right: 8px;
 }

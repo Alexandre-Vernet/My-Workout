@@ -8,6 +8,7 @@ import { forkJoin, take } from 'rxjs';
 import { Message } from 'primeng/message';
 import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
+import { ThemeService } from '../../../theme/theme.service';
 
 @Component({
     selector: 'select-muscle-group-workout',
@@ -26,10 +27,11 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     isLoading = true;
 
-    isDarkMode = localStorage.getItem('dark-mode') === 'true';
+    isDarkMode = false;
 
     constructor(
-        private readonly muscleGroupService: MuscleGroupService
+        private readonly muscleGroupService: MuscleGroupService,
+        private readonly themeService: ThemeService
     ) {
     }
 
@@ -53,5 +55,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
                 },
                 error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les entraînements'
             });
+
+        this.isDarkMode = this.themeService.isDarkMode();
     }
 }

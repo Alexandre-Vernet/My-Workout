@@ -1,9 +1,11 @@
 import { User } from './user';
 import { MuscleGroup } from './MuscleGroup';
+import { History } from './history';
 
 export class Workout {
     id?: number;
     user?: User;
-    muscleGroup: MuscleGroup;
+    muscleGroup?: MuscleGroup;
     date: Date;
+    history?: History[];
 }

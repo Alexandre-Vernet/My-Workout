@@ -72,7 +72,7 @@ export class MuscleGroupService {
                                            WHERE id NOT IN (SELECT muscle_group_id FROM worked_groups)),
                      ranked_worked_groups AS (SELECT mg.id,
                                                      mg.name,
-                                                     MAX(h.date) AS last_worked
+                                                     MAX(w.date) AS last_worked
                                               FROM workout w
                                                        JOIN history h ON w.id = h.workout_id
                                                        JOIN exercises e ON e.id = h.exercise_id

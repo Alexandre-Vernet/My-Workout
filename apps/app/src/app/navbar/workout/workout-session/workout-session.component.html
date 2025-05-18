@@ -1,5 +1,5 @@
 <p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
-<p-confirmdialog />
+<p-confirmdialog></p-confirmdialog>
 
 <div #swipeZone class="workout-session">
     <ng-container *ngIf="isLoading else content">
@@ -72,6 +72,7 @@
 
                                     <p-inputNumber
                                         [(ngModel)]="weight"
+                                        (ngModelChange)="convertWeightToElastics()"
                                         [disabled]="timer.interval"
                                         [suffix]="' kg'">
                                     </p-inputNumber>

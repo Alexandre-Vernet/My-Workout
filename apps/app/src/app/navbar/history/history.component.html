@@ -1,0 +1,82 @@
+<p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
+
+<div class="history">
+    <ng-container *ngIf="isLoading else content">
+        <div *ngFor="let skeleton of [1, 2]">
+            <div class="p-5">
+                <p-skeleton width="10rem" styleClass="mb-2" />
+
+                <div *ngFor="let s of [1, 2]" class="p-3 mb-3 border-round-lg" [ngClass]="{
+                    'recommended-light': !isDarkMode,
+                    'recommended-dark': isDarkMode,
+                    'shadow-dark': isDarkMode,
+                    'shadow-light': !isDarkMode
+                    }">
+                    <h3 class="mb-4" [ngClass]="{
+                    'text-black-alpha-90': isDarkMode
+                    }">
+                        <p-skeleton width="5rem" styleClass="mb-2" />
+                    </h3>
+
+                    <ng-container *ngFor="let exercise of [1, 2, 3]">
+                        <div class="flex justify-content-between mb-2">
+                            <p-skeleton width="8rem" styleClass="mb-2" />
+
+                            <div class="flex flex-column text-right text-sm text-color-secondary">
+                                <p-skeleton width="2rem" />
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="flex justify-content-end mt-3">
+                        <p-skeleton width="4rem" height="3rem" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #content>
+        <div *ngFor="let h of history">
+            <div class="p-5">
+                <h2 class="mb-2">{{ h.workout.date | date:'fullDate' | titlecase }}</h2>
+
+                <div *ngFor="let group of h.groups" class="p-3 mb-3 border-round-lg" [ngClass]="{
+                    'recommended-light': !isDarkMode,
+                    'recommended-dark': isDarkMode,
+                    'shadow-dark': isDarkMode,
+                    'shadow-light': !isDarkMode
+                    }">
+                    <!-- Muscle group name -->
+                    <h3 class="mb-3" [ngClass]="{
+                    'text-black-alpha-90': isDarkMode
+                    }">{{ group.muscleGroup.name }}</h3>
+
+                    <!-- List exercises -->
+                    <ng-container *ngFor="let exercise of group.exercises; let i = index">
+                      <!-- If not the first exercise and the current exercise is different from the previous one -->
+                      <hr *ngIf="i > 0 && exercise.id !== group.exercises[i - 1].id" class="mt-3 mb-3" />
+
+                        <div class="flex justify-content-between mb-2">
+                            <!-- Exercise name -->
+                            <div class="text-primary text-lg">
+                                <span *ngIf="exercise.count > 1">{{ exercise.count }}x</span>
+                                {{ exercise.name }}
+                            </div>
+
+                            <!-- Weight -->
+                            <div *ngIf="exercise.weight" class="flex flex-column text-right text-sm text-color-secondary">
+                                {{ exercise.weight }} kg
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="flex justify-content-end mt-3">
+                        <p-button pRipple icon="pi pi-trash" severity="danger"
+                                  (onClick)="deleteWorkout(group.workoutId, group.muscleGroup.name, h.workout.date)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</div>
+
+<p-confirmdialog></p-confirmdialog>

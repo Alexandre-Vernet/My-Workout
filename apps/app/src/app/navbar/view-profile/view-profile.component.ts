@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
@@ -8,6 +8,7 @@ import { ChangeThemeComponent } from './change-theme/change-theme.component';
 import { ManageAccountComponent } from './manage-account/manage-account.component';
 import { Alert } from '../../../../../../libs/interfaces/alert';
 import { AccountActionsComponent } from './account-actions/account-actions.component';
+import { ThemeService } from '../../theme/theme.service';
 
 @Component({
     selector: 'app-view-profile',
@@ -17,11 +18,20 @@ import { AccountActionsComponent } from './account-actions/account-actions.compo
     standalone: true,
     providers: [ConfirmationService]
 })
-export class ViewProfileComponent {
+export class ViewProfileComponent implements OnInit {
 
     alert: Alert;
 
-    isDarkMode = localStorage.getItem('dark-mode') === 'true';
+    isDarkMode = false;
+
+    constructor(
+        private readonly themeService: ThemeService
+    ) {
+    }
+
+    ngOnInit() {
+        this.isDarkMode = this.themeService.isDarkMode();
+    }
 
     updateDarkMode(value: boolean) {
         this.isDarkMode = value;
