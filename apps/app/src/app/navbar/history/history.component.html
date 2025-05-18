@@ -6,7 +6,7 @@
             <div class="p-5">
                 <p-skeleton width="10rem" styleClass="mb-2" />
 
-                <div *ngFor="let s of [1, 2]" class="p-3 mb-3 bg border-round-lg" [ngClass]="{
+                <div *ngFor="let s of [1, 2]" class="p-3 mb-3 border-round-lg" [ngClass]="{
                     'recommended-light': !isDarkMode,
                     'recommended-dark': isDarkMode,
                     'shadow-dark': isDarkMode,
@@ -40,7 +40,7 @@
             <div class="p-5">
                 <h2 class="mb-2">{{ h.workout.date | date:'fullDate' | titlecase }}</h2>
 
-                <div *ngFor="let group of h.groups" class="p-3 mb-3 bg border-round-lg" [ngClass]="{
+                <div *ngFor="let group of h.groups" class="p-3 mb-3 border-round-lg" [ngClass]="{
                     'recommended-light': !isDarkMode,
                     'recommended-dark': isDarkMode,
                     'shadow-dark': isDarkMode,
