@@ -12,6 +12,7 @@ import { Workout } from '../../../../../../libs/interfaces/workout';
 import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
+import { ThemeService } from '../../theme/theme.service';
 
 @Component({
     selector: 'app-calendar',
@@ -40,10 +41,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             center: '',
             right: 'today'
         },
-        eventClick: (info) => {
-            const id = info.event.id;
-            this.viewHistory(Number(id));
-        }
+        eventClick: (info) => this.viewHistory(Number(info.event.id))
     };
 
     workout: Workout;
@@ -60,7 +58,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     constructor(
         private readonly workoutService: WorkoutService,
-        private readonly confirmationService: ConfirmationService
+        private readonly confirmationService: ConfirmationService,
+        private readonly themeService: ThemeService
     ) {
 
     }
@@ -76,6 +75,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                     })
                 );
             });
+
+        this.isDarkMode = this.themeService.isDarkMode();
     }
 
 

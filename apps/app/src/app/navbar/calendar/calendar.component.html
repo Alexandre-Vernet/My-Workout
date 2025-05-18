@@ -10,17 +10,20 @@
 </div>
 
 
-<p-dialog [header]="workout?.date | date:'fullDate' | titlecase" [modal]="true" [(visible)]="showModalViewWorkout" dismissableMask="true"
-          [style]="{ width: '25rem' }">
+<p-dialog [header]="workout?.date | date:'fullDate' | titlecase" [modal]="true" [(visible)]="showModalViewWorkout"
+          dismissableMask="true"
+          [style]="{ width: '25rem',  background: isDarkMode ? '#1f2a36' : '#ffff' }">
     <div *ngIf="workout" class="p-2">
-        <h2 class="mb-2">{{ workout.muscleGroup.name }}</h2>
 
-        <div class="p-3 bg border-round-lg" [ngClass]="{
+        <div class="p-3 border-round-lg" [ngClass]="{
                     'recommended-light': !isDarkMode,
                     'recommended-dark': isDarkMode,
                     'shadow-dark': isDarkMode,
                     'shadow-light': !isDarkMode
                     }">
+
+            <h2 class="mb-3">{{ workout.muscleGroup.name }}</h2>
+
 
             <!-- List exercises -->
             <ng-container *ngFor="let h of workout.history; let i = index">
@@ -34,7 +37,7 @@
                     </div>
 
                     <!-- Weight -->
-                    <div class="flex flex-column text-right text-sm text-color-secondary">
+                    <div *ngIf="h.weight" class="flex flex-column text-right text-sm text-color-secondary">
                         {{ h.weight }} kg
                     </div>
                 </div>
@@ -42,8 +45,8 @@
         </div>
         <div class="flex justify-content-end mt-3">
             <p-button severity="danger"
-                (onClick)="openModalDeleteWorkout(workout.id, workout.muscleGroup.name, workout.date)"
-                icon="pi pi-trash" label="Supprimer" />
+                      (onClick)="openModalDeleteWorkout(workout.id, workout.muscleGroup.name, workout.date)"
+                      icon="pi pi-trash" label="Supprimer" />
         </div>
     </div>
 </p-dialog>
