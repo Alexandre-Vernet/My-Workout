@@ -122,11 +122,7 @@ export class WorkoutService {
         });
 
         if (historyToDelete) {
-            await this.workoutRepository.delete({ id: historyToDelete.id });
-            return { deletedId: id };
+            return this.workoutRepository.delete({ id: historyToDelete.id });
         }
-
-        return { deletedId: 0 };
-
     }
 }

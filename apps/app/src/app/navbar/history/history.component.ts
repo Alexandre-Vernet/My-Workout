@@ -10,10 +10,11 @@ import { Ripple } from 'primeng/ripple';
 import { WorkoutService } from '../../services/workout.service';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { Message } from 'primeng/message';
 
 @Component({
     selector: 'app-history',
-    imports: [CommonModule, Skeleton, Button, Ripple, ConfirmDialog],
+    imports: [CommonModule, Skeleton, Button, Ripple, ConfirmDialog, Message],
     templateUrl: './history.component.html',
     styleUrl: './history.component.scss',
     standalone: true,
@@ -25,6 +26,8 @@ export class HistoryComponent implements OnInit {
     isLoading = true;
 
     isDarkMode = false;
+
+    errorMessage: string;
 
     constructor(
       private readonly historyService: HistoryService,
@@ -69,11 +72,13 @@ export class HistoryComponent implements OnInit {
                   .pipe(take(1))
                   .subscribe({
                       next: () => {
+                          this.errorMessage = '';
                           this.history = this.history.map(h => {
                               h.groups = h.groups.filter(g => g.workoutId !== id);
                               return h;
                           });
-                      }
+                      },
+                      error: (err) => this.errorMessage = err?.error?.message ?? 'Une erreur est survenue lors de la suppression de l\'entraînement',
                   });
             }
         });

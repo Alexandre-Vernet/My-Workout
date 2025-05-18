@@ -1,3 +1,6 @@
+<p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
+
+
 <div #swipeZone class="p-4">
     <full-calendar [options]="calendarOptions">
         <ng-template #eventContent let-arg>

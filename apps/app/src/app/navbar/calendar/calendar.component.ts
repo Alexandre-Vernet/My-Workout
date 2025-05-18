@@ -11,10 +11,11 @@ import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../../../../../libs/interfaces/workout';
 import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
+import { Message } from 'primeng/message';
 
 @Component({
     selector: 'app-calendar',
-    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button],
+    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, Message],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
@@ -54,6 +55,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
 
     isDarkMode = false;
+
+    errorMessage: string;
 
     constructor(
         private readonly workoutService: WorkoutService,
@@ -121,11 +124,11 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             accept: () => {
                 this.workoutService.delete(id)
                     .subscribe({
-                        next: ({ deletedId }) => {
-                            if (deletedId) {
-                                this.calendarOptions.events = (this.calendarOptions.events as EventInput[]).filter(event => Number(event.id) !== deletedId);
-                            }
-                        }
+                        next: () => {
+                            this.errorMessage = '';
+                            this.calendarOptions.events = (this.calendarOptions.events as EventInput[]).filter(event => Number(event.id) !== id);
+                        },
+                        error: (err) => this.errorMessage = err?.error?.message ?? 'Une erreur est survenue lors de la suppression de l\'entraînement'
                     });
                 this.showModalViewWorkout = false;
             }

@@ -46,7 +46,7 @@ export class WorkoutService {
     delete(id: number) {
         return this.authService.user$
             .pipe(
-                switchMap(user => this.http.delete<{ deletedId: number }>(`${ this.workoutUrl }`, {
+                switchMap(user => this.http.delete<void>(`${ this.workoutUrl }`, {
                     params: {
                         id,
                         userId: user.id

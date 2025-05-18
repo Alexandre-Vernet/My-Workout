@@ -1,5 +1,6 @@
-<div class="history">
+<p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
 
+<div class="history">
     <ng-container *ngIf="isLoading else content">
         <div *ngFor="let skeleton of [1, 2]">
             <div class="p-5">
