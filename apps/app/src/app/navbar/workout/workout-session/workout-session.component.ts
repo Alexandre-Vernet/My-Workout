@@ -67,7 +67,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     isLoading = true;
 
-    isDarkMode =false;
+    isDarkMode = false;
 
     weightToElastics: Elastic[] = [];
 
@@ -76,7 +76,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     swipeEndX = 0;
 
     isIphone = false;
-
 
 
     constructor(
@@ -153,7 +152,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         const history: History = {
             workout: this.workout,
             exercise: this.currentExercise,
-            weight: weightNumber,
+            weight: weightNumber
         };
 
         this.historyService.create(history)
@@ -446,7 +445,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         });
     }
 
-    private createWorkout(muscleGroupId: number, forceCreateWorkout= false) {
+    private createWorkout(muscleGroupId: number, forceCreateWorkout = false) {
         const muscleGroup: MuscleGroup = {
             id: muscleGroupId
         };
