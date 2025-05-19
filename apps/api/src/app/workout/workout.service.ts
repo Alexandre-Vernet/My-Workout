@@ -99,12 +99,20 @@ export class WorkoutService {
                 }
             },
             relations: {
-                muscleGroup: true
+                muscleGroup: true,
+                history: {
+                    exercise: true
+                }
             }
         });
 
         workout.forEach(w => {
             w.muscleGroup.name = renameMuscleGroupMap[w.muscleGroup.name] ?? w.muscleGroup.name;
+
+            // Display exercise name for cardio instead "CARDIO" in calendar
+            if (w.muscleGroup.id === 8) {
+                w.muscleGroup.name = renameMuscleGroupMap[w.history[0].exercise.name] ?? w.history[0].exercise.name;
+            }
         });
 
         return workout;
