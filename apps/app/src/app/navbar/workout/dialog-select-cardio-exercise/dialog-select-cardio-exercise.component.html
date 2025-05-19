@@ -1,0 +1,10 @@
+<p-dialog header="Sélectionner un type d'entraînement" [modal]="true" [(visible)]="openModal"
+          [closable]="true" dismissableMask="true" (onHide)="onCloseModal()">
+    <div class="cardio-flow">
+        <div class="cardio-card" *ngFor="let cardioExercise of cardioExercises">
+            <div class="flex-1 flex align-items-center justify-content-between">
+                <h2 class="text-xl font-bold text-primary">{{ cardioExercise?.name }}</h2>
+            </div>
+        </div>
+    </div>
+</p-dialog>

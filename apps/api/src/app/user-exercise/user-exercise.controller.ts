@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
 import { UserExerciseService } from './user-exercise.service';
 import { UserExercise } from '../../../../../libs/interfaces/user-exercise';
 import { AuthInterceptor } from '../auth/auth.interceptor';
+import { AuthService } from '../auth/auth.service';
 
 @UseInterceptors(AuthInterceptor)
 @Controller('user-exercise')

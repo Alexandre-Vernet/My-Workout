@@ -1,0 +1,14 @@
+.cardio-flow {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.cardio-card {
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}

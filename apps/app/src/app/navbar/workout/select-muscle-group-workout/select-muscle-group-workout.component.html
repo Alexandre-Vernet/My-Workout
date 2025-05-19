@@ -23,21 +23,47 @@
     </ng-container>
 
     <ng-template #content>
-        <ng-container *ngFor="let muscleGroup of muscleGroups">
-            <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroup?.id]">
-                <div class="muscle-group-card" [ngClass]="{
+        <div class="muscle-groups" *ngFor="let muscleGroup of muscleGroups">
+            <ng-container *ngIf="muscleGroup?.id !== 8; else noLink">
+                <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroup?.id]">
+                    <div class="muscle-group-card" [ngClass]="{
+                        'selected-light': !isDarkMode && muscleGroup?.isRecommended,
+                        'selected-dark': isDarkMode && muscleGroup?.isRecommended,
+                        'shadow-dark': isDarkMode,
+                        'shadow-light': !isDarkMode
+                    }">
+                        <div class="flex-1 flex align-items-center justify-content-between">
+                            <h2 class="text-xl font-bold text-primary">{{ muscleGroup?.name }}</h2>
+                            <p-tag *ngIf="muscleGroup.isRecommended" severity="info">Recommandé</p-tag>
+                        </div>
+                        <span
+                            class="text-lg">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
+                    </div>
+                </a>
+            </ng-container>
+            <ng-template #noLink>
+                <div class="muscle-group-card"
+                     (click)="openModalExerciseCardio = true"
+                     [ngClass]="{
                     'selected-light': !isDarkMode && muscleGroup?.isRecommended,
                     'selected-dark': isDarkMode && muscleGroup?.isRecommended,
                     'shadow-dark': isDarkMode,
-                    'shadow-light': !isDarkMode,
+                    'shadow-light': !isDarkMode
                 }">
                     <div class="flex-1 flex align-items-center justify-content-between">
                         <h2 class="text-xl font-bold text-primary">{{ muscleGroup?.name }}</h2>
                         <p-tag *ngIf="muscleGroup.isRecommended" severity="info">Recommandé</p-tag>
                     </div>
-                    <span class="text-lg">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
+                    <span
+                        class="text-lg">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
                 </div>
-            </a>
-        </ng-container>
+            </ng-template>
+        </div>
     </ng-template>
 </div>
+
+
+<app-dialog-select-cardio-exercise
+    [openModal]="openModalExerciseCardio"
+    (closeModal)="closeModalExerciseCardio()"
+></app-dialog-select-cardio-exercise>

@@ -9,10 +9,13 @@ import { Message } from 'primeng/message';
 import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
 import { ThemeService } from '../../../theme/theme.service';
+import {
+    DialogSelectCardioExerciseComponent
+} from '../dialog-select-cardio-exercise/dialog-select-cardio-exercise.component';
 
 @Component({
     selector: 'select-muscle-group-workout',
-    imports: [CommonModule, RouterLink, Message, Tag, Skeleton],
+    imports: [CommonModule, RouterLink, Message, Tag, Skeleton, DialogSelectCardioExerciseComponent],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
     standalone: true
@@ -22,6 +25,8 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
     protected readonly MenuUrls = MenuUrls;
 
     muscleGroups: MuscleGroup[] = [];
+
+    openModalExerciseCardio = false;
 
     errorMessage: string;
 
@@ -57,5 +62,9 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
             });
 
         this.isDarkMode = this.themeService.isDarkMode();
+    }
+
+    closeModalExerciseCardio() {
+        this.openModalExerciseCardio = false;
     }
 }

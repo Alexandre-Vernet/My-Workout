@@ -6,11 +6,14 @@
     justify-content: center;
     gap: 15px;
 
-    a {
+    .muscle-groups {
         width: 100%;
-        text-decoration: none;
-        color: var(--p-text-color);
-        text-underline: none;
+
+        a {
+            text-decoration: none;
+            color: var(--p-text-color);
+            text-underline: none;
+        }
 
         .muscle-group-card {
             padding: 1.2em 2em;
