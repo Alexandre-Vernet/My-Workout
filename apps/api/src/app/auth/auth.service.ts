@@ -189,7 +189,7 @@ export class AuthService {
             throw new ConflictException('Invalid credentials');
         }
 
-        const user: User = decoded.existingUser;
+        const user: User = decoded.user;
 
         return user;
     }

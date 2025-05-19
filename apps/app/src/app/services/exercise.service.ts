@@ -51,4 +51,9 @@ export class ExerciseService {
                 }))
             );
     }
+
+
+    findAllByMuscleGroupId() {
+        return this.httpClient.get<Exercise[]>(this.exerciseUrl);
+    }
 }

@@ -8,5 +8,6 @@ export interface MuscleGroup {
 
 export const renameMuscleGroupMap: Record<string, string> = {
     'Pectoraux': 'Pecs',
-    'Abdominaux': 'Abdos'
+    'Abdominaux': 'Abdos',
+    'Course à pied': 'Running',
 };

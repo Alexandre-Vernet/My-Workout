@@ -1,10 +1,14 @@
-import { Body, Controller, HttpCode, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Req, UseInterceptors } from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
 import { AuthInterceptor } from '../auth/auth.interceptor';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('exercises')
 export class ExercisesController {
-    constructor(private readonly exercisesService: ExercisesService) {
+    constructor(
+        private readonly exercisesService: ExercisesService,
+        private readonly authService: AuthService
+    ) {
     }
 
     @Post('find-all-exercises-by-muscle-group-id')
@@ -31,5 +35,12 @@ export class ExercisesController {
         userId: number
     }) {
         return this.exercisesService.findExercisesByMuscleGroupIdAndUserId(userId, muscleGroupId);
+    }
+
+    @Get()
+    findAllByMuscleGroupId(@Req() request: Request) {
+        const token = request.headers['authorization'].split(' ')[1];
+        const user = this.authService.verifyToken(token);
+        return this.exercisesService.findAllByMuscleGroupId(user.id);
     }
 }

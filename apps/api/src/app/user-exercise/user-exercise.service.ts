@@ -11,7 +11,7 @@ export class UserExerciseService {
 
     constructor(
         @InjectRepository(UserExerciseEntity)
-        private readonly workoutRepository: Repository<UserExerciseEntity>
+        private readonly userExerciseEntityRepository: Repository<UserExerciseEntity>
     ) {
     }
 
@@ -19,7 +19,7 @@ export class UserExerciseService {
         if (!userExercise?.user?.id || !userExercise?.exercise?.id) {
             throw new CustomBadRequestException(ErrorCode.userMustBeLoggedToContinue);
         } else {
-            const existingWorkout = await this.workoutRepository.findOne({
+            const existingWorkout = await this.userExerciseEntityRepository.findOne({
                 where: {
                     user: {
                         id: userExercise.user.id
@@ -30,10 +30,10 @@ export class UserExerciseService {
                 }
             });
             if (existingWorkout) {
-                return await this.workoutRepository.remove(existingWorkout);
+                return await this.userExerciseEntityRepository.remove(existingWorkout);
             }
 
-            return await this.workoutRepository.save(userExercise);
+            return await this.userExerciseEntityRepository.save(userExercise);
         }
     }
 }

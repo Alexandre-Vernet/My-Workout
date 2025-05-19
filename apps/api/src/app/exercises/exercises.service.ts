@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { MuscleGroupService } from '../muscle-group/muscle-group.service';
 import { CustomBadRequestException } from '../exceptions/CustomBadRequestException';
 import { ErrorCode } from '../../../../../libs/error-code/error-code';
+import { ExercisesEntity } from './exercises.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ExercisesService {
     constructor(
         private readonly dataSource: DataSource,
+        @InjectRepository (ExercisesEntity)
+        private readonly exerciseRepository: Repository<ExercisesEntity>,
         private readonly muscleGroupService: MuscleGroupService,
     ) {
     }
@@ -99,5 +103,27 @@ export class ExercisesService {
             `,
             [userId, muscleGroupId]
         );
+    }
+
+    findAllByMuscleGroupId(userId: number) {
+        return this.exerciseRepository.find({
+            where: {
+                userExercise: {
+                    user: {
+                        id: userId
+                    },
+                    exercise: {
+                        exerciseMuscle: {
+                            muscle: {
+                                muscleGroup: {
+                                    id: 8,
+                                    name: 'Cardio',
+                                }
+                            }
+                        }
+                    }
+                },
+            }
+        });
     }
 }
