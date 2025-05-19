@@ -1,14 +1,20 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
-import { Subject } from 'rxjs';
+import { Subject, switchMap, take } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
-import { Tag } from 'primeng/tag';
+import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
+import { Workout } from '../../../../../../../libs/interfaces/workout';
+import { WorkoutService } from '../../../services/workout.service';
+import { HistoryService } from '../../../services/history.service';
+import { History } from '../../../../../../../libs/interfaces/history';
+import { Alert } from '../../../../../../../libs/interfaces/alert';
+import { ThemeService } from '../../../theme/theme.service';
 
 @Component({
     selector: 'app-dialog-select-cardio-exercise',
-    imports: [CommonModule, Dialog, Tag],
+    imports: [CommonModule, Dialog],
     templateUrl: './dialog-select-cardio-exercise.component.html',
     styleUrl: './dialog-select-cardio-exercise.component.scss',
     standalone: true
@@ -17,22 +23,80 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
 
     @Input() openModal: boolean;
     @Output() closeModal = new Subject<void>();
+    @Output() showAlert = new Subject<Alert>();
 
     cardioExercises: Exercise[] = [];
 
+    private MUSCLE_GROUP_CARDIO_ID = 8;
+
+    isDarkMode = false;
+
+
     constructor(
-        private readonly exerciseService: ExerciseService
+        private readonly exerciseService: ExerciseService,
+        private readonly workoutService: WorkoutService,
+        private readonly historyService: HistoryService,
+        private readonly themeService: ThemeService
     ) {
     }
 
     ngOnInit() {
-        this.exerciseService.findAllByMuscleGroupId()
+        this.exerciseService
+            .findAllByMuscleGroupId()
+            .pipe(take(1))
             .subscribe(cardioExercises => {
                 this.cardioExercises = cardioExercises;
             });
+
+        this.isDarkMode = this.themeService.isDarkMode();
+
     }
 
     onCloseModal() {
         this.closeModal.next();
+    }
+
+    createWorkout(exercise: Exercise) {
+        const muscleGroup: MuscleGroup = {
+            id: this.MUSCLE_GROUP_CARDIO_ID
+        };
+
+        const workout: Workout = {
+            muscleGroup,
+            date: new Date()
+        };
+
+        this.workoutService.create(workout)
+            .pipe(
+                take(1),
+                switchMap(workout => {
+                    const newExercise: Exercise = {
+                        id: exercise.id
+                    };
+
+                    const history: History = {
+                        workout,
+                        exercise: newExercise
+                    };
+
+                    return this.historyService.create(history);
+                })
+            )
+            .subscribe({
+                next: () => {
+                    this.closeModal.next();
+                    this.showAlert.next({
+                        severity: 'success',
+                        message: `L'entraînement ${ exercise.name } a été créé avec succès`
+                    });
+                },
+                error: (err) => {
+                    this.closeModal.next();
+                    this.showAlert.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible de créer l\'entraînement'
+                    });
+                }
+            });
     }
 }

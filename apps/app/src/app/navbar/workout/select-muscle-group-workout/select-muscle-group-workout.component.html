@@ -1,4 +1,6 @@
-<p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
+<p-message *ngIf="alert?.message" [severity]="alert?.severity">{{ alert?.message }}</p-message>
+
+<p-confirmdialog></p-confirmdialog>
 
 
 <div class="select-muscle-group-workout">
@@ -43,7 +45,7 @@
             </ng-container>
             <ng-template #noLink>
                 <div class="muscle-group-card"
-                     (click)="openModalExerciseCardio = true"
+                     (click)="openModalExerciseCardio()"
                      [ngClass]="{
                     'selected-light': !isDarkMode && muscleGroup?.isRecommended,
                     'selected-dark': isDarkMode && muscleGroup?.isRecommended,
@@ -64,6 +66,7 @@
 
 
 <app-dialog-select-cardio-exercise
-    [openModal]="openModalExerciseCardio"
+    [openModal]="isOpenModalExerciseCardio"
     (closeModal)="closeModalExerciseCardio()"
+    (showAlert)="showAlert($event)"
 ></app-dialog-select-cardio-exercise>
