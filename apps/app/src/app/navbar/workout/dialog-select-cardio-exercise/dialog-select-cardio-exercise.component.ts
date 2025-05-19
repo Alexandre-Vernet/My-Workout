@@ -44,8 +44,15 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
         this.exerciseService
             .findAllByMuscleGroupId()
             .pipe(take(1))
-            .subscribe(cardioExercises => {
-                this.cardioExercises = cardioExercises;
+            .subscribe({
+                next: (cardioExercises) => this.cardioExercises = cardioExercises,
+                error: (err) => {
+                    this.closeModal.next();
+                    this.showAlert.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'afficher les exercices'
+                    });
+                }
             });
 
         this.isDarkMode = this.themeService.isDarkMode();
