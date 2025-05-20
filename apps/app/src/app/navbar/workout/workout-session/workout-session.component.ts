@@ -337,7 +337,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     private startTimer() {
-        if (this.exercisesMade.length <= 0) {
+        if (!this.workout) {
             this.createWorkout(this.muscleGroupId)
                 .pipe(take(1))
                 .subscribe(workout => {
