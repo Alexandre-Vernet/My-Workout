@@ -4,30 +4,18 @@ import { WorkoutEntity } from './workout.entity';
 import { Repository } from 'typeorm';
 import { renameMuscleGroupMap } from '../../../../../libs/interfaces/MuscleGroup';
 import { Workout } from '../../../../../libs/interfaces/workout';
-import { CustomBadRequestException } from '../exceptions/CustomBadRequestException';
-import { ErrorCode } from '../../../../../libs/error-code/error-code';
 
 @Injectable()
 export class WorkoutService {
 
 
     constructor(
-      @InjectRepository(WorkoutEntity)
-      private readonly workoutRepository: Repository<WorkoutEntity>
+        @InjectRepository(WorkoutEntity)
+        private readonly workoutRepository: Repository<WorkoutEntity>
     ) {
     }
 
-    async create(workout: Workout, forceCreateWorkout = false) {
-        const existingWorkoutToday = await this.workoutRepository
-          .createQueryBuilder('w')
-          .where('w.muscleGroup.id = :muscleGroupId', { muscleGroupId: workout.muscleGroup.id })
-          .andWhere('DATE(w.date) = DATE(:date)', { date: workout.date })
-          .getOne();
-
-
-        if (existingWorkoutToday && !forceCreateWorkout) {
-            throw new CustomBadRequestException(ErrorCode.duplicateWorkout);
-        }
+    async create(workout: Workout) {
         return this.workoutRepository.save(workout);
     }
 
@@ -116,6 +104,15 @@ export class WorkoutService {
         });
 
         return workout;
+    }
+
+    checkDuplicateWorkout(userId: number, muscleGroupId: number) {
+        return this.workoutRepository
+            .createQueryBuilder('w')
+            .where('w.user.id = :userId', { userId })
+            .where('w.muscleGroup.id = :muscleGroupId', { muscleGroupId })
+            .andWhere('DATE(w.date) = DATE(:date)', { date: new Date() })
+            .getOne();
     }
 
 

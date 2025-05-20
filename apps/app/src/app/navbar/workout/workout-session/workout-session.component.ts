@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { map, of, switchMap, take } from 'rxjs';
+import { filter, map, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
@@ -44,7 +44,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     exercises: Exercise[] = [];
     exercisesMade: Exercise[] = [];
     currentExercise: Exercise;
-    hasConfirmedDuplicateWorkout = false;
+    muscleGroupId: number;
 
     activeStep: number = 1;
 
@@ -91,7 +91,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.findExercisesAndCreateWorkout();
+        this.muscleGroupId = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
+        this.checkDuplicateWorkout();
+        this.findExercises();
         this.isIphone = this.deviceDetectionService.isIphone();
         this.isDarkMode = this.themeService.isDarkMode();
     }
@@ -270,32 +272,23 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.weightToElastics = bestCombinaison;
     }
 
-    private findExercisesAndCreateWorkout(forceCreateWorkout = false) {
-        const muscleGroupId = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
-
-        this.exerciseService.findAddedExercisesByMuscleGroupId(muscleGroupId)
+    private findExercises() {
+        this.exerciseService.findAddedExercisesByMuscleGroupId(this.muscleGroupId)
             .pipe(
                 take(1),
-                switchMap(exercises => {
+                map(exercises => {
                     if (!exercises || exercises.length === 0) {
-                        this.showDialogNoExercisesAdded(muscleGroupId);
-                        return of(null);
+                        this.showDialogNoExercisesAdded(this.muscleGroupId);
+                        return null;
                     }
-                    return this.createWorkout(muscleGroupId, forceCreateWorkout)
-                        .pipe(
-                            take(1),
-                            map(workout => ({ workout, exercises }))
-                        );
-                })
+
+                    return exercises;
+                }),
+                filter(exercises => !!exercises)
             )
             .subscribe({
-                next: (result) => {
-                    if (!result) {
-                        return;
-                    }
+                next: (exercises) => {
                     this.isLoading = false;
-                    const { exercises, workout } = result;
-                    this.workout = workout;
                     this.exercises = exercises;
                     this.currentExercise = this.exercises[0];
                     this.fillInputWeightLastSavedValue();
@@ -305,13 +298,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
                     if (err?.error?.errorCode === ErrorCode.muscleGroupDoesntExist) {
                         return this.router.navigate(['/', 'workout']);
-                    }
-                    if (err?.error?.errorCode === ErrorCode.duplicateWorkout) {
-                        if (!this.hasConfirmedDuplicateWorkout) {
-                            this.showDialogConfirmDuplicateWorkout(err?.error?.message);
-                        }
-                        this.hasConfirmedDuplicateWorkout = true;
-                        return;
                     }
                     return this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les exercices';
                 }
@@ -351,7 +337,16 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     private startTimer() {
-        this.saveExercise();
+        if (this.exercisesMade.length <= 0) {
+            this.createWorkout(this.muscleGroupId)
+                .pipe(take(1))
+                .subscribe(workout => {
+                    this.workout = workout;
+                    this.saveExercise();
+                });
+        } else {
+            this.saveExercise();
+        }
 
         this.timer.interval = setInterval(() => {
 
@@ -396,6 +391,16 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         return `${ minutes.toString().padStart(2, '0') }:${ seconds.toString().padStart(2, '0') }:${ centiseconds.toString().padStart(2, '0') }`;
     }
 
+    private checkDuplicateWorkout() {
+        this.workoutService.checkDuplicateWorkout(this.muscleGroupId)
+            .pipe(take(1))
+            .subscribe(workout => {
+                if (workout) {
+                    this.showDialogConfirmDuplicateWorkout();
+                }
+            });
+    }
+
 
     private showDialogNoExercisesAdded(muscleGroupId: number) {
         this.confirmationService.confirm({
@@ -422,10 +427,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         });
     }
 
-    private showDialogConfirmDuplicateWorkout(message: string) {
+    private showDialogConfirmDuplicateWorkout() {
         this.confirmationService.confirm({
             header: 'Attention',
-            message: `${ message }<br/>Souhaitez-vous la refaire ?`,
+            message: 'Vous avez déjà réalisé cette séance aujourd’hui.<br/>Souhaitez-vous la refaire ?',
             closable: true,
             closeOnEscape: true,
             dismissableMask: true,
@@ -438,14 +443,12 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                 severity: 'secondary',
                 outlined: true
             },
-            accept: () => this.findExercisesAndCreateWorkout(true),
-            reject: () => {
-                this.router.navigate(['/', 'workout']);
-            }
+            accept: () => this.findExercises(),
+            reject: () => this.router.navigate(['/', 'workout'])
         });
     }
 
-    private createWorkout(muscleGroupId: number, forceCreateWorkout = false) {
+    private createWorkout(muscleGroupId: number) {
         const muscleGroup: MuscleGroup = {
             id: muscleGroupId
         };
@@ -454,6 +457,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             muscleGroup,
             date: new Date()
         };
-        return this.workoutService.create(workout, forceCreateWorkout);
+        return this.workoutService.create(workout);
     }
 }
