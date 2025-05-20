@@ -30,15 +30,16 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     constructor(
         private readonly route: ActivatedRoute,
         private readonly exerciseService: ExerciseService,
-        private readonly workoutService: UserExerciseService
+        private readonly userExerciseService: UserExerciseService
     ) {
     }
 
     ngOnInit() {
         this.route.params.pipe(
             take(1),
-            switchMap((params: { muscleGroupId: number }) =>
-                this.exerciseService.findAllExercisesByMuscleGroupIdAndUserId(Number(params.muscleGroupId)))
+            switchMap((params: {
+                muscleGroupId: number
+            }) => this.exerciseService.findAllExercisesByMuscleGroupId(Number(params.muscleGroupId)))
         )
             .subscribe({
                 next: ({ exercises, muscleGroup }) => {
@@ -52,7 +53,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     }
 
     toggleExerciseWorkout(exercise: Exercise) {
-        return this.workoutService.toggleExerciseWorkout(exercise)
+        return this.userExerciseService.toggleExerciseWorkout(exercise)
             .pipe(take(1))
             .subscribe({
                 next: () => {

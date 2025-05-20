@@ -11,13 +11,17 @@ import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../../../../libs/interfaces/history';
 import { Alert } from '../../../../../../../libs/interfaces/alert';
 import { ThemeService } from '../../../theme/theme.service';
+import { ErrorCode } from '../../../../../../../libs/error-code/error-code';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
     selector: 'app-dialog-select-cardio-exercise',
-    imports: [CommonModule, Dialog],
+    imports: [CommonModule, Dialog, ConfirmDialog],
     templateUrl: './dialog-select-cardio-exercise.component.html',
     styleUrl: './dialog-select-cardio-exercise.component.scss',
-    standalone: true
+    standalone: true,
+    providers: [ConfirmationService]
 })
 export class DialogSelectCardioExerciseComponent implements OnInit {
 
@@ -31,18 +35,21 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
 
     isDarkMode = false;
 
+    hasConfirmedDuplicateWorkout = false;
+    private createExercise: Exercise;
 
     constructor(
         private readonly exerciseService: ExerciseService,
         private readonly workoutService: WorkoutService,
         private readonly historyService: HistoryService,
-        private readonly themeService: ThemeService
+        private readonly themeService: ThemeService,
+        private readonly confirmationService: ConfirmationService
     ) {
     }
 
     ngOnInit() {
         this.exerciseService
-            .findAllByMuscleGroupId()
+            .findCardioExercises()
             .pipe(take(1))
             .subscribe({
                 next: (cardioExercises) => this.cardioExercises = cardioExercises,
@@ -63,7 +70,8 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
         this.closeModal.next();
     }
 
-    createWorkout(exercise: Exercise) {
+    createWorkout(exercise: Exercise, forceCreateWorkout = false) {
+        this.createExercise = exercise;
         const muscleGroup: MuscleGroup = {
             id: this.MUSCLE_GROUP_CARDIO_ID
         };
@@ -73,7 +81,7 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
             date: new Date()
         };
 
-        this.workoutService.create(workout)
+        this.workoutService.create(workout, forceCreateWorkout)
             .pipe(
                 take(1),
                 switchMap(workout => {
@@ -98,12 +106,48 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
                     });
                 },
                 error: (err) => {
+                    if (err?.error?.errorCode === ErrorCode.duplicateWorkout) {
+                        if (!this.hasConfirmedDuplicateWorkout) {
+                            this.showDialogConfirmDuplicateWorkout();
+                        }
+                        this.hasConfirmedDuplicateWorkout = true;
+                        return;
+                    }
+
                     this.closeModal.next();
+
                     this.showAlert.next({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible de créer l\'entraînement'
                     });
                 }
             });
+    }
+
+    private showDialogConfirmDuplicateWorkout() {
+        this.confirmationService.confirm({
+            header: 'Attention',
+            message: 'Vous avez déjà réalisé une séance cardio aujourd’hui.<br/>Souhaitez-vous en faire une autre ?',
+            closable: true,
+            closeOnEscape: true,
+            dismissableMask: true,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {
+                label: 'Confirmer'
+            },
+            rejectButtonProps: {
+                label: 'Annuler',
+                severity: 'secondary',
+                outlined: true
+            },
+            accept: () => {
+                this.createWorkout(this.createExercise, true);
+                this.hasConfirmedDuplicateWorkout = false;
+            },
+            reject: () => {
+                this.closeModal.next();
+                this.hasConfirmedDuplicateWorkout = false;
+            }
+        });
     }
 }

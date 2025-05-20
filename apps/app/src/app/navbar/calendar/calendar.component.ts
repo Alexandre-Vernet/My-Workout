@@ -65,7 +65,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.workoutService.findByUserId()
+        this.workoutService.find()
             .pipe(take(1))
             .subscribe(workout => {
                 this.calendarOptions.events = workout.map(w => ({

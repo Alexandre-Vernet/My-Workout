@@ -21,11 +21,11 @@ export class MuscleGroupService {
         });
     }
 
-    async findAll() {
+    findAll() {
         return this.muscleGroupRepository.find();
     }
 
-    async findAllMuscleGroupAndCountExercisesByUserId(userId: number) {
+    async findAllMuscleGroupAndCountAddedExercises(userId: number) {
         const muscleGroup: MuscleGroup[] = await this.dataSource.query(`
             select mg.id, mg.name, COUNT(distinct ue.exercise_id) as "exerciseCount"
             from muscle_group mg

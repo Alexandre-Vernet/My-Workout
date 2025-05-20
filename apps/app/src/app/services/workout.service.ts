@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { AuthService } from '../auth/auth.service';
-import { switchMap } from 'rxjs';
 import { Workout } from '../../../../../libs/interfaces/workout';
 
 @Injectable({
@@ -13,45 +11,27 @@ export class WorkoutService {
     workoutUrl = environment.workoutUrl();
 
     constructor(
-        private readonly http: HttpClient,
-        private readonly authService: AuthService
+        private readonly http: HttpClient
     ) {
     }
 
     create(workout: Workout, forceCreateWorkout = false) {
-        return this.authService.user$
-            .pipe(
-                switchMap(user => {
-                    workout.user = user;
-                    return this.http.post<Workout>(this.workoutUrl, { workout, forceCreateWorkout });
-                })
-            );
+        return this.http.post<Workout>(this.workoutUrl, { workout, forceCreateWorkout });
     }
 
     findById(id: number) {
         return this.http.get<Workout>(`${ this.workoutUrl }/${ id }`);
     }
 
-    findByUserId() {
-        return this.authService.user$
-            .pipe(
-                switchMap(user => this.http.get<Workout[]>(this.workoutUrl, {
-                    params: {
-                        userId: user.id
-                    }
-                }))
-            );
+    find() {
+        return this.http.get<Workout[]>(this.workoutUrl);
     }
 
     delete(id: number) {
-        return this.authService.user$
-            .pipe(
-                switchMap(user => this.http.delete<void>(`${ this.workoutUrl }`, {
-                    params: {
-                        id,
-                        userId: user.id
-                    }
-                }))
-            );
+        return this.http.delete<void>(`${ this.workoutUrl }`, {
+            params: {
+                id
+            }
+        });
     }
 }

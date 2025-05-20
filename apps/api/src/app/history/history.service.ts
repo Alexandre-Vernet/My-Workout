@@ -17,7 +17,7 @@ export class HistoryService {
         return this.historyEntity.save(history);
     }
 
-    async findByUserId(userId: number) {
+    async find(userId: number) {
         const historyEntity = await this.historyEntity.find({
             where: {
                 workout: {

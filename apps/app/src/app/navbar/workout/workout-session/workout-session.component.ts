@@ -273,7 +273,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     private findExercisesAndCreateWorkout(forceCreateWorkout = false) {
         const muscleGroupId = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
 
-        this.exerciseService.findExercisesByMuscleGroupIdAndUserId(muscleGroupId)
+        this.exerciseService.findAddedExercisesByMuscleGroupId(muscleGroupId)
             .pipe(
                 take(1),
                 switchMap(exercises => {

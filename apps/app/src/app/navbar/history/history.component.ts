@@ -38,7 +38,7 @@ export class HistoryComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.historyService.findByUserId()
+        this.historyService.find()
           .pipe(take(1))
           .subscribe({
               next: (history) => {
