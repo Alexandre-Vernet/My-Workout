@@ -91,7 +91,7 @@ export class WorkoutService {
     }
 
 
-    async findByUserId(userId: number) {
+    async find(userId: number) {
         const workout = await this.workoutRepository.find({
             where: {
                 user: {

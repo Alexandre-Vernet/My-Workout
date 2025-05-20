@@ -3,6 +3,6 @@ import { Exercise } from './exercise';
 
 export interface UserExercise {
     id?: number;
-    user: User;
+    user?: User;
     exercise: Exercise;
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post, Req, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, HttpCode, Query, Req, UseInterceptors } from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { AuthService } from '../auth/auth.service';
@@ -11,36 +11,38 @@ export class ExercisesController {
     ) {
     }
 
-    @Post('find-all-exercises-by-muscle-group-id')
-    @HttpCode(200)
-    findAllExercisesByMuscleGroupI(@Body() { muscleGroupId }: { muscleGroupId: number }) {
-        return this.exercisesService.findAllExercisesByMuscleGroupId(muscleGroupId);
+    @Get('find-all-exercises-by-muscle-group-id')
+    findAllExercisesByMuscleGroupIdAndUserId(@Req() request: Request, @Query('muscleGroupId') muscleGroupId: string) {
+        let user = null;
+
+        try {
+            const authHeader = request.headers['authorization'];
+            if (authHeader?.startsWith('Bearer ')) {
+                const token = authHeader.split(' ')[1];
+                user = this.authService.verifyToken(token);
+            }
+        } catch (e) {
+            user = null;
+        }
+
+        return this.exercisesService.findAllExercisesByMuscleGroupId(Number(muscleGroupId), user);
     }
+
 
     @UseInterceptors(AuthInterceptor)
-    @Post('find-all-exercises-by-muscle-group-id-and-user-id')
+    @Get('find-added-exercises-by-muscle-group-id')
     @HttpCode(200)
-    findAllExercisesByMuscleGroupIdAndUserId(@Body() { muscleGroupId, userId }: {
-        muscleGroupId: number,
-        userId: number
-    }) {
-        return this.exercisesService.findAllExercisesByMuscleGroupIdAndUserId(userId, muscleGroupId);
-    }
-
-    @UseInterceptors(AuthInterceptor)
-    @Post('find-exercises-by-muscle-group-id-and-user-id')
-    @HttpCode(200)
-    findExercisesByMuscleGroupIdAndUserId(@Body() { muscleGroupId, userId }: {
-        muscleGroupId: number,
-        userId: number
-    }) {
-        return this.exercisesService.findExercisesByMuscleGroupIdAndUserId(userId, muscleGroupId);
-    }
-
-    @Get()
-    findAllByMuscleGroupId(@Req() request: Request) {
+    findAddedExercisesByMuscleGroupId(@Req() request: Request, @Query('muscleGroupId') muscleGroupId: string) {
         const token = request.headers['authorization'].split(' ')[1];
         const user = this.authService.verifyToken(token);
-        return this.exercisesService.findAllByMuscleGroupId(user.id);
+        return this.exercisesService.findAddedExercisesByMuscleGroupId(user.id, Number(muscleGroupId));
+    }
+
+    @UseInterceptors(AuthInterceptor)
+    @Get('find-cardio-exercises')
+    findCardioExercises(@Req() request: Request) {
+        const token = request.headers['authorization'].split(' ')[1];
+        const user = this.authService.verifyToken(token);
+        return this.exercisesService.findCardioExercises(user.id);
     }
 }

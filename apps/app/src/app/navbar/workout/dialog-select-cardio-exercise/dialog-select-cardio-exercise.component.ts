@@ -42,7 +42,7 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
 
     ngOnInit() {
         this.exerciseService
-            .findAllByMuscleGroupId()
+            .findCardioExercises()
             .pipe(take(1))
             .subscribe({
                 next: (cardioExercises) => this.cardioExercises = cardioExercises,

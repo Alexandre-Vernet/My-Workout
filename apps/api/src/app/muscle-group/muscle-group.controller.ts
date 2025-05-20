@@ -1,22 +1,32 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
 import { MuscleGroupService } from './muscle-group.service';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('muscle-group')
 export class MuscleGroupController {
-  constructor(private readonly muscleGroupService: MuscleGroupService) {}
 
-  @Get()
-  findAll() {
-    return this.muscleGroupService.findAll();
-  }
+    constructor(
+        private readonly muscleGroupService: MuscleGroupService,
+        private readonly authService: AuthService
+    ) {
+    }
 
-  @Get('users/:userId')
-  findAllMuscleGroupAndCountExercisesByUserId(@Param('userId') userId: number) {
-    return this.muscleGroupService.findAllMuscleGroupAndCountExercisesByUserId(userId);
-  }
+    @Get()
+    findAll() {
+        return this.muscleGroupService.findAll();
+    }
 
-    @Get('suggest-muscle-group/users/:userId')
-    suggestMuscleGroup(@Param('userId') userId: number) {
-        return this.muscleGroupService.suggestMuscleGroup(userId);
+    @Get('users')
+    findAllMuscleGroupAndCountAddedExercises(@Req() request: Request) {
+        const token = request.headers['authorization'].split(' ')[1];
+        const user = this.authService.verifyToken(token);
+        return this.muscleGroupService.findAllMuscleGroupAndCountAddedExercises(user.id);
+    }
+
+    @Get('suggest-muscle-group/users')
+    suggestMuscleGroup(@Req() request: Request) {
+        const token = request.headers['authorization'].split(' ')[1];
+        const user = this.authService.verifyToken(token);
+        return this.muscleGroupService.suggestMuscleGroup(user.id);
     }
 }
