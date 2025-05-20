@@ -20,10 +20,10 @@ export class MuscleGroupService {
     }
 
     findAllMuscleGroupAndCountAddedExercises() {
-        return this.http.get<MuscleGroup[]>(`${ this.muscleGroupUrl }/users`);
+        return this.http.get<MuscleGroup[]>(`${ this.muscleGroupUrl }/count-exercises`);
     }
 
     suggestMuscleGroup() {
-        return this.http.get<MuscleGroup>(`${ this.muscleGroupUrl }/suggest-muscle-group/users`);
+        return this.http.get<MuscleGroup>(`${ this.muscleGroupUrl }/suggest-muscle-group`);
     }
 }

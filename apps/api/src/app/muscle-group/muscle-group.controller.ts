@@ -16,14 +16,14 @@ export class MuscleGroupController {
         return this.muscleGroupService.findAll();
     }
 
-    @Get('users')
+    @Get('count-exercises')
     findAllMuscleGroupAndCountAddedExercises(@Req() request: Request) {
         const token = request.headers['authorization'].split(' ')[1];
         const user = this.authService.verifyToken(token);
         return this.muscleGroupService.findAllMuscleGroupAndCountAddedExercises(user.id);
     }
 
-    @Get('suggest-muscle-group/users')
+    @Get('suggest-muscle-group')
     suggestMuscleGroup(@Req() request: Request) {
         const token = request.headers['authorization'].split(' ')[1];
         const user = this.authService.verifyToken(token);
