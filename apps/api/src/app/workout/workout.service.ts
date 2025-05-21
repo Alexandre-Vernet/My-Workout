@@ -54,7 +54,7 @@ export class WorkoutService {
         });
 
         // 3. Add the count to each exercise in the deduplicated list
-        const historyWithCount = uniqueHistory.map(h => {
+        workout.history = uniqueHistory.map(h => {
             const key = `${ h.exercise.id }-${ h.weight }`;
             return {
                 ...h,
@@ -64,8 +64,6 @@ export class WorkoutService {
                 }
             };
         });
-
-        workout.history = historyWithCount;
 
         // 4. Sort by exercise ID first, then by weight if IDs match
         workout.history.sort((a, b) => {
