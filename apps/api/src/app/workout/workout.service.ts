@@ -16,6 +16,12 @@ export class WorkoutService {
     }
 
     async create(workout: Workout) {
+        // Do not create a workout if it already exists for the same user and muscle group on the same day
+        const existingWorkout = await this.checkDuplicateWorkout(workout.user.id, workout.muscleGroup.id);
+        if (existingWorkout) {
+            return existingWorkout;
+        }
+
         return this.workoutRepository.save(workout);
     }
 
