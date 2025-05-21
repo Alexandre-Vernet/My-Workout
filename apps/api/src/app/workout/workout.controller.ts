@@ -15,18 +15,10 @@ export class WorkoutController {
     }
 
     @Post()
-    create(@Req() request: Request, @Body() { workout, forceCreateWorkout }: {
-        workout: Workout,
-        forceCreateWorkout: boolean
-    }) {
+    create(@Req() request: Request, @Body() workout: Workout) {
         const token = request.headers['authorization'].split(' ')[1];
         workout.user = this.authService.verifyToken(token);
-        return this.workoutService.create(workout, forceCreateWorkout);
-    }
-
-    @Get(':id')
-    findById(@Param('id') id: string) {
-        return this.workoutService.findById(Number(id));
+        return this.workoutService.create(workout);
     }
 
     @Get()
@@ -34,6 +26,18 @@ export class WorkoutController {
         const token = request.headers['authorization'].split(' ')[1];
         const user = this.authService.verifyToken(token);
         return this.workoutService.find(user.id);
+    }
+
+    @Get('duplicate-workout')
+    checkDuplicateWorkout(@Req() request: Request, @Query('muscleGroupId') muscleGroupId: string) {
+        const token = request.headers['authorization'].split(' ')[1];
+        const user = this.authService.verifyToken(token);
+        return this.workoutService.checkDuplicateWorkout(user.id, Number(muscleGroupId));
+    }
+
+    @Get(':id')
+    findById(@Param('id') id: string) {
+        return this.workoutService.findById(Number(id));
     }
 
     @Delete()

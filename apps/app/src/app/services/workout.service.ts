@@ -15,8 +15,8 @@ export class WorkoutService {
     ) {
     }
 
-    create(workout: Workout, forceCreateWorkout = false) {
-        return this.http.post<Workout>(this.workoutUrl, { workout, forceCreateWorkout });
+    create(workout: Workout) {
+        return this.http.post<Workout>(this.workoutUrl, workout);
     }
 
     findById(id: number) {
@@ -25,6 +25,14 @@ export class WorkoutService {
 
     find() {
         return this.http.get<Workout[]>(this.workoutUrl);
+    }
+
+    checkDuplicateWorkout(muscleGroupId: number) {
+        return this.http.get<Workout[]>(`${ this.workoutUrl }/duplicate-workout`, {
+            params: {
+                muscleGroupId
+            }
+        });
     }
 
     delete(id: number) {
