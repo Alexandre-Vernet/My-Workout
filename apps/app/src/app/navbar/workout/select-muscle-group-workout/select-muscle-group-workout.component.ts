@@ -15,6 +15,7 @@ import {
 import { Alert } from '../../../../../../../libs/interfaces/alert';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { WorkoutService } from '../../../services/workout.service';
 
 @Component({
     selector: 'select-muscle-group-workout',
@@ -30,16 +31,18 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     muscleGroups: MuscleGroup[] = [];
 
-    isOpenModalExerciseCardio = false;
-
     alert: Alert;
 
     isLoading = true;
 
     isDarkMode = false;
 
+    isOpenModalExerciseCardio = false;
+    MUSCLE_GROUP_CARDIO_ID = 8;
+
     constructor(
         private readonly muscleGroupService: MuscleGroupService,
+        private readonly workoutService: WorkoutService,
         private readonly themeService: ThemeService,
         private readonly confirmationService: ConfirmationService,
         private readonly router: Router
@@ -81,7 +84,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
         if (cardioExercise.exerciseCount <= 0) {
             this.showDialogNoExercisesAdded(cardioExercise.id);
         } else {
-            this.isOpenModalExerciseCardio = true;
+            this.checkDuplicateWorkout();
         }
     }
 
@@ -94,6 +97,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
         window.scrollTo(0, 0);
         this.alert = alert;
     }
+
 
     private showDialogNoExercisesAdded(muscleGroupId: number) {
         this.confirmationService.confirm({
@@ -111,12 +115,41 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
                 severity: 'secondary',
                 outlined: true
             },
-            accept: () => {
-                this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]);
+            accept: () => this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]),
+            reject: () => this.router.navigate(['/', 'workout'])
+        });
+    }
+
+    private checkDuplicateWorkout() {
+        this.workoutService.checkDuplicateWorkout(this.MUSCLE_GROUP_CARDIO_ID)
+            .pipe(take(1))
+            .subscribe(workout => {
+                if (workout) {
+                    this.showDialogConfirmDuplicateWorkout();
+                } else {
+                    this.isOpenModalExerciseCardio = true;
+                }
+            });
+    }
+
+    private showDialogConfirmDuplicateWorkout() {
+        this.confirmationService.confirm({
+            header: 'Attention',
+            message: 'Vous avez déjà réalisé une séance cardio aujourd’hui.<br/>Souhaitez-vous en faire une autre ?',
+            closable: true,
+            closeOnEscape: true,
+            dismissableMask: true,
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonProps: {
+                label: 'Confirmer'
             },
-            reject: () => {
-                this.router.navigate(['/', 'workout']);
-            }
+            rejectButtonProps: {
+                label: 'Annuler',
+                severity: 'secondary',
+                outlined: true
+            },
+            accept: () => this.isOpenModalExerciseCardio = true,
+            reject: () => this.isOpenModalExerciseCardio = false
         });
     }
 }
