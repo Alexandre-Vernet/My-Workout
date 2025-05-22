@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WorkoutEntity } from './workout.entity';
 import { Repository } from 'typeorm';
-import { renameMuscleGroupMap } from '../../../../../libs/interfaces/MuscleGroup';
+import { muscleGroupMap } from '../../../../../libs/interfaces/MuscleGroup';
 import { Workout } from '../../../../../libs/interfaces/workout';
+import { removeAccents } from '../../../../app/src/app/utils/remove-accents';
 
 @Injectable()
 export class WorkoutService {
@@ -99,11 +100,9 @@ export class WorkoutService {
         });
 
         workout.forEach(w => {
-            w.muscleGroup.name = renameMuscleGroupMap[w.muscleGroup.name] ?? w.muscleGroup.name;
-
             // Display exercise name for cardio instead "CARDIO" in calendar
             if (w.muscleGroup.id === 8) {
-                w.muscleGroup.name = renameMuscleGroupMap[w.history[0].exercise.name] ?? w.history[0].exercise.name;
+                w.muscleGroup.name = muscleGroupMap[removeAccents(w.history[0].exercise.name)]?.label ?? w.history[0].exercise.name;
             }
         });
 
