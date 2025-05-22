@@ -13,6 +13,8 @@ import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { ThemeService } from '../../theme/theme.service';
+import { removeAccents } from '../../utils/remove-accents';
+import { muscleGroupMap } from '../../../../../../libs/interfaces/MuscleGroup';
 
 @Component({
     selector: 'app-calendar',
@@ -41,7 +43,20 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             center: '',
             right: 'today'
         },
-        eventClick: (info) => this.viewHistory(Number(info.event.id))
+        eventClick: (info) => this.viewHistory(Number(info.event.id)),
+        eventDidMount(info) {
+            const eventNameFormated = removeAccents(info.event.title);
+            const label: string = muscleGroupMap[eventNameFormated]?.label ?? info.event.title;
+            const color: string = muscleGroupMap[eventNameFormated]?.color || '#e67c73';
+
+            const spanEventName = info.el.querySelector('span.text-sm') as HTMLElement;
+            if (spanEventName) {
+                spanEventName.textContent = label;
+            }
+
+            info.el.style.borderLeft = `4px solid ${ color }`;
+            info.el.style.paddingLeft = '3px';
+        }
     };
 
     workout: Workout;
@@ -65,7 +80,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.workoutService.find()
+        this.workoutService.findAll()
             .pipe(take(1))
             .subscribe(workout => {
                 this.calendarOptions.events = workout.map(w => ({

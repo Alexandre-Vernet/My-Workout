@@ -23,7 +23,7 @@ export class WorkoutService {
         return this.http.get<Workout>(`${ this.workoutUrl }/${ id }`);
     }
 
-    find() {
+    findAll() {
         return this.http.get<Workout[]>(this.workoutUrl);
     }
 
