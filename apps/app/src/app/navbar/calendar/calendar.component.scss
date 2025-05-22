@@ -18,6 +18,14 @@
 }
 
 
-.fc .fc-daygrid-day.fc-day-today {
-    background: var(--p-primary-400);
+.fc-day-today {
+    background-color: transparent !important;
+
+    .fc-daygrid-day-frame > .fc-daygrid-day-top > a.fc-daygrid-day-number {
+        background: var(--p-primary-700);
+        color: #FFFFFF;
+        border-radius: 50%;
+        padding: 5px 5px;
+        line-height: 1;
+    }
 }
