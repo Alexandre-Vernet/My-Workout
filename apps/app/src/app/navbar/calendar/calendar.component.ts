@@ -80,7 +80,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.workoutService.find()
+        this.workoutService.findAll()
             .pipe(take(1))
             .subscribe(workout => {
                 this.calendarOptions.events = workout.map(w => ({
