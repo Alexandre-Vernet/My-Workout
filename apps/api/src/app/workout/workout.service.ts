@@ -113,7 +113,7 @@ export class WorkoutService {
         return this.workoutRepository
             .createQueryBuilder('w')
             .where('w.user.id = :userId', { userId })
-            .where('w.muscleGroup.id = :muscleGroupId', { muscleGroupId })
+            .andWhere('w.muscleGroup.id = :muscleGroupId', { muscleGroupId })
             .andWhere('DATE(w.date) = DATE(:date)', { date: new Date() })
             .getOne();
     }
