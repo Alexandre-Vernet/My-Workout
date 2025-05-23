@@ -66,8 +66,6 @@
 
 
 <app-dialog-select-cardio-exercise
-    [openModal]="isOpenModalExerciseCardio"
-    [muscleGroupIdCardio]="MUSCLE_GROUP_CARDIO_ID"
-    (closeModal)="closeModalExerciseCardio()"
+    [(openModal)]="isOpenModalExerciseCardio"
     (showAlert)="showAlert($event)"
 ></app-dialog-select-cardio-exercise>

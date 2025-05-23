@@ -1,4 +1,4 @@
-<p-message *ngIf="errorMessage" severity="error">{{ errorMessage }}</p-message>
+<p-message *ngIf="alert" closable="true" [severity]="alert?.severity">{{ alert?.message }}</p-message>
 
 
 <div #swipeZone class="p-4">
@@ -9,11 +9,18 @@
     </full-calendar>
 </div>
 
+<app-dialog-select-cardio-exercise
+    [(openModal)]="isOpenModalExerciseCardio"
+    [workoutDate]="setWorkoutDate"
+    (createdWorkout)="createdWorkout($event)"
+    (showAlert)="showAlert($event)"
+></app-dialog-select-cardio-exercise>
 
-<p-dialog [header]="workout?.date | date:'fullDate' | titlecase" [modal]="true" [(visible)]="showModalViewWorkout"
+
+<p-dialog [header]="showWorkout?.date | date:'fullDate' | titlecase" [modal]="true" [(visible)]="showModalViewWorkout"
           dismissableMask="true"
           [style]="{ width: '25rem',  background: isDarkMode ? '#1f2a36' : '#ffff' }">
-    <div *ngIf="workout" class="p-2">
+    <div *ngIf="showWorkout" class="p-2">
 
         <div class="p-3 border-round-lg" [ngClass]="{
                     'recommended-light': !isDarkMode,
@@ -22,12 +29,12 @@
                     'shadow-light': !isDarkMode
                     }">
 
-            <h2 class="mb-3">{{ workout.muscleGroup.name }}</h2>
+            <h2 class="mb-3">{{ showWorkout.muscleGroup.name }}</h2>
 
 
             <!-- List exercises -->
-            <ng-container *ngFor="let h of workout.history; let i = index">
-                <hr class="mt-3 mb-3" *ngIf="i > 0 && workout.history[i - 1].exercise.id !== h.exercise.id" />
+            <ng-container *ngFor="let h of showWorkout.history; let i = index">
+                <hr class="mt-3 mb-3" *ngIf="i > 0 && showWorkout.history[i - 1].exercise.id !== h.exercise.id" />
                 <div class="flex justify-content-between mb-3">
 
                     <!-- Exercise name -->
@@ -45,7 +52,7 @@
         </div>
         <div class="flex justify-content-end mt-3">
             <p-button severity="danger"
-                      (onClick)="openModalDeleteWorkout(workout.id, workout.muscleGroup.name, workout.date)"
+                      (onClick)="openModalDeleteWorkout(showWorkout.id, showWorkout.muscleGroup.name, showWorkout.date)"
                       icon="pi pi-trash" label="Supprimer" />
         </div>
     </div>
