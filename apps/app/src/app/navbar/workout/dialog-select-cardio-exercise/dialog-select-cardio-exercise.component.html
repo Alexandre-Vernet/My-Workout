@@ -2,18 +2,19 @@
 
 
 <p-dialog header="Sélectionner un type d'entraînement" [modal]="true" [(visible)]="openModal"
-          [closable]="true" dismissableMask="true" (onHide)="onCloseModal()">
+          [closable]="true" (onHide)="onHideModal()">
     <div class="cardio-flow">
         <div *ngFor="let cardioExercise of cardioExercises"
-            [ngClass]="{
+             [ngClass]="{
                 'shadow-dark': isDarkMode,
                 'shadow-light': !isDarkMode
             }"
-            [style]="{
+             [style]="{
               background: isDarkMode ? '#1f2a36' : '#ffff'
             }" class="cardio-card">
             <div
-                (click)="createWorkout(cardioExercise)" class="flex-1 flex align-items-center justify-content-between">
+                (click)="createCardioWorkout(cardioExercise)"
+                class="flex-1 flex align-items-center justify-content-between">
                 <h2 class="text-xl font-bold text-primary">{{ cardioExercise?.name }}</h2>
             </div>
         </div>

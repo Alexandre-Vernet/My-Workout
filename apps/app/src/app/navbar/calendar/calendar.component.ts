@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { CalendarOptions, EventInput } from '@fullcalendar/core';
+import { CalendarOptions, EventClickArg, EventInput, EventMountArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { take } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -15,10 +15,15 @@ import { Message } from 'primeng/message';
 import { ThemeService } from '../../theme/theme.service';
 import { removeAccents } from '../../utils/remove-accents';
 import { muscleGroupMap } from '../../../../../../libs/interfaces/MuscleGroup';
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
+import {
+    DialogSelectCardioExerciseComponent
+} from '../workout/dialog-select-cardio-exercise/dialog-select-cardio-exercise.component';
+import { Alert } from '../../../../../../libs/interfaces/alert';
 
 @Component({
     selector: 'app-calendar',
-    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, Message],
+    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, Message, DialogSelectCardioExerciseComponent],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
@@ -29,7 +34,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     calendarOptions: CalendarOptions = {
         locale: 'fr',
-        plugins: [dayGridPlugin],
+        plugins: [dayGridPlugin, interactionPlugin],
         initialView: 'dayGridMonth',
         weekends: true,
         events: [],
@@ -43,33 +48,24 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             center: '',
             right: 'today'
         },
-        eventClick: (info) => this.viewHistory(Number(info.event.id)),
-        eventDidMount(info) {
-            const eventNameFormated = removeAccents(info.event.title);
-            const label: string = muscleGroupMap[eventNameFormated]?.label ?? info.event.title;
-            const color: string = muscleGroupMap[eventNameFormated]?.color || '#e67c73';
-
-            const spanEventName = info.el.querySelector('span.text-sm') as HTMLElement;
-            if (spanEventName) {
-                spanEventName.textContent = label;
-            }
-
-            info.el.style.borderLeft = `4px solid ${ color }`;
-            info.el.style.paddingLeft = '3px';
-        }
+        eventClick: this.viewHistory.bind(this),
+        eventDidMount: this.customizeCalendar.bind(this),
+        dateClick: this.dateClick.bind(this)
     };
 
-    workout: Workout;
+    showWorkout: Workout;
     showModalViewWorkout = false;
 
     @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
     swipeStartX = 0;
     swipeEndX = 0;
 
+    alert: Alert;
+
+    setWorkoutDate: Date;
+    isOpenModalExerciseCardio = false;
 
     isDarkMode = false;
-
-    errorMessage: string;
 
     constructor(
         private readonly workoutService: WorkoutService,
@@ -141,23 +137,70 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                 this.workoutService.delete(id)
                     .subscribe({
                         next: () => {
-                            this.errorMessage = '';
+                            this.alert = null;
                             this.calendarOptions.events = (this.calendarOptions.events as EventInput[]).filter(event => Number(event.id) !== id);
                         },
-                        error: (err) => this.errorMessage = err?.error?.message ?? 'Une erreur est survenue lors de la suppression de l\'entraînement'
+                        error: (err) => {
+                            this.alert = {
+                                severity: 'error',
+                                message: err?.error?.message ?? 'Impossible de supprimer l\'entraînement'
+                            };
+                        }
                     });
                 this.showModalViewWorkout = false;
             }
         });
     }
 
-    private viewHistory(id: number) {
-        this.workoutService.findById(id)
+    createdWorkout(workout: Workout) {
+        this.calendarOptions.events = [
+            ...this.calendarOptions.events as EventInput[],
+            {
+                id: workout.id.toString(),
+                title: workout.history[0].exercise.name,
+                start: workout.date
+            }
+        ];
+
+        this.alert = {
+            severity: 'success',
+            message: `${ workout.history[0].exercise.name } a été ajouté au calendrier`
+        };
+    }
+
+    showAlert(alert: Alert) {
+        window.scrollTo(0, 0);
+        this.alert = alert;
+    }
+
+
+    private viewHistory(info: EventClickArg) {
+        const workoutId = Number(info.event.id);
+        this.workoutService.findById(workoutId)
             .pipe(take(1))
             .subscribe(workout => {
                 this.showModalViewWorkout = true;
-                this.workout = workout;
+                this.showWorkout = workout;
             });
+    }
+
+    private customizeCalendar(info: EventMountArg) {
+        const eventNameFormated = removeAccents(info.event.title);
+        const label: string = muscleGroupMap[eventNameFormated]?.label ?? info.event.title;
+        const color: string = muscleGroupMap[eventNameFormated]?.color || '#e67c73';
+
+        const spanEventName = info.el.querySelector('span.text-sm') as HTMLElement;
+        if (spanEventName) {
+            spanEventName.textContent = label;
+        }
+
+        info.el.style.borderLeft = `4px solid ${ color }`;
+        info.el.style.paddingLeft = '3px';
+    }
+
+    private dateClick(info: DateClickArg) {
+        this.isOpenModalExerciseCardio = true;
+        this.setWorkoutDate = info.date;
     }
 
     private previousMonth() {

@@ -38,7 +38,6 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
     isDarkMode = false;
 
     isOpenModalExerciseCardio = false;
-    MUSCLE_GROUP_CARDIO_ID = 8;
 
     constructor(
         private readonly muscleGroupService: MuscleGroupService,
@@ -89,10 +88,6 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
     }
 
 
-    closeModalExerciseCardio() {
-        this.isOpenModalExerciseCardio = false;
-    }
-
     showAlert(alert: Alert) {
         window.scrollTo(0, 0);
         this.alert = alert;
@@ -121,7 +116,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
     }
 
     private checkDuplicateWorkout() {
-        this.workoutService.checkDuplicateWorkout(this.MUSCLE_GROUP_CARDIO_ID)
+        this.workoutService.checkDuplicateWorkout(8)
             .pipe(take(1))
             .subscribe(workout => {
                 if (workout) {

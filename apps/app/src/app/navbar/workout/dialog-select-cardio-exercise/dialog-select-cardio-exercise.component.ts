@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
-import { Subject, switchMap, take } from 'rxjs';
+import { map, Subject, switchMap, take } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
 import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
@@ -25,8 +25,9 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 export class DialogSelectCardioExerciseComponent implements OnInit {
 
     @Input() openModal: boolean;
-    @Input() muscleGroupIdCardio: number;
-    @Output() closeModal = new Subject<void>();
+    @Output() openModalChange = new Subject<void>();
+    @Input() workoutDate: Date;
+    @Output() createdWorkout = new Subject<Workout>();
     @Output() showAlert = new Subject<Alert>();
 
     cardioExercises: Exercise[] = [];
@@ -47,39 +48,46 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
         this.isDarkMode = this.themeService.isDarkMode();
     }
 
-    onCloseModal() {
-        this.closeModal.next();
+    onHideModal() {
+        this.openModalChange.next();
     }
 
-    createWorkout(exercise: Exercise) {
+    createCardioWorkout(exercise: Exercise) {
         const muscleGroup: MuscleGroup = {
-            id: this.muscleGroupIdCardio
+            id: 8
         };
 
         const workout: Workout = {
             muscleGroup,
-            date: new Date()
+            date: this.workoutDate ?? new Date()
         };
 
         this.workoutService.create(workout)
             .pipe(
                 take(1),
-                switchMap(workout => {
+                switchMap(createdWorkout => {
+
                     const newExercise: Exercise = {
                         id: exercise.id
                     };
 
                     const history: History = {
-                        workout,
+                        workout: createdWorkout,
                         exercise: newExercise
                     };
 
-                    return this.historyService.create(history);
+                    return this.historyService.create(history)
+                        .pipe(map(() => createdWorkout));
                 })
             )
             .subscribe({
-                next: () => {
-                    this.closeModal.next();
+                next: (workout) => {
+                    const h: History = {
+                        exercise
+                    }
+                    workout.history = [];
+                    workout.history.push(h);
+                    this.createdWorkout.next(workout);
 
                     this.showAlert.next({
                         severity: 'success',
@@ -87,14 +95,14 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
                     });
                 },
                 error: (err) => {
-                    this.closeModal.next();
-
                     this.showAlert.next({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible de créer l\'entraînement'
                     });
                 }
             });
+
+        this.openModalChange.next();
     }
 
 
@@ -104,7 +112,8 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
             .subscribe({
                 next: (cardioExercises) => this.cardioExercises = cardioExercises,
                 error: (err) => {
-                    this.closeModal.next();
+                    this.openModalChange.next();
+
                     this.showAlert.next({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible d\'afficher les exercices'
