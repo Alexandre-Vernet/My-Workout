@@ -429,7 +429,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     private showDialogConfirmDuplicateWorkout() {
         this.confirmationService.confirm({
             header: 'Attention',
-            message: 'Vous avez déjà réalisé cette séance aujourd’hui.<br/>Souhaitez-vous la refaire ?',
+            message: 'Vous avez déjà réalisé cette séance aujourd’hui.<br/>Souhaitez-vous la poursuivre ?',
             closable: true,
             closeOnEscape: true,
             dismissableMask: true,
