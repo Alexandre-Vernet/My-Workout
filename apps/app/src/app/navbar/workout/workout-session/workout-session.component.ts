@@ -51,6 +51,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     weight: number = 0;
 
     timer = {
+        startTime: 0,
         text: '00:00:00',
         minutes: 0,
         seconds: 0,
@@ -348,19 +349,17 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             this.saveExercise();
         }
 
+        this.timer.startTime = performance.now();
         this.timer.interval = setInterval(() => {
+            const elapsed = performance.now() - this.timer.startTime;
 
-            this.timer.centiseconds++;
+            const centiseconds = Math.floor(elapsed / 10) % 100;
+            const seconds = Math.floor(elapsed / 1000) % 60;
+            const minutes = Math.floor(elapsed / 60000);
 
-            if (this.timer.centiseconds === 100) {
-                this.timer.seconds++;
-                this.timer.centiseconds = 0;
-            }
-
-            if (this.timer.seconds === 60) {
-                this.timer.minutes++;
-                this.timer.seconds = 0;
-            }
+            this.timer.centiseconds = centiseconds;
+            this.timer.seconds = seconds;
+            this.timer.minutes = minutes;
             this.timer.text = this.formatTimer(this.timer.minutes, this.timer.seconds, this.timer.centiseconds);
         }, 10);
     }
