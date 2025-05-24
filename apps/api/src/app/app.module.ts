@@ -15,7 +15,6 @@ import { HistoryModule } from './history/history.module';
 import { HistoryEntity } from './history/history.entity';
 import { WorkoutEntity } from './workout/workout.entity';
 import { WorkoutModule } from './workout/workout.module';
-import { AuthGuard } from './auth/auth.guard';
 
 const {
     POSTGRES_HOST,
