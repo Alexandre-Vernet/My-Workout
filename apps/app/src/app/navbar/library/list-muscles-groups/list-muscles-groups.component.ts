@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
 import { RouterLink } from '@angular/router';
-import { Message } from 'primeng/message';
 import { Skeleton } from 'primeng/skeleton';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
     selector: 'app-list-muscle-group',
-    imports: [CommonModule, RouterLink, Message, Skeleton],
+    imports: [CommonModule, RouterLink, Skeleton],
     templateUrl: './list-muscles-groups.component.html',
     styleUrl: './list-muscles-groups.component.scss',
     standalone: true
@@ -17,12 +17,13 @@ export class ListMusclesGroupsComponent implements OnInit {
 
     muscleGroups: MuscleGroup[];
 
-    errorMessage: string;
-
     isLoading = true;
 
 
-    constructor(private readonly muscleGroupService: MuscleGroupService) {
+    constructor(
+        private readonly muscleGroupService: MuscleGroupService,
+        private readonly alertService: AlertService
+    ) {
     }
 
     ngOnInit() {
@@ -31,9 +32,14 @@ export class ListMusclesGroupsComponent implements OnInit {
                 next: (muscleGroups) => {
                     this.isLoading = false;
                     this.muscleGroups = muscleGroups;
-                    this.errorMessage = '';
+                    this.alertService.alert$.next(null);
                 },
-                error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher la bibliothèque d\'exercices'
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'afficher la bibliothèque d\'exercices'
+                    });
+                }
             });
     }
 }

@@ -8,9 +8,10 @@ import { NgClass } from '@angular/common';
 import { PrimeNG } from 'primeng/config';
 import { ThemeService } from './theme/theme.service';
 import { DeviceDetectionService } from './services/device-detection.service';
+import { AlertComponent } from './alert/alert.component';
 
 @Component({
-    imports: [RouterModule, NavbarComponent, NgClass],
+    imports: [RouterModule, NavbarComponent, NgClass, AlertComponent],
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss'

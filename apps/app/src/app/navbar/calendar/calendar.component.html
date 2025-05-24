@@ -1,6 +1,3 @@
-<p-message *ngIf="alert" closable="true" [severity]="alert?.severity">{{ alert?.message }}</p-message>
-
-
 <div #swipeZone class="p-2">
     <full-calendar [options]="calendarOptions">
         <ng-template #eventContent let-arg>

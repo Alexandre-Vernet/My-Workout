@@ -7,14 +7,14 @@ import { switchMap, take } from 'rxjs';
 import { DataView } from 'primeng/dataview';
 import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
-import { Message } from 'primeng/message';
 import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
 import { Badge } from 'primeng/badge';
 import { Skeleton } from 'primeng/skeleton';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [CommonModule, DataView, Button, Message, Badge, Skeleton],
+    imports: [CommonModule, DataView, Button, Badge, Skeleton],
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })
@@ -23,14 +23,13 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     muscleGroup: MuscleGroup;
     exercises: Exercise[];
 
-    errorMessage: string;
-
     isLoading = true;
 
     constructor(
         private readonly route: ActivatedRoute,
         private readonly exerciseService: ExerciseService,
-        private readonly userExerciseService: UserExerciseService
+        private readonly userExerciseService: UserExerciseService,
+        private readonly alertService: AlertService
     ) {
     }
 
@@ -47,8 +46,14 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
                     this.exercises = exercises;
                     this.muscleGroup = muscleGroup;
                     this.sortExercises();
+                    this.alertService.alert$.next(null);
                 },
-                error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher la liste des exercises'
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'afficher la liste des exercises'
+                    });
+                }
             });
     }
 
@@ -58,9 +63,14 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             .subscribe({
                 next: () => {
                     exercise.addedToWorkout = !exercise.addedToWorkout;
-                    this.errorMessage = '';
+                    this.alertService.alert$.next(null);
                 },
-                error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'enregistrer cet exercice'
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'enregistrer cet exercice'
+                    });
+                }
             });
     }
 

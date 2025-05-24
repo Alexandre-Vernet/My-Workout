@@ -12,7 +12,6 @@ import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
-import { Message } from 'primeng/message';
 import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../../../../libs/interfaces/history';
 import { Skeleton } from 'primeng/skeleton';
@@ -27,10 +26,11 @@ import { Workout } from '../../../../../../../libs/interfaces/workout';
 import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
 import { ErrorCode } from '../../../../../../../libs/error-code/error-code';
 import { ThemeService } from '../../../theme/theme.service';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Message, Skeleton, ButtonDirective, Ripple, ExercisesTableComponent, Popover],
+    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Skeleton, ButtonDirective, Ripple, ExercisesTableComponent, Popover],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -64,8 +64,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         faPlay
     };
 
-    errorMessage: string;
-
     isLoading = true;
 
     isDarkMode = false;
@@ -84,6 +82,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         private readonly workoutService: WorkoutService,
         private readonly exerciseService: ExerciseService,
         private readonly historyService: HistoryService,
+        private readonly alertService: AlertService,
         private readonly themeService: ThemeService,
         private readonly confirmationService: ConfirmationService,
         private readonly router: Router,
@@ -160,7 +159,12 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
         this.historyService.create(history)
             .subscribe({
-                error: (err) => this.errorMessage = err?.error?.message ?? 'Impossible d\'enregister l\'historique'
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'enregister l\'historique'
+                    });
+                }
             });
     }
 
@@ -293,14 +297,18 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     this.exercises = exercises;
                     this.currentExercise = this.exercises[0];
                     this.fillInputWeightLastSavedValue();
+                    this.alertService.alert$.next(null);
                 },
                 error: (err) => {
                     this.isLoading = false;
 
                     if (err?.error?.errorCode === ErrorCode.muscleGroupDoesntExist) {
-                        return this.router.navigate(['/', 'workout']);
+                        this.router.navigate(['/', 'workout']);
                     }
-                    return this.errorMessage = err?.error?.message ?? 'Impossible d\'afficher les exercices';
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'afficher les exercices'
+                    });
                 }
             });
 
