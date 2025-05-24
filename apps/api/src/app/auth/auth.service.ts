@@ -88,64 +88,50 @@ export class AuthService {
     }
 
 
-    async updateUser(token: string, user: User) {
-        const decoded = this.jwtService.verify(token);
-        if (!decoded) {
-            throw new ConflictException('Invalid credentials');
-        }
-        user.id = decoded.user.id;
-
+    async updateUser(currentUser: User, user: User) {
         const existingUser = await this.userRepository.findOne({
             where: {
-                id: user.id
+                id: currentUser.id
             }
         });
         if (!existingUser) {
             throw new ConflictException('Invalid credentials');
         }
 
-        if (user.email && existingUser.email !== user.email) {
-            await this.userRepository.update(user.id, {
+        if (existingUser.email !== user?.email) {
+            await this.userRepository.update(currentUser.id, {
                 email: user.email
             });
         }
 
 
-        if (user.password && user.password !== user.confirmPassword) {
+        if (user.password) {
             if (user.password !== user.confirmPassword) {
                 throw new FormBadRequestException(ErrorCode.passwordNotMatch, 'password');
             }
-
             const hashedPassword = await bcrypt.hash(user.password, 10);
             if (!hashedPassword) {
                 throw new ConflictException('Something went wrong. Please try again later.');
             }
-            await this.userRepository.update(user.id, {
-                email: user.email,
+            await this.userRepository.update(currentUser.id, {
                 password: hashedPassword
             });
         }
 
-        return user;
-    }
-
-    async deleteUser(token: string) {
-        const decoded = this.jwtService.verify(token);
-        if (!decoded) {
-            throw new ConflictException('Invalid credentials');
-        }
-
-        const user = await this.userRepository.findOne({
+        return this.userRepository.findOne({
             where: {
-                id: decoded.user.id
+                id: currentUser.id
             }
         });
+    }
 
-        if (!user) {
+    async deleteUser(user: User) {
+        const existingUser = await this.userRepository.findOne({ where: { id: user.id } });
+        if (!existingUser) {
             throw new ConflictException('Invalid credentials');
         }
 
-        return this.userRepository.remove(user);
+        return this.userRepository.delete(user.id);
     }
 
     async sendEmailForgotPassword(email: string) {

@@ -1,36 +1,31 @@
-import { Body, Controller, Get, Post, Query, Req, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { History } from '../../../../../libs/interfaces/history';
-import { AuthInterceptor } from '../auth/auth.interceptor';
-import { AuthService } from '../auth/auth.service';
+import { AuthGuard } from '../auth/auth.guard';
+import { CurrentUser } from '../auth/current-user-decorator';
+import { User } from '../../../../../libs/interfaces/user';
 
-@UseInterceptors(AuthInterceptor)
+@UseGuards(AuthGuard)
 @Controller('history')
 export class HistoryController {
     constructor(
-        private readonly historyService: HistoryService,
-        private readonly authService: AuthService
+        private readonly historyService: HistoryService
     ) {
     }
 
     @Post()
-    create(@Req() request: Request, @Body() history: History) {
-        const token = request.headers['authorization'].split(' ')[1];
-        history.user = this.authService.verifyToken(token);
+    create(@CurrentUser() user: User, @Body() history: History) {
+        history.user = user;
         return this.historyService.create(history);
     }
 
     @Get()
-    find(@Req() request: Request) {
-        const token = request.headers['authorization'].split(' ')[1];
-        const user = this.authService.verifyToken(token);
+    find(@CurrentUser() user: User) {
         return this.historyService.find(user.id);
     }
 
     @Get('last')
-    findLastHistoryWeightByExerciseId(@Req() request: Request, @Query('exerciseId') exerciseId: number) {
-        const token = request.headers['authorization'].split(' ')[1];
-        const user = this.authService.verifyToken(token);
+    findLastHistoryWeightByExerciseId(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
         return this.historyService.findLastHistoryWeightByExerciseId(user.id, exerciseId);
     }
 }

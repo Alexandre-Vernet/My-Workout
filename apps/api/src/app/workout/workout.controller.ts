@@ -1,37 +1,32 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Req, UseInterceptors } from '@nestjs/common';
-import { AuthInterceptor } from '../auth/auth.interceptor';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '../auth/auth.guard';
 import { WorkoutService } from './workout.service';
 import { Workout } from '../../../../../libs/interfaces/workout';
-import { AuthService } from '../auth/auth.service';
+import { CurrentUser } from '../auth/current-user-decorator';
+import { User } from '../../../../../libs/interfaces/user';
 
-@UseInterceptors(AuthInterceptor)
+@UseGuards(AuthGuard)
 @Controller('workout')
 export class WorkoutController {
 
     constructor(
-        private readonly workoutService: WorkoutService,
-        private readonly authService: AuthService
+        private readonly workoutService: WorkoutService
     ) {
     }
 
     @Post()
-    create(@Req() request: Request, @Body() workout: Workout) {
-        const token = request.headers['authorization'].split(' ')[1];
-        workout.user = this.authService.verifyToken(token);
+    create(@CurrentUser() user: User, @Body() workout: Workout) {
+        workout.user = user;
         return this.workoutService.create(workout);
     }
 
     @Get()
-    find(@Req() request: Request) {
-        const token = request.headers['authorization'].split(' ')[1];
-        const user = this.authService.verifyToken(token);
+    find(@CurrentUser() user: User) {
         return this.workoutService.find(user.id);
     }
 
     @Get('duplicate-workout')
-    checkDuplicateWorkout(@Req() request: Request, @Query('muscleGroupId') muscleGroupId: string) {
-        const token = request.headers['authorization'].split(' ')[1];
-        const user = this.authService.verifyToken(token);
+    checkDuplicateWorkout(@CurrentUser() user: User, @Query('muscleGroupId') muscleGroupId: string) {
         return this.workoutService.checkDuplicateWorkout(user.id, Number(muscleGroupId));
     }
 
@@ -41,9 +36,7 @@ export class WorkoutController {
     }
 
     @Delete()
-    deleteByUserId(@Req() request: Request, @Query('id') id: number) {
-        const token = request.headers['authorization'].split(' ')[1];
-        const user = this.authService.verifyToken(token);
+    deleteByUserId(@CurrentUser() user: User, @Query('id') id: number) {
         return this.workoutService.delete(user.id, Number(id));
     }
 }
