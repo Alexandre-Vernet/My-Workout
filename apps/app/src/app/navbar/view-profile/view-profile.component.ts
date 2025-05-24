@@ -2,17 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import { Message } from 'primeng/message';
 import { ConfirmationService } from 'primeng/api';
 import { ChangeThemeComponent } from './change-theme/change-theme.component';
 import { ManageAccountComponent } from './manage-account/manage-account.component';
 import { Alert } from '../../../../../../libs/interfaces/alert';
 import { AccountActionsComponent } from './account-actions/account-actions.component';
 import { ThemeService } from '../../theme/theme.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
     selector: 'app-view-profile',
-    imports: [CommonModule, ReactiveFormsModule, DropdownModule, FormsModule, Message, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent],
+    imports: [CommonModule, ReactiveFormsModule, DropdownModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent],
     templateUrl: './view-profile.component.html',
     styleUrl: './view-profile.component.scss',
     standalone: true,
@@ -20,11 +20,10 @@ import { ThemeService } from '../../theme/theme.service';
 })
 export class ViewProfileComponent implements OnInit {
 
-    alert: Alert;
-
     isDarkMode = false;
 
     constructor(
+        private readonly alertService: AlertService,
         private readonly themeService: ThemeService
     ) {
     }
@@ -38,6 +37,6 @@ export class ViewProfileComponent implements OnInit {
     }
 
     displayAlert(alert: Alert) {
-        this.alert = alert;
+        this.alertService.alert$.next(alert);
     }
 }

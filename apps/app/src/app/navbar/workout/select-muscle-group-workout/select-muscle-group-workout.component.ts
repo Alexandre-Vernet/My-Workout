@@ -5,7 +5,6 @@ import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { Router, RouterLink } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
 import { forkJoin, take } from 'rxjs';
-import { Message } from 'primeng/message';
 import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
 import { ThemeService } from '../../../theme/theme.service';
@@ -16,10 +15,11 @@ import { Alert } from '../../../../../../../libs/interfaces/alert';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { WorkoutService } from '../../../services/workout.service';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
     selector: 'select-muscle-group-workout',
-    imports: [CommonModule, RouterLink, Message, Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog],
+    imports: [CommonModule, RouterLink, Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
     standalone: true,
@@ -31,8 +31,6 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     muscleGroups: MuscleGroup[] = [];
 
-    alert: Alert;
-
     isLoading = true;
 
     isDarkMode = false;
@@ -42,6 +40,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
     constructor(
         private readonly muscleGroupService: MuscleGroupService,
         private readonly workoutService: WorkoutService,
+        private readonly alertService: AlertService,
         private readonly themeService: ThemeService,
         private readonly confirmationService: ConfirmationService,
         private readonly router: Router
@@ -57,8 +56,8 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
             .subscribe({
                 next: ([muscleGroups, recommendedWorkout]) => {
                     this.isLoading = false;
-                    this.alert = null;
                     this.muscleGroups = muscleGroups;
+                    this.alertService.alert$.next(null);
 
                     if (recommendedWorkout) {
                         const muscleGroupRecommended = this.muscleGroups.find(m => m.id === recommendedWorkout.id);
@@ -67,10 +66,10 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
                     }
                 },
                 error: (err) => {
-                    this.alert = {
+                    this.alertService.alert$.next({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible d\'afficher les entraînements'
-                    };
+                    });
                 }
             });
 
@@ -90,7 +89,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     showAlert(alert: Alert) {
         window.scrollTo(0, 0);
-        this.alert = alert;
+        this.alertService.alert$.next(alert);
     }
 
 

@@ -11,7 +11,6 @@ import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../../../../../libs/interfaces/workout';
 import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
-import { Message } from 'primeng/message';
 import { ThemeService } from '../../theme/theme.service';
 import { removeAccents } from '../../utils/remove-accents';
 import { muscleGroupMap } from '../../../../../../libs/interfaces/MuscleGroup';
@@ -20,10 +19,11 @@ import {
     DialogSelectCardioExerciseComponent
 } from '../workout/dialog-select-cardio-exercise/dialog-select-cardio-exercise.component';
 import { Alert } from '../../../../../../libs/interfaces/alert';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
     selector: 'app-calendar',
-    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, Message, DialogSelectCardioExerciseComponent],
+    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
@@ -60,8 +60,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     swipeStartX = 0;
     swipeEndX = 0;
 
-    alert: Alert;
-
     setWorkoutDate: Date;
     isOpenModalExerciseCardio = false;
 
@@ -70,6 +68,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     constructor(
         private readonly workoutService: WorkoutService,
         private readonly confirmationService: ConfirmationService,
+        private readonly alertService: AlertService,
         private readonly themeService: ThemeService
     ) {
 
@@ -137,14 +136,14 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                 this.workoutService.delete(id)
                     .subscribe({
                         next: () => {
-                            this.alert = null;
                             this.calendarOptions.events = (this.calendarOptions.events as EventInput[]).filter(event => Number(event.id) !== id);
+                            this.alertService.alert$.next(null);
                         },
                         error: (err) => {
-                            this.alert = {
+                            this.alertService.alert$.next({
                                 severity: 'error',
                                 message: err?.error?.message ?? 'Impossible de supprimer l\'entraînement'
-                            };
+                            });
                         }
                     });
                 this.showModalViewWorkout = false;
@@ -162,15 +161,15 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             }
         ];
 
-        this.alert = {
+        this.alertService.alert$.next({
             severity: 'success',
             message: `${ workout.history[0].exercise.name } a été ajouté au calendrier`
-        };
+        });
     }
 
     showAlert(alert: Alert) {
         window.scrollTo(0, 0);
-        this.alert = alert;
+        this.alertService.alert$.next(alert);
     }
 
 

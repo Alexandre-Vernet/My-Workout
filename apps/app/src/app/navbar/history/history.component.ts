@@ -10,11 +10,11 @@ import { Ripple } from 'primeng/ripple';
 import { WorkoutService } from '../../services/workout.service';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
-import { Message } from 'primeng/message';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
     selector: 'app-history',
-    imports: [CommonModule, Skeleton, Button, Ripple, ConfirmDialog, Message],
+    imports: [CommonModule, Skeleton, Button, Ripple, ConfirmDialog],
     templateUrl: './history.component.html',
     styleUrl: './history.component.scss',
     standalone: true,
@@ -27,25 +27,25 @@ export class HistoryComponent implements OnInit {
 
     isDarkMode = false;
 
-    errorMessage: string;
 
     constructor(
-      private readonly historyService: HistoryService,
-      private readonly workoutService: WorkoutService,
-      private readonly themeService: ThemeService,
-      private readonly confirmationService: ConfirmationService
+        private readonly historyService: HistoryService,
+        private readonly workoutService: WorkoutService,
+        private readonly themeService: ThemeService,
+        private readonly alertService: AlertService,
+        private readonly confirmationService: ConfirmationService
     ) {
     }
 
     ngOnInit() {
         this.historyService.find()
-          .pipe(take(1))
-          .subscribe({
-              next: (history) => {
-                  this.isLoading = false;
-                  this.history = history;
-              }
-          });
+            .pipe(take(1))
+            .subscribe({
+                next: (history) => {
+                    this.isLoading = false;
+                    this.history = history;
+                }
+            });
 
         this.isDarkMode = this.themeService.isDarkMode();
     }
@@ -69,17 +69,22 @@ export class HistoryComponent implements OnInit {
             },
             accept: () => {
                 this.workoutService.delete(id)
-                  .pipe(take(1))
-                  .subscribe({
-                      next: () => {
-                          this.errorMessage = '';
-                          this.history = this.history.map(h => {
-                              h.groups = h.groups.filter(g => g.workoutId !== id);
-                              return h;
-                          });
-                      },
-                      error: (err) => this.errorMessage = err?.error?.message ?? 'Une erreur est survenue lors de la suppression de l\'entraînement',
-                  });
+                    .pipe(take(1))
+                    .subscribe({
+                        next: () => {
+                            this.history = this.history.map(h => {
+                                h.groups = h.groups.filter(g => g.workoutId !== id);
+                                return h;
+                            });
+                            this.alertService.alert$.next(null);
+                        },
+                        error: (err) => {
+                            this.alertService.alert$.next({
+                                severity: 'error',
+                                message: err?.error?.message ?? 'Impossible de supprimer l\'entraînement'
+                            });
+                        }
+                    });
             }
         });
     }
