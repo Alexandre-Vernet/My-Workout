@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, HttpCode, Param, Post, Put, Req, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthInterceptor } from './auth.interceptor';
+import { AuthGuard } from './auth.guard';
 import { User } from '../../../../../libs/interfaces/user';
+import { CurrentUser } from './current-user-decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -29,18 +30,16 @@ export class AuthController {
         return await this.authService.signInWithAccessToken(accessToken);
     }
 
-    @UseInterceptors(AuthInterceptor)
+   @UseGuards(AuthGuard)
     @Put()
-    updateUser(@Req() request: Request, @Body() { user }: { user: User }) {
-        const token = request.headers['authorization'].split(' ')[1];
-        return this.authService.updateUser(token, user);
+    updateUser(@CurrentUser() currentUser: User, @Body() { user }: { user: User }) {
+        return this.authService.updateUser(currentUser, user);
     }
 
-    @UseInterceptors(AuthInterceptor)
+   @UseGuards(AuthGuard)
     @Delete()
-    deleteUser(@Req() request: Request) {
-        const token = request.headers['authorization'].split(' ')[1];
-        return this.authService.deleteUser(token);
+    deleteUser(@CurrentUser() user: User) {
+        return this.authService.deleteUser(user);
     }
 
     @HttpCode(200)

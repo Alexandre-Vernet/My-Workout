@@ -1,13 +1,14 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { MuscleGroupService } from './muscle-group.service';
-import { AuthService } from '../auth/auth.service';
+import { CurrentUser } from '../auth/current-user-decorator';
+import { User } from '../../../../../libs/interfaces/user';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('muscle-group')
 export class MuscleGroupController {
 
     constructor(
-        private readonly muscleGroupService: MuscleGroupService,
-        private readonly authService: AuthService
+        private readonly muscleGroupService: MuscleGroupService
     ) {
     }
 
@@ -16,17 +17,15 @@ export class MuscleGroupController {
         return this.muscleGroupService.findAll();
     }
 
+    @UseGuards(AuthGuard)
     @Get('count-exercises')
-    findAllMuscleGroupAndCountAddedExercises(@Req() request: Request) {
-        const token = request.headers['authorization'].split(' ')[1];
-        const user = this.authService.verifyToken(token);
+    findAllMuscleGroupAndCountAddedExercises(@CurrentUser() user: User) {
         return this.muscleGroupService.findAllMuscleGroupAndCountAddedExercises(user.id);
     }
 
+    @UseGuards(AuthGuard)
     @Get('suggest-muscle-group')
-    suggestMuscleGroup(@Req() request: Request) {
-        const token = request.headers['authorization'].split(' ')[1];
-        const user = this.authService.verifyToken(token);
+    suggestMuscleGroup(@CurrentUser() user: User) {
         return this.muscleGroupService.suggestMuscleGroup(user.id);
     }
 }

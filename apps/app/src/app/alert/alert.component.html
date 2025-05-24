@@ -1,4 +1,4 @@
 <p-message *ngIf="alert" closable="true"
-           [life]="alert?.severity === 'success' ? 3000 : 0"
+           (onClose)="alert = null"
            [severity]="alert?.severity">{{ alert?.message }}
 </p-message>

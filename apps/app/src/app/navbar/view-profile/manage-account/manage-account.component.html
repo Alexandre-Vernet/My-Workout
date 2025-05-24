@@ -15,32 +15,13 @@
 
     <ng-container *ngIf="isCheckedChangePassword">
         <p-floatlabel variant="on">
-            <p-password [formControl]="formControlPassword" autocomplete="off">
-                <ng-template #header>
-                    <div class="font-semibold text-xm mb-4">Tapez un mot de passe</div>
-                </ng-template>
-                <ng-template #footer>
-                    <p-divider />
-                    <ul class="pl-2 ml-2 my-0 leading-normal">
-                        <li>Minimum 6 caractères</li>
-                    </ul>
-                </ng-template>
+            <p-password [formControl]="formControlPassword" autocomplete="off" [feedback]="false">
             </p-password>
             <label for="password">Nouveau mot de passe</label>
         </p-floatlabel>
 
         <p-floatlabel variant="on">
-            <p-password [formControl]="formControlConfirmPassword"
-                        autocomplete="off">
-                <ng-template #header>
-                    <div class="font-semibold text-xm mb-4">Tapez un mot de passe</div>
-                </ng-template>
-                <ng-template #footer>
-                    <p-divider />
-                    <ul class="pl-2 ml-2 my-0 leading-normal">
-                        <li>Minimum 6 caractères</li>
-                    </ul>
-                </ng-template>
+            <p-password [formControl]="formControlConfirmPassword" autocomplete="off" [feedback]="false">
             </p-password>
             <label for="confirmPassword">Confirmer le mot de passe</label>
         </p-floatlabel>
@@ -53,10 +34,22 @@
     </ng-container>
 
     <p-button
-        [disabled]="isCheckedChangePassword && (formControlEmail.invalid || formControlPassword.invalid ||
-            formControlConfirmPassword.invalid ||
-            formControlPassword.value !== formControlConfirmPassword.value) ||
-            currentEmail === formControlEmail.value"
+        [disabled]="
+          (
+            isCheckedChangePassword &&
+            (
+              formControlEmail.invalid ||
+              formControlPassword.invalid ||
+              formControlConfirmPassword.invalid ||
+              formControlPassword.value !== formControlConfirmPassword.value
+            )
+          ) ||
+          (
+            !isCheckedChangePassword &&
+            (formControlEmail.invalid || currentEmail === formControlEmail.value)
+          )
+"
+
         pRipple
         class="mt-2"
         label="Mettre à jour" [loading]="isLoading" (onClick)="updateUser()" />

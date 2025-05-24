@@ -3,6 +3,7 @@ export enum ErrorCode {
     passwordNotMatch = 'passwordNotMatch',
     invalidCredential = 'invalidCredential',
     userMustBeLoggedToContinue = 'userMustBeLoggedToContinue',
+    sessionHasExpired = 'sessionHasExpired',
     muscleGroupDoesntExist = 'muscleGroupDoesntExist',
 }
 
@@ -11,5 +12,6 @@ export const errorMessages = new Map<ErrorCode, string>([
     [ErrorCode.passwordNotMatch, 'Les mots de passe ne correspondent pas'],
     [ErrorCode.invalidCredential, 'Email ou mot de passe invalide'],
     [ErrorCode.userMustBeLoggedToContinue, 'Vous devez être connecté pour continuer'],
+    [ErrorCode.sessionHasExpired, 'Votre session a expirée, veuillez vous reconnecter'],
     [ErrorCode.muscleGroupDoesntExist, 'Ce groupe musculaire n\'existe pas'],
 ]);
