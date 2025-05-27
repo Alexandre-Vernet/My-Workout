@@ -193,8 +193,9 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             spanEventName.textContent = label;
         }
 
-        info.el.style.borderLeft = `4px solid ${ color }`;
-        info.el.style.paddingLeft = '3px';
+        info.el.classList.add('event-color-style');
+        info.el.style.borderLeftColor = color;
+
     }
 
     private dateClick(info: DateClickArg) {
