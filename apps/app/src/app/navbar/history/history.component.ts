@@ -72,10 +72,12 @@ export class HistoryComponent implements OnInit {
                     .pipe(take(1))
                     .subscribe({
                         next: () => {
-                            this.history = this.history.map(h => {
-                                h.groups = h.groups.filter(g => g.workoutId !== id);
-                                return h;
-                            });
+                            this.history = this.history
+                                .map(h => ({
+                                    ...h,
+                                    groups: h.groups.filter(g => g.workoutId !== id)
+                                }))
+                                .filter(h => h.groups.length > 0);
                             this.alertService.alert$.next(null);
                         },
                         error: (err) => {
