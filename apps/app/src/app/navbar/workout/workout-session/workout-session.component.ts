@@ -96,6 +96,13 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.findExercises();
         this.isIphone = this.deviceDetectionService.isIphone();
         this.isDarkMode = this.themeService.isDarkMode();
+
+        this.activatedRoute.queryParams.subscribe(params => {
+            const savedTab = +params['tab'];
+            if (!isNaN(savedTab)) {
+                this.activeStep = savedTab;
+            }
+        });
     }
 
     ngAfterViewInit() {
@@ -180,19 +187,17 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         }
     }
 
-    switchPanel(exercise: Exercise, switchPanel?: () => void) {
-        if (switchPanel) {
-            switchPanel();
-        }
-
+    switchPanel(exercise: Exercise, index?: number) {
         this.currentExercise = exercise;
         this.fillInputWeightLastSavedValue();
         this.exercisesMade = [];
         this.stopTimer();
+
+        this.updateTabUrl(index);
     }
 
 
-    convertWeightToElastics(): void {
+    convertWeightToElastics() {
         // Check if the weight is a multiple of 5, since all elastics come in 5kg steps
         if (this.weight % 5 !== 0) {
             return null;
@@ -319,7 +324,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         if (this.activeStep < this.exercises.length) {
             this.activeStep++;
             const nextExercise = this.exercises[this.activeStep - 1];
-            this.switchPanel(nextExercise);
+            this.switchPanel(nextExercise, this.activeStep);
         }
     }
 
@@ -327,7 +332,17 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         if (this.activeStep > 1) {
             this.activeStep--;
             const previousExercise = this.exercises[this.activeStep - 1];
-            this.switchPanel(previousExercise);
+            this.switchPanel(previousExercise, this.activeStep);
+        }
+    }
+
+    private updateTabUrl(index: number) {
+        if (index !== null) {
+            this.router.navigate([], {
+                relativeTo: this.activatedRoute,
+                queryParams: { tab: index },
+                queryParamsHandling: 'merge'
+            });
         }
     }
 
