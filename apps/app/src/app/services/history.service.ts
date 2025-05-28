@@ -30,4 +30,13 @@ export class HistoryService {
             }
         });
     }
+
+    findTodayExercicesHistory(muscleGroupId: number, exerciseId: number) {
+        return this.http.get<History[]>(`${ this.historyUrl }/today`, {
+            params: {
+                muscleGroupId,
+                exerciseId
+            }
+        });
+    }
 }

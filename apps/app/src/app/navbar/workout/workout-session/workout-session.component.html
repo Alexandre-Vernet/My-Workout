@@ -98,9 +98,7 @@
             </p-step-panels>
         </p-stepper>
 
-        <div *ngIf="exercisesMade.length > 0" class="card">
-            <app-exercises-table [exercisesMade]="exercisesMade"></app-exercises-table>
-        </div>
+            <app-exercises-table [muscleGroupId]="muscleGroupId" [exercisesMade]="exercisesMade" [exerciseId]="currentExercise.id"></app-exercises-table>
 
         <div class="bottom-page">
             <div class="stopwatch text-primary">
