@@ -96,13 +96,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.findExercises();
         this.isIphone = this.deviceDetectionService.isIphone();
         this.isDarkMode = this.themeService.isDarkMode();
-
-        this.activatedRoute.queryParams.subscribe(params => {
-            const savedTab = +params['tab'];
-            if (!isNaN(savedTab)) {
-                this.activeStep = savedTab;
-            }
-        });
     }
 
     ngAfterViewInit() {
@@ -302,6 +295,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     this.exercises = exercises;
                     this.currentExercise = this.exercises[0];
                     this.fillInputWeightLastSavedValue();
+                    this.loadUrlTab();
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {
@@ -334,6 +328,15 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             const previousExercise = this.exercises[this.activeStep - 1];
             this.switchPanel(previousExercise, this.activeStep);
         }
+    }
+
+    private loadUrlTab() {
+        this.activatedRoute.queryParams.subscribe(params => {
+            const savedTab = +params['tab'];
+            if (!isNaN(savedTab) && savedTab <= this.exercises.length) {
+                this.activeStep = savedTab;
+            }
+        });
     }
 
     private updateTabUrl(index: number) {
