@@ -22,7 +22,7 @@ export class ExercisesTableComponent implements OnChanges {
     }
 
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(changes: SimpleChanges) {
         const change: SimpleChange | undefined = changes['exerciseId'];
         if (change?.currentValue !== undefined) {
             this.findTodayExercicesHistory();

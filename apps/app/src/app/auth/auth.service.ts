@@ -77,7 +77,7 @@ export class AuthService {
         return this.http.delete<void>(`${ this.authUrl }`);
     }
 
-    signOut(): void {
+    signOut() {
         this.userSubject.next(null);
         localStorage.removeItem('access-token');
     }
