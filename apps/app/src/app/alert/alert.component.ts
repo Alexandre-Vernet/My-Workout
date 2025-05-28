@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Alert } from '../../../../../libs/interfaces/alert';
 import { Message } from 'primeng/message';
@@ -8,7 +8,8 @@ import { AlertService } from '../services/alert.service';
     selector: 'app-alert',
     imports: [CommonModule, Message],
     templateUrl: './alert.component.html',
-    styleUrl: './alert.component.scss'
+    styleUrl: './alert.component.scss',
+    encapsulation: ViewEncapsulation.None
 })
 export class AlertComponent implements OnInit {
     alert: Alert;
