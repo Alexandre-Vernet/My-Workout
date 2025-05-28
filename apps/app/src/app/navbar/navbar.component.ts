@@ -22,7 +22,7 @@ export class NavbarComponent implements AfterViewInit {
     ) {
     }
 
-    ngAfterViewInit(): void {
+    ngAfterViewInit() {
         this.isIphone = this.deviceDetection.isIphone();
 
         const body = document.body;

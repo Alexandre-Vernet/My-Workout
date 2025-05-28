@@ -28,4 +28,9 @@ export class HistoryController {
     findLastHistoryWeightByExerciseId(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
         return this.historyService.findLastHistoryWeightByExerciseId(user.id, exerciseId);
     }
+
+    @Get('today')
+    findTodayExercicesHistory(@CurrentUser() user: User, @Query('muscleGroupId') muscleGroupId: number, @Query('exerciseId') exerciseId: number) {
+        return this.historyService.existingWorkout(user.id, muscleGroupId, exerciseId);
+    }
 }

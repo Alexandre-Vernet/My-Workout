@@ -9,16 +9,16 @@ export class HistoryService {
 
     constructor(
         @InjectRepository(HistoryEntity)
-        private readonly historyEntity: Repository<HistoryEntity>
+        private readonly historyRepository: Repository<HistoryEntity>
     ) {
     }
 
     create(history: History) {
-        return this.historyEntity.save(history);
+        return this.historyRepository.save(history);
     }
 
     async find(userId: number) {
-        const historyEntity = await this.historyEntity.find({
+        const historyEntity = await this.historyRepository.find({
             where: {
                 workout: {
                     user: {
@@ -30,7 +30,7 @@ export class HistoryService {
                 workout: {
                     muscleGroup: true
                 },
-                exercise: true,
+                exercise: true
             }
         });
 
@@ -97,7 +97,7 @@ export class HistoryService {
     }
 
     findLastHistoryWeightByExerciseId(userId: number, exerciseId: number) {
-        return this.historyEntity.findOne({
+        return this.historyRepository.findOne({
             where: {
                 exercise: {
                     id: exerciseId
@@ -109,5 +109,18 @@ export class HistoryService {
                 }
             }
         });
+    }
+
+
+    existingWorkout(userId: number, muscleGroupId: number, exerciseId: number) {
+        return this.historyRepository
+            .createQueryBuilder('h')
+            .leftJoin('h.exercise', 'e')
+            .leftJoin('h.workout', 'w')
+            .where('w.user.id = :userId', { userId })
+            .andWhere('e.id = :exerciseId', { exerciseId })
+            .andWhere('w.muscleGroup.id = :muscleGroupId', { muscleGroupId })
+            .andWhere('DATE(w.date) = DATE(:date)', { date: new Date() })
+            .getMany();
     }
 }
