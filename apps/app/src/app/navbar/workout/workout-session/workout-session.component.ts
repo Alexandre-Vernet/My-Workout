@@ -450,7 +450,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                 severity: 'secondary',
                 outlined: true
             },
-            accept: () => this.findExercises(),
             reject: () => this.router.navigate(['/', 'workout'])
         });
     }
