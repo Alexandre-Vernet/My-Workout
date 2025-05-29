@@ -6,7 +6,6 @@ import { ErrorCode } from '../../../../../libs/error-code/error-code';
 import { ExercisesEntity } from './exercises.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../../../libs/interfaces/user';
-import { Exercise } from '../../../../../libs/interfaces/exercise';
 
 @Injectable()
 export class ExercisesService {
@@ -85,7 +84,7 @@ export class ExercisesService {
             throw new CustomBadRequestException(ErrorCode.muscleGroupDoesntExist);
         }
 
-        const exercises: Exercise[] = await this.exerciseRepository
+        return this.exerciseRepository
             .createQueryBuilder('e')
             .leftJoin('e.userExercise', 'ue')
             .innerJoin('e.exerciseMuscle', 'em')
@@ -100,11 +99,8 @@ export class ExercisesService {
             ])
             .where('ue.user.id = :userId', { userId })
             .andWhere('mg.id = :muscleGroupId', { muscleGroupId })
+            .orderBy('ue.order', 'ASC')
             .getRawMany();
-
-        exercises.sort((a, b) => a.order - b.order);
-
-        return exercises;
     }
 
     findCardioExercises(userId: number) {
