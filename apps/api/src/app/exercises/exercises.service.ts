@@ -24,7 +24,7 @@ export class ExercisesService {
             throw new CustomBadRequestException(ErrorCode.muscleGroupDoesntExist);
         }
 
-        if (user && user.id) {
+        if (user?.id) {
             const exercises = await this.dataSource.query(
                 `
                     SELECT e.id,
