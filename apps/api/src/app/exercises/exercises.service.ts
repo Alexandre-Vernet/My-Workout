@@ -44,7 +44,8 @@ export class ExercisesService {
                         em.muscle_id = m.id
                              JOIN muscle_group mg ON m.muscle_group_id = mg.id
                     WHERE m.muscle_group_id = $2
-                    GROUP BY e.id, e.name, e.description, ue.id;
+                    GROUP BY e.id, e.name, e.description, ue.id
+                    order by "addedToWorkout" DESC, e.id ASC;
                 `,
                 [user.id, muscleGroupId]
             );
