@@ -83,31 +83,21 @@ export class ExercisesService {
             throw new CustomBadRequestException(ErrorCode.muscleGroupDoesntExist);
         }
 
-        return this.dataSource.query(
-            `
-                select e.id,
-                       e.name,
-                       e.description,
-                       e.is_smart_workout as "isSmartWorkout"
-                from exercises e
-                         left join user_exercise ue on
-                    e.id = ue.exercise_id
-                         join exercise_muscle em on
-                    em.exercise_id = e.id
-                         join muscles m on
-                    em.muscle_id = m.id
-                         join muscle_group mg on
-                    m.muscle_group_id = mg.id
-                where ue.user_id = $1
-                  and m.muscle_group_id = $2
-                group by e.id,
-                         e.name,
-                         e.description,
-                         ue.id
-                order by e.id;
-            `,
-            [userId, muscleGroupId]
-        );
+        return this.exerciseRepository
+            .createQueryBuilder('e')
+            .leftJoin('e.userExercise', 'ue')
+            .innerJoin('e.exerciseMuscle', 'em')
+            .innerJoin('em.muscle', 'm')
+            .innerJoin('m.muscleGroup', 'mg')
+            .select([
+                'e.id AS id',
+                'e.name AS name',
+                'e.description AS description',
+                'e.isSmartWorkout AS "isSmartWorkout"'
+            ])
+            .where('ue.user.id = :userId', { userId })
+            .andWhere('mg.id = :muscleGroupId', { muscleGroupId })
+            .getRawMany();
     }
 
     findCardioExercises(userId: number) {
