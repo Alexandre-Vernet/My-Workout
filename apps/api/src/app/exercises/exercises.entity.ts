@@ -17,6 +17,9 @@ export class ExercisesEntity {
     @Column({ name: 'is_smart_workout' })
     isSmartWorkout: boolean;
 
+    @Column()
+    order: number;
+
     @OneToMany(() => ExerciseMuscleEntity, exerciseMuscle => exerciseMuscle.exercise)
     exerciseMuscle: ExerciseMuscleEntity[];
 
