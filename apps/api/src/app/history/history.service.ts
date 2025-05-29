@@ -103,11 +103,10 @@ export class HistoryService {
             .innerJoin('h.exercise', 'e')
             .where('w.user_id = :userId', { userId })
             .andWhere('e.id = :exerciseId', { exerciseId })
+            .andWhere('h.weight IS NOT NULL')
             .orderBy('w.date', 'DESC')
             .addOrderBy('h.weight', 'DESC')
-            .limit(1)
             .getOne();
-
     }
 
 
