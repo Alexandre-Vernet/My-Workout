@@ -97,18 +97,17 @@ export class HistoryService {
     }
 
     findLastHistoryWeightByExerciseId(userId: number, exerciseId: number) {
-        return this.historyRepository.findOne({
-            where: {
-                exercise: {
-                    id: exerciseId
-                },
-                workout: {
-                    user: {
-                        id: userId
-                    }
-                }
-            }
-        });
+        return this.historyRepository
+            .createQueryBuilder('h')
+            .innerJoin('h.workout', 'w')
+            .innerJoin('h.exercise', 'e')
+            .where('w.user_id = :userId', { userId })
+            .andWhere('e.id = :exerciseId', { exerciseId })
+            .orderBy('w.date', 'DESC')
+            .addOrderBy('h.weight', 'DESC')
+            .limit(1)
+            .getOne();
+
     }
 
 
