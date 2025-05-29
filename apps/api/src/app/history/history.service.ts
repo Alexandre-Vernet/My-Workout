@@ -120,6 +120,7 @@ export class HistoryService {
             .andWhere('e.id = :exerciseId', { exerciseId })
             .andWhere('w.muscleGroup.id = :muscleGroupId', { muscleGroupId })
             .andWhere('DATE(w.date) = DATE(:date)', { date: new Date() })
+            .orderBy('h.id', 'ASC')
             .getMany();
     }
 }
