@@ -200,7 +200,9 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     private dateClick(info: DateClickArg) {
         this.isOpenModalExerciseCardio = true;
-        this.setWorkoutDate = info.date;
+        // Set day to info.date but hour to current time
+        this.setWorkoutDate = new Date(info.date);
+        this.setWorkoutDate.setHours(new Date().getHours(), new Date().getMinutes(), 0, 0);
     }
 
     private previousMonth() {
