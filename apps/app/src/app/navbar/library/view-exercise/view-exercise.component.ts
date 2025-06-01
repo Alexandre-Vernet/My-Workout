@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, take } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
+import { Exercise } from '../../../../../../../libs/interfaces/exercise';
+import { AlertService } from '../../../services/alert.service';
+import { UserExerciseService } from '../../../services/user-exercise.service';
 
 @Component({
     selector: 'app-view-exercise',
@@ -13,9 +16,13 @@ import { ExerciseService } from '../../../services/exercise.service';
 })
 export class ViewExerciseComponent implements OnInit {
 
+    exercise: Exercise;
+
     constructor(
         private readonly exerciseService: ExerciseService,
-        private readonly activatedRoute: ActivatedRoute
+        private readonly userExerciseService: UserExerciseService,
+        private readonly activatedRoute: ActivatedRoute,
+        private readonly alertService: AlertService
     ) {
     }
 
@@ -26,6 +33,33 @@ export class ViewExerciseComponent implements OnInit {
                 exerciseId: number
             }) => this.exerciseService.getExercise(Number(params.exerciseId)))
         )
-            .subscribe();
+            .subscribe({
+                next: (exercise) => {
+                    this.exercise = exercise;
+                    this.alertService.alert$.next(null);
+                },
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible de récupérer les détails de l\'exercice.'
+                    });
+                }
+            });
+    }
+
+    toggleExerciseWorkout() {
+        return this.userExerciseService.toggleExerciseWorkout(this.exercise)
+            .pipe(take(1))
+            .subscribe({
+                next: () => {
+                    this.alertService.alert$.next(null);
+                },
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'enregistrer cet exercice'
+                    });
+                }
+            });
     }
 }

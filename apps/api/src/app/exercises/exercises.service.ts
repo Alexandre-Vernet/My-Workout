@@ -120,10 +120,19 @@ export class ExercisesService {
     }
 
     getExercise(exerciseId: number) {
-        return this.exerciseRepository.findOne({
-            where: {
-                id: exerciseId
-            }
-        });
+        return this.exerciseRepository.createQueryBuilder('e')
+            .select([
+                'e.id as "id"',
+                'e.name as "name"',
+                'e.description as "description"',
+                'e.isSmartWorkout as "isSmartWorkout"',
+                `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`
+            ])
+            .leftJoin('e.exerciseMuscle', 'em')
+            .leftJoin('em.muscle', 'm')
+            .leftJoin('m.muscleGroup', 'mg')
+            .where('e.id = :exerciseId', { exerciseId })
+            .groupBy('e.id, e.description, e.isSmartWorkout')
+            .getRawOne();
     }
 }

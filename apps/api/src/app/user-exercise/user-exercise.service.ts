@@ -25,10 +25,10 @@ export class UserExerciseService {
             }
         });
         if (existingWorkout) {
-            return await this.userExerciseEntityRepository.remove(existingWorkout);
+            return this.userExerciseEntityRepository.remove(existingWorkout);
         }
 
-        return await this.userExerciseEntityRepository.save(userExercise);
+        return this.userExerciseEntityRepository.save(userExercise);
     }
 
     async updateOrderExercises(userExercises: UserExercise[]) {
