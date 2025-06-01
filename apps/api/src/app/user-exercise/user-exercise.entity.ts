@@ -1,4 +1,4 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { ExercisesEntity } from '../exercises/exercises.entity';
 
@@ -14,4 +14,7 @@ export class UserExerciseEntity {
     @ManyToOne(() => ExercisesEntity, exercise => exercise.userExercise, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'exercise_id' })
     exercise: ExercisesEntity;
+
+    @Column()
+    order: number;
 }

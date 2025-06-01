@@ -30,4 +30,14 @@ export class UserExerciseService {
 
         return await this.userExerciseEntityRepository.save(userExercise);
     }
+
+    async updateOrderExercises(userExercises: UserExercise[]) {
+        for (const ue of userExercises) {
+            await this.userExerciseEntityRepository.update(ue.id, {
+                order: ue.order
+            });
+        }
+
+        return userExercises;
+    }
 }

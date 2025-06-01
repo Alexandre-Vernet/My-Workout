@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { MuscleGroupService } from '../muscle-group/muscle-group.service';
 import { CustomBadRequestException } from '../exceptions/CustomBadRequestException';
 import { ErrorCode } from '../../../../../libs/error-code/error-code';
 import { ExercisesEntity } from './exercises.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../../../../libs/interfaces/user';
+import { Exercise } from '../../../../../libs/interfaces/exercise';
 
 @Injectable()
 export class ExercisesService {
     constructor(
-        private readonly dataSource: DataSource,
         @InjectRepository(ExercisesEntity)
         private readonly exerciseRepository: Repository<ExercisesEntity>,
         private readonly muscleGroupService: MuscleGroupService
@@ -23,53 +23,48 @@ export class ExercisesService {
             throw new CustomBadRequestException(ErrorCode.muscleGroupDoesntExist);
         }
 
-        if (user && user.id) {
-            const exercises = await this.dataSource.query(
-                `
-                    SELECT e.id,
-                           e.name,
-                           e.description,
-                           CASE
-                               WHEN ue.id IS NOT NULL THEN true
-                               ELSE false
-                               END                           AS "addedToWorkout",
-                           STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"
-                    FROM exercises e
-                             LEFT JOIN user_exercise ue ON
-                        e.id = ue.exercise_id AND ue.user_id = $1
-                             JOIN exercise_muscle em ON
-                        em.exercise_id = e.id
-                             JOIN muscles m ON
-                        em.muscle_id = m.id
-                             JOIN muscle_group mg ON m.muscle_group_id = mg.id
-                    WHERE m.muscle_group_id = $2
-                    GROUP BY e.id, e.name, e.description, ue.id;
-                `,
-                [user.id, muscleGroupId]
-            );
+        if (user?.id) {
+            const exercises: Exercise[] = await this.exerciseRepository
+                .createQueryBuilder('e')
+                .select([
+                    'e.id AS id',
+                    'e.name AS name',
+                    'e.description AS description',
+                    'CASE WHEN ue.id IS NOT NULL THEN true ELSE false END AS "addedToWorkout"',
+                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`,
+                    'ue.id as "userExerciseId"',
+                    'ue.order as "order"'
+                ])
+                .leftJoin('e.userExercise', 'ue', 'ue.user_id = :userId', { userId: user.id })
+                .innerJoin('e.exerciseMuscle', 'em')
+                .innerJoin('em.muscle', 'm')
+                .innerJoin('m.muscleGroup', 'mg')
+                .where('mg.id = :muscleGroupId', { muscleGroupId })
+                .groupBy('e.id, e.name, e.description, ue.id')
+                .getRawMany();
+
 
             return {
                 exercises,
                 muscleGroup: await this.muscleGroupService.findById(muscleGroupId)
             };
         } else {
-            const exercises = await this.dataSource.query(
-                `
-                    SELECT e.id,
-                           e.name,
-                           e.description,
-                           STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"
-                    FROM exercises e
-                             JOIN exercise_muscle em ON
-                        em.exercise_id = e.id
-                             JOIN muscles m ON
-                        em.muscle_id = m.id
-                             JOIN muscle_group mg ON m.muscle_group_id = mg.id
-                    WHERE m.muscle_group_id = $1
-                    GROUP BY e.id, e.name, e.description;
-                `,
-                [muscleGroupId]
-            );
+            const exercises: Exercise[] = await this.exerciseRepository
+                .createQueryBuilder('e')
+                .select([
+                    'e.id AS id',
+                    'e.name AS name',
+                    'e.description AS description',
+                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`
+                ])
+                .innerJoin('e.exerciseMuscle', 'em')
+                .innerJoin('em.muscle', 'm')
+                .innerJoin('m.muscleGroup', 'mg')
+                .where('mg.id = :muscleGroupId', { muscleGroupId })
+                .groupBy('e.id, e.name, e.description')
+                .addOrderBy('e.id', 'ASC')
+                .getRawMany();
+
             return {
                 exercises,
                 muscleGroup: await this.muscleGroupService.findById(muscleGroupId)
@@ -93,10 +88,12 @@ export class ExercisesService {
                 'e.id AS id',
                 'e.name AS name',
                 'e.description AS description',
-                'e.isSmartWorkout AS "isSmartWorkout"'
+                'e.isSmartWorkout AS "isSmartWorkout"',
+                'ue.order as order'
             ])
             .where('ue.user.id = :userId', { userId })
             .andWhere('mg.id = :muscleGroupId', { muscleGroupId })
+            .orderBy('ue.order', 'ASC')
             .getRawMany();
     }
 

@@ -3,9 +3,9 @@ import { ExercisesService } from './exercises.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { CurrentUser } from '../auth/current-user-decorator';
 import { User } from '../../../../../libs/interfaces/user';
+import { OptionalCurrentUser } from '../auth/optional-current-user-decorator';
 
 @Controller('exercises')
-@UseGuards(AuthGuard)
 export class ExercisesController {
     constructor(
         private readonly exercisesService: ExercisesService
@@ -13,8 +13,8 @@ export class ExercisesController {
     }
 
     @Get('find-all-exercises-by-muscle-group-id')
-    findAllExercisesByMuscleGroupIdAndUserId(@CurrentUser() user: User, @Query('muscleGroupId') muscleGroupId: string) {
-        return this.exercisesService.findAllExercisesByMuscleGroupId(Number(muscleGroupId), user);
+    findAllExercisesByMuscleGroupIdAndUserId(@OptionalCurrentUser() optionalCurrentUser: User, @Query('muscleGroupId') muscleGroupId: string) {
+        return this.exercisesService.findAllExercisesByMuscleGroupId(Number(muscleGroupId), optionalCurrentUser);
     }
 
 
