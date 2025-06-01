@@ -14,7 +14,7 @@ export class UserExerciseService {
     }
 
     async create(userExercise: UserExercise) {
-        const existingWorkout = await this.userExerciseEntityRepository.findOne({
+        const existingUserExercise = await this.userExerciseEntityRepository.findOne({
             where: {
                 user: {
                     id: userExercise.user.id
@@ -24,8 +24,8 @@ export class UserExerciseService {
                 }
             }
         });
-        if (existingWorkout) {
-            return this.userExerciseEntityRepository.remove(existingWorkout);
+        if (existingUserExercise) {
+            return this.userExerciseEntityRepository.remove(existingUserExercise);
         }
 
         return this.userExerciseEntityRepository.save(userExercise);
