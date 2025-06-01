@@ -22,7 +22,8 @@
         </div>
 
         <div class="m-2 mt-5">
-            <p-button (click)="toggleExerciseWorkout()" [label]="exercise.addedToWorkout ? 'Supprimer' : 'Ajouter'" />
+            <p-button (click)="toggleExerciseWorkout()" [label]="exercise.addedToWorkout ? 'Supprimer de l\'entraînement' : 'Ajouter à l\'entraînement'"
+            [severity]="exercise.addedToWorkout ? 'danger' : 'primary'"/>
         </div>
     </ng-container>
 </div>
