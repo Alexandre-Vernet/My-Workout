@@ -72,6 +72,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     weightToElastics: Elastic[] = [];
 
     @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
+    @ViewChild('stepper', { static: false }) stepper!: ElementRef<HTMLDivElement>;
     swipeStartX = 0;
     swipeEndX = 0;
 
@@ -108,14 +109,22 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
         swipeZoneElement.addEventListener('touchend', (e: TouchEvent) => {
             this.swipeEndX = e.changedTouches[0].screenX;
-            this.handleSwipe();
+            this.handleSwipe(e);
         });
     }
 
-    handleSwipe() {
+    handleSwipe(event: TouchEvent) {
+        const stepperEl = this.stepper.nativeElement;
+        const eventTarget = event.target as Node;
+
+        // Ignore swipe from stepper
+        if (stepperEl.contains(eventTarget)) {
+            return;
+        }
+
         const deltaX = this.swipeEndX - this.swipeStartX;
 
-        if (Math.abs(deltaX) < 50) return; // Ignore small swipes
+        if (Math.abs(deltaX) < 75) return; // Ignore small swipes
 
         if (deltaX < 0) {
             this.nextStep();

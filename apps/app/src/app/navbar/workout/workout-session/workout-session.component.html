@@ -33,22 +33,24 @@
 
 
         <p-stepper [(value)]="activeStep" class="basis-[40rem]">
-            <p-step-list class="flex justify-center w-full">
-                <ng-container *ngFor="let exercise of exercises; let index = index">
-                    <p-step [value]="index + 1">
-                        <ng-template #content let-activateCallback="activateCallback" let-value="value">
-                            <button class="step-button"
-                                    [ngClass]="{
+            <div #stepper>
+                <p-step-list class="flex justify-center w-full">
+                    <ng-container *ngFor="let exercise of exercises; let index = index">
+                        <p-step [value]="index + 1">
+                            <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                                <button class="step-button"
+                                        [ngClass]="{
                         'bg-primary text-primary-contrast border-primary': value === activeStep,
                         'border-surface': value > activeStep
                     }"
-                                    (click)="switchPanel(exercise, index + 1)">
-                                <span class="step-button-span">{{ index + 1 }}</span>
-                            </button>
-                        </ng-template>
-                    </p-step>
-                </ng-container>
-            </p-step-list>
+                                        (click)="switchPanel(exercise, index + 1)">
+                                    <span class="step-button-span">{{ index + 1 }}</span>
+                                </button>
+                            </ng-template>
+                        </p-step>
+                    </ng-container>
+                </p-step-list>
+            </div>
 
 
             <p-step-panels>
@@ -57,7 +59,8 @@
                         <ng-template #content let-activateCallback="activateCallback">
                             <div class="flex-1 flex flex-column justify-content-center mb-6">
                                 <div class="text-center mt-4 mb-4 text-xl font-semibold">
-                                    <h3 [routerLink]="['/', 'library', 'exercises', exercise?.id]" class="text-2xl">{{ exercise.name | uppercase }}</h3>
+                                    <h3 [routerLink]="['/', 'library', 'exercises', exercise?.id]"
+                                        class="text-2xl">{{ exercise.name | uppercase }}</h3>
                                 </div>
                                 <div class="flex-1 flex justify-content-center items-center mt-2">
                                     <button (click)="decreaseWeight()" pButton pRipple type="button" icon="pi pi-minus"
@@ -98,7 +101,8 @@
             </p-step-panels>
         </p-stepper>
 
-            <app-exercises-table [muscleGroupId]="muscleGroupId" [exercisesMade]="exercisesMade" [exerciseId]="currentExercise.id"></app-exercises-table>
+        <app-exercises-table [muscleGroupId]="muscleGroupId" [exercisesMade]="exercisesMade"
+                             [exerciseId]="currentExercise.id"></app-exercises-table>
 
         <div class="bottom-page">
             <div class="stopwatch text-primary">
