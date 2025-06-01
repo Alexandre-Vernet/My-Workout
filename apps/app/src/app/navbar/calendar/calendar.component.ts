@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FullCalendarModule } from '@fullcalendar/angular';
+import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, EventClickArg, EventInput, EventMountArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { take } from 'rxjs';
@@ -32,6 +32,7 @@ import { AlertService } from '../../services/alert.service';
 })
 export class CalendarComponent implements OnInit, AfterViewInit {
 
+    @ViewChild('calendarComponent', { static: false }) calendarComponent!: FullCalendarComponent;
     calendarOptions: CalendarOptions = {
         locale: 'fr',
         plugins: [dayGridPlugin, interactionPlugin],
@@ -57,17 +58,22 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                 .pipe(take(1))
                 .subscribe({
                     next: (workouts) => {
-                        const events = workouts.map(w => ({
+                        this.workouts = workouts;
+
+                        const events: EventInput[] = workouts.map(w => ({
                             id: w.id.toString(),
                             title: w.muscleGroup.name,
                             start: w.date
                         }));
+
                         success(events);
                     },
                     error: (err) => failure(err)
                 });
         })
     };
+
+    workouts: Workout[] = [];
 
     showWorkout: Workout;
     showModalViewWorkout = false;
@@ -141,7 +147,9 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                 this.workoutService.delete(id)
                     .subscribe({
                         next: () => {
-                            this.calendarOptions.events = (this.calendarOptions.events as EventInput[]).filter(event => Number(event.id) !== id);
+                            this.workouts = this.workouts.filter(w => w.id !== id);
+                            this.calendarComponent.getApi().refetchEvents();
+
                             this.alertService.alert$.next(null);
                         },
                         error: (err) => {
@@ -157,14 +165,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     createdWorkout(workout: Workout) {
-        this.calendarOptions.events = [
-            ...this.calendarOptions.events as EventInput[],
-            {
-                id: workout.id.toString(),
-                title: workout.history[0].exercise.name,
-                start: workout.date
-            }
-        ];
+        this.workouts.push(workout);
+        this.calendarComponent.getApi().refetchEvents();
 
         this.alertService.alert$.next({
             severity: 'success',
