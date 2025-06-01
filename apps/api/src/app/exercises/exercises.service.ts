@@ -85,7 +85,7 @@ export class ExercisesService {
             .innerJoin('em.muscle', 'm')
             .innerJoin('m.muscleGroup', 'mg')
             .select([
-                'e.id AS id',
+                'DISTINCT e.id AS id',
                 'e.name AS name',
                 'e.description AS description',
                 'e.isSmartWorkout AS "isSmartWorkout"',
