@@ -35,7 +35,7 @@
                 <div class="flex justify-content-between mb-3">
 
                     <!-- Exercise name -->
-                    <div class="text-primary text-lg">
+                    <div [routerLink]="['/', 'library', 'exercises', h?.exercise?.id]" class="text-primary text-lg">
                         <span *ngIf="h.exercise.count > 1">{{ h.exercise.count }}x</span>
                         {{ h.exercise.name }}
                     </div>

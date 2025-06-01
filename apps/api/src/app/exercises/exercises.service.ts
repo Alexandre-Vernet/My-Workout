@@ -118,4 +118,40 @@ export class ExercisesService {
             }
         });
     }
+
+    getExercise(exerciseId: number, user?: User) {
+        if (user?.id) {
+            return this.exerciseRepository.createQueryBuilder('e')
+                .select([
+                    'e.id as "id"',
+                    'e.name as "name"',
+                    'e.description as "description"',
+                    'e.isSmartWorkout as "isSmartWorkout"',
+                    'CASE WHEN ue.id IS NOT NULL THEN TRUE ELSE FALSE END as "addedToWorkout"',
+                    'ARRAY_AGG(DISTINCT m.name) AS "muscleGroups"'
+                ])
+                .leftJoin('e.userExercise', 'ue', 'ue.user_id = :userId', { userId: user.id })
+                .leftJoin('e.exerciseMuscle', 'em')
+                .leftJoin('em.muscle', 'm')
+                .leftJoin('m.muscleGroup', 'mg')
+                .where('e.id = :exerciseId', { exerciseId })
+                .groupBy('e.id, ue.id')
+                .getRawOne();
+        } else {
+            return this.exerciseRepository.createQueryBuilder('e')
+                .select([
+                    'e.id as "id"',
+                    'e.name as "name"',
+                    'e.description as "description"',
+                    'e.isSmartWorkout as "isSmartWorkout"',
+                    'ARRAY_AGG(DISTINCT m.name) AS "muscleGroups"'
+                ])
+                .leftJoin('e.exerciseMuscle', 'em')
+                .leftJoin('em.muscle', 'm')
+                .leftJoin('m.muscleGroup', 'mg')
+                .where('e.id = :exerciseId', { exerciseId })
+                .groupBy('e.id')
+                .getRawOne();
+        }
+    }
 }

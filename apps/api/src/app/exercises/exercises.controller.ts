@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpCode, Param, Query, UseGuards } from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { CurrentUser } from '../auth/current-user-decorator';
@@ -29,5 +29,10 @@ export class ExercisesController {
     @Get('find-cardio-exercises')
     findCardioExercises(@CurrentUser() user: User) {
         return this.exercisesService.findCardioExercises(user.id);
+    }
+
+    @Get(':exerciseId')
+    getExercise(@OptionalCurrentUser() optionalCurrentUser: User, @Param('exerciseId') exerciseId: number) {
+        return this.exercisesService.getExercise(exerciseId, optionalCurrentUser);
     }
 }

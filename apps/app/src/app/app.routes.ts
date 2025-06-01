@@ -17,6 +17,7 @@ import { ViewProfileComponent } from './navbar/view-profile/view-profile.compone
 import { CalendarComponent } from './navbar/calendar/calendar.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { HistoryComponent } from './navbar/history/history.component';
+import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exercise.component';
 
 
 @Component({
@@ -37,6 +38,10 @@ export const appRoutes: Route[] = [
             {
                 path: 'muscle-group/:muscleGroupId',
                 component: ListExercisesMuscleGroupComponent
+            },
+            {
+                path: 'exercises/:exerciseId',
+                component: ViewExerciseComponent
             },
             {
                 path: '**',

@@ -11,8 +11,7 @@ export class ExerciseService {
 
     exerciseUrl = environment.exerciseUrl();
 
-    constructor(
-        private readonly httpClient: HttpClient) {
+    constructor(private readonly httpClient: HttpClient) {
     }
 
     findAllExercisesByMuscleGroupId(muscleGroupId: number) {
@@ -34,8 +33,11 @@ export class ExerciseService {
         });
     }
 
-
     findCardioExercises() {
         return this.httpClient.get<Exercise[]>(`${ this.exerciseUrl }/find-cardio-exercises`);
+    }
+
+    getExercise(exerciseId: number) {
+        return this.httpClient.get<Exercise>(`${ this.exerciseUrl }/${ exerciseId }`);
     }
 }
