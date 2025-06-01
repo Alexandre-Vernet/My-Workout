@@ -128,7 +128,7 @@ export class ExercisesService {
                     'e.description as "description"',
                     'e.isSmartWorkout as "isSmartWorkout"',
                     'CASE WHEN ue.id IS NOT NULL THEN TRUE ELSE FALSE END as "addedToWorkout"',
-                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`
+                    'ARRAY_AGG(DISTINCT m.name) AS "muscleGroups"'
                 ])
                 .leftJoin('e.userExercise', 'ue', 'ue.user_id = :userId', { userId: user.id })
                 .leftJoin('e.exerciseMuscle', 'em')
@@ -144,7 +144,7 @@ export class ExercisesService {
                     'e.name as "name"',
                     'e.description as "description"',
                     'e.isSmartWorkout as "isSmartWorkout"',
-                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`
+                    'ARRAY_AGG(DISTINCT m.name) AS "muscleGroups"'
                 ])
                 .leftJoin('e.exerciseMuscle', 'em')
                 .leftJoin('em.muscle', 'm')

@@ -6,7 +6,7 @@ export interface Exercise {
     isSmartWorkout?: boolean;
     order?:number;
     addedToWorkout?: boolean;
-    muscleGroup?: boolean;
+    muscleGroups?: string[];
     weight?: number;
     restTime?: string;
     count?: number;
