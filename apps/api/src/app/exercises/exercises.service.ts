@@ -118,4 +118,12 @@ export class ExercisesService {
             }
         });
     }
+
+    getExercise(exerciseId: number) {
+        return this.exerciseRepository.findOne({
+            where: {
+                id: exerciseId
+            }
+        });
+    }
 }

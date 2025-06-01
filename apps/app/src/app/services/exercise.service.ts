@@ -38,4 +38,8 @@ export class ExerciseService {
     findCardioExercises() {
         return this.httpClient.get<Exercise[]>(`${ this.exerciseUrl }/find-cardio-exercises`);
     }
+
+    getExercise(exerciseId: number) {
+        return this.httpClient.get<Exercise[]>(`${ this.exerciseUrl }/${ exerciseId }`);
+    }
 }
