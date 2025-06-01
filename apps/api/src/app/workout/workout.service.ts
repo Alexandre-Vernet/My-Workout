@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WorkoutEntity } from './workout.entity';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { muscleGroupMap } from '../../../../../libs/interfaces/MuscleGroup';
 import { Workout } from '../../../../../libs/interfaces/workout';
 import { removeAccents } from '../../../../app/src/app/utils/remove-accents';
@@ -87,12 +87,13 @@ export class WorkoutService {
     }
 
 
-    async find(userId: number) {
+    async find(userId: number, start: Date, end: Date) {
         const workout = await this.workoutRepository.find({
             where: {
                 user: {
                     id: userId
-                }
+                },
+                date: Between(start, end)
             },
             relations: {
                 muscleGroup: true,

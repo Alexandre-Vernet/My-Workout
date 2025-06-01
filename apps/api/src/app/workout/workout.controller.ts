@@ -21,8 +21,8 @@ export class WorkoutController {
     }
 
     @Get()
-    find(@CurrentUser() user: User) {
-        return this.workoutService.find(user.id);
+    find(@CurrentUser() user: User, @Query('start') start: string, @Query('end') end: string) {
+        return this.workoutService.find(user.id, new Date(start), new Date(end));
     }
 
     @Get('duplicate-workout')

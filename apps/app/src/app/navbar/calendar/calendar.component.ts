@@ -37,7 +37,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         plugins: [dayGridPlugin, interactionPlugin],
         initialView: 'dayGridMonth',
         weekends: true,
-        events: [],
         firstDay: 1,
         height: 600,
         buttonText: {
@@ -50,7 +49,24 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         },
         eventClick: this.viewHistory.bind(this),
         eventDidMount: this.customizeCalendar.bind(this),
-        dateClick: this.dateClick.bind(this)
+        dateClick: this.dateClick.bind(this),
+        events: ((info, success, failure) => {
+            const { start, end } = info;
+
+            this.workoutService.findAll(start, end)
+                .pipe(take(1))
+                .subscribe({
+                    next: (workouts) => {
+                        const events = workouts.map(w => ({
+                            id: w.id.toString(),
+                            title: w.muscleGroup.name,
+                            start: w.date
+                        }));
+                        success(events);
+                    },
+                    error: (err) => failure(err)
+                });
+        })
     };
 
     showWorkout: Workout;
@@ -75,17 +91,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.workoutService.findAll()
-            .pipe(take(1))
-            .subscribe(workout => {
-                this.calendarOptions.events = workout.map(w => ({
-                        id: w.id.toString(),
-                        title: w.muscleGroup.name,
-                        start: w.date
-                    })
-                );
-            });
-
         this.isDarkMode = this.themeService.isDarkMode();
     }
 

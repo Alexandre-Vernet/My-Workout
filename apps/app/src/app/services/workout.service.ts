@@ -23,8 +23,13 @@ export class WorkoutService {
         return this.http.get<Workout>(`${ this.workoutUrl }/${ id }`);
     }
 
-    findAll() {
-        return this.http.get<Workout[]>(this.workoutUrl);
+    findAll(start: Date, end: Date) {
+        return this.http.get<Workout[]>(this.workoutUrl, {
+            params: {
+                start: start.toISOString(),
+                end: end.toISOString()
+            }
+        });
     }
 
     checkDuplicateWorkout(muscleGroupId: number) {
