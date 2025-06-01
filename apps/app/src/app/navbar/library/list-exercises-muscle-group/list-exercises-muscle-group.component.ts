@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ExerciseService } from '../../../services/exercise.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
 import { switchMap, take } from 'rxjs';
 import { DataView } from 'primeng/dataview';
@@ -16,7 +16,7 @@ import { UserExercise } from '../../../../../../../libs/interfaces/user-exercise
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [CommonModule, DataView, Button, Badge, Skeleton, DragDropModule],
+    imports: [CommonModule, DataView, Button, Badge, Skeleton, DragDropModule, RouterLink],
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })

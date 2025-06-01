@@ -31,7 +31,8 @@
         <p-dataview #dv [value]="exercises">
             <ng-template #list let-items>
                 <div cdkDropList (cdkDropListDropped)="drop($event)" class="flex flex-column">
-                    <div *ngFor="let item of items" cdkDrag  [cdkDragDisabled]="!item.addedToWorkout" class="col-span-12">
+                    <div *ngFor="let item of items" cdkDrag [cdkDragDisabled]="!item.addedToWorkout"
+                         class="col-span-12">
                         <div class="flex flex-col align-items-center p-6 gap-4">
                             <div class="md:w-40">
                                 <p-badge [value]="item?.id" />
@@ -43,7 +44,8 @@
                                     <div class="text-sm text-secondary">
                                         {{ item?.muscleGroup }}
                                     </div>
-                                    <div class="text-xl text-surface-900 dark:text-surface-0 mt-2">
+                                    <div [routerLink]="['/', 'library', 'exercises', item?.id]"
+                                         class="text-xl text-surface-900 dark:text-surface-0 mt-2">
                                         {{ item?.name }}
                                     </div>
                                 </div>
@@ -53,7 +55,8 @@
                                               [icon]="item.addedToWorkout ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"
                                               [outlined]="true" />
 
-                                    <p-button *ngIf="item.addedToWorkout" cdkDragHandle icon="pi pi-arrows-alt" severity="secondary"
+                                    <p-button *ngIf="item.addedToWorkout" cdkDragHandle icon="pi pi-arrows-alt"
+                                              severity="secondary"
                                               [outlined]="true" />
                                 </div>
                             </div>

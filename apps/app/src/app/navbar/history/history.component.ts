@@ -11,10 +11,11 @@ import { WorkoutService } from '../../services/workout.service';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { AlertService } from '../../services/alert.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-history',
-    imports: [CommonModule, Skeleton, Button, Ripple, ConfirmDialog],
+    imports: [CommonModule, Skeleton, Button, Ripple, ConfirmDialog, RouterLink],
     templateUrl: './history.component.html',
     styleUrl: './history.component.scss',
     standalone: true,
