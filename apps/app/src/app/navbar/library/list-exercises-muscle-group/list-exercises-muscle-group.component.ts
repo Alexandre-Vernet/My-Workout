@@ -11,10 +11,12 @@ import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
 import { Badge } from 'primeng/badge';
 import { Skeleton } from 'primeng/skeleton';
 import { AlertService } from '../../../services/alert.service';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { UserExercise } from '../../../../../../../libs/interfaces/user-exercise';
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [CommonModule, DataView, Button, Badge, Skeleton],
+    imports: [CommonModule, DataView, Button, Badge, Skeleton, DragDropModule],
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })
@@ -34,6 +36,64 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.findAllExercisesByMuscleGroupId();
+    }
+
+    toggleExerciseWorkout(exercise: Exercise) {
+        return this.userExerciseService.toggleExerciseWorkout(exercise)
+            .pipe(take(1))
+            .subscribe({
+                next: () => {
+                    this.findAllExercisesByMuscleGroupId();
+                    this.alertService.alert$.next(null);
+                },
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'enregistrer cet exercice'
+                    });
+                }
+            });
+    }
+
+    drop(event: CdkDragDrop<any[]>) {
+        const dragged = this.exercises[event.previousIndex];
+        const target = this.exercises[event.currentIndex];
+
+        // Block movement between added and not added
+        if (dragged.addedToWorkout !== target.addedToWorkout) {
+            return;
+        }
+
+        moveItemInArray(this.exercises, event.previousIndex, event.currentIndex);
+
+        const userExercises: UserExercise[] = [];
+
+        this.exercises.forEach((e, index) => {
+            const userExercise: UserExercise = {
+                id: e.userExerciseId,
+                exercise: e,
+                order: index
+            };
+
+            userExercises.push(userExercise);
+        });
+
+        const userExercisesFilter = userExercises.filter(ue => ue.id !== null);
+
+        this.userExerciseService.updateOrderExercises(userExercisesFilter)
+            .pipe(take(1))
+            .subscribe({
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible de mettre à jour l\'ordre des exercises'
+                    });
+                }
+            });
+    }
+
+    private findAllExercisesByMuscleGroupId() {
         this.route.params.pipe(
             take(1),
             switchMap((params: {
@@ -57,25 +117,22 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             });
     }
 
-    toggleExerciseWorkout(exercise: Exercise) {
-        return this.userExerciseService.toggleExerciseWorkout(exercise)
-            .pipe(take(1))
-            .subscribe({
-                next: () => {
-                    exercise.addedToWorkout = !exercise.addedToWorkout;
-                    this.alertService.alert$.next(null);
-                },
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'enregistrer cet exercice'
-                    });
-                }
-            });
-    }
 
     private sortExercises() {
-        return this.exercises.sort((a, b) => Number(b.name) - Number(a.name));
+        return this.exercises.sort((a, b) => {
+            // 1. Order by addedToWorkout
+            if (a.addedToWorkout !== b.addedToWorkout) {
+                return a.addedToWorkout ? -1 : 1;
+            }
+
+            // 2. Order by "order" field
+            if (a.order !== b.order) {
+                return a.order - b.order;
+            }
+
+            // 3. Order by id
+            return a.id - b.id;
+        });
     }
 }
 

@@ -31,7 +31,9 @@ export class ExercisesService {
                     'e.name AS name',
                     'e.description AS description',
                     'CASE WHEN ue.id IS NOT NULL THEN true ELSE false END AS "addedToWorkout"',
-                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`
+                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`,
+                    'ue.id as "userExerciseId"',
+                    'ue.order as "order"'
                 ])
                 .leftJoin('e.userExercise', 'ue', 'ue.user_id = :userId', { userId: user.id })
                 .innerJoin('e.exerciseMuscle', 'em')
@@ -39,9 +41,6 @@ export class ExercisesService {
                 .innerJoin('m.muscleGroup', 'mg')
                 .where('mg.id = :muscleGroupId', { muscleGroupId })
                 .groupBy('e.id, e.name, e.description, ue.id')
-                .orderBy('"addedToWorkout"', 'DESC')
-                .addOrderBy('ue.order', 'ASC')
-                .addOrderBy('e.id', 'ASC')
                 .getRawMany();
 
 

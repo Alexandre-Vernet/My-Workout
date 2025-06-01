@@ -5,4 +5,5 @@ export interface UserExercise {
     id?: number;
     user?: User;
     exercise: Exercise;
+    order?: number;
 }

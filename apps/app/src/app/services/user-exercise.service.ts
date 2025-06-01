@@ -23,4 +23,8 @@ export class UserExerciseService {
 
         return this.http.post<UserExercise>(this.userExerciseUrl, userExercise);
     }
+
+    updateOrderExercises(userExercises: UserExercise[]) {
+        return this.http.put<UserExercise>(this.userExerciseUrl, userExercises);
+    }
 }
