@@ -32,7 +32,7 @@ export class ExercisesController {
     }
 
     @Get(':exerciseId')
-    getExercise(@Param('exerciseId') exerciseId: number) {
-        return this.exercisesService.getExercise(exerciseId);
+    getExercise(@OptionalCurrentUser() optionalCurrentUser: User, @Param('exerciseId') exerciseId: number) {
+        return this.exercisesService.getExercise(exerciseId, optionalCurrentUser);
     }
 }

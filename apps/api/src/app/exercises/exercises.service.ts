@@ -119,20 +119,39 @@ export class ExercisesService {
         });
     }
 
-    getExercise(exerciseId: number) {
-        return this.exerciseRepository.createQueryBuilder('e')
-            .select([
-                'e.id as "id"',
-                'e.name as "name"',
-                'e.description as "description"',
-                'e.isSmartWorkout as "isSmartWorkout"',
-                `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`
-            ])
-            .leftJoin('e.exerciseMuscle', 'em')
-            .leftJoin('em.muscle', 'm')
-            .leftJoin('m.muscleGroup', 'mg')
-            .where('e.id = :exerciseId', { exerciseId })
-            .groupBy('e.id, e.description, e.isSmartWorkout')
-            .getRawOne();
+    getExercise(exerciseId: number, user?: User) {
+        if (user?.id) {
+            return this.exerciseRepository.createQueryBuilder('e')
+                .select([
+                    'e.id as "id"',
+                    'e.name as "name"',
+                    'e.description as "description"',
+                    'e.isSmartWorkout as "isSmartWorkout"',
+                    'CASE WHEN ue.id IS NOT NULL THEN TRUE ELSE FALSE END as "addedToWorkout"',
+                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`
+                ])
+                .leftJoin('e.userExercise', 'ue', 'ue.user_id = :userId', { userId: user.id })
+                .leftJoin('e.exerciseMuscle', 'em')
+                .leftJoin('em.muscle', 'm')
+                .leftJoin('m.muscleGroup', 'mg')
+                .where('e.id = :exerciseId', { exerciseId })
+                .groupBy('e.id, ue.id')
+                .getRawOne();
+        } else {
+            return this.exerciseRepository.createQueryBuilder('e')
+                .select([
+                    'e.id as "id"',
+                    'e.name as "name"',
+                    'e.description as "description"',
+                    'e.isSmartWorkout as "isSmartWorkout"',
+                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`
+                ])
+                .leftJoin('e.exerciseMuscle', 'em')
+                .leftJoin('em.muscle', 'm')
+                .leftJoin('m.muscleGroup', 'mg')
+                .where('e.id = :exerciseId', { exerciseId })
+                .groupBy('e.id')
+                .getRawOne();
+        }
     }
 }
