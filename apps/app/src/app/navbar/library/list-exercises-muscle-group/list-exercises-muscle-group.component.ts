@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ExerciseService } from '../../../services/exercise.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
-import { switchMap, take } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { DataView } from 'primeng/dataview';
 import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
@@ -41,7 +41,6 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
 
     toggleExerciseWorkout(exercise: Exercise) {
         return this.userExerciseService.toggleExerciseWorkout(exercise)
-            .pipe(take(1))
             .subscribe({
                 next: () => {
                     this.findAllExercisesByMuscleGroupId();
@@ -82,7 +81,6 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
         const userExercisesFilter = userExercises.filter(ue => ue.id !== null);
 
         this.userExerciseService.updateOrderExercises(userExercisesFilter)
-            .pipe(take(1))
             .subscribe({
                 error: (err) => {
                     this.alertService.alert$.next({
@@ -95,7 +93,6 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
 
     private findAllExercisesByMuscleGroupId() {
         this.route.params.pipe(
-            take(1),
             switchMap((params: {
                 muscleGroupId: number
             }) => this.exerciseService.findAllExercisesByMuscleGroupId(Number(params.muscleGroupId)))

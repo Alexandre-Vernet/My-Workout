@@ -4,7 +4,7 @@ import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { Router, RouterLink } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
-import { forkJoin, take } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
 import { ThemeService } from '../../../theme/theme.service';
@@ -52,7 +52,6 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
             this.muscleGroupService.findAllMuscleGroupAndCountAddedExercises(),
             this.muscleGroupService.suggestMuscleGroup()
         ])
-            .pipe(take(1))
             .subscribe({
                 next: ([muscleGroups, recommendedWorkout]) => {
                     this.isLoading = false;
@@ -116,7 +115,6 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     private checkDuplicateWorkout() {
         this.workoutService.checkDuplicateWorkout(8)
-            .pipe(take(1))
             .subscribe(workout => {
                 if (workout) {
                     this.showDialogConfirmDuplicateWorkout();

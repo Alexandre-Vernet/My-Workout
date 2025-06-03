@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, Observable, switchMap, take } from 'rxjs';
+import { catchError, Observable, switchMap } from 'rxjs';
 import { AuthService } from './auth.service';
 
 export const defaultRedirect = (): Observable<boolean> => {
@@ -9,7 +9,6 @@ export const defaultRedirect = (): Observable<boolean> => {
 
     return authService.signInWithAccessToken()
         .pipe(
-            take(1),
             switchMap(({ user }) => {
                 if (!user) {
                     return router.navigate(['/library']);

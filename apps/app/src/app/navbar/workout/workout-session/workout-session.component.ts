@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { filter, map, take } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
@@ -246,7 +246,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     private findExercises() {
         this.exerciseService.findAddedExercisesByMuscleGroupId(this.muscleGroupId)
             .pipe(
-                take(1),
                 map(exercises => {
                     if (!exercises || exercises.length === 0) {
                         this.showDialogNoExercisesAdded(this.muscleGroupId);
@@ -326,7 +325,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     private fillInputWeightLastSavedValue() {
         this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise.id)
-            .pipe(take(1))
             .subscribe(history => {
                 if (history) {
                     this.weight = history?.weight;
@@ -340,7 +338,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     private startTimer() {
         if (!this.workout) {
             this.createWorkout(this.muscleGroupId)
-                .pipe(take(1))
                 .subscribe(workout => {
                     this.workout = workout;
                     this.saveExercise();
@@ -392,7 +389,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     private checkDuplicateWorkout() {
         this.workoutService.checkDuplicateWorkout(this.muscleGroupId)
-            .pipe(take(1))
             .subscribe(workout => {
                 if (workout) {
                     this.showDialogConfirmDuplicateWorkout();

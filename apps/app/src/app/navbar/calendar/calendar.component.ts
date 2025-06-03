@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, EventClickArg, EventInput, EventMountArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { take } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
@@ -56,7 +55,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             const { start, end } = info;
 
             this.workoutService.findAll(start, end)
-                .pipe(take(1))
                 .subscribe({
                     next: (workouts) => {
                         this.workouts = workouts;
@@ -184,7 +182,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     private viewHistory(info: EventClickArg) {
         const workoutId = Number(info.event.id);
         this.workoutService.findById(workoutId)
-            .pipe(take(1))
             .subscribe(workout => {
                 this.showModalViewWorkout = true;
                 this.showWorkout = workout;

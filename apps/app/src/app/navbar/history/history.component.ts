@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { take } from 'rxjs';
 import { HistoryService } from '../../services/history.service';
 import { History } from '../../../../../../libs/interfaces/history';
 import { Skeleton } from 'primeng/skeleton';
@@ -40,7 +39,6 @@ export class HistoryComponent implements OnInit {
 
     ngOnInit() {
         this.historyService.find()
-            .pipe(take(1))
             .subscribe({
                 next: (history) => {
                     this.isLoading = false;
@@ -70,7 +68,6 @@ export class HistoryComponent implements OnInit {
             },
             accept: () => {
                 this.workoutService.delete(id)
-                    .pipe(take(1))
                     .subscribe({
                         next: () => {
                             this.history = this.history

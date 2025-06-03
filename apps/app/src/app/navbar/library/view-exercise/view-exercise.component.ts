@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap, take } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
 import { AlertService } from '../../../services/alert.service';
@@ -34,7 +34,6 @@ export class ViewExerciseComponent implements OnInit {
 
     ngOnInit() {
         this.activatedRoute.params.pipe(
-            take(1),
             switchMap((params: {
                 exerciseId: number
             }) => this.exerciseService.getExercise(Number(params.exerciseId)))
@@ -55,7 +54,6 @@ export class ViewExerciseComponent implements OnInit {
 
     toggleExerciseWorkout() {
         return this.userExerciseService.toggleExerciseWorkout(this.exercise)
-            .pipe(take(1))
             .subscribe({
                 next: () => {
                     this.exercise.addedToWorkout = !this.exercise.addedToWorkout;

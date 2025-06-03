@@ -8,7 +8,7 @@ import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { User } from '../../../../../../../libs/interfaces/user';
-import { Subject, take } from 'rxjs';
+import { Subject } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { Alert } from '../../../../../../../libs/interfaces/alert';
 import { Ripple } from 'primeng/ripple';
@@ -41,7 +41,6 @@ export class ManageAccountComponent implements OnInit {
 
     ngOnInit() {
         this.authService.user$
-            .pipe(take(1))
             .subscribe(user => {
                 this.currentEmail = user?.email;
                 this.formControlEmail.setValue(user?.email);
@@ -75,7 +74,6 @@ export class ManageAccountComponent implements OnInit {
         }
 
         this.authService.updateUser(user)
-            .pipe(take(1))
             .subscribe({
                 next: (user) => {
                     this.showAlert.next({
