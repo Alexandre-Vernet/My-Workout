@@ -28,6 +28,7 @@ import { ErrorCode } from '../../../../../../../libs/error-code/error-code';
 import { ThemeService } from '../../../theme/theme.service';
 import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../utils/convert-weight-elastic';
+import { animate, group, query, style, transition, trigger } from '@angular/animations';
 
 @Component({
     selector: 'app-workout-session',
@@ -36,8 +37,45 @@ import { convertWeightElastic } from '../../../utils/convert-weight-elastic';
     styleUrl: './workout-session.component.scss',
     standalone: true,
     providers: [ConfirmationService],
-    encapsulation: ViewEncapsulation.None
-
+    encapsulation: ViewEncapsulation.None,
+    animations: [
+        trigger('slidePanel', [
+            transition('void => right', [
+                style({ transform: 'translateX(100%)', opacity: 0 }),
+                animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+            ]),
+            transition('void => left', [
+                style({ transform: 'translateX(-100%)', opacity: 0 }),
+                animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+            ]),
+            transition('left => right', [
+                query(':enter, :leave', style({ position: 'absolute', width: '100%' }), { optional: true }),
+                group([
+                    query(':leave', [
+                        style({ transform: 'translateX(0)', opacity: 1 }),
+                        animate('300ms ease-out', style({ transform: 'translateX(-100%)', opacity: 0 }))
+                    ], { optional: true }),
+                    query(':enter', [
+                        style({ transform: 'translateX(100%)', opacity: 0 }),
+                        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+                    ], { optional: true })
+                ])
+            ]),
+            transition('right => left', [
+                query(':enter, :leave', style({ position: 'absolute', width: '100%' }), { optional: true }),
+                group([
+                    query(':leave', [
+                        style({ transform: 'translateX(0)', opacity: 1 }),
+                        animate('300ms ease-out', style({ transform: 'translateX(100%)', opacity: 0 }))
+                    ], { optional: true }),
+                    query(':enter', [
+                        style({ transform: 'translateX(-100%)', opacity: 0 }),
+                        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+                    ], { optional: true })
+                ])
+            ])
+        ])
+    ]
 })
 export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
@@ -78,6 +116,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     isIphone = false;
 
+    animationDirection: 'left' | 'right' = 'right';
 
     constructor(
         private readonly activatedRoute: ActivatedRoute,
@@ -245,7 +284,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     private nextStep() {
         if (this.activeStep < this.exercises.length) {
+            const oldStep = this.activeStep;
             this.activeStep++;
+            this.animationDirection = this.activeStep > oldStep ? 'right' : 'left';
+
             const nextExercise = this.exercises[this.activeStep - 1];
             this.switchPanel(nextExercise, this.activeStep);
         }
@@ -253,7 +295,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     private previousStep() {
         if (this.activeStep > 1) {
+            const oldStep = this.activeStep;
             this.activeStep--;
+            this.animationDirection = this.activeStep < oldStep ? 'left' : 'right';
+
             const previousExercise = this.exercises[this.activeStep - 1];
             this.switchPanel(previousExercise, this.activeStep);
         }

@@ -57,12 +57,12 @@
                 <ng-container *ngFor="let exercise of exercises; let index = index">
                     <p-step-panel [value]="index + 1">
                         <ng-template #content let-activateCallback="activateCallback">
-                            <div class="flex-1 flex flex-column justify-content-center mb-6">
+                            <div [@slidePanel]="animationDirection" class="flex-1 flex flex-column justify-content-center mb-6">
                                 <div class="text-center mt-4 mb-4 text-xl font-semibold">
                                     <h3 [routerLink]="['/', 'library', 'exercises', exercise?.id]"
                                         class="text-2xl">{{ exercise.name | uppercase }}</h3>
                                 </div>
-                                <div class="flex-1 flex justify-content-center items-center mt-2">
+                                <div class="flex-1 flex justify-content-center items-center mt-2 mb-6">
                                     <button (click)="decreaseWeight()" pButton pRipple type="button" icon="pi pi-minus"
                                             class="button-increase-decrease-weight"
                                             [disabled]="timer.interval"
@@ -94,6 +94,9 @@
                                     </i>
 
                                 </div>
+
+                                <app-exercises-table [muscleGroupId]="muscleGroupId" [exercisesMade]="exercisesMade"
+                                                     [exerciseId]="currentExercise.id"></app-exercises-table>
                             </div>
                         </ng-template>
                     </p-step-panel>
@@ -101,8 +104,6 @@
             </p-step-panels>
         </p-stepper>
 
-        <app-exercises-table [muscleGroupId]="muscleGroupId" [exercisesMade]="exercisesMade"
-                             [exerciseId]="currentExercise.id"></app-exercises-table>
 
         <div class="bottom-page">
             <div class="stopwatch text-primary">
