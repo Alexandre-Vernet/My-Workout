@@ -31,7 +31,7 @@ export class ExercisesService {
                     'e.name AS name',
                     'e.description AS description',
                     'CASE WHEN ue.id IS NOT NULL THEN true ELSE false END AS "addedToWorkout"',
-                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`,
+                    'ARRAY_AGG(DISTINCT m.name) AS "muscles"',
                     'ue.id as "userExerciseId"',
                     'ue.order as "order"'
                 ])
@@ -55,7 +55,7 @@ export class ExercisesService {
                     'e.id AS id',
                     'e.name AS name',
                     'e.description AS description',
-                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`
+                    'ARRAY_AGG(DISTINCT m.name) AS "muscles"'
                 ])
                 .innerJoin('e.exerciseMuscle', 'em')
                 .innerJoin('em.muscle', 'm')
@@ -128,7 +128,7 @@ export class ExercisesService {
                     'e.description as "description"',
                     'e.isSmartWorkout as "isSmartWorkout"',
                     'CASE WHEN ue.id IS NOT NULL THEN TRUE ELSE FALSE END as "addedToWorkout"',
-                    'ARRAY_AGG(DISTINCT m.name) AS "muscleGroups"'
+                    'ARRAY_AGG(DISTINCT m.name) AS "muscles"'
                 ])
                 .leftJoin('e.userExercise', 'ue', 'ue.user_id = :userId', { userId: user.id })
                 .leftJoin('e.exerciseMuscle', 'em')
@@ -144,7 +144,7 @@ export class ExercisesService {
                     'e.name as "name"',
                     'e.description as "description"',
                     'e.isSmartWorkout as "isSmartWorkout"',
-                    'ARRAY_AGG(DISTINCT m.name) AS "muscleGroups"'
+                    'ARRAY_AGG(DISTINCT m.name) AS "muscles"'
                 ])
                 .leftJoin('e.exerciseMuscle', 'em')
                 .leftJoin('em.muscle', 'm')
