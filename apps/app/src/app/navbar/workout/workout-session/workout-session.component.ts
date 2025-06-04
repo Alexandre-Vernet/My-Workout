@@ -163,7 +163,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
         const deltaX = this.swipeEndX - this.swipeStartX;
 
-        if (Math.abs(deltaX) < 75) return; // Ignore small swipes
+        if (Math.abs(deltaX) < 65) return; // Ignore small swipes
 
         if (deltaX < 0) {
             this.nextStep();
