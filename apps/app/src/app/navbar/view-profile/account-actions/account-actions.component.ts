@@ -2,7 +2,7 @@ import { Component, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Button } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
-import { Subject, take } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ConfirmationService } from 'primeng/api';
 import { AuthService } from '../../../auth/auth.service';
 import { Router } from '@angular/router';
@@ -55,7 +55,6 @@ export class AccountActionsComponent {
 
     deleteAccount() {
         this.authService.deleteAccount()
-            .pipe(take(1))
             .subscribe({
                 next: () => {
                     this.showAlert.next({

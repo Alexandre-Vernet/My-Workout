@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { take } from 'rxjs';
 import { NgClass, NgIf } from '@angular/common';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
@@ -49,7 +48,6 @@ export class ResetPasswordComponent implements OnInit {
 
     private verifyToken(token: string) {
         this.authService.verifyToken(token)
-            .pipe(take(1))
             .subscribe({
                 next: (user) => this.user = user,
                 error: () => {

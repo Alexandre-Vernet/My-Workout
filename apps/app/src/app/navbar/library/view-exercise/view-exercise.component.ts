@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap, take } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
 import { AlertService } from '../../../services/alert.service';
@@ -10,6 +10,7 @@ import { Button } from 'primeng/button';
 import { Fieldset } from 'primeng/fieldset';
 import { Tag } from 'primeng/tag';
 import { Drawer } from 'primeng/drawer';
+import { DeviceDetectionService } from '../../../services/device-detection.service';
 
 @Component({
     selector: 'app-view-exercise',
@@ -24,17 +25,19 @@ export class ViewExerciseComponent implements OnInit {
 
     showDrawerSmartWorkout = false;
 
+    isIphone = false;
+
     constructor(
         private readonly exerciseService: ExerciseService,
         private readonly userExerciseService: UserExerciseService,
         private readonly activatedRoute: ActivatedRoute,
-        private readonly alertService: AlertService
+        private readonly alertService: AlertService,
+        private readonly deviceDetectionService: DeviceDetectionService
     ) {
     }
 
     ngOnInit() {
         this.activatedRoute.params.pipe(
-            take(1),
             switchMap((params: {
                 exerciseId: number
             }) => this.exerciseService.getExercise(Number(params.exerciseId)))
@@ -51,11 +54,12 @@ export class ViewExerciseComponent implements OnInit {
                     });
                 }
             });
+
+        this.isIphone = this.deviceDetectionService.isIphone();
     }
 
     toggleExerciseWorkout() {
         return this.userExerciseService.toggleExerciseWorkout(this.exercise)
-            .pipe(take(1))
             .subscribe({
                 next: () => {
                     this.exercise.addedToWorkout = !this.exercise.addedToWorkout;

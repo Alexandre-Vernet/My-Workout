@@ -2,7 +2,6 @@ import { Component, Input, OnChanges, SimpleChange, SimpleChanges } from '@angul
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { Exercise } from '../../../../../../../../libs/interfaces/exercise';
-import { take } from 'rxjs';
 import { HistoryService } from '../../../../services/history.service';
 
 @Component({
@@ -31,7 +30,6 @@ export class ExercisesTableComponent implements OnChanges {
 
     private findTodayExercicesHistory() {
         this.historyService.findTodayExercicesHistory(this.muscleGroupId, this.exerciseId)
-            .pipe(take(1))
             .subscribe(history => {
                 if (history) {
                     history.forEach(h => {

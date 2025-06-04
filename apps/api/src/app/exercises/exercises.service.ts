@@ -31,7 +31,12 @@ export class ExercisesService {
                     'e.name AS name',
                     'e.description AS description',
                     'CASE WHEN ue.id IS NOT NULL THEN true ELSE false END AS "addedToWorkout"',
-                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`,
+                    `json_agg(
+                        json_build_object(
+                          'id', m.id,
+                          'name', m.name
+                        )
+                      ) as "muscles"`,
                     'ue.id as "userExerciseId"',
                     'ue.order as "order"'
                 ])
@@ -55,7 +60,12 @@ export class ExercisesService {
                     'e.id AS id',
                     'e.name AS name',
                     'e.description AS description',
-                    `STRING_AGG(DISTINCT m.name, ', ') AS "muscleGroup"`
+                    `json_agg(
+                        json_build_object(
+                          'id', m.id,
+                          'name', m.name
+                        )
+                      ) as "muscles"`,
                 ])
                 .innerJoin('e.exerciseMuscle', 'em')
                 .innerJoin('em.muscle', 'm')
@@ -127,8 +137,13 @@ export class ExercisesService {
                     'e.name as "name"',
                     'e.description as "description"',
                     'e.isSmartWorkout as "isSmartWorkout"',
+                    `json_agg(
+                        json_build_object(
+                          'id', m.id,
+                          'name', m.name
+                        )
+                      ) as "muscles"`,
                     'CASE WHEN ue.id IS NOT NULL THEN TRUE ELSE FALSE END as "addedToWorkout"',
-                    'ARRAY_AGG(DISTINCT m.name) AS "muscleGroups"'
                 ])
                 .leftJoin('e.userExercise', 'ue', 'ue.user_id = :userId', { userId: user.id })
                 .leftJoin('e.exerciseMuscle', 'em')
@@ -144,7 +159,12 @@ export class ExercisesService {
                     'e.name as "name"',
                     'e.description as "description"',
                     'e.isSmartWorkout as "isSmartWorkout"',
-                    'ARRAY_AGG(DISTINCT m.name) AS "muscleGroups"'
+                    `json_agg(
+                        json_build_object(
+                          'id', m.id,
+                          'name', m.name
+                        )
+                      ) as "muscles"`,
                 ])
                 .leftJoin('e.exerciseMuscle', 'em')
                 .leftJoin('em.muscle', 'm')

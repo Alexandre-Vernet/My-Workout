@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
-import { map, Subject, switchMap, take } from 'rxjs';
+import { map, Subject, switchMap } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
 import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
@@ -64,7 +64,6 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
 
         this.workoutService.create(workout)
             .pipe(
-                take(1),
                 switchMap(createdWorkout => {
 
                     const newExercise: Exercise = {
@@ -108,7 +107,6 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
 
     private findCardioExercises() {
         this.exerciseService.findCardioExercises()
-            .pipe(take(1))
             .subscribe({
                 next: (cardioExercises) => this.cardioExercises = cardioExercises,
                 error: (err) => {

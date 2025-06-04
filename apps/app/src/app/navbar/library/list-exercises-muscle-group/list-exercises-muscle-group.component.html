@@ -27,7 +27,18 @@
 </ng-container>
 
 <ng-template #content>
-    <p-dataview #dv [value]="exercises">
+
+    <div class="ml-2 flex flex-row gap-2 flex-wrap">
+        <span *ngFor="let muscle of muscles" class="flex flex-row-reverse">
+            <p-tag severity="info" [value]="muscle.name" [ngClass]="{
+                'border border-blue-500 bg-blue-100 text-blue-700 shadow-md scale-105': activeFilter === muscle.id,
+            }" (click)="filterByMuscle(muscle)">
+        </p-tag>
+        </span>
+    </div>
+
+
+    <p-dataview #dv [value]="filteredExercises">
         <ng-template #list let-items>
             <div cdkDropList (cdkDropListDropped)="drop($event)" class="flex flex-column">
                 <div *ngFor="let item of items" cdkDrag [cdkDragDisabled]="!item.addedToWorkout"
@@ -41,7 +52,9 @@
 
                             <div class="flex-1">
                                 <div class="text-sm text-secondary">
-                                    {{ item?.muscleGroup }}
+                                    <span *ngFor="let muscle of item.muscles; let last = last">
+                                        {{ muscle.name }}<span *ngIf="!last">,</span>
+                                    </span>
                                 </div>
                                 <div [routerLink]="['/', 'library', 'exercises', item?.id]"
                                      class="text-xl text-surface-900 dark:text-surface-0 mt-2">

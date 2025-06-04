@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ExerciseService } from '../../../services/exercise.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
-import { switchMap, take } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { DataView } from 'primeng/dataview';
 import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
@@ -13,10 +13,12 @@ import { Skeleton } from 'primeng/skeleton';
 import { AlertService } from '../../../services/alert.service';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { UserExercise } from '../../../../../../../libs/interfaces/user-exercise';
+import { Tag } from 'primeng/tag';
+import { Muscle } from '../../../../../../../libs/interfaces/muscle';
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [CommonModule, DataView, Button, Badge, Skeleton, DragDropModule, RouterLink],
+    imports: [CommonModule, DataView, Button, Badge, Skeleton, DragDropModule, RouterLink, Tag],
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })
@@ -24,6 +26,10 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
 
     muscleGroup: MuscleGroup;
     exercises: Exercise[];
+    filteredExercises: Exercise[];
+
+    muscles: Muscle[] = [];
+    activeFilter: number = null;
 
     isLoading = true;
 
@@ -41,7 +47,6 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
 
     toggleExerciseWorkout(exercise: Exercise) {
         return this.userExerciseService.toggleExerciseWorkout(exercise)
-            .pipe(take(1))
             .subscribe({
                 next: () => {
                     this.findAllExercisesByMuscleGroupId();
@@ -82,7 +87,6 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
         const userExercisesFilter = userExercises.filter(ue => ue.id !== null);
 
         this.userExerciseService.updateOrderExercises(userExercisesFilter)
-            .pipe(take(1))
             .subscribe({
                 error: (err) => {
                     this.alertService.alert$.next({
@@ -93,9 +97,20 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             });
     }
 
+    filterByMuscle(muscle: Muscle) {
+        // Reset filter
+        if (muscle.id === this.activeFilter) {
+            this.filteredExercises = this.exercises;
+            this.activeFilter = null;
+            return;
+        }
+
+        this.filteredExercises = this.exercises.filter(e => e.muscles.some(m => m.id === muscle.id));
+        this.activeFilter = muscle.id;
+    }
+
     private findAllExercisesByMuscleGroupId() {
         this.route.params.pipe(
-            take(1),
             switchMap((params: {
                 muscleGroupId: number
             }) => this.exerciseService.findAllExercisesByMuscleGroupId(Number(params.muscleGroupId)))
@@ -103,9 +118,10 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             .subscribe({
                 next: ({ exercises, muscleGroup }) => {
                     this.isLoading = false;
-                    this.exercises = exercises;
+                    this.exercises = exercises.sort(this.sortExercises);
+                    this.filteredExercises = exercises.sort(this.sortExercises);
                     this.muscleGroup = muscleGroup;
-                    this.sortExercises();
+                    this.getMuscles();
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {
@@ -118,20 +134,28 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     }
 
 
-    private sortExercises() {
-        return this.exercises.sort((a, b) => {
-            // 1. Order by addedToWorkout
-            if (a.addedToWorkout !== b.addedToWorkout) {
-                return a.addedToWorkout ? -1 : 1;
-            }
+    private sortExercises(a: Exercise, b: Exercise) {
+        // 1. Order by addedToWorkout
+        if (a.addedToWorkout !== b.addedToWorkout) {
+            return a.addedToWorkout ? -1 : 1;
+        }
 
-            // 2. Order by "order" field
-            if (a.order !== b.order) {
-                return a.order - b.order;
-            }
+        // 2. Order by "order" field
+        if (a.order !== b.order) {
+            return a.order - b.order;
+        }
 
-            // 3. Order by id
-            return a.id - b.id;
+        // 3. Order by id
+        return a.id - b.id;
+    }
+
+    private getMuscles() {
+        this.exercises.forEach(exercise => {
+            exercise.muscles.forEach(muscle => {
+                if (!this.muscles.some(m => m.id === muscle.id)) {
+                    this.muscles.push(muscle);
+                }
+            });
         });
     }
 }
