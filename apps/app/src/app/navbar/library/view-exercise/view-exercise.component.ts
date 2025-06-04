@@ -10,6 +10,7 @@ import { Button } from 'primeng/button';
 import { Fieldset } from 'primeng/fieldset';
 import { Tag } from 'primeng/tag';
 import { Drawer } from 'primeng/drawer';
+import { DeviceDetectionService } from '../../../services/device-detection.service';
 
 @Component({
     selector: 'app-view-exercise',
@@ -24,11 +25,14 @@ export class ViewExerciseComponent implements OnInit {
 
     showDrawerSmartWorkout = false;
 
+    isIphone = false;
+
     constructor(
         private readonly exerciseService: ExerciseService,
         private readonly userExerciseService: UserExerciseService,
         private readonly activatedRoute: ActivatedRoute,
-        private readonly alertService: AlertService
+        private readonly alertService: AlertService,
+        private readonly deviceDetectionService: DeviceDetectionService
     ) {
     }
 
@@ -50,6 +54,8 @@ export class ViewExerciseComponent implements OnInit {
                     });
                 }
             });
+
+        this.isIphone = this.deviceDetectionService.isIphone();
     }
 
     toggleExerciseWorkout() {
