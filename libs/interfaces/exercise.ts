@@ -1,3 +1,5 @@
+import { Muscle } from './muscle';
+
 export interface Exercise {
     id: number;
     name?: string;
@@ -6,7 +8,7 @@ export interface Exercise {
     isSmartWorkout?: boolean;
     order?:number;
     addedToWorkout?: boolean;
-    muscles?: string[];
+    muscles?: Muscle[];
     weight?: number;
     restTime?: string;
     count?: number;

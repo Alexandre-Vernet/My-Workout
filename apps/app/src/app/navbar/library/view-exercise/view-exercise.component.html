@@ -5,7 +5,7 @@
         <div class="flex flex-column">
             <div class="flex flex-row gap-2 flex-wrap">
                 <ng-container *ngFor="let muscle of exercise.muscles">
-                    <p-tag value="{{ muscle }}" />
+                    <p-tag value="{{ muscle.name }}" />
                 </ng-container>
             </div>
         </div>
