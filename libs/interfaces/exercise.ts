@@ -12,4 +12,5 @@ export interface Exercise {
     weight?: number;
     restTime?: string;
     count?: number;
+    reps?: number;
 }

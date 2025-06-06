@@ -36,6 +36,7 @@ export class ExercisesTableComponent implements OnChanges {
                         const exercise: Exercise = {
                             id: this.exercisesMade.length + 1,
                             weight: h.weight,
+                            reps: h.reps,
                             restTime: '/'
                         };
 

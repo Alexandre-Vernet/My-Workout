@@ -4,13 +4,15 @@
             <tr>
                 <th id="id" class="text-center">N°</th>
                 <th id="weight" class="text-center">Poids</th>
-                <th id="restTime" class="text-center">Temps de repos</th>
+                <th id="reps" class="text-center">Répétition</th>
+                <th id="restTime" class="text-center">Tps. de repos</th>
             </tr>
         </ng-template>
         <ng-template #body let-exercise>
             <tr>
                 <td class="text-center">{{ exercise.id }}</td>
                 <td class="text-center">{{ exercise.weight > 0 ? exercise.weight + ' kg' : '/' }}</td>
+                <td class="text-center">{{ exercise.reps }}</td>
                 <td class="text-center">{{ exercise.restTime }}</td>
             </tr>
         </ng-template>
