@@ -193,6 +193,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
         this.historyService.create(history)
             .subscribe({
+                next: () => this.alertService.alert$.next(null),
                 error: (err) => {
                     this.alertService.alert$.next({
                         severity: 'error',

@@ -1,3 +1,13 @@
+<div class="m-2 flex flex-row gap-2 flex-wrap mb-3">
+    <ng-container *ngFor="let muscleGroup of muscleGroups">
+        <p-tag (click)="filterByMuscleGroup(muscleGroup)" severity="info"
+               [ngClass]="{
+                'border border-blue-500 bg-blue-100 text-blue-700': activeFilter?.name === muscleGroup.name,
+            }"
+        >{{ muscleGroup.name }}</p-tag>
+    </ng-container>
+</div>
+
 <div #swipeZone class="p-2">
     <full-calendar #calendarComponent [options]="calendarOptions">
         <ng-template #eventContent let-arg>
