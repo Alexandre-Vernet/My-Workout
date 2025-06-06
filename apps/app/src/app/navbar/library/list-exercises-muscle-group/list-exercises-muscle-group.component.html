@@ -31,8 +31,11 @@
     <div class="ml-2 flex flex-row gap-2 flex-wrap">
         <span *ngFor="let muscle of muscles" class="flex flex-row-reverse">
             <p-tag severity="info" [value]="muscle.name" [ngClass]="{
-                'border border-blue-500 bg-blue-100 text-blue-700 shadow-md scale-105': activeFilter === muscle.id,
-            }" (click)="filterByMuscle(muscle)">
+                'border border-blue-500 bg-blue-100 text-blue-700': activeFilter === muscle.id,
+            }"
+                   role="button"
+                   tabindex="0"
+                   (click)="filterByMuscle(muscle)">
         </p-tag>
         </span>
     </div>
