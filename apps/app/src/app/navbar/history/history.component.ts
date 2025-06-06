@@ -43,6 +43,13 @@ export class HistoryComponent implements OnInit {
                 next: (history) => {
                     this.isLoading = false;
                     this.history = history;
+                    this.alertService.alert$.next(null);
+                },
+                error : (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'afficher l\'historique'
+                    });
                 }
             });
 
