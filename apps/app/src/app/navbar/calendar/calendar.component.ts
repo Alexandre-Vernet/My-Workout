@@ -12,7 +12,7 @@ import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
 import { ThemeService } from '../../theme/theme.service';
 import { removeAccents } from '../../utils/remove-accents';
-import { muscleGroupMap } from '../../../../../../libs/interfaces/MuscleGroup';
+import { MuscleGroup, muscleGroupMap } from '../../../../../../libs/interfaces/MuscleGroup';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import {
     DialogSelectCardioExerciseComponent
@@ -20,10 +20,11 @@ import {
 import { Alert } from '../../../../../../libs/interfaces/alert';
 import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
+import { Tag } from 'primeng/tag';
 
 @Component({
     selector: 'app-calendar',
-    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, RouterLink],
+    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, RouterLink, Tag],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
@@ -59,6 +60,28 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                     next: (workouts) => {
                         this.workouts = workouts;
 
+                        if (!this.filterWorkouts) {
+                            this.filterWorkouts = workouts;
+                        }
+
+
+                        // Filter by name because all cardio exercises has the same id
+                        workouts.forEach(w => {
+                            if (!this.muscleGroups.some(mg => mg.name === w.muscleGroup.name)) {
+                                this.muscleGroups.push(w.muscleGroup);
+                            }
+                        });
+
+                        if (this.filterWorkouts.length > 0) {
+                            const events: EventInput[] = this.filterWorkouts.map(w => ({
+                                id: w.id.toString(),
+                                title: w.muscleGroup.name,
+                                start: w.date
+                            }));
+
+                            success(events);
+                            return;
+                        }
                         const events: EventInput[] = workouts.map(w => ({
                             id: w.id.toString(),
                             title: w.muscleGroup.name,
@@ -73,9 +96,13 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     };
 
     workouts: Workout[] = [];
+    filterWorkouts: Workout[] = [];
+    activeFilter: MuscleGroup;
 
     showWorkout: Workout;
     showModalViewWorkout = false;
+
+    muscleGroups: MuscleGroup[] = [];
 
     @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
     swipeStartX = 0;
@@ -186,6 +213,19 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                 this.showModalViewWorkout = true;
                 this.showWorkout = workout;
             });
+    }
+
+    filterByMuscleGroup(muscleGroup: MuscleGroup) {
+        if (muscleGroup.name === this.activeFilter?.name) {
+            this.filterWorkouts = this.workouts;
+            this.calendarComponent.getApi().refetchEvents();
+            this.activeFilter = null;
+            return;
+        }
+
+        this.filterWorkouts = this.workouts.filter(w => w.muscleGroup.name === muscleGroup.name);
+        this.calendarComponent.getApi().refetchEvents();
+        this.activeFilter = muscleGroup;
     }
 
     private customizeCalendar(info: EventMountArg) {
