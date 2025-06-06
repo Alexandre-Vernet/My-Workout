@@ -163,6 +163,10 @@ export class AuthService {
             }
         });
 
+        if (!user) {
+            throw new ConflictException('Invalid credentials');
+        }
+
         return {
             accessToken: await this.jwtService.signAsync({ user }),
             user
