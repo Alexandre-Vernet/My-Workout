@@ -182,7 +182,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             restTime: '/'
         };
 
-        this.exercisesMade.push(exerciseMade);
+        this.exercisesMade = [...this.exercisesMade, exerciseMade];
 
         const history: History = {
             workout: this.workout,

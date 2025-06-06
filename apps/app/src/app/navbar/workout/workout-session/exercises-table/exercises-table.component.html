@@ -1,5 +1,5 @@
 <div *ngIf="exercisesMade.length > 0">
-    <p-table [value]="exercisesMade" stripedRows scrollable="true" scrollHeight="200px">
+    <p-table #exerciseTable [value]="exercisesMade" stripedRows scrollable="true" scrollHeight="200px">
         <ng-template #header>
             <tr>
                 <th id="id" class="text-center">N°</th>
