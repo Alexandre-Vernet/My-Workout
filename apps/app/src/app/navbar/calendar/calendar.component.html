@@ -36,7 +36,7 @@
 
                     <!-- Exercise name -->
                     <div [routerLink]="['/', 'library', 'exercises', h?.exercise?.id]" class="text-primary text-lg">
-                        <span *ngIf="h.exercise.count > 1">{{ h.exercise.count }}x</span>
+                        <span *ngIf="h.reps >= 1">{{ h.reps }}x</span>
                         {{ h.exercise.name }}
                     </div>
 
