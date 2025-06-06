@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { map } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
@@ -233,12 +233,14 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     switchPanel(exercise: Exercise, index?: number) {
+        if (this.currentTab === index) {
+            return;
+        }
         this.currentExercise = exercise;
         this.fillInputWeightLastSavedValue();
         this.exercisesMade = [];
         this.stopTimer();
-
-        this.updateTabUrl(index);
+        this.setTabUrl(index);
     }
 
 
@@ -256,7 +258,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     }
 
                     return exercises;
-                })
+                }),
+                filter(exercises => !!exercises)
             )
             .subscribe({
                 next: (exercises) => {
@@ -264,8 +267,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     this.exercises = exercises;
                     this.currentExercise = this.exercises[this.activeStep - 1];
                     if (!this.currentExercise) {
-                        this.redirectWorkoutHome();
-                        return;
+                        this.currentExercise = this.exercises[0];
+                        this.switchPanel(this.currentExercise);
                     }
                     this.fillInputWeightLastSavedValue();
                     this.alertService.alert$.next(null);
@@ -311,12 +314,16 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     private getCurrentTabFromUrl() {
         this.activatedRoute.queryParams
             .subscribe(params => {
-                this.currentTab = +params['tab'] || 1;
+                const tabParam = +params['tab'];
+                if (!tabParam) {
+                    this.setTabUrl(1);
+                }
+                this.currentTab = tabParam || 1;
                 this.activeStep = this.currentTab;
             });
     }
 
-    private updateTabUrl(index: number) {
+    private setTabUrl(index: number) {
         if (index !== null) {
             this.router.navigate([], {
                 relativeTo: this.activatedRoute,
