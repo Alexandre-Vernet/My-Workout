@@ -82,7 +82,7 @@ export class NavbarComponent implements AfterViewInit {
         }
 
         function offsetMenuBorder(element: HTMLElement, menuBorder: HTMLElement) {
-            const offsetActiveItem = element.getBoundingClientRect();
+            const offsetActiveItem = element?.getBoundingClientRect();
             const left = Math.floor(
                 offsetActiveItem.left - menu.offsetLeft - (menuBorder.offsetWidth - offsetActiveItem.width) / 2
             ) + 'px';

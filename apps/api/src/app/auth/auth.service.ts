@@ -141,10 +141,10 @@ export class AuthService {
             }
         };
 
-        const existingUser = await this.userRepository.findOne(options);
+        const user = await this.userRepository.findOne(options);
 
         const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
-        const token = this.jwtService.sign({ existingUser });
+        const token = this.jwtService.sign({ user });
         return { linkResetPassword: `${ ALLOWED_ORIGIN }/auth/reset-password?token=${ token }` };
     }
 
@@ -157,11 +157,15 @@ export class AuthService {
             password: hashedPassword
         });
 
-        const user = await this.userRepository.find({
+        const user = await this.userRepository.findOne({
             where: {
                 id: id
             }
         });
+
+        if (!user) {
+            throw new ConflictException('Invalid credentials');
+        }
 
         return {
             accessToken: await this.jwtService.signAsync({ user }),
