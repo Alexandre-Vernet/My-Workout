@@ -118,6 +118,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     animationDirection: 'left' | 'right' = 'right';
 
+    private currentTab: number;
+
     constructor(
         private readonly activatedRoute: ActivatedRoute,
         private readonly workoutService: WorkoutService,
@@ -133,6 +135,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.muscleGroupId = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
+        this.getCurrentTabFromUrl();
         this.checkDuplicateWorkout();
         this.findExercises();
         this.isIphone = this.deviceDetectionService.isIphone();
@@ -230,12 +233,14 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     switchPanel(exercise: Exercise, index?: number) {
+        if (this.currentTab === index) {
+            return;
+        }
         this.currentExercise = exercise;
         this.fillInputWeightLastSavedValue();
         this.exercisesMade = [];
         this.stopTimer();
-
-        this.updateTabUrl(index);
+        this.setTabUrl(index);
     }
 
 
@@ -260,16 +265,19 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                 next: (exercises) => {
                     this.isLoading = false;
                     this.exercises = exercises;
-                    this.currentExercise = this.exercises[0];
+                    this.currentExercise = this.exercises[this.activeStep - 1];
+                    if (!this.currentExercise) {
+                        this.currentExercise = this.exercises[0];
+                        this.switchPanel(this.currentExercise);
+                    }
                     this.fillInputWeightLastSavedValue();
-                    this.loadUrlTab();
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {
                     this.isLoading = false;
 
                     if (err?.error?.errorCode === ErrorCode.muscleGroupDoesntExist) {
-                        this.router.navigate(['/', 'workout']);
+                        this.redirectWorkoutHome();
                     }
                     this.alertService.alert$.next({
                         severity: 'error',
@@ -303,16 +311,19 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         }
     }
 
-    private loadUrlTab() {
-        this.activatedRoute.queryParams.subscribe(params => {
-            const savedTab = +params['tab'];
-            if (!isNaN(savedTab) && savedTab <= this.exercises.length) {
-                this.activeStep = savedTab;
-            }
-        });
+    private getCurrentTabFromUrl() {
+        this.activatedRoute.queryParams
+            .subscribe(params => {
+                const tabParam = +params['tab'];
+                if (!tabParam) {
+                    this.setTabUrl(1);
+                }
+                this.currentTab = tabParam || 1;
+                this.activeStep = this.currentTab;
+            });
     }
 
-    private updateTabUrl(index: number) {
+    private setTabUrl(index: number) {
         if (index !== null) {
             this.router.navigate([], {
                 relativeTo: this.activatedRoute,
@@ -416,9 +427,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             accept: () => {
                 this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]);
             },
-            reject: () => {
-                this.router.navigate(['/', 'workout']);
-            }
+            reject: () => this.redirectWorkoutHome()
         });
     }
 
@@ -438,7 +447,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                 severity: 'secondary',
                 outlined: true
             },
-            reject: () => this.router.navigate(['/', 'workout'])
+            reject: () => this.redirectWorkoutHome()
         });
     }
 
@@ -452,5 +461,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             date: new Date()
         };
         return this.workoutService.create(workout);
+    }
+
+
+    private redirectWorkoutHome() {
+        this.router.navigate(['/', 'workout']);
     }
 }
