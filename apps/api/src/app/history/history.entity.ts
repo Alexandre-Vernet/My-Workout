@@ -16,6 +16,9 @@ export class HistoryEntity {
     @JoinColumn({ name: 'workout_id' })
     workout: WorkoutEntity;
 
-    @Column({ type: 'float' })
+    @Column()
     weight: number;
+
+    @Column()
+    reps: number;
 }

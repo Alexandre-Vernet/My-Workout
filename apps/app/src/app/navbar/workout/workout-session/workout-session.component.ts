@@ -86,7 +86,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     activeStep: number = 1;
 
     weight: number = 0;
-    reps: number = 0;
+    reps: number = 8;
 
     timer = {
         startTime: 0,
@@ -175,11 +175,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     saveExercise() {
-        const weightNumber = Number(this.weight) > 0 ? this.weight : null;
-
         const exerciseMade: Exercise = {
             id: this.exercisesMade.length + 1,
-            weight: weightNumber,
+            weight: this.weight,
+            reps: this.reps,
             restTime: '/'
         };
 
@@ -188,7 +187,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         const history: History = {
             workout: this.workout,
             exercise: this.currentExercise,
-            weight: weightNumber
+            weight: this.weight,
+            reps: this.reps
         };
 
         this.historyService.create(history)
@@ -223,6 +223,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.exercisesMade = [];
         this.stopTimer();
         this.setTabUrl(index);
+        this.reps = 8;
     }
 
 
