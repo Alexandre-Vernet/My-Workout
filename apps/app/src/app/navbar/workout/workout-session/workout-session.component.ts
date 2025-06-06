@@ -15,8 +15,6 @@ import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../../../../libs/interfaces/history';
 import { Skeleton } from 'primeng/skeleton';
-import { ButtonDirective } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 import { ExercisesTableComponent } from './exercises-table/exercises-table.component';
 import { Elastic } from '../../../../../../../libs/interfaces/elastic';
 import { Popover } from 'primeng/popover';
@@ -32,7 +30,7 @@ import { animate, group, query, style, transition, trigger } from '@angular/anim
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Skeleton, ButtonDirective, Ripple, ExercisesTableComponent, Popover, RouterLink],
+    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Skeleton, ExercisesTableComponent, Popover, RouterLink],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -88,6 +86,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     activeStep: number = 1;
 
     weight: number = 0;
+    reps: number = 8;
 
     timer = {
         startTime: 0,
@@ -175,38 +174,21 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         }
     }
 
-    decreaseWeight() {
-        if (!this.weight) {
-            return;
-        }
-        this.weight = Number(this.weight) - 2.5;
-        this.convertWeightToElastics();
-    }
-
-    increaseWeight() {
-        if (this.weight >= 500) {
-            return;
-        }
-        this.weight = Number(this.weight) + 2.5;
-        this.convertWeightToElastics();
-    }
-
-
     saveExercise() {
-        const weightNumber = Number(this.weight) > 0 ? this.weight : null;
-
         const exerciseMade: Exercise = {
             id: this.exercisesMade.length + 1,
-            weight: weightNumber,
+            weight: this.weight,
+            reps: this.reps,
             restTime: '/'
         };
 
-        this.exercisesMade.push(exerciseMade);
+        this.exercisesMade = [...this.exercisesMade, exerciseMade];
 
         const history: History = {
             workout: this.workout,
             exercise: this.currentExercise,
-            weight: weightNumber
+            weight: this.weight,
+            reps: this.reps
         };
 
         this.historyService.create(history)
@@ -241,6 +223,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.exercisesMade = [];
         this.stopTimer();
         this.setTabUrl(index);
+        this.reps = 8;
     }
 
 

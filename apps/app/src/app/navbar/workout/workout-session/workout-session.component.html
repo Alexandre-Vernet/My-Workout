@@ -57,42 +57,50 @@
                 <ng-container *ngFor="let exercise of exercises; let index = index">
                     <p-step-panel [value]="index + 1">
                         <ng-template #content let-activateCallback="activateCallback">
-                            <div [@slidePanel]="animationDirection" class="flex-1 flex flex-column justify-content-center mb-6">
+                            <div [@slidePanel]="animationDirection"
+                                 class="flex-1 flex flex-column justify-content-center mb-6">
                                 <div class="text-center mt-4 mb-4 text-xl font-semibold">
                                     <h3 [routerLink]="['/', 'library', 'exercises', exercise?.id]"
                                         class="text-2xl">{{ exercise.name | uppercase }}</h3>
                                 </div>
-                                <div class="flex-1 flex justify-content-center items-center mt-2 mb-6">
-                                    <button (click)="decreaseWeight()" pButton pRipple type="button" icon="pi pi-minus"
-                                            class="button-increase-decrease-weight"
-                                            [disabled]="timer.interval"
-                                            [ngClass]="{
-                                                'border-dark': isDarkMode,
-                                                'border-light': !isDarkMode,
-                                            }"
-                                    ></button>
 
-                                    <p-inputNumber
-                                        [(ngModel)]="weight"
-                                        (ngModelChange)="convertWeightToElastics()"
-                                        [disabled]="timer.interval"
-                                        [suffix]="' kg'">
-                                    </p-inputNumber>
 
-                                    <button (click)="increaseWeight()" pButton pRipple type="button" icon="pi pi-plus"
-                                            class="button-increase-decrease-weight"
-                                            [disabled]="timer.interval"
-                                            [ngClass]="{
-                                                'border-dark': isDarkMode,
-                                                'border-light': !isDarkMode,
-                                            }"></button>
+                                <div class="flex-1 flex flex-column justify-center align-items-center w-full gap-3">
+                                    <div class="flex align-items-center">
+                                        <p-inputnumber [disabled]="timer.interval" [(ngModel)]="weight"
+                                                       (ngModelChange)="convertWeightToElastics()" [showButtons]="true"
+                                                       buttonLayout="horizontal" inputId="horizontal"
+                                                       spinnerMode="horizontal" [step]="2.5"
+                                                       suffix=" kg" min="0" max="500">
+                                            <ng-template #incrementbuttonicon>
+                                                <span class="pi pi-plus"></span>
+                                            </ng-template>
+                                            <ng-template #decrementbuttonicon>
+                                                <span class="pi pi-minus"></span>
+                                            </ng-template>
+                                        </p-inputnumber>
 
-                                    <i
-                                        (click)="dialogConvertWeightToElastics.toggle($event)"
-                                        class="ml-1 pi pi-info-circle"
-                                        [style.visibility]="exercise.isSmartWorkout && this.weight % 5 === 0 && this.weight > 0 ? 'visible' : 'hidden'">
-                                    </i>
+                                        <i class="ml-2 pi pi-info-circle cursor-pointer"
+                                           (click)="dialogConvertWeightToElastics.toggle($event)"
+                                           [style.visibility]="exercise.isSmartWorkout && this.weight % 5 === 0 && this.weight > 0 ? 'visible' : 'hidden'">
+                                        </i>
+                                    </div>
 
+
+                                    <div class="flex align-items-center mr-4">
+                                        <p-inputnumber class="mb-6" size="small" [disabled]="timer.interval" [(ngModel)]="reps"
+                                                       [showButtons]="true"
+                                                       buttonLayout="horizontal"
+                                                       inputId="horizontal" spinnerMode="horizontal" [step]="1"
+                                                       [suffix]=" reps <= 1 ? ' rep' : ' reps'" min="0" max="50">
+                                            <ng-template #incrementbuttonicon>
+                                                <span class="pi pi-plus"></span>
+                                            </ng-template>
+                                            <ng-template #decrementbuttonicon>
+                                                <span class="pi pi-minus"></span>
+                                            </ng-template>
+                                        </p-inputnumber>
+                                    </div>
                                 </div>
 
                                 <app-exercises-table [muscleGroupId]="muscleGroupId" [exercisesMade]="exercisesMade"

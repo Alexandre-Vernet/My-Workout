@@ -5,13 +5,17 @@
         <div class="flex flex-column">
             <div class="flex flex-row gap-2 flex-wrap">
                 <ng-container *ngFor="let muscle of exercise.muscles">
-                    <p-tag value="{{ muscle.name }}" />
+                    <p-tag value="{{ muscle.name }}"
+                           role="button"
+                           tabindex="0"/>
                 </ng-container>
             </div>
         </div>
 
         <p-tag class="mt-2 inline-flex w-auto" *ngIf="exercise.isSmartWorkout" (click)="showDrawerSmartWorkout = true"
-               severity="info" value="Smart-Workout" />
+               severity="info" value="Smart-Workout"
+               role="button"
+               tabindex="0"/>
 
         <div class="card flex justify-center mt-4">
             <p-fieldset legend="Description" [toggleable]="true">
@@ -30,7 +34,7 @@
 
 
 <p-drawer header="Smart-Workout" [(visible)]="showDrawerSmartWorkout" position="bottom" [style]="{
-    bottom: isIphone ? '150px' : '70px',
+    bottom: isIphone ? '150px' : '60px',
     height: '600px'
     }">
     <div class="text-justify">

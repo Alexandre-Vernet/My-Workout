@@ -9,6 +9,7 @@ export interface History {
     user?: User;
     exercise?: Exercise;
     weight?: number;
+    reps?: number;
     date?: Date,
     groups?: {
         workoutId: number;

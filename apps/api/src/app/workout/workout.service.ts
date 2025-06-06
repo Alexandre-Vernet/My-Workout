@@ -31,7 +31,7 @@ export class WorkoutService {
 
 
     async findById(id: number) {
-        const workout = await this.workoutRepository.findOne({
+        return this.workoutRepository.findOne({
             where: { id },
             relations: {
                 history: {
@@ -40,50 +40,6 @@ export class WorkoutService {
                 muscleGroup: true
             }
         });
-
-        if (!workout) {
-            return null;
-        }
-
-        // 1. Count the number of occurrences for each unique combination of exercise ID and weight
-        const counts: Record<string, number> = {};
-        workout.history.forEach(h => {
-            const key = `${ h.exercise.id }-${ h.weight }`;
-            counts[key] = (counts[key] || 0) + 1;
-        });
-
-        // 2. Remove duplicates by keeping only the first occurrence of each unique key
-        const seen = new Set<string>();
-        const uniqueHistory = workout.history.filter(h => {
-            const key = `${ h.exercise.id }-${ h.weight }`;
-            if (seen.has(key)) {
-                return false; // duplicate => skip
-            }
-            seen.add(key);
-            return true; // first occurrence => keep
-        });
-
-        // 3. Add the count to each exercise in the deduplicated list
-        workout.history = uniqueHistory.map(h => {
-            const key = `${ h.exercise.id }-${ h.weight }`;
-            return {
-                ...h,
-                exercise: {
-                    ...h.exercise,
-                    count: counts[key]
-                }
-            };
-        });
-
-        // 4. Sort by exercise ID first, then by weight if IDs match
-        workout.history.sort((a, b) => {
-            if (a.exercise.id === b.exercise.id) {
-                return Number(a.weight) - Number(b.weight);
-            }
-            return a.exercise.id - b.exercise.id;
-        });
-
-        return workout;
     }
 
 
