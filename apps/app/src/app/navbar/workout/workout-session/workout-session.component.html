@@ -67,7 +67,9 @@
 
                                 <div class="flex-1 flex flex-column justify-center align-items-center w-full gap-3">
                                     <div class="flex align-items-center">
-                                        <p-inputnumber [disabled]="timer.interval" [(ngModel)]="weight"
+                                        <p-inputnumber
+                                            preventFocusOnButtonClick
+                                            [disabled]="timer.interval" [(ngModel)]="weight"
                                                        (ngModelChange)="convertWeightToElastics()" [showButtons]="true"
                                                        buttonLayout="horizontal" inputId="horizontal"
                                                        spinnerMode="horizontal" [step]="2.5"
@@ -88,7 +90,9 @@
 
 
                                     <div class="flex align-items-center mr-4">
-                                        <p-inputnumber class="mb-6" size="small" [disabled]="timer.interval" [(ngModel)]="reps"
+                                        <p-inputnumber
+                                            preventFocusOnButtonClick
+                                            class="mb-6" size="small" [disabled]="timer.interval" [(ngModel)]="reps"
                                                        [showButtons]="true"
                                                        buttonLayout="horizontal"
                                                        inputId="horizontal" spinnerMode="horizontal" [step]="1"
