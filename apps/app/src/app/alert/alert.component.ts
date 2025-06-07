@@ -24,12 +24,12 @@ export class AlertComponent implements OnInit {
             .subscribe(alert => {
                 this.alert = alert;
 
-                // Hide modal after 3s
+                // Hide modal after 4s
                 // Attribute [life] on <p-message always hide alert if user click on close button
                 if (alert?.severity === 'success') {
                     setTimeout(() => {
                         this.alert = null;
-                    }, 3000);
+                    }, 4000);
                 }
             });
     }

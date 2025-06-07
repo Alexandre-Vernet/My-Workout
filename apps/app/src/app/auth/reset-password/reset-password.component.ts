@@ -34,6 +34,8 @@ export class ResetPasswordComponent implements OnInit {
 
     user: User;
 
+    isLoading = false;
+
     constructor(
         private readonly authService: AuthService,
         private router: Router,
@@ -63,6 +65,7 @@ export class ResetPasswordComponent implements OnInit {
 
     submitForm() {
         if (this.formResetPassword.valid) {
+            this.isLoading = true;
             const { newPassword, confirmPassword } = this.formResetPassword.value;
             if (newPassword !== confirmPassword) {
                 this.formResetPassword.setErrors({ error: 'Passwords do not match' });
@@ -84,9 +87,8 @@ export class ResetPasswordComponent implements OnInit {
                     this.router.navigate(['/']);
                 },
                 error: (err) => {
-                    if (err.error?.message) {
-                        this.formResetPassword.setErrors({ error: err.error.message });
-                    }
+                    this.formResetPassword.setErrors({ error: err.error.message ?? 'Une erreur s\'est produite' });
+                    this.isLoading = false;
                 }
             });
     }
