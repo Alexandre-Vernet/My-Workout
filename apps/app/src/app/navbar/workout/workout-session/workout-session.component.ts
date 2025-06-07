@@ -27,10 +27,11 @@ import { ThemeService } from '../../../theme/theme.service';
 import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../utils/convert-weight-elastic';
 import { animate, group, query, style, transition, trigger } from '@angular/animations';
+import { PreventFocusOnButtonClickDirective } from '../../../directives/prevent-focus-on-button-click.directive';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Skeleton, ExercisesTableComponent, Popover, RouterLink],
+    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
