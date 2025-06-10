@@ -60,9 +60,9 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                     next: (workouts) => {
                         this.workouts = workouts;
 
-                        if (!this.filterWorkouts) {
-                            this.filterWorkouts = workouts;
-                        }
+                        this.filterWorkouts = this.activeFilter
+                            ? workouts.filter(w => w.muscleGroup.name === this.activeFilter.name)
+                            : workouts;
 
 
                         // Filter by name because all cardio exercises has the same id
@@ -72,17 +72,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                             }
                         });
 
-                        if (this.filterWorkouts.length > 0) {
-                            const events: EventInput[] = this.filterWorkouts.map(w => ({
-                                id: w.id.toString(),
-                                title: w.muscleGroup.name,
-                                start: w.date
-                            }));
-
-                            success(events);
-                            return;
-                        }
-                        const events: EventInput[] = workouts.map(w => ({
+                        const events: EventInput[] = this.filterWorkouts.map(w => ({
                             id: w.id.toString(),
                             title: w.muscleGroup.name,
                             start: w.date
