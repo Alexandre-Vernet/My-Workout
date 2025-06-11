@@ -2,7 +2,11 @@
  'iphone': isIphone
 }">
     <app-alert></app-alert>
-    <router-outlet></router-outlet>
+    <div [ngClass]="{
+    'mb-6': !isLoginPage
+    }">
+        <router-outlet></router-outlet>
+    </div>
 </div>
 <app-navbar [ngClass]="{
     'display-none': isLoginPage
