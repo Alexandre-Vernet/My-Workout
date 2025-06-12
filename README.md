@@ -6,9 +6,9 @@
 
 ## Introduction
 
-My-Workout est une application de suivi pour les pratiquants de musculation. Elle permet d'enregistrer et de suivre une progression sur une série d'exercices. Vous pourrez enregistrer le nombre de répétitions, de série et la charge utilisée. Ces séances peuvent être visualisées depuis un calendrier ou depuis la page historique.
+My-Workout est une application de suivi pour les pratiquants de musculation. Elle permet d'enregistrer et de suivre une progression sur une série d'exercices. Vous pouvez enregistrer le nombre de répétitions, de série et la charge utilisée. Ces séances peuvent être visualisées depuis un calendrier ou depuis la page historique.
 
-Vous pouvez définir un programme en choisissant vos exercices
+Vous pouvez définir un programme en choisissant vos exercices depuis une bibliothèque et agencer votre séance en choisissant l'ordre de vos exercices.
 
 ## Fonctionnalités
 
@@ -20,6 +20,7 @@ Vous pouvez définir un programme en choisissant vos exercices
 - Suggestion de séance
 - Historique de séance
 - Personnalisation de l'application pour changer le thème + thème sombre
+- Authentification
 
 ### Bibliothèque
 
@@ -64,9 +65,9 @@ L'application recommande la plus ancienne des séances effectuées
 
 2. Aperçu
 
-Vous retrouverez tout en haut de l'écran les exercices à effectuer durant la séance choisi (trier selon votre préférence défini depuis la bibliothèque. Dans notre exemple nous avons 4 exercices, vous pouvez cliquer sur un des numéros pour changer d'exercice.
+Vous retrouverez tout en haut de l'écran les exercices à effectuer durant la séance choisi (trier selon votre préférence définie depuis la bibliothèque). Dans notre exemple, nous avons 4 exercices, vous pouvez cliquer sur un des numéros pour changer d'exercice.
 
-Augmentez / diminuez la charge utilisée via les bouton + ou moins ou en entrant un nombre dans le champ.
+Augmentez / diminuez la charge utilisée via les boutons + ou moins ou en entrant un nombre dans le champ.
 La valeur par défaut est pré-rempli avec la dernière séance du même type (ici biceps) en utilisant la charge la plus élevée qui a été utilisée précédemment.
 Même principe pour les répétitions
 
@@ -74,6 +75,7 @@ Même principe pour les répétitions
 
 3. Chronomètre
    Une fois votre série effectuée, cliquez sur l'icône du chronomètre pour lancer ce dernier. Une fois lancé, un tableau apparaîtra pour afficher :
+
 - Le numéro de la série
 - La charge utilisée
 - Le nombre de répétitions
@@ -86,7 +88,7 @@ En cas de fermeture de l'application ou changement de page, les données sont co
 ![chronometre](https://github.com/user-attachments/assets/34a9711b-3ec0-4e9a-8398-48d16a17ae7f)
 
 4. Fin de séance
-Une fois la séance terminée, vous pourrez la visualiser depuis le calendrier ou depuis la page historique.
+   Une fois la séance terminée, vous pourrez la visualiser depuis le calendrier ou depuis la page historique.
 
 ### Historique
 
@@ -103,3 +105,25 @@ La section mon compte permet de modifier des informations de l'utilisateur : mai
 Vous pourrez aussi y changer de thème parmi les 17 proposés et activer / désactiver le mode sombre.
 
 ![mon compte](https://github.com/user-attachments/assets/0f7dac19-35d2-4687-a656-c31df3b8b512)
+
+### Authentification
+
+L'application propose une authentification pour sauvegarder vos données. Vous pouvez vous connecter avec un compte déjà existant ou en créer un nouveau.
+Vos données seront sauvegardées dans une base de données et vous pourrez y accéder depuis n'importe quel appareil.
+
+1. Page de connexion
+
+Connectez-vous avec votre email et mot de passe. Si vous n'avez pas de compte, vous pouvez en créer un en cliquant sur le lien "Pas encore inscrit ?".
+
+![page de connexion](https://github.com/user-attachments/assets/8bb3f0ca-6eb8-444b-bc4a-38a5f8afefe5)
+
+2. Page d'inscription
+   Créez un compte en remplissant le formulaire avec votre email et mot de passe.
+
+![page d'inscription](https://github.com/user-attachments/assets/8141f960-72b6-4048-b1bc-def09e7bdd7d)
+
+3. Mot de passe oublié
+
+Cliquez sur le bouton "Mot de passe oublié ?" pour réinitialiser votre mot de passe. Un email vous sera envoyé avec un lien pour réinitialiser votre mot de passe.
+
+![mot de passe oublié](https://github.com/user-attachments/assets/8141f960-72b6-4048-b1bc-def09e7bdd7d)
