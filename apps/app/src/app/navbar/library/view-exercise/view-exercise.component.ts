@@ -27,6 +27,9 @@ export class ViewExerciseComponent implements OnInit {
 
     isIphone = false;
 
+    showImage = true;
+    imagePath = '';
+
     constructor(
         private readonly exerciseService: ExerciseService,
         private readonly userExerciseService: UserExerciseService,
@@ -45,6 +48,7 @@ export class ViewExerciseComponent implements OnInit {
             .subscribe({
                 next: (exercise) => {
                     this.exercise = exercise;
+                    this.imagePath = `/assets/images/${ exercise.id }.gif`;
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {
