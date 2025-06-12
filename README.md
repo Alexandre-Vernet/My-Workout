@@ -41,5 +41,65 @@ Vous pouvez cliquer sur un exercice pour y afficher une description de l'exercic
 
 En bas de la page, vous aurez de nouveau la possibilité d'ajouter / supprimer cet exercice à la séance.
 
-
 ![detail exercice](https://github.com/user-attachments/assets/a4bc38a8-e577-4638-8db9-b23d05be31fd)
+
+### Calendrier
+
+Le calendrier répertorie l'ensemble des séances réalisées. Vous pourrez filtrer par groupe musculaire pour n'afficher que lui. Au clic d'une séance, vous pourrez visualiser le détail d'une séance.
+
+Swipez vers la gauche / droite pour changer de mois.
+
+![calendrier](https://github.com/user-attachments/assets/8e2cef8b-075d-48be-ab2b-d977b567bd3c)
+
+## Enregistrer une séance
+
+Cette partie de l'application concerne l'enregistrement d'une séance. Il s'agit du point clé de l'application.
+
+1. Sélectionner un entraînement
+   Vous pourrez ici choisir un groupe musculaire à travailler et démarrer une séance.
+
+L'application recommande la plus ancienne des séances effectuées
+
+![choisir entrainement](https://github.com/user-attachments/assets/5f4f42f9-c34e-4a45-a86a-e4a6840eb777)
+
+2. Aperçu
+
+Vous retrouverez tout en haut de l'écran les exercices à effectuer durant la séance choisi (trier selon votre préférence défini depuis la bibliothèque. Dans notre exemple nous avons 4 exercices, vous pouvez cliquer sur un des numéros pour changer d'exercice.
+
+Augmentez / diminuez la charge utilisée via les bouton + ou moins ou en entrant un nombre dans le champ.
+La valeur par défaut est pré-rempli avec la dernière séance du même type (ici biceps) en utilisant la charge la plus élevée qui a été utilisée précédemment.
+Même principe pour les répétitions
+
+![apercu entrainement](https://github.com/user-attachments/assets/b9da1985-b1d9-49fd-a48c-ff03e4dbf550)
+
+3. Chronomètre
+   Une fois votre série effectuée, cliquez sur l'icône du chronomètre pour lancer ce dernier. Une fois lancé, un tableau apparaîtra pour afficher :
+- Le numéro de la série
+- La charge utilisée
+- Le nombre de répétitions
+- Le temps de repos (vide tant qu'on n'arrête pas le chronomètre)
+
+En appuyant de nouveau sur le chronomètre, ce dernier s'arrête, ajoute le temps de repos dans le tableau et vous pouvez démarrer une nouvelle série. Refaite ce circuit jusqu'à vouloir changer d'exercice.
+
+En cas de fermeture de l'application ou changement de page, les données sont conservées et seront de nouveau afficher (sauf le temps de repos qui n'est pas sauvegardé).
+
+![chronometre](https://github.com/user-attachments/assets/34a9711b-3ec0-4e9a-8398-48d16a17ae7f)
+
+4. Fin de séance
+Une fois la séance terminée, vous pourrez la visualiser depuis le calendrier ou depuis la page historique.
+
+### Historique
+
+La partie historique détaille chaque séance effectuée avec le nombre de séries, de répétitions et la charge soulevée.
+
+Vous pouvez supprimer une séance en cliquant sur la corbeille
+
+![historique](https://github.com/user-attachments/assets/f9399789-2816-41a1-8a93-948312a7e15d)
+
+### Mon compte
+
+La section mon compte permet de modifier des informations de l'utilisateur : mail / mot de passe
+
+Vous pourrez aussi y changer de thème parmi les 17 proposés et activer / désactiver le mode sombre.
+
+![mon compte](https://github.com/user-attachments/assets/0f7dac19-35d2-4687-a656-c31df3b8b512)
