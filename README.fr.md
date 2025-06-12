@@ -4,12 +4,6 @@
 <img alt="my-workout logo" src="https://raw.githubusercontent.com/Alexandre-Vernet/My-Workout/refs/heads/main/apps/app/public/favicon.ico" width="45">
 </a>
 
-
-## 🌍 Language / Langue
-
-[🇺🇸 English](README.md) | [🇫🇷 Français](README.fr.md)
-
-
 ## Introduction
 
 My-Workout est une application de suivi pour les pratiquants de musculation. Elle permet d'enregistrer et de suivre une progression sur une série d'exercices. Vous pouvez enregistrer le nombre de répétitions, de série et la charge utilisée. Ces séances peuvent être visualisées depuis un calendrier ou depuis la page historique.
