@@ -52,6 +52,10 @@ Swipez vers la gauche / droite pour changer de mois.
 
 ![calendrier](https://github.com/user-attachments/assets/8e2cef8b-075d-48be-ab2b-d977b567bd3c)
 
+Cliquez sur un jour pour ajouter une séance de cardio.
+
+![ajouter seance cardio](https://github.com/user-attachments/assets/bd988a3b-8cd7-4647-a76a-0c44578b4313)
+
 ## Enregistrer une séance
 
 Cette partie de l'application concerne l'enregistrement d'une séance. Il s'agit du point clé de l'application.
@@ -59,17 +63,17 @@ Cette partie de l'application concerne l'enregistrement d'une séance. Il s'agit
 1. Sélectionner un entraînement
    Vous pourrez ici choisir un groupe musculaire à travailler et démarrer une séance.
 
-L'application recommande la plus ancienne des séances effectuées
+L'application recommande la plus ancienne des séances effectuées.
 
 ![choisir entrainement](https://github.com/user-attachments/assets/5f4f42f9-c34e-4a45-a86a-e4a6840eb777)
 
 2. Aperçu
 
-Vous retrouverez tout en haut de l'écran les exercices à effectuer durant la séance choisi (trier selon votre préférence définie depuis la bibliothèque). Dans notre exemple, nous avons 4 exercices, vous pouvez cliquer sur un des numéros pour changer d'exercice.
+Vous retrouverez tout en haut de l'écran les exercices à effectuer durant la séance choisi (trier selon votre préférence définie depuis la bibliothèque). Dans notre exemple, nous avons 4 exercices, vous pouvez cliquer sur un des numéros pour changer d'exercice ou swiper vers la gauche / droite.
 
-Augmentez / diminuez la charge utilisée via les boutons + ou moins ou en entrant un nombre dans le champ.
-La valeur par défaut est pré-rempli avec la dernière séance du même type (ici biceps) en utilisant la charge la plus élevée qui a été utilisée précédemment.
-Même principe pour les répétitions
+Augmentez / diminuez la charge utilisée via les boutons + ou moins ou en entrant un nombre dans le champ. Même principe pour les répétitions.
+
+Pour la charge à utiliser, le champ est pré-rempli avec la charge la plus élevée qui a été utilisé lors la dernière séance (ici curl biceps).
 
 ![apercu entrainement](https://github.com/user-attachments/assets/b9da1985-b1d9-49fd-a48c-ff03e4dbf550)
 
@@ -83,7 +87,7 @@ Même principe pour les répétitions
 
 En appuyant de nouveau sur le chronomètre, ce dernier s'arrête, ajoute le temps de repos dans le tableau et vous pouvez démarrer une nouvelle série. Refaite ce circuit jusqu'à vouloir changer d'exercice.
 
-En cas de fermeture de l'application ou changement de page, les données sont conservées et seront de nouveau afficher (sauf le temps de repos qui n'est pas sauvegardé).
+En cas de fermeture de l'application ou changement de page, les données sont conservées et seront de nouveau affichées (sauf le temps de repos qui n'est pas sauvegardé).
 
 ![chronometre](https://github.com/user-attachments/assets/34a9711b-3ec0-4e9a-8398-48d16a17ae7f)
 
