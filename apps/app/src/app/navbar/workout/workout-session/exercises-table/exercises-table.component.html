@@ -19,6 +19,7 @@
                             [(ngModel)]="updateWeight"
                             inputStyleClass="update-weight"
                             inputId="weight-input"
+                            (ngModelChange)="onWeightChange($event)"
                             (keydown.enter)="updateHistory(history)"
                             (focusout)="updateHistory(history)"
                             min="0"

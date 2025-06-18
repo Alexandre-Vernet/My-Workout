@@ -51,23 +51,14 @@ export class ExercisesTableComponent implements OnChanges {
         }
     }
 
-    private findTodayExercicesHistory() {
-        this.historyService.findTodayExercicesHistory(this.muscleGroupId, this.exerciseId)
-            .subscribe(history => {
-                if (history) {
-                    history.forEach(h => {
-                        const exercise: History = {
-                            id: h.id,
-                            weight: h.weight,
-                            reps: h.reps,
-                            restTime: '/'
-                        };
-
-                        this.exercisesMade.push(exercise);
-                    });
-                }
-            });
+    roundToQuarter(value: number): number {
+        return Math.round(value / 0.25) * 0.25;
     }
+
+    onWeightChange(value: number) {
+        this.updateWeight = this.roundToQuarter(value);
+    }
+
 
     clickWeight(history: History) {
         this.editingField = `weight-${ history.id }`;
@@ -101,5 +92,24 @@ export class ExercisesTableComponent implements OnChanges {
             });
 
         this.editingField = '';
+    }
+
+
+    private findTodayExercicesHistory() {
+        this.historyService.findTodayExercicesHistory(this.muscleGroupId, this.exerciseId)
+            .subscribe(history => {
+                if (history) {
+                    history.forEach(h => {
+                        const exercise: History = {
+                            id: h.id,
+                            weight: h.weight,
+                            reps: h.reps,
+                            restTime: '/'
+                        };
+
+                        this.exercisesMade.push(exercise);
+                    });
+                }
+            });
     }
 }
