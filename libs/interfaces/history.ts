@@ -10,10 +10,11 @@ export interface History {
     exercise?: Exercise;
     weight?: number;
     reps?: number;
+    restTime?: string;
     date?: Date,
     groups?: {
         workoutId: number;
         muscleGroup: MuscleGroup,
         exercises: Exercise[]
-    }[]
+    }[],
 }

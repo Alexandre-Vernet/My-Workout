@@ -74,7 +74,7 @@ export class HistoryService {
             groupEntry.exercises.push({
                 ...exercise,
                 weight,
-                reps,
+                reps
             });
         }
 
@@ -110,5 +110,12 @@ export class HistoryService {
             .andWhere('DATE(w.date) = DATE(:date)', { date: new Date() })
             .orderBy('h.id', 'ASC')
             .getMany();
+    }
+
+    update(history: History) {
+        if (history.weight === 0) {
+            history.weight = null;
+        }
+        return this.historyRepository.save(history);
     }
 }

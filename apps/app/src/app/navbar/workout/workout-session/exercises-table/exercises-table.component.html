@@ -8,12 +8,47 @@
                 <th id="restTime" class="text-center">Tps. de repos</th>
             </tr>
         </ng-template>
-        <ng-template #body let-exercise>
+        <ng-template #body let-history let-rowIndex="rowIndex">
             <tr>
-                <td class="text-center">{{ exercise.id }}</td>
-                <td class="text-center">{{ exercise.weight > 0 ? exercise.weight + ' kg' : '/' }}</td>
-                <td class="text-center">{{ exercise.reps }}</td>
-                <td class="text-center">{{ exercise.restTime }}</td>
+                <td class="text-center">{{ rowIndex + 1 }}</td>
+                <td class="text-center" (click)="clickWeight(history)">
+                    @if (editingField !== 'weight-' + history.id) {
+                        {{ history.weight > 0 ? history.weight + ' kg' : '/' }}
+                    } @else {
+                        <p-inputnumber
+                            [(ngModel)]="updateWeight"
+                            inputStyleClass="update-weight"
+                            inputId="weight-input"
+                            (keydown.enter)="updateHistory(history)"
+                            (focusout)="updateHistory(history)"
+                            min="0"
+                            max="500"
+                            size="small"
+                            [autofocus]="true"
+                            mode="decimal"
+                            [minFractionDigits]="1"
+                            [maxFractionDigits]="2"
+                        ></p-inputnumber>
+                    }
+                </td>
+                <td class="text-center" (click)="clickReps(history)">
+                    @if (editingField !== 'reps-' + history.id) {
+                        {{ history.reps }}
+                    } @else {
+                        <p-inputnumber
+                            [(ngModel)]="updateReps"
+                            inputStyleClass="update-reps"
+                            inputId="integeronly"
+                            (keydown.enter)="updateHistory(history)"
+                            (focusout)="updateHistory(history)"
+                            min="1"
+                            max="99"
+                            size="small"
+                            [autofocus]="true"
+                        ></p-inputnumber>
+                    }
+                </td>
+                <td class="text-center">{{ history.restTime }}</td>
             </tr>
         </ng-template>
     </p-table>

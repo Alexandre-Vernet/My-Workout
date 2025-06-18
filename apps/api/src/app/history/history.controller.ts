@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { History } from '../../../../../libs/interfaces/history';
 import { AuthGuard } from '../auth/auth.guard';
@@ -32,5 +32,11 @@ export class HistoryController {
     @Get('today')
     findTodayExercicesHistory(@CurrentUser() user: User, @Query('muscleGroupId') muscleGroupId: number, @Query('exerciseId') exerciseId: number) {
         return this.historyService.existingWorkout(user.id, muscleGroupId, exerciseId);
+    }
+
+    @Put(':id')
+    update(@CurrentUser() user: User, @Body() history: History) {
+        history.user = user;
+        return this.historyService.update(history);
     }
 }

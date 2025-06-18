@@ -80,7 +80,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     workout: Workout;
     exercises: Exercise[] = [];
-    exercisesMade: Exercise[] = [];
+    exercisesMade: History[] = [];
     currentExercise: Exercise;
     muscleGroupId: number;
 
@@ -175,15 +175,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     saveExercise() {
-        const exerciseMade: Exercise = {
-            id: this.exercisesMade.length + 1,
-            weight: this.weight,
-            reps: this.reps,
-            restTime: '/'
-        };
-
-        this.exercisesMade = [...this.exercisesMade, exerciseMade];
-
         const history: History = {
             workout: this.workout,
             exercise: this.currentExercise,
@@ -193,7 +184,18 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
         this.historyService.create(history)
             .subscribe({
-                next: () => this.alertService.alert$.next(null),
+                next: (h) => {
+                    const exerciseMade: History = {
+                        id: h.id,
+                        weight: this.weight,
+                        reps: this.reps,
+                        restTime: '/'
+                    };
+
+                    this.exercisesMade = [...this.exercisesMade, exerciseMade];
+
+                    this.alertService.alert$.next(null);
+                },
                 error: (err) => {
                     this.alertService.alert$.next({
                         severity: 'error',
