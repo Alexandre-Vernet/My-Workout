@@ -80,7 +80,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     workout: Workout;
     exercises: Exercise[] = [];
-    exercisesMade: Exercise[] = [];
+    exercisesMade: History[] = [];
     currentExercise: Exercise;
     muscleGroupId: number;
 
@@ -136,7 +136,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.muscleGroupId = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
         this.getCurrentTabFromUrl();
-        this.checkDuplicateWorkout();
         this.findExercises();
         this.isIphone = this.deviceDetectionService.isIphone();
         this.isDarkMode = this.themeService.isDarkMode();
@@ -176,15 +175,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     saveExercise() {
-        const exerciseMade: Exercise = {
-            id: this.exercisesMade.length + 1,
-            weight: this.weight,
-            reps: this.reps,
-            restTime: '/'
-        };
-
-        this.exercisesMade = [...this.exercisesMade, exerciseMade];
-
         const history: History = {
             workout: this.workout,
             exercise: this.currentExercise,
@@ -194,7 +184,18 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
         this.historyService.create(history)
             .subscribe({
-                next: () => this.alertService.alert$.next(null),
+                next: (h) => {
+                    const exerciseMade: History = {
+                        id: h.id,
+                        weight: this.weight,
+                        reps: this.reps,
+                        restTime: '/'
+                    };
+
+                    this.exercisesMade = [...this.exercisesMade, exerciseMade];
+
+                    this.alertService.alert$.next(null);
+                },
                 error: (err) => {
                     this.alertService.alert$.next({
                         severity: 'error',
@@ -383,15 +384,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         return `${ minutes.toString().padStart(2, '0') }:${ seconds.toString().padStart(2, '0') }:${ centiseconds.toString().padStart(2, '0') }`;
     }
 
-    private checkDuplicateWorkout() {
-        this.workoutService.checkDuplicateWorkout(this.muscleGroupId)
-            .subscribe(workout => {
-                if (workout) {
-                    this.showDialogConfirmDuplicateWorkout();
-                }
-            });
-    }
-
 
     private showDialogNoExercisesAdded(muscleGroupId: number) {
         this.confirmationService.confirm({
@@ -411,26 +403,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             },
             accept: () => {
                 this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]);
-            },
-            reject: () => this.redirectWorkoutHome()
-        });
-    }
-
-    private showDialogConfirmDuplicateWorkout() {
-        this.confirmationService.confirm({
-            header: 'Attention',
-            message: 'Vous avez déjà réalisé cette séance aujourd’hui.<br/>Souhaitez-vous la poursuivre ?',
-            closable: true,
-            closeOnEscape: true,
-            dismissableMask: true,
-            icon: 'pi pi-exclamation-triangle',
-            acceptButtonProps: {
-                label: 'Confirmer'
-            },
-            rejectButtonProps: {
-                label: 'Annuler',
-                severity: 'secondary',
-                outlined: true
             },
             reject: () => this.redirectWorkoutHome()
         });
