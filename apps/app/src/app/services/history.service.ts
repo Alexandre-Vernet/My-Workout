@@ -43,4 +43,8 @@ export class HistoryService {
     update(history: History) {
         return this.http.put<History>(`${ this.historyUrl }/${ history.id }`, history);
     }
+
+    delete(history: History) {
+        return this.http.delete<History>(`${ this.historyUrl }/${ history.id }`);
+    }
 }

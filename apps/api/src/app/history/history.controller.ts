@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { History } from '../../../../../libs/interfaces/history';
 import { AuthGuard } from '../auth/auth.guard';
@@ -38,5 +38,10 @@ export class HistoryController {
     update(@CurrentUser() user: User, @Body() history: History) {
         history.user = user;
         return this.historyService.update(history);
+    }
+
+    @Delete(':historyId')
+    delete(@Param('historyId') historyId: number) {
+        return this.historyService.delete(historyId);
     }
 }

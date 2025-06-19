@@ -1,4 +1,13 @@
-import { Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { HistoryService } from '../../../../services/history.service';
@@ -6,6 +15,7 @@ import { InputNumber } from 'primeng/inputnumber';
 import { History } from '../../../../../../../../libs/interfaces/history';
 import { AlertService } from '../../../../services/alert.service';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-exercises-table',
@@ -18,6 +28,7 @@ export class ExercisesTableComponent implements OnChanges {
     @Input() muscleGroupId: number;
     @Input() exerciseId: number;
     @Input() exercisesMade: History[] = [];
+    @Output() exercisesMadeChange = new Subject<History[]>();
 
     @ViewChild('exerciseTable', { read: ElementRef }) exerciseTable!: ElementRef;
 
@@ -82,16 +93,31 @@ export class ExercisesTableComponent implements OnChanges {
                 next: () =>
                     this.alertService.alert$.next({
                         severity: 'success',
-                        message: 'History updated successfully'
+                        message: 'Mise à jour réussie'
                     }),
                 error: (err) =>
                     this.alertService.alert$.next({
                         severity: 'error',
-                        message: err.error.message ?? 'Error updating history'
+                        message: err.error.message ?? 'Impossible de mettre à jour'
                     })
             });
 
         this.editingField = '';
+    }
+
+    deleteHistory(history: History) {
+        this.historyService.delete(history)
+            .subscribe({
+                next: () => {
+                    this.exercisesMade = this.exercisesMade.filter(e => e.id !== history.id);
+                    this.exercisesMadeChange.next(this.exercisesMade);
+                },
+                error: (err) =>
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err.error.message ?? 'Erreur lors de la suppression'
+                    })
+            });
     }
 
 

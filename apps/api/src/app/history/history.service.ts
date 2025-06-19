@@ -118,4 +118,8 @@ export class HistoryService {
         }
         return this.historyRepository.save(history);
     }
+
+    delete(historyId: number) {
+        return this.historyRepository.delete(historyId);
+    }
 }
