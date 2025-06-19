@@ -10,7 +10,7 @@ import { WorkoutService } from '../../services/workout.service';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { AlertService } from '../../services/alert.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-history',
@@ -31,6 +31,7 @@ export class HistoryComponent implements OnInit {
     constructor(
         private readonly historyService: HistoryService,
         private readonly workoutService: WorkoutService,
+        private readonly router: Router,
         private readonly themeService: ThemeService,
         private readonly alertService: AlertService,
         private readonly confirmationService: ConfirmationService
@@ -43,9 +44,10 @@ export class HistoryComponent implements OnInit {
                 next: (history) => {
                     this.isLoading = false;
                     this.history = history;
+                    this.checkNoHistory();
                     this.alertService.alert$.next(null);
                 },
-                error : (err) => {
+                error: (err) => {
                     this.alertService.alert$.next({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible d\'afficher l\'historique'
@@ -83,6 +85,7 @@ export class HistoryComponent implements OnInit {
                                     groups: h.groups.filter(g => g.workoutId !== id)
                                 }))
                                 .filter(h => h.groups.length > 0);
+                            this.checkNoHistory();
                             this.alertService.alert$.next(null);
                         },
                         error: (err) => {
@@ -94,5 +97,23 @@ export class HistoryComponent implements OnInit {
                     });
             }
         });
+    }
+
+    private checkNoHistory() {
+        if (!this.history || this.history.length === 0) {
+            this.confirmationService.confirm({
+                header: 'Attention',
+                message: `Aucun entraînement trouvé dans l'historique.`,
+                closable: false,
+                closeOnEscape: false,
+                dismissableMask: false,
+                icon: 'pi pi-exclamation-triangle',
+                rejectVisible: false,
+                acceptButtonProps: {
+                    label: 'Fermer'
+                },
+                accept: () => this.router.navigate(['/workout'])
+            });
+        }
     }
 }
