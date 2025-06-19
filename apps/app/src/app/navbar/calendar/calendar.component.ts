@@ -64,13 +64,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                             ? workouts.filter(w => w.muscleGroup.name === this.activeFilter.name)
                             : workouts;
 
-
-                        // Filter by name because all cardio exercises has the same id
-                        workouts.forEach(w => {
-                            if (!this.muscleGroups.some(mg => mg.name === w.muscleGroup.name)) {
-                                this.muscleGroups.push(w.muscleGroup);
-                            }
-                        });
+                        this.getMuscleGroups();
 
                         const events: EventInput[] = this.filterWorkouts.map(w => ({
                             id: w.id.toString(),
@@ -84,6 +78,16 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                 });
         })
     };
+
+    private getMuscleGroups() {
+        this.muscleGroups = [];
+        // Filter by name because all cardio exercises has the same id
+        this.workouts.forEach(w => {
+            if (!this.muscleGroups.some(mg => mg.name === w.muscleGroup.name)) {
+                this.muscleGroups.push(w.muscleGroup);
+            }
+        });
+    }
 
     workouts: Workout[] = [];
     filterWorkouts: Workout[] = [];
@@ -165,6 +169,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                         next: () => {
                             this.workouts = this.workouts.filter(w => w.id !== id);
                             this.calendarComponent.getApi().refetchEvents();
+                            this.getMuscleGroups();
 
                             this.alertService.alert$.next(null);
                         },
