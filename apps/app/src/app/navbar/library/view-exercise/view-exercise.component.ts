@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
@@ -12,10 +12,11 @@ import { Tag } from 'primeng/tag';
 import { Drawer } from 'primeng/drawer';
 import { DeviceDetectionService } from '../../../services/device-detection.service';
 import { Skeleton } from 'primeng/skeleton';
+import { replaceSpaces } from '../../../utils/remove-accents';
 
 @Component({
     selector: 'app-view-exercise',
-    imports: [CommonModule, Button, Fieldset, Tag, Drawer, Skeleton],
+    imports: [CommonModule, Button, Fieldset, Tag, Drawer, Skeleton, RouterLink],
     templateUrl: './view-exercise.component.html',
     styleUrl: './view-exercise.component.scss',
     standalone: true
@@ -80,4 +81,6 @@ export class ViewExerciseComponent implements OnInit {
                 }
             });
     }
+
+    protected readonly replaceSpaces = replaceSpaces;
 }

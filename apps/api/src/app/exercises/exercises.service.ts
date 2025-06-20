@@ -137,6 +137,7 @@ export class ExercisesService {
                     'e.name as "name"',
                     'e.description as "description"',
                     'e.isSmartWorkout as "isSmartWorkout"',
+                    'mg.name as "muscleGroup"',
                     `json_agg(
                         json_build_object(
                           'id', m.id,
@@ -150,7 +151,7 @@ export class ExercisesService {
                 .leftJoin('em.muscle', 'm')
                 .leftJoin('m.muscleGroup', 'mg')
                 .where('e.id = :exerciseId', { exerciseId })
-                .groupBy('e.id, ue.id')
+                .groupBy('e.id, ue.id, mg.name')
                 .getRawOne();
         } else {
             return this.exerciseRepository.createQueryBuilder('e')
@@ -159,6 +160,7 @@ export class ExercisesService {
                     'e.name as "name"',
                     'e.description as "description"',
                     'e.isSmartWorkout as "isSmartWorkout"',
+                    'mg.name as "muscleGroup"',
                     `json_agg(
                         json_build_object(
                           'id', m.id,
@@ -170,7 +172,7 @@ export class ExercisesService {
                 .leftJoin('em.muscle', 'm')
                 .leftJoin('m.muscleGroup', 'mg')
                 .where('e.id = :exerciseId', { exerciseId })
-                .groupBy('e.id')
+                .groupBy('e.id, mg.name')
                 .getRawOne();
         }
     }

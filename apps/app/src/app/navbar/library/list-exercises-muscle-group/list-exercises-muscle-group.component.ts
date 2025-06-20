@@ -15,6 +15,7 @@ import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-
 import { UserExercise } from '../../../../../../../libs/interfaces/user-exercise';
 import { Tag } from 'primeng/tag';
 import { Muscle } from '../../../../../../../libs/interfaces/muscle';
+import { removeAccents, replaceSpaces } from '../../../utils/remove-accents';
 
 @Component({
     selector: 'app-list-exercises',
@@ -32,6 +33,8 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     activeFilter: number = null;
 
     isLoading = true;
+
+    protected readonly replaceSpaces = replaceSpaces;
 
     constructor(
         private readonly route: ActivatedRoute,

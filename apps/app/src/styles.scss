@@ -11,6 +11,7 @@ html, body {
     font-size: 14px;
     line-height: 1.5;
     height: 100%;
+    scroll-behavior: smooth;
 }
 
 .display-none {
@@ -41,4 +42,10 @@ html, body {
 
 .mr-2-5 {
     margin-right: 8px;
+}
+
+
+img {
+    max-width: 100%;
+    height: auto;
 }

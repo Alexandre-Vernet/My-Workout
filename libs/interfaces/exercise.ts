@@ -11,4 +11,5 @@ export interface Exercise {
     muscles?: Muscle[];
     weight?: number;
     reps?: number;
+    muscleGroup?: string;
 }
