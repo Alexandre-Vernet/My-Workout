@@ -17,8 +17,17 @@
                role="button"
                tabindex="0" />
 
-        <img *ngIf="showImage" class="image-width mt-2" (error)="showImage = false" [src]="imagePath"
-             [alt]="exercise.name" />
+        <div class="mt-4">
+            @if (isLoading) {
+                <div class="loader">
+                    <p-skeleton width="25rem" height="25rem" />
+                </div>
+            }
+
+            <img *ngIf="showImage" class="image-width" (error)="showImage = false; isLoading = false" [src]="imagePath"
+                 (load)="isLoading = false"
+                 [alt]="exercise.name" />
+        </div>
 
         <div class="card flex justify-center mt-4">
             <p-fieldset legend="Description" [toggleable]="true">
