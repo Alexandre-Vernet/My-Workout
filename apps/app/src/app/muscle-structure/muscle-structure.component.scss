@@ -21,5 +21,11 @@ ul, ol {
 
     li {
         line-height: 2;
+        list-style: none;
+    }
+    li::before {
+        content: "🔹 ";
+        color: red;
+        margin-right: 0.5em;
     }
 }

@@ -19,7 +19,7 @@ import { ResetPasswordComponent } from './auth/reset-password/reset-password.com
 import { HistoryComponent } from './navbar/history/history.component';
 import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exercise.component';
 import { TricepsComponent } from './muscle-structure/triceps/triceps.component';
-import { LegsComponent } from './muscle-structure/legs/legs.component';
+import { JambesComponent } from './muscle-structure/jambes/jambes.component';
 
 
 @Component({
@@ -101,8 +101,8 @@ export const appRoutes: Route[] = [
                 component: TricepsComponent
             },
             {
-                path: 'legs',
-                component: LegsComponent
+                path: 'jambes',
+                component: JambesComponent
             }
         ]
     },
