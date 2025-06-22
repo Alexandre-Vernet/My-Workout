@@ -6,5 +6,5 @@ export const removeAccents = (str: string) => {
 };
 
 export const replaceSpaces = (str: string) => {
-    return removeAccents(str).replace(' ', '-');
+    return removeAccents(str).split(' ').join('-');
 }
