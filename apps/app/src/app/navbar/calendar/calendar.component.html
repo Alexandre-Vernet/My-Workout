@@ -1,4 +1,4 @@
-<div class="m-2 flex flex-row gap-2 flex-wrap mb-3">
+<div class="m-1 p-3 flex flex-row gap-2 mb-3 overflow-auto">
     <ng-container *ngFor="let muscleGroup of muscleGroups">
         <p-tag (click)="filterByMuscleGroup(muscleGroup)" severity="info"
                [ngClass]="{
