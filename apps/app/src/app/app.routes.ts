@@ -21,6 +21,7 @@ import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exerc
 import { TricepsComponent } from './muscle-structure/triceps/triceps.component';
 import { JambesComponent } from './muscle-structure/jambes/jambes.component';
 import { PectorauxComponent } from './muscle-structure/pectoraux/pectoraux.component';
+import { EpaulesComponent } from './muscle-structure/epaules/epaules.component';
 
 
 @Component({
@@ -108,6 +109,10 @@ export const appRoutes: Route[] = [
             {
                 path: 'jambes',
                 component: JambesComponent
+            },
+            {
+                path: 'epaules',
+                component: EpaulesComponent
             }
         ]
     },
