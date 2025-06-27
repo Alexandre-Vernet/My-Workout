@@ -23,6 +23,7 @@ import { JambesComponent } from './muscle-structure/jambes/jambes.component';
 import { PectorauxComponent } from './muscle-structure/pectoraux/pectoraux.component';
 import { EpaulesComponent } from './muscle-structure/epaules/epaules.component';
 import { BicepsComponent } from './muscle-structure/biceps/biceps.component';
+import { AbdominauxComponent } from './muscle-structure/abdominaux/abdominaux.component';
 
 
 @Component({
@@ -118,6 +119,10 @@ export const appRoutes: Route[] = [
             {
                 path: 'biceps',
                 component: BicepsComponent
+            },
+            {
+                path: 'abdominaux',
+                component: AbdominauxComponent
             }
         ]
     },
