@@ -20,6 +20,7 @@ import { HistoryComponent } from './navbar/history/history.component';
 import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exercise.component';
 import { TricepsComponent } from './muscle-structure/triceps/triceps.component';
 import { JambesComponent } from './muscle-structure/jambes/jambes.component';
+import { PectorauxComponent } from './muscle-structure/pectoraux/pectoraux.component';
 
 
 @Component({
@@ -96,6 +97,10 @@ export const appRoutes: Route[] = [
     {
         path: MenuUrls.muscleStructure,
         children: [
+            {
+                path: 'pectoraux',
+                component: PectorauxComponent
+            },
             {
                 path: 'triceps',
                 component: TricepsComponent
