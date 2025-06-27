@@ -161,5 +161,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             });
         });
     }
+
+    protected readonly removeAccents = removeAccents;
 }
 
