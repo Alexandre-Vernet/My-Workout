@@ -24,6 +24,7 @@ import { PectorauxComponent } from './muscle-structure/pectoraux/pectoraux.compo
 import { EpaulesComponent } from './muscle-structure/epaules/epaules.component';
 import { BicepsComponent } from './muscle-structure/biceps/biceps.component';
 import { AbdominauxComponent } from './muscle-structure/abdominaux/abdominaux.component';
+import { DosComponent } from './muscle-structure/dos/dos.component';
 
 
 @Component({
@@ -115,6 +116,10 @@ export const appRoutes: Route[] = [
             {
                 path: 'epaules',
                 component: EpaulesComponent
+            },
+            {
+                path: 'dos',
+                component: DosComponent
             },
             {
                 path: 'biceps',
