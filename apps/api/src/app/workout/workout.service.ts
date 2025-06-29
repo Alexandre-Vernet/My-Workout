@@ -5,6 +5,7 @@ import { Between, Repository } from 'typeorm';
 import { muscleGroupMap } from '../../../../../libs/interfaces/MuscleGroup';
 import { Workout } from '../../../../../libs/interfaces/workout';
 import { removeAccents } from '../../../../app/src/app/utils/remove-accents';
+import { GroupedHistory } from '../../../../../libs/interfaces/history';
 
 @Injectable()
 export class WorkoutService {
@@ -31,7 +32,7 @@ export class WorkoutService {
 
 
     async findById(id: number) {
-        return this.workoutRepository.findOne({
+        const workout: Workout = await this.workoutRepository.findOne({
             where: { id },
             relations: {
                 history: {
@@ -40,6 +41,40 @@ export class WorkoutService {
                 muscleGroup: true
             }
         });
+
+        const historyGroupedByExercise = new Map<number, GroupedHistory[]>();
+
+        workout.history.forEach(h => {
+            const exerciseId = h.exercise.id;
+            if (!historyGroupedByExercise.has(exerciseId)) {
+                historyGroupedByExercise.set(exerciseId, []);
+            }
+            historyGroupedByExercise.get(exerciseId)!.push({
+                weight: h.weight,
+                reps: h.reps ?? null
+            });
+
+            delete h.id;
+            delete h.weight;
+            delete h.reps;
+        });
+
+        const seen = new Set<number>();
+        const uniqueHistory = workout.history.filter(item => {
+            if (seen.has(item.exercise.id)) return false;
+            seen.add(item.exercise.id);
+            return true;
+        });
+
+        uniqueHistory.forEach(h => {
+            h.groupedHistory = historyGroupedByExercise.get(h.exercise.id);
+        });
+
+
+        workout.history = uniqueHistory;
+
+        return workout;
+
     }
 
 

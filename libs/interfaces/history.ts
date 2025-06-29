@@ -17,4 +17,11 @@ export interface History {
         muscleGroup: MuscleGroup,
         exercises: Exercise[]
     }[],
+    groupedHistory?: GroupedHistory[]
+}
+
+
+export interface GroupedHistory {
+    weight: number;
+    reps: number;
 }
