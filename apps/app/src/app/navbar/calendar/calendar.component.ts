@@ -55,7 +55,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         events: ((info, success, failure) => {
             const { start, end } = info;
 
-            this.workoutService.findAll(start, end)
+            this.workoutService.findByDate(start, end)
                 .subscribe({
                     next: (workouts) => {
                         this.workouts = workouts;

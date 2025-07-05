@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { History } from '../../../../../libs/interfaces/history';
 import { HttpClient } from '@angular/common/http';
+import { Workout } from '../../../../../libs/interfaces/workout';
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +21,7 @@ export class HistoryService {
     }
 
     find() {
-        return this.http.get<History[]>(this.historyUrl);
+        return this.http.get<Workout[]>(this.historyUrl);
     }
 
     findLastHistoryWeightByExerciseId(exerciseId: number) {

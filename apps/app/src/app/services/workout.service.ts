@@ -20,11 +20,15 @@ export class WorkoutService {
     }
 
     findById(id: number) {
-        return this.http.get<Workout>(`${ this.workoutUrl }/${ id }`);
+        return this.http.get<Workout>(`${ this.workoutUrl }/${ id }/`);
     }
 
-    findAll(start: Date, end: Date) {
-        return this.http.get<Workout[]>(this.workoutUrl, {
+    find() {
+        return this.http.get<Workout[]>(this.workoutUrl);
+    }
+
+    findByDate(start: Date, end: Date) {
+        return this.http.get<Workout[]>(`${ this.workoutUrl }/find-by-date`, {
             params: {
                 start: start.toISOString(),
                 end: end.toISOString()
