@@ -40,22 +40,7 @@ export class HistoryComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.workoutService.find()
-            .subscribe({
-                next: (workout) => {
-                    this.isLoading = false;
-                    this.workout = workout;
-                    this.checkNoWorkout();
-                    this.alertService.alert$.next(null);
-                },
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'afficher l\'historique'
-                    });
-                }
-            });
-
+        this.getHistories();
         this.isDarkMode = this.themeService.isDarkMode();
     }
 
@@ -82,20 +67,7 @@ export class HistoryComponent implements OnInit {
                 this.historyService.deleteIds(historyId)
                     .subscribe({
                         next: () => {
-                            this.workout = this.workout
-                                .map(h => ({
-                                    ...h,
-                                    muscleGroups: h.muscleGroups.map(mg => ({
-                                        ...mg,
-                                        history: mg.history.filter(h => !historyId.includes(h.id))
-                                    })).filter(mg => mg.history.length > 0) // on garde que les mg qui ont encore de l'historique
-                                }))
-                                .filter(h => h.muscleGroups.length > 0); // on garde que les workout qui ont encore des muscleGroups
-
-                            this.workout = [...this.workout];
-
-                            this.checkNoWorkout();
-                            this.alertService.alert$.next(null);
+                            this.getHistories();
                         },
                         error: (err) => {
                             this.alertService.alert$.next({
@@ -106,6 +78,24 @@ export class HistoryComponent implements OnInit {
                     });
             }
         });
+    }
+
+    private getHistories() {
+        this.workoutService.find()
+            .subscribe({
+                next: (workout) => {
+                    this.isLoading = false;
+                    this.workout = workout;
+                    this.checkNoWorkout();
+                    this.alertService.alert$.next(null);
+                },
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'afficher l\'historique'
+                    });
+                }
+            });
     }
 
     private checkNoWorkout() {
