@@ -35,6 +35,9 @@ export class HistoryService {
 
 
     existingWorkout(userId: number, muscleGroupId: number, exerciseId: number) {
+        const twelveHoursAgo = new Date();
+        twelveHoursAgo.setHours(twelveHoursAgo.getHours() - 12);
+
         return this.historyRepository
             .createQueryBuilder('h')
             .leftJoin('h.exercise', 'e')
@@ -42,7 +45,7 @@ export class HistoryService {
             .where('w.user.id = :userId', { userId })
             .andWhere('e.id = :exerciseId', { exerciseId })
             .andWhere('w.muscleGroup.id = :muscleGroupId', { muscleGroupId })
-            .andWhere('DATE(w.date) = DATE(:date)', { date: new Date() })
+            .andWhere('w.date >= :since', { since: twelveHoursAgo })
             .orderBy('h.id', 'ASC')
             .getMany();
     }
