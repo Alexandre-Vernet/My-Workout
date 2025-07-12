@@ -53,7 +53,7 @@
                         <span *ngIf="gp.reps">{{ gp.reps }}</span>
                         <span *ngIf="gp.reps && gp.weight">x</span>
                         <span *ngIf="gp.weight">{{ gp.weight }} kg</span>
-                        <span *ngIf="!gp.weight && gp.reps <= 1">répétition</span>
+                        <span *ngIf="!gp.weight && gp.reps <= 1 && gp.reps > 0">répétition</span>
                         <span *ngIf="!gp.weight && gp.reps > 1">répétitions</span>
                     </div>
                 </ng-container>
