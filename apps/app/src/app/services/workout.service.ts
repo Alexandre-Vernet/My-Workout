@@ -20,7 +20,7 @@ export class WorkoutService {
     }
 
     findById(id: number) {
-        return this.http.get<Workout>(`${ this.workoutUrl }/${ id }/`);
+        return this.http.get<Workout>(`${ this.workoutUrl }/${ id }`);
     }
 
     find() {

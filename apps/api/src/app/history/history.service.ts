@@ -3,13 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HistoryEntity } from './history.entity';
 import { Repository } from 'typeorm';
 import { History } from '../../../../../libs/interfaces/history';
+import { WorkoutService } from '../workout/workout.service';
 
 @Injectable()
 export class HistoryService {
 
     constructor(
         @InjectRepository(HistoryEntity)
-        private readonly historyRepository: Repository<HistoryEntity>
+        private readonly historyRepository: Repository<HistoryEntity>,
+        private readonly workoutService: WorkoutService
     ) {
     }
 
@@ -54,5 +56,28 @@ export class HistoryService {
 
     delete(historyId: number) {
         return this.historyRepository.delete(historyId);
+    }
+
+    async deleteIds(userId: number, ids: number[]) {
+        const historyOne = await this.historyRepository.findOne({
+            where: {
+                id: ids[0],
+                workout: {
+                    user: {
+                        id: userId
+                    }
+                }
+            },
+            relations: {
+                workout: true
+            }
+        });
+
+        await Promise.all(
+            ids.map(async id => this.historyRepository.delete({ id }))
+        );
+
+        // Delete workout if no history left
+        return this.workoutService.deleteWorkoutIfNoHistory(historyOne?.workout?.id);
     }
 }

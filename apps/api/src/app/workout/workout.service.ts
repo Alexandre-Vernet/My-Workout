@@ -10,7 +10,6 @@ import { GroupedHistory } from '../../../../../libs/interfaces/history';
 @Injectable()
 export class WorkoutService {
 
-
     constructor(
         @InjectRepository(WorkoutEntity)
         private readonly workoutRepository: Repository<WorkoutEntity>
@@ -70,7 +69,7 @@ export class WorkoutService {
             }
 
             for (const history of workout.history) {
-                const { reps, weight, exercise } = history;
+                const { id, reps, weight, exercise } = history;
 
                 let exerciseEntry = groupEntry.history.find(e =>
                     e.exercise.id === exercise.id
@@ -84,7 +83,7 @@ export class WorkoutService {
                     groupEntry.history.push(exerciseEntry);
                 }
 
-                exerciseEntry.groupedHistory.push({ reps, weight });
+                exerciseEntry.groupedHistory.push({ id, reps, weight });
             }
         }
 
@@ -113,6 +112,7 @@ export class WorkoutService {
                 historyGroupedByExercise.set(exerciseId, []);
             }
             historyGroupedByExercise.get(exerciseId)!.push({
+                id: h.id,
                 weight: h.weight,
                 reps: h.reps ?? null
             });
@@ -189,6 +189,21 @@ export class WorkoutService {
 
         if (historyToDelete) {
             return this.workoutRepository.delete({ id: historyToDelete.id });
+        }
+    }
+
+    async deleteWorkoutIfNoHistory(workoutId: number) {
+        const workout = await this.workoutRepository.findOne({
+            where: {
+                id: workoutId
+            },
+            relations: {
+                history: true
+            }
+        });
+
+        if (workout?.history.length === 0) {
+            return this.workoutRepository.delete({ id: workout.id });
         }
     }
 }

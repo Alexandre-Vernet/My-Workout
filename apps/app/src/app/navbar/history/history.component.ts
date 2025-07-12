@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 import { Workout } from '../../../../../../libs/interfaces/workout';
 import { Button } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
+import { GroupedHistory } from '../../../../../../libs/interfaces/history';
+import { HistoryService } from '../../services/history.service';
 
 @Component({
     selector: 'app-history',
@@ -29,6 +31,7 @@ export class HistoryComponent implements OnInit {
 
     constructor(
         private readonly workoutService: WorkoutService,
+        private readonly historyService: HistoryService,
         private readonly router: Router,
         private readonly themeService: ThemeService,
         private readonly alertService: AlertService,
@@ -56,7 +59,9 @@ export class HistoryComponent implements OnInit {
         this.isDarkMode = this.themeService.isDarkMode();
     }
 
-    deleteWorkout(id: number, muscleGroupName: string, date: Date) {
+    deleteWorkout(groupedHistory: GroupedHistory[], muscleGroupName: string, date: Date) {
+        const historyId = groupedHistory.map(g => g.id);
+
         const newDate = new Date(date);
         this.confirmationService.confirm({
             header: 'Attention',
@@ -74,15 +79,21 @@ export class HistoryComponent implements OnInit {
                 outlined: true
             },
             accept: () => {
-                this.workoutService.delete(id)
+                this.historyService.deleteIds(historyId)
                     .subscribe({
                         next: () => {
-                            // this.history = this.history
-                            //     .map(h => ({
-                            //         ...h,
-                            //         groups: h.groups.filter(g => g.workoutId !== id)
-                            //     }))
-                            //     .filter(h => h.groups.length > 0);
+                            this.workout = this.workout
+                                .map(h => ({
+                                    ...h,
+                                    muscleGroups: h.muscleGroups.map(mg => ({
+                                        ...mg,
+                                        history: mg.history.filter(h => !historyId.includes(h.id))
+                                    })).filter(mg => mg.history.length > 0) // on garde que les mg qui ont encore de l'historique
+                                }))
+                                .filter(h => h.muscleGroups.length > 0); // on garde que les workout qui ont encore des muscleGroups
+
+                            this.workout = [...this.workout];
+
                             this.checkNoWorkout();
                             this.alertService.alert$.next(null);
                         },

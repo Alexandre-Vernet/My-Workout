@@ -17,6 +17,7 @@ export interface History {
 
 
 export interface GroupedHistory {
+    id: number;
     weight: number;
     reps: number;
     muscleGroup?: MuscleGroup,

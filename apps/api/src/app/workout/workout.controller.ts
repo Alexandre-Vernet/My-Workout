@@ -41,7 +41,7 @@ export class WorkoutController {
     }
 
     @Delete()
-    deleteByUserId(@CurrentUser() user: User, @Query('id') id: number) {
+    delete(@CurrentUser() user: User, @Query('id') id: number) {
         return this.workoutService.delete(user.id, Number(id));
     }
 }

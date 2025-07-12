@@ -37,11 +37,11 @@
                 <h2 class="mb-2 text-2xl">{{ w.date | date:'fullDate' | titlecase }}</h2>
 
                 <!-- Muscle group name -->
-                <div *ngFor="let mg of w.muscleGroups" class="flex flex-column mb-3">
-                    <h3 class="mb-1 text-color-secondary text-2xl">{{ mg.muscleGroup.name }}</h3>
+                <div *ngFor="let muscleGroup of w.muscleGroups" class="flex flex-column mb-3">
+                    <h3 class="mb-1 text-color-secondary text-2xl">{{ muscleGroup.muscleGroup.name }}</h3>
 
                     <!-- List exercises -->
-                    <div *ngFor="let h of mg.history; let i = index"
+                    <div *ngFor="let h of muscleGroup.history; let i = index"
                          class="mt-3 p-3 border-round-lg"
                          [ngClass]="{
                     'shadow-dark': isDarkMode,
@@ -53,13 +53,12 @@
                                 <span *ngIf="groupedHistory.reps">{{ groupedHistory.reps }}</span>
                                 <span *ngIf="groupedHistory.reps && groupedHistory.weight">x</span>
                                 <span *ngIf="groupedHistory.weight">{{ groupedHistory.weight }} kg</span>
-                                <span *ngIf="!groupedHistory.weight">Poids du corps</span>
+                                <span *ngIf="!groupedHistory.weight && groupedHistory.reps">répétitions</span>
                             </div>
                         </ng-container>
-                        <!--                    <hr class="mt-3 mb-3" *ngIf="i >= 0 && i <= w.history.length" />-->
                         <div class="flex justify-content-end mt-3">
                             <p-button pRipple icon="pi pi-trash" severity="danger"
-                                      (onClick)="deleteWorkout(w.id, w.muscleGroup.name, h.workout.date)" />
+                                      (onClick)="deleteWorkout(h.groupedHistory, h.exercise.name, w.date)" />
                         </div>
                     </div>
                 </div>
