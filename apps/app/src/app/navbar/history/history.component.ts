@@ -68,6 +68,10 @@ export class HistoryComponent implements OnInit {
                     .subscribe({
                         next: () => {
                             this.getHistories();
+                            this.alertService.alert$.next({
+                                severity: 'success',
+                                message: 'Suppression effectuée'
+                            });
                         },
                         error: (err) => {
                             this.alertService.alert$.next({
@@ -87,7 +91,6 @@ export class HistoryComponent implements OnInit {
                     this.isLoading = false;
                     this.workout = workout;
                     this.checkNoWorkout();
-                    this.alertService.alert$.next(null);
                 },
                 error: (err) => {
                     this.alertService.alert$.next({

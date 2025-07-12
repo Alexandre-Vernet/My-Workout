@@ -11,20 +11,14 @@
                     <h3 class="mb-4" [ngClass]="{
                     'text-black-alpha-90': isDarkMode
                     }">
-                        <p-skeleton width="5rem" styleClass="mb-2" />
+                        <p-skeleton width="8rem" styleClass="mb-2" />
                     </h3>
 
                     <ng-container *ngFor="let exercise of [1, 2, 3]">
-                        <div class="flex justify-content-between mb-2">
-                            <p-skeleton width="8rem" styleClass="mb-2" />
-
-                            <div class="flex flex-column text-right text-sm text-color-secondary">
-                                <p-skeleton width="2rem" />
-                            </div>
-                        </div>
+                            <p-skeleton width="5rem" styleClass="mb-2" />
                     </ng-container>
                     <div class="flex justify-content-end mt-3">
-                        <p-skeleton width="4rem" height="3rem" />
+                        <p-skeleton width="2rem" height="2rem" />
                     </div>
                 </div>
             </div>
@@ -53,7 +47,8 @@
                                 <span *ngIf="groupedHistory.reps">{{ groupedHistory.reps }}</span>
                                 <span *ngIf="groupedHistory.reps && groupedHistory.weight">x</span>
                                 <span *ngIf="groupedHistory.weight">{{ groupedHistory.weight }} kg</span>
-                                <span *ngIf="!groupedHistory.weight && groupedHistory.reps">répétitions</span>
+                                <span *ngIf="!groupedHistory.weight && groupedHistory.reps && groupedHistory.reps <= 1">répétition</span>
+                                <span *ngIf="!groupedHistory.weight && groupedHistory.reps && groupedHistory.reps > 1">répétitions</span>
                             </div>
                         </ng-container>
                         <div class="flex justify-content-end mt-3">

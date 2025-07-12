@@ -79,16 +79,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         })
     };
 
-    private getMuscleGroups() {
-        this.muscleGroups = [];
-        // Filter by name because all cardio exercises has the same id
-        this.workouts.forEach(w => {
-            if (!this.muscleGroups.some(mg => mg.name === w.muscleGroup.name)) {
-                this.muscleGroups.push(w.muscleGroup);
-            }
-        });
-    }
-
     workouts: Workout[] = [];
     filterWorkouts: Workout[] = [];
     activeFilter: MuscleGroup;
@@ -171,7 +161,10 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                             this.calendarComponent.getApi().refetchEvents();
                             this.getMuscleGroups();
 
-                            this.alertService.alert$.next(null);
+                            this.alertService.alert$.next({
+                                severity: 'success',
+                                message: 'Suppression effectuée'
+                            });
                         },
                         error: (err) => {
                             this.alertService.alert$.next({
@@ -200,6 +193,16 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         this.alertService.alert$.next(alert);
     }
 
+
+    private getMuscleGroups() {
+        this.muscleGroups = [];
+        // Filter by name because all cardio exercises has the same id
+        this.workouts.forEach(w => {
+            if (!this.muscleGroups.some(mg => mg.name === w.muscleGroup.name)) {
+                this.muscleGroups.push(w.muscleGroup);
+            }
+        });
+    }
 
     private viewHistory(info: EventClickArg) {
         const workoutId = Number(info.event.id);
