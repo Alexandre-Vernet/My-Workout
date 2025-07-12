@@ -12,9 +12,13 @@ export interface History {
     reps?: number;
     restTime?: string;
     date?: Date,
-    groups?: {
-        workoutId: number;
-        muscleGroup: MuscleGroup,
-        exercises: Exercise[]
-    }[],
+    groupedHistory?: GroupedHistory[]
+}
+
+
+export interface GroupedHistory {
+    id: number;
+    weight: number;
+    reps: number;
+    muscleGroup?: MuscleGroup,
 }

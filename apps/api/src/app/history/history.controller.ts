@@ -19,11 +19,6 @@ export class HistoryController {
         return this.historyService.create(history);
     }
 
-    @Get()
-    find(@CurrentUser() user: User) {
-        return this.historyService.find(user.id);
-    }
-
     @Get('last')
     findLastHistoryWeightByExerciseId(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
         return this.historyService.findLastHistoryWeightByExerciseId(user.id, exerciseId);
@@ -38,6 +33,11 @@ export class HistoryController {
     update(@CurrentUser() user: User, @Body() history: History) {
         history.user = user;
         return this.historyService.update(history);
+    }
+
+    @Delete('delete-ids')
+    deleteIds(@CurrentUser() user: User, @Body('id') ids: number[]) {
+        return this.historyService.deleteIds(user.id, ids);
     }
 
     @Delete(':historyId')

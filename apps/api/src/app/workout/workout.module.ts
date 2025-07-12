@@ -11,7 +11,8 @@ import { WorkoutController } from './workout.controller';
         AuthModule
     ],
     controllers: [WorkoutController],
-    providers: [WorkoutService]
+    providers: [WorkoutService],
+    exports: [WorkoutService]
 })
 export class WorkoutModule {
 }

@@ -22,13 +22,15 @@
     background-color: transparent !important;
 
     .fc-daygrid-day-frame > .fc-daygrid-day-top > a.fc-daygrid-day-number {
-        display: inline-block;
-        min-width: 2ch;
-        text-align: center;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 2em;
+        aspect-ratio: 1;
         background: var(--p-primary-700);
         color: #FFFFFF;
         border-radius: 50%;
-        padding: 5px;
+        font-size: 0.9em;
         line-height: 1;
     }
 }

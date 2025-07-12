@@ -19,10 +19,6 @@ export class HistoryService {
         return this.http.post<History>(this.historyUrl, history);
     }
 
-    find() {
-        return this.http.get<History[]>(this.historyUrl);
-    }
-
     findLastHistoryWeightByExerciseId(exerciseId: number) {
         return this.http.get<History>(`${ this.historyUrl }/last`, {
             params: {
@@ -46,5 +42,13 @@ export class HistoryService {
 
     delete(history: History) {
         return this.http.delete<History>(`${ this.historyUrl }/${ history.id }`);
+    }
+
+    deleteIds(id: number[]) {
+        return this.http.delete<void>(`${ this.historyUrl }/delete-ids`, {
+            body: {
+                id
+            }
+        });
     }
 }
