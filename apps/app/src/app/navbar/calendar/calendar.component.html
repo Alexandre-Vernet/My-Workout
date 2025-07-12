@@ -31,8 +31,6 @@
     <div *ngIf="showWorkout" class="p-2">
 
         <div class="p-3 border-round-lg" [ngClass]="{
-                    'recommended-light': !isDarkMode,
-                    'recommended-dark': isDarkMode,
                     'shadow-dark': isDarkMode,
                     'shadow-light': !isDarkMode
                     }">
@@ -45,7 +43,8 @@
                 <hr class="mt-3 mb-3" *ngIf="i > 0" />
 
                 <!-- Exercise name -->
-                <div [routerLink]="['/', 'library', 'exercises', history?.exercise?.id]" class="text-primary text-lg mb-1">
+                <div [routerLink]="['/', 'library', 'exercises', history?.exercise?.id]"
+                     class="text-primary text-lg mb-1">
                     {{ history.exercise.name }}
                 </div>
 
@@ -54,7 +53,8 @@
                         <span *ngIf="gp.reps">{{ gp.reps }}</span>
                         <span *ngIf="gp.reps && gp.weight">x</span>
                         <span *ngIf="gp.weight">{{ gp.weight }} kg</span>
-                        <span *ngIf="!gp.weight">Poids du corps</span>
+                        <span *ngIf="!gp.weight && gp.reps <= 1 && gp.reps > 0">répétition</span>
+                        <span *ngIf="!gp.weight && gp.reps > 1">répétitions</span>
                     </div>
                 </ng-container>
             </ng-container>

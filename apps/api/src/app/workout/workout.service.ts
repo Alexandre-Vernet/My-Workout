@@ -10,7 +10,6 @@ import { GroupedHistory } from '../../../../../libs/interfaces/history';
 @Injectable()
 export class WorkoutService {
 
-
     constructor(
         @InjectRepository(WorkoutEntity)
         private readonly workoutRepository: Repository<WorkoutEntity>
@@ -28,6 +27,69 @@ export class WorkoutService {
         }
 
         return this.workoutRepository.save(workout);
+    }
+
+    async find(userId: number) {
+        const workoutEntity = await this.workoutRepository.find({
+            where: { user: { id: userId } },
+            relations: {
+                muscleGroup: true,
+                history: { exercise: true }
+            }
+        });
+
+        const result: Workout[] = [];
+
+        for (const workout of workoutEntity) {
+            const workoutDate = new Date(workout.date);
+            workoutDate.setHours(0, 0, 0, 0);
+
+            let dayEntry = result.find(entry =>
+                new Date(entry.date).getTime() === workoutDate.getTime()
+            );
+
+            if (!dayEntry) {
+                dayEntry = {
+                    date: workoutDate,
+                    muscleGroups: []
+                };
+                result.push(dayEntry);
+            }
+
+            let groupEntry = dayEntry.muscleGroups.find(g =>
+                g.muscleGroup.id === workout.muscleGroup.id
+            );
+
+            if (!groupEntry) {
+                groupEntry = {
+                    muscleGroup: workout.muscleGroup,
+                    history: []
+                };
+                dayEntry.muscleGroups.push(groupEntry);
+            }
+
+            for (const history of workout.history) {
+                const { id, reps, weight, exercise } = history;
+
+                let exerciseEntry = groupEntry.history.find(e =>
+                    e.exercise.id === exercise.id
+                );
+
+                if (!exerciseEntry) {
+                    exerciseEntry = {
+                        exercise,
+                        groupedHistory: []
+                    };
+                    groupEntry.history.push(exerciseEntry);
+                }
+
+                exerciseEntry.groupedHistory.push({ id, reps, weight });
+            }
+        }
+
+        result.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+        return result;
     }
 
 
@@ -50,6 +112,7 @@ export class WorkoutService {
                 historyGroupedByExercise.set(exerciseId, []);
             }
             historyGroupedByExercise.get(exerciseId)!.push({
+                id: h.id,
                 weight: h.weight,
                 reps: h.reps ?? null
             });
@@ -78,7 +141,7 @@ export class WorkoutService {
     }
 
 
-    async find(userId: number, start: Date, end: Date) {
+    async findByDate(userId: number, start: Date, end: Date) {
         const workout = await this.workoutRepository.find({
             where: {
                 user: {
