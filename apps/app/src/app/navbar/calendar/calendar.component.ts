@@ -202,6 +202,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                 this.muscleGroups.push(w.muscleGroup);
             }
         });
+
+        this.muscleGroups.sort((a, b) => a.name.localeCompare(b.name));
     }
 
     private viewHistory(info: EventClickArg) {
