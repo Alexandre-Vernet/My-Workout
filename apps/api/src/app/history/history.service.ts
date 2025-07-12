@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HistoryEntity } from './history.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { History } from '../../../../../libs/interfaces/history';
 import { WorkoutService } from '../workout/workout.service';
 
@@ -59,9 +59,9 @@ export class HistoryService {
     }
 
     async deleteIds(userId: number, ids: number[]) {
-        const historyOne = await this.historyRepository.findOne({
+        const histories = await this.historyRepository.find({
             where: {
-                id: ids[0],
+                id: In(ids),
                 workout: {
                     user: {
                         id: userId
@@ -73,11 +73,25 @@ export class HistoryService {
             }
         });
 
+        if (histories.length === 0) {
+            return;
+        }
+
+
         await Promise.all(
-            ids.map(async id => this.historyRepository.delete({ id }))
+            histories.map(history => this.historyRepository.delete({ id: history.id }))
         );
 
-        // Delete workout if no history left
-        return this.workoutService.deleteWorkoutIfNoHistory(historyOne?.workout?.id);
+        const workoutId = histories[0].workout.id;
+
+        const historyRemaining = await this.historyRepository.exists({
+            where: {
+                workout: { id: workoutId }
+            }
+        });
+
+        if (!historyRemaining) {
+            return this.workoutService.delete(userId, workoutId);
+        }
     }
 }

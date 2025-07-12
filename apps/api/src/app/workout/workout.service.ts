@@ -191,19 +191,4 @@ export class WorkoutService {
             return this.workoutRepository.delete({ id: historyToDelete.id });
         }
     }
-
-    async deleteWorkoutIfNoHistory(workoutId: number) {
-        const workout = await this.workoutRepository.findOne({
-            where: {
-                id: workoutId
-            },
-            relations: {
-                history: true
-            }
-        });
-
-        if (workout?.history.length === 0) {
-            return this.workoutRepository.delete({ id: workout.id });
-        }
-    }
 }
