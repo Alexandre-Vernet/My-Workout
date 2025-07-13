@@ -5,6 +5,7 @@ import Chart, { ChartItem } from 'chart.js/auto';
 import { AlertService } from '../../services/alert.service';
 import { ExerciseService } from '../../services/exercise.service';
 import { Exercise } from '../../../../../../libs/interfaces/exercise';
+import { WorkoutService } from '../../services/workout.service';
 
 @Component({
     selector: 'app-graphs',
@@ -19,12 +20,14 @@ export class GraphsComponent implements OnInit {
     totalWeight = 0;
     totalReps = 0;
     maxWeight = 0;
+    totalDaysWorkout = 0;
 
     exerciseId = 1;
 
     constructor(
         private readonly historyService: HistoryService,
         private readonly exerciseService: ExerciseService,
+        private readonly workoutService: WorkoutService,
         private readonly alertService: AlertService
     ) {
     }
@@ -38,6 +41,7 @@ export class GraphsComponent implements OnInit {
                     this.countTotalWeight();
                     this.countTotalReps();
                     this.countMaxWeight();
+                    this.countTotalDaysWorkout();
                 },
                 error: (err) => {
                     this.alertService.alert$.next({
@@ -118,6 +122,19 @@ export class GraphsComponent implements OnInit {
         this.historyService.countMaxWeight(this.exerciseId)
             .subscribe({
                 next: (maxWeight => this.maxWeight = maxWeight),
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Erreur lors de la récupération des données'
+                    });
+                }
+            });
+    }
+
+    private countTotalDaysWorkout() {
+        this.workoutService.countTotalDaysWorkout()
+            .subscribe({
+                next: (totalDaysWorkout => this.totalDaysWorkout = totalDaysWorkout),
                 error: (err) => {
                     this.alertService.alert$.next({
                         severity: 'error',
