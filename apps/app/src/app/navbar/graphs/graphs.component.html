@@ -1,3 +1,8 @@
-<h1 class="text-center mt-1">{{ exercise.name }}</h1>
+<h1 class="text-center mt-1">{{ exercise?.name }}</h1>
 
-<canvas id="bar" class="mt-8"></canvas>
+<canvas id="bar" class="mt-8 mb-6"></canvas>
+
+<div class="p-1 flex justify-center align-items-center gap-2 text-xl">
+    <span>Charge totale utilisée : </span>
+    <span>{{ totalWeight }} kg</span>
+</div>

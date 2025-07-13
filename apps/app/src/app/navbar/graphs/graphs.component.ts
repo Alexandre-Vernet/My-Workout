@@ -16,6 +16,7 @@ import { Exercise } from '../../../../../../libs/interfaces/exercise';
 export class GraphsComponent implements OnInit {
 
     exercise: Exercise;
+    totalWeight = 0;
 
     exerciseId = 1;
 
@@ -27,12 +28,12 @@ export class GraphsComponent implements OnInit {
     }
 
     ngOnInit() {
-
         this.exerciseService.getExercise(this.exerciseId)
             .subscribe({
                 next: (exercise) => {
                     this.exercise = exercise;
                     this.bar();
+                    this.countTotalWeight();
                 },
                 error: (err) => {
                     this.alertService.alert$.next({
@@ -74,6 +75,19 @@ export class GraphsComponent implements OnInit {
                         }
                     });
                 }),
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Erreur lors de la récupération des données'
+                    });
+                }
+            });
+    }
+
+    private countTotalWeight() {
+        this.historyService.countTotalWeight(this.exerciseId)
+            .subscribe({
+                next: (totalWeight => this.totalWeight = totalWeight),
                 error: (err) => {
                     this.alertService.alert$.next({
                         severity: 'error',

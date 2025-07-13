@@ -47,4 +47,12 @@ export class HistoryService {
             }
         });
     }
+
+    countTotalWeight(exerciseId: number) {
+        return this.http.get<number>(`${ this.historyUrl }/count-total-weight`, {
+            params: {
+                exerciseId
+            }
+        });
+    }
 }

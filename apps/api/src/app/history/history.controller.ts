@@ -38,4 +38,9 @@ export class HistoryController {
     graphs(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
         return this.historyService.graphs(user.id, exerciseId);
     }
+
+    @Get('count-total-weight')
+    countTotalWeight(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
+        return this.historyService.countTotalWeight(user.id, exerciseId);
+    }
 }

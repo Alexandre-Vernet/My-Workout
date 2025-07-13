@@ -136,4 +136,21 @@ export class HistoryService {
             .orderBy('TO_CHAR(w.date, \'MM-YYYY\')', 'ASC')
             .getRawMany();
     }
+
+    async countTotalWeight(userId: number, exerciseId: number) {
+        const histories: History[] = await this.historyRepository.find({
+            where: {
+                exercise: {
+                    id: exerciseId
+                },
+                workout: {
+                    user: {
+                        id: userId
+                    }
+                }
+            }
+        });
+
+        return histories.reduce((acc, h) => acc + h.weight, 0);
+    }
 }
