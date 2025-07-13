@@ -44,6 +44,11 @@ export class HistoryController {
         return this.historyService.countTotalWeight(user.id, exerciseId);
     }
 
+    @Get('count-total-reps')
+    countTotalReps(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
+        return this.historyService.countTotalReps(user.id, exerciseId);
+    }
+
     @Get('count-max-weight')
     countMaxWeight(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
         return this.historyService.countMaxWeight(user.id, exerciseId);

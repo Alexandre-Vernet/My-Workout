@@ -56,6 +56,14 @@ export class HistoryService {
         });
     }
 
+    countTotalReps(exerciseId: number) {
+        return this.http.get<number>(`${ this.historyUrl }/count-total-reps`, {
+            params: {
+                exerciseId
+            }
+        });
+    }
+
     countMaxWeight(exerciseId: number) {
         return this.http.get<number>(`${ this.historyUrl }/count-max-weight`, {
             params: {

@@ -173,4 +173,21 @@ export class HistoryService {
 
         return history.weight;
     }
+
+    async countTotalReps(userId: number, exerciseId: number) {
+        const histories: History[] = await this.historyRepository.find({
+            where: {
+                exercise: {
+                    id: exerciseId
+                },
+                workout: {
+                    user: {
+                        id: userId
+                    }
+                }
+            }
+        });
+
+        return histories.reduce((acc, h) => acc + h.reps, 0);
+    }
 }
