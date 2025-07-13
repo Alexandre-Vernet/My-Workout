@@ -153,4 +153,24 @@ export class HistoryService {
 
         return histories.reduce((acc, h) => acc + h.weight, 0);
     }
+
+    async countMaxWeight(userId: number, exerciseId: number) {
+        const history = await this.historyRepository.findOne({
+            order: {
+                weight: 'DESC'
+            },
+            where: {
+                exercise: {
+                    id: exerciseId
+                },
+                workout: {
+                    user: {
+                        id: userId
+                    }
+                }
+            }
+        });
+
+        return history.weight;
+    }
 }

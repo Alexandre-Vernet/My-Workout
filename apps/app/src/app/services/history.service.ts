@@ -55,4 +55,12 @@ export class HistoryService {
             }
         });
     }
+
+    countMaxWeight(exerciseId: number) {
+        return this.http.get<number>(`${ this.historyUrl }/count-max-weight`, {
+            params: {
+                exerciseId
+            }
+        });
+    }
 }

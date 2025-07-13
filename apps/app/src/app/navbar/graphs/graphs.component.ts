@@ -17,6 +17,7 @@ export class GraphsComponent implements OnInit {
 
     exercise: Exercise;
     totalWeight = 0;
+    maxWeight = 0;
 
     exerciseId = 1;
 
@@ -34,6 +35,7 @@ export class GraphsComponent implements OnInit {
                     this.exercise = exercise;
                     this.bar();
                     this.countTotalWeight();
+                    this.countMaxWeight();
                 },
                 error: (err) => {
                     this.alertService.alert$.next({
@@ -88,6 +90,19 @@ export class GraphsComponent implements OnInit {
         this.historyService.countTotalWeight(this.exerciseId)
             .subscribe({
                 next: (totalWeight => this.totalWeight = totalWeight),
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Erreur lors de la récupération des données'
+                    });
+                }
+            });
+    }
+
+    private countMaxWeight() {
+        this.historyService.countMaxWeight(this.exerciseId)
+            .subscribe({
+                next: (maxWeight => this.maxWeight = maxWeight),
                 error: (err) => {
                     this.alertService.alert$.next({
                         severity: 'error',
