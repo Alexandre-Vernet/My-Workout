@@ -10,7 +10,7 @@ export interface History {
     exercise?: Exercise;
     weight?: number;
     reps?: number;
-    date?: Date,
+    date?: Date | string;
     groups?: {
         workoutId: number;
         muscleGroup: MuscleGroup,

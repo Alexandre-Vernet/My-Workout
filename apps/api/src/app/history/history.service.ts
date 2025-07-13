@@ -3,13 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HistoryEntity } from './history.entity';
 import { Repository } from 'typeorm';
 import { History } from '../../../../../libs/interfaces/history';
+import { ExercisesService } from '../exercises/exercises.service';
+import { CustomBadRequestException } from '../exceptions/CustomBadRequestException';
+import { ErrorCode } from '../../../../../libs/error-code/error-code';
 
 @Injectable()
 export class HistoryService {
 
     constructor(
         @InjectRepository(HistoryEntity)
-        private readonly historyRepository: Repository<HistoryEntity>
+        private readonly historyRepository: Repository<HistoryEntity>,
+        private readonly exerciseService: ExercisesService
     ) {
     }
 
@@ -74,7 +78,7 @@ export class HistoryService {
             groupEntry.exercises.push({
                 ...exercise,
                 weight,
-                reps,
+                reps
             });
         }
 
@@ -110,5 +114,26 @@ export class HistoryService {
             .andWhere('DATE(w.date) = DATE(:date)', { date: new Date() })
             .orderBy('h.id', 'ASC')
             .getMany();
+    }
+
+    async graphs(userId: number, exerciseId: number) {
+        const exerciseExist = await this.exerciseService.exerciseExist(exerciseId);
+        if (!exerciseExist) {
+            throw new CustomBadRequestException(ErrorCode.exerciseDoesntExist);
+        }
+
+        return this.historyRepository
+            .createQueryBuilder('h')
+            .select([
+                'TO_CHAR(w.date, \'MM-YYYY\') AS date',
+                'MAX(h.weight) AS weight'
+            ])
+            .leftJoin('h.exercise', 'e')
+            .leftJoin('h.workout', 'w')
+            .where('w.user.id = :userId', { userId })
+            .andWhere('e.id = :exerciseId', { exerciseId })
+            .groupBy('TO_CHAR(w.date, \'MM-YYYY\')')
+            .orderBy('TO_CHAR(w.date, \'MM-YYYY\')', 'ASC')
+            .getRawMany();
     }
 }

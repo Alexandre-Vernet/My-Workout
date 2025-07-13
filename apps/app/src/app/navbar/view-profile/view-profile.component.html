@@ -3,6 +3,19 @@
         <i class="pi pi-user mt-2 mb-5" style="font-size: 6rem; color: var(--p-primary-900)"></i>
     </div>
 
+    <div class="view-profile-container p-4"
+         [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+        <a routerLink='/user/graphs'>
+            <div class="flex-1 flex justify-center align-items-center gap-3">
+                <i class="pi pi-wave-pulse" style="font-size: 1.2rem"></i>
+                <span class="text-primary text-xl stats">Statistiques</span>
+            </div>
+        </a>
+    </div>
+
     <div class="view-profile-container"
          [ngClass]="{
             'shadow-dark': isDarkMode,

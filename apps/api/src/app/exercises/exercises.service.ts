@@ -174,4 +174,12 @@ export class ExercisesService {
                 .getRawOne();
         }
     }
+
+    exerciseExist(exerciseId: number) {
+        return this.exerciseRepository.exists({
+            where: {
+                id: exerciseId
+            }
+        })
+    }
 }

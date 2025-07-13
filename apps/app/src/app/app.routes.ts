@@ -18,6 +18,7 @@ import { CalendarComponent } from './navbar/calendar/calendar.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { HistoryComponent } from './navbar/history/history.component';
 import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exercise.component';
+import { GraphsComponent } from './navbar/graphs/graphs.component';
 
 
 @Component({
@@ -85,9 +86,13 @@ export const appRoutes: Route[] = [
                 component: ViewProfileComponent
             },
             {
+                path: 'graphs',
+                component: GraphsComponent
+            },
+            {
                 path: '**',
                 redirectTo: 'view-profile'
-            }
+            },
         ],
         canActivate: [authGuard]
     },

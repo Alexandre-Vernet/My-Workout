@@ -39,4 +39,12 @@ export class HistoryService {
             }
         });
     }
+
+    graphs(exerciseId: number) {
+        return this.http.get<History[]>(`${ this.historyUrl }/graphs`, {
+            params: {
+                exerciseId
+            }
+        });
+    }
 }

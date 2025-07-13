@@ -5,6 +5,7 @@ export enum ErrorCode {
     userMustBeLoggedToContinue = 'userMustBeLoggedToContinue',
     sessionHasExpired = 'sessionHasExpired',
     muscleGroupDoesntExist = 'muscleGroupDoesntExist',
+    exerciseDoesntExist = 'exerciseDoesntExist',
 }
 
 export const errorMessages = new Map<ErrorCode, string>([
@@ -14,4 +15,5 @@ export const errorMessages = new Map<ErrorCode, string>([
     [ErrorCode.userMustBeLoggedToContinue, 'Vous devez être connecté pour continuer'],
     [ErrorCode.sessionHasExpired, 'Votre session a expirée, veuillez vous reconnecter'],
     [ErrorCode.muscleGroupDoesntExist, 'Ce groupe musculaire n\'existe pas'],
+    [ErrorCode.exerciseDoesntExist, 'Cet exercice n\'existe pas'],
 ]);

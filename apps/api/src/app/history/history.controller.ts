@@ -33,4 +33,9 @@ export class HistoryController {
     findTodayExercicesHistory(@CurrentUser() user: User, @Query('muscleGroupId') muscleGroupId: number, @Query('exerciseId') exerciseId: number) {
         return this.historyService.existingWorkout(user.id, muscleGroupId, exerciseId);
     }
+
+    @Get('graphs')
+    graphs(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
+        return this.historyService.graphs(user.id, exerciseId);
+    }
 }
