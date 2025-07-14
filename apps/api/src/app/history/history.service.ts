@@ -3,17 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HistoryEntity } from './history.entity';
 import { Repository } from 'typeorm';
 import { History } from '../../../../../libs/interfaces/history';
-import { ExercisesService } from '../exercises/exercises.service';
-import { CustomBadRequestException } from '../exceptions/CustomBadRequestException';
-import { ErrorCode } from '../../../../../libs/error-code/error-code';
 
 @Injectable()
 export class HistoryService {
 
     constructor(
         @InjectRepository(HistoryEntity)
-        private readonly historyRepository: Repository<HistoryEntity>,
-        private readonly exerciseService: ExercisesService
+        private readonly historyRepository: Repository<HistoryEntity>
     ) {
     }
 
@@ -117,11 +113,6 @@ export class HistoryService {
     }
 
     async graphs(userId: number, exerciseId: number) {
-        const exerciseExist = await this.exerciseService.exerciseExist(exerciseId);
-        if (!exerciseExist) {
-            throw new CustomBadRequestException(ErrorCode.exerciseDoesntExist);
-        }
-
         return this.historyRepository
             .createQueryBuilder('h')
             .select([
@@ -171,7 +162,10 @@ export class HistoryService {
             }
         });
 
-        return history.weight;
+        if (history?.weight) {
+            return history.weight;
+        }
+        return 0;
     }
 
     async countTotalReps(userId: number, exerciseId: number) {

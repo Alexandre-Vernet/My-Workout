@@ -6,6 +6,7 @@ import { AlertService } from '../../services/alert.service';
 import { ExerciseService } from '../../services/exercise.service';
 import { Exercise } from '../../../../../../libs/interfaces/exercise';
 import { WorkoutService } from '../../services/workout.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-graphs',
@@ -17,22 +18,26 @@ import { WorkoutService } from '../../services/workout.service';
 export class GraphsComponent implements OnInit {
 
     exercise: Exercise;
+
+    exerciseId = 0;
+
     totalWeight = 0;
     totalReps = 0;
     maxWeight = 0;
     totalDaysWorkout = 0;
 
-    exerciseId = 1;
-
     constructor(
         private readonly historyService: HistoryService,
         private readonly exerciseService: ExerciseService,
         private readonly workoutService: WorkoutService,
+        private readonly activatedRoute: ActivatedRoute,
         private readonly alertService: AlertService
     ) {
     }
 
     ngOnInit() {
+        this.exerciseId = Number(this.activatedRoute.snapshot.queryParamMap.get('exerciseId'));
+
         this.exerciseService.getExercise(this.exerciseId)
             .subscribe({
                 next: (exercise) => {

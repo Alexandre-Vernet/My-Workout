@@ -65,7 +65,7 @@ export class ExercisesService {
                           'id', m.id,
                           'name', m.name
                         )
-                      ) as "muscles"`,
+                      ) as "muscles"`
                 ])
                 .innerJoin('e.exerciseMuscle', 'em')
                 .innerJoin('em.muscle', 'm')
@@ -129,7 +129,17 @@ export class ExercisesService {
         });
     }
 
-    getExercise(exerciseId: number, user?: User) {
+    async getExercise(exerciseId: number, user?: User) {
+        const exerciseExist = await this.exerciseRepository.exists({
+            where: {
+                id: exerciseId
+            }
+        });
+
+        if (!exerciseExist) {
+            throw new CustomBadRequestException(ErrorCode.exerciseDoesntExist);
+        }
+
         if (user?.id) {
             return this.exerciseRepository.createQueryBuilder('e')
                 .select([
@@ -143,7 +153,7 @@ export class ExercisesService {
                           'name', m.name
                         )
                       ) as "muscles"`,
-                    'CASE WHEN ue.id IS NOT NULL THEN TRUE ELSE FALSE END as "addedToWorkout"',
+                    'CASE WHEN ue.id IS NOT NULL THEN TRUE ELSE FALSE END as "addedToWorkout"'
                 ])
                 .leftJoin('e.userExercise', 'ue', 'ue.user_id = :userId', { userId: user.id })
                 .leftJoin('e.exerciseMuscle', 'em')
@@ -164,7 +174,7 @@ export class ExercisesService {
                           'id', m.id,
                           'name', m.name
                         )
-                      ) as "muscles"`,
+                      ) as "muscles"`
                 ])
                 .leftJoin('e.exerciseMuscle', 'em')
                 .leftJoin('em.muscle', 'm')
@@ -173,13 +183,5 @@ export class ExercisesService {
                 .groupBy('e.id')
                 .getRawOne();
         }
-    }
-
-    exerciseExist(exerciseId: number) {
-        return this.exerciseRepository.exists({
-            where: {
-                id: exerciseId
-            }
-        })
     }
 }
