@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HistoryService } from '../../services/history.service';
-import { History } from '../../../../../../libs/interfaces/history';
 import { Skeleton } from 'primeng/skeleton';
 import { ThemeService } from '../../theme/theme.service';
-import { Button } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
 import { WorkoutService } from '../../services/workout.service';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { AlertService } from '../../services/alert.service';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { Workout } from '../../../../../../libs/interfaces/workout';
+import { Button } from 'primeng/button';
+import { Ripple } from 'primeng/ripple';
+import { GroupedHistory } from '../../../../../../libs/interfaces/history';
+import { HistoryService } from '../../services/history.service';
 
 @Component({
     selector: 'app-history',
-    imports: [CommonModule, Skeleton, Button, Ripple, ConfirmDialog, RouterLink],
+    imports: [CommonModule, Skeleton, ConfirmDialog, Button, Ripple],
     templateUrl: './history.component.html',
     styleUrl: './history.component.scss',
     standalone: true,
@@ -22,15 +23,16 @@ import { RouterLink } from '@angular/router';
 })
 export class HistoryComponent implements OnInit {
 
-    history: History[];
+    workout: Workout[];
     isLoading = true;
 
     isDarkMode = false;
 
 
     constructor(
-        private readonly historyService: HistoryService,
         private readonly workoutService: WorkoutService,
+        private readonly historyService: HistoryService,
+        private readonly router: Router,
         private readonly themeService: ThemeService,
         private readonly alertService: AlertService,
         private readonly confirmationService: ConfirmationService
@@ -38,25 +40,13 @@ export class HistoryComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.historyService.find()
-            .subscribe({
-                next: (history) => {
-                    this.isLoading = false;
-                    this.history = history;
-                    this.alertService.alert$.next(null);
-                },
-                error : (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'afficher l\'historique'
-                    });
-                }
-            });
-
+        this.getHistories();
         this.isDarkMode = this.themeService.isDarkMode();
     }
 
-    deleteWorkout(id: number, muscleGroupName: string, date: Date) {
+    deleteWorkout(groupedHistory: GroupedHistory[], muscleGroupName: string, date: Date) {
+        const historyId = groupedHistory.map(g => g.id);
+
         const newDate = new Date(date);
         this.confirmationService.confirm({
             header: 'Attention',
@@ -74,16 +64,14 @@ export class HistoryComponent implements OnInit {
                 outlined: true
             },
             accept: () => {
-                this.workoutService.delete(id)
+                this.historyService.deleteIds(historyId)
                     .subscribe({
                         next: () => {
-                            this.history = this.history
-                                .map(h => ({
-                                    ...h,
-                                    groups: h.groups.filter(g => g.workoutId !== id)
-                                }))
-                                .filter(h => h.groups.length > 0);
-                            this.alertService.alert$.next(null);
+                            this.getHistories();
+                            this.alertService.alert$.next({
+                                severity: 'success',
+                                message: 'Suppression effectuée'
+                            });
                         },
                         error: (err) => {
                             this.alertService.alert$.next({
@@ -94,5 +82,40 @@ export class HistoryComponent implements OnInit {
                     });
             }
         });
+    }
+
+    private getHistories() {
+        this.workoutService.find()
+            .subscribe({
+                next: (workout) => {
+                    this.isLoading = false;
+                    this.workout = workout;
+                    this.checkNoWorkout();
+                },
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'afficher l\'historique'
+                    });
+                }
+            });
+    }
+
+    private checkNoWorkout() {
+        if (!this.workout || this.workout.length === 0) {
+            this.confirmationService.confirm({
+                header: 'Attention',
+                message: `Aucun entraînement trouvé dans l'historique.`,
+                closable: false,
+                closeOnEscape: false,
+                dismissableMask: false,
+                icon: 'pi pi-exclamation-triangle',
+                rejectVisible: false,
+                acceptButtonProps: {
+                    label: 'Fermer'
+                },
+                accept: () => this.router.navigate(['/workout'])
+            });
+        }
     }
 }

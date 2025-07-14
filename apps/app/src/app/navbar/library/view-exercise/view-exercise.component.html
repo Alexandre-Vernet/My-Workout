@@ -7,7 +7,7 @@
                 <ng-container *ngFor="let muscle of exercise.muscles">
                     <p-tag value="{{ muscle.name }}"
                            role="button"
-                           tabindex="0"/>
+                           tabindex="0" />
                 </ng-container>
             </div>
         </div>
@@ -15,7 +15,19 @@
         <p-tag class="mt-2 inline-flex w-auto" *ngIf="exercise.isSmartWorkout" (click)="showDrawerSmartWorkout = true"
                severity="info" value="Smart-Workout"
                role="button"
-               tabindex="0"/>
+               tabindex="0" />
+
+        <div class="mt-4">
+            @if (isLoading) {
+                <div class="loader">
+                    <p-skeleton width="25rem" height="25rem" />
+                </div>
+            }
+
+            <img *ngIf="showImage" class="image-width" (error)="showImage = false; isLoading = false" [src]="imagePath"
+                 (load)="isLoading = false"
+                 [alt]="exercise.name" />
+        </div>
 
         <div class="card flex justify-center mt-4">
             <p-fieldset legend="Description" [toggleable]="true">
@@ -26,8 +38,9 @@
         </div>
 
         <div class="m-2 mt-5">
-            <p-button (click)="toggleExerciseWorkout()" [label]="exercise.addedToWorkout ? 'Supprimer de l\'entraînement' : 'Ajouter à l\'entraînement'"
-            [severity]="exercise.addedToWorkout ? 'danger' : 'primary'"/>
+            <p-button (click)="toggleExerciseWorkout()"
+                      [label]="exercise.addedToWorkout ? 'Supprimer de l\'entraînement' : 'Ajouter à l\'entraînement'"
+                      [severity]="exercise.addedToWorkout ? 'danger' : 'primary'" />
         </div>
     </ng-container>
 </div>

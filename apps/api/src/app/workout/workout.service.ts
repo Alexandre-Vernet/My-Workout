@@ -5,10 +5,10 @@ import { Between, Repository } from 'typeorm';
 import { muscleGroupMap } from '../../../../../libs/interfaces/MuscleGroup';
 import { Workout } from '../../../../../libs/interfaces/workout';
 import { removeAccents } from '../../../../app/src/app/utils/remove-accents';
+import { GroupedHistory } from '../../../../../libs/interfaces/history';
 
 @Injectable()
 export class WorkoutService {
-
 
     constructor(
         @InjectRepository(WorkoutEntity)
@@ -29,9 +29,72 @@ export class WorkoutService {
         return this.workoutRepository.save(workout);
     }
 
+    async find(userId: number) {
+        const workoutEntity = await this.workoutRepository.find({
+            where: { user: { id: userId } },
+            relations: {
+                muscleGroup: true,
+                history: { exercise: true }
+            }
+        });
+
+        const result: Workout[] = [];
+
+        for (const workout of workoutEntity) {
+            const workoutDate = new Date(workout.date);
+            workoutDate.setHours(0, 0, 0, 0);
+
+            let dayEntry = result.find(entry =>
+                new Date(entry.date).getTime() === workoutDate.getTime()
+            );
+
+            if (!dayEntry) {
+                dayEntry = {
+                    date: workoutDate,
+                    muscleGroups: []
+                };
+                result.push(dayEntry);
+            }
+
+            let groupEntry = dayEntry.muscleGroups.find(g =>
+                g.muscleGroup.id === workout.muscleGroup.id
+            );
+
+            if (!groupEntry) {
+                groupEntry = {
+                    muscleGroup: workout.muscleGroup,
+                    history: []
+                };
+                dayEntry.muscleGroups.push(groupEntry);
+            }
+
+            for (const history of workout.history) {
+                const { id, reps, weight, exercise } = history;
+
+                let exerciseEntry = groupEntry.history.find(e =>
+                    e.exercise.id === exercise.id
+                );
+
+                if (!exerciseEntry) {
+                    exerciseEntry = {
+                        exercise,
+                        groupedHistory: []
+                    };
+                    groupEntry.history.push(exerciseEntry);
+                }
+
+                exerciseEntry.groupedHistory.push({ id, reps, weight });
+            }
+        }
+
+        result.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+        return result;
+    }
+
 
     async findById(id: number) {
-        return this.workoutRepository.findOne({
+        const workout: Workout = await this.workoutRepository.findOne({
             where: { id },
             relations: {
                 history: {
@@ -40,10 +103,45 @@ export class WorkoutService {
                 muscleGroup: true
             }
         });
+
+        const historyGroupedByExercise = new Map<number, GroupedHistory[]>();
+
+        workout.history.forEach(h => {
+            const exerciseId = h.exercise.id;
+            if (!historyGroupedByExercise.has(exerciseId)) {
+                historyGroupedByExercise.set(exerciseId, []);
+            }
+            historyGroupedByExercise.get(exerciseId)!.push({
+                id: h.id,
+                weight: h.weight,
+                reps: h.reps ?? null
+            });
+
+            delete h.id;
+            delete h.weight;
+            delete h.reps;
+        });
+
+        const seen = new Set<number>();
+        const uniqueHistory = workout.history.filter(item => {
+            if (seen.has(item.exercise.id)) return false;
+            seen.add(item.exercise.id);
+            return true;
+        });
+
+        uniqueHistory.forEach(h => {
+            h.groupedHistory = historyGroupedByExercise.get(h.exercise.id);
+        });
+
+
+        workout.history = uniqueHistory;
+
+        return workout;
+
     }
 
 
-    async find(userId: number, start: Date, end: Date) {
+    async findByDate(userId: number, start: Date, end: Date) {
         const workout = await this.workoutRepository.find({
             where: {
                 user: {

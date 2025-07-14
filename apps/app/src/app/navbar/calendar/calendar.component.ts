@@ -55,7 +55,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         events: ((info, success, failure) => {
             const { start, end } = info;
 
-            this.workoutService.findAll(start, end)
+            this.workoutService.findByDate(start, end)
                 .subscribe({
                     next: (workouts) => {
                         this.workouts = workouts;
@@ -64,13 +64,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                             ? workouts.filter(w => w.muscleGroup.name === this.activeFilter.name)
                             : workouts;
 
-
-                        // Filter by name because all cardio exercises has the same id
-                        workouts.forEach(w => {
-                            if (!this.muscleGroups.some(mg => mg.name === w.muscleGroup.name)) {
-                                this.muscleGroups.push(w.muscleGroup);
-                            }
-                        });
+                        this.getMuscleGroups();
 
                         const events: EventInput[] = this.filterWorkouts.map(w => ({
                             id: w.id.toString(),
@@ -165,8 +159,12 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                         next: () => {
                             this.workouts = this.workouts.filter(w => w.id !== id);
                             this.calendarComponent.getApi().refetchEvents();
+                            this.getMuscleGroups();
 
-                            this.alertService.alert$.next(null);
+                            this.alertService.alert$.next({
+                                severity: 'success',
+                                message: 'Suppression effectuée'
+                            });
                         },
                         error: (err) => {
                             this.alertService.alert$.next({
@@ -195,6 +193,18 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         this.alertService.alert$.next(alert);
     }
 
+
+    private getMuscleGroups() {
+        this.muscleGroups = [];
+        // Filter by name because all cardio exercises has the same id
+        this.workouts.forEach(w => {
+            if (!this.muscleGroups.some(mg => mg.name === w.muscleGroup.name)) {
+                this.muscleGroups.push(w.muscleGroup);
+            }
+        });
+
+        this.muscleGroups.sort((a, b) => a.name.localeCompare(b.name));
+    }
 
     private viewHistory(info: EventClickArg) {
         const workoutId = Number(info.event.id);

@@ -10,6 +10,5 @@ export interface Exercise {
     addedToWorkout?: boolean;
     muscles?: Muscle[];
     weight?: number;
-    restTime?: string;
     reps?: number;
 }

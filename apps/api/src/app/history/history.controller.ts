@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { History } from '../../../../../libs/interfaces/history';
 import { AuthGuard } from '../auth/auth.guard';
@@ -17,11 +17,6 @@ export class HistoryController {
     create(@CurrentUser() user: User, @Body() history: History) {
         history.user = user;
         return this.historyService.create(history);
-    }
-
-    @Get()
-    find(@CurrentUser() user: User) {
-        return this.historyService.find(user.id);
     }
 
     @Get('last')
@@ -52,5 +47,21 @@ export class HistoryController {
     @Get('count-max-weight')
     countMaxWeight(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
         return this.historyService.countMaxWeight(user.id, exerciseId);
+    }
+
+    @Put(':id')
+    update(@CurrentUser() user: User, @Body() history: History) {
+        history.user = user;
+        return this.historyService.update(history);
+    }
+
+    @Delete('delete-ids')
+    deleteIds(@CurrentUser() user: User, @Body('id') ids: number[]) {
+        return this.historyService.deleteIds(user.id, ids);
+    }
+
+    @Delete(':historyId')
+    delete(@Param('historyId') historyId: number) {
+        return this.historyService.delete(historyId);
     }
 }

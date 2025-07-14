@@ -11,10 +11,11 @@ import { Fieldset } from 'primeng/fieldset';
 import { Tag } from 'primeng/tag';
 import { Drawer } from 'primeng/drawer';
 import { DeviceDetectionService } from '../../../services/device-detection.service';
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
     selector: 'app-view-exercise',
-    imports: [CommonModule, Button, Fieldset, Tag, Drawer],
+    imports: [CommonModule, Button, Fieldset, Tag, Drawer, Skeleton],
     templateUrl: './view-exercise.component.html',
     styleUrl: './view-exercise.component.scss',
     standalone: true
@@ -26,6 +27,11 @@ export class ViewExerciseComponent implements OnInit {
     showDrawerSmartWorkout = false;
 
     isIphone = false;
+
+    showImage = true;
+    imagePath = '';
+
+    isLoading = true;
 
     constructor(
         private readonly exerciseService: ExerciseService,
@@ -45,6 +51,7 @@ export class ViewExerciseComponent implements OnInit {
             .subscribe({
                 next: (exercise) => {
                     this.exercise = exercise;
+                    this.imagePath = `/assets/images/${ exercise.id }.gif`;
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {
