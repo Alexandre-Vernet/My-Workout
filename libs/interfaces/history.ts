@@ -1,7 +1,6 @@
 import { Exercise } from './exercise';
 import { User } from './user';
 import { Workout } from './workout';
-import { MuscleGroup } from './MuscleGroup';
 
 export interface History {
     id?: number;
@@ -20,5 +19,4 @@ export interface GroupedHistory {
     id: number;
     weight: number;
     reps: number;
-    muscleGroup?: MuscleGroup,
 }
