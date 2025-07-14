@@ -117,7 +117,7 @@ export class HistoryService {
             .createQueryBuilder('h')
             .select([
                 'TO_CHAR(w.date, \'MM-YYYY\') AS date',
-                'MAX(h.weight) AS weight'
+                'cast(MAX(h.weight) as integer) AS weight'
             ])
             .leftJoin('h.exercise', 'e')
             .leftJoin('h.workout', 'w')

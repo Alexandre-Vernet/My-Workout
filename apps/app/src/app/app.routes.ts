@@ -19,6 +19,7 @@ import { ResetPasswordComponent } from './auth/reset-password/reset-password.com
 import { HistoryComponent } from './navbar/history/history.component';
 import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exercise.component';
 import { GraphsComponent } from './navbar/graphs/graphs.component';
+import { StatsComponent } from './navbar/view-profile/stats/stats.component';
 
 
 @Component({
@@ -86,7 +87,11 @@ export const appRoutes: Route[] = [
                 component: ViewProfileComponent
             },
             {
-                path: 'graphs',
+                path: 'stats',
+                component: StatsComponent
+            },
+            {
+                path: 'graphs/:exerciseId',
                 component: GraphsComponent
             },
             {

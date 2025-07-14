@@ -107,6 +107,21 @@ export class ExercisesService {
             .getRawMany();
     }
 
+    async findAddedExercises(userId: number) {
+        return this.exerciseRepository.find({
+            where: {
+                userExercise: {
+                    user: {
+                        id: userId
+                    }
+                }
+            },
+            order: {
+                id: 'ASC'
+            }
+        });
+    }
+
     findCardioExercises(userId: number) {
         return this.exerciseRepository.find({
             where: {

@@ -5,7 +5,6 @@ import Chart, { ChartItem } from 'chart.js/auto';
 import { AlertService } from '../../services/alert.service';
 import { ExerciseService } from '../../services/exercise.service';
 import { Exercise } from '../../../../../../libs/interfaces/exercise';
-import { WorkoutService } from '../../services/workout.service';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../theme/theme.service';
 
@@ -25,14 +24,12 @@ export class GraphsComponent implements OnInit {
     totalWeight = 0;
     totalReps = 0;
     maxWeight = 0;
-    totalDaysWorkout = 0;
 
     isDarkMode = false;
 
     constructor(
         private readonly historyService: HistoryService,
         private readonly exerciseService: ExerciseService,
-        private readonly workoutService: WorkoutService,
         private readonly activatedRoute: ActivatedRoute,
         private readonly alertService: AlertService,
         private readonly themeService: ThemeService
@@ -40,7 +37,7 @@ export class GraphsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.exerciseId = Number(this.activatedRoute.snapshot.queryParamMap.get('exerciseId'));
+        this.exerciseId = Number(this.activatedRoute.snapshot.paramMap.get('exerciseId'));
 
         this.exerciseService.getExercise(this.exerciseId)
             .subscribe({
@@ -50,7 +47,6 @@ export class GraphsComponent implements OnInit {
                     this.countTotalWeight();
                     this.countTotalReps();
                     this.countMaxWeight();
-                    this.countTotalDaysWorkout();
                 },
                 error: (err) => {
                     this.alertService.alert$.next({
@@ -66,16 +62,16 @@ export class GraphsComponent implements OnInit {
     private bar() {
         this.historyService.graphs(this.exerciseId)
             .subscribe({
-                next: (history => {
+                next: (histories => {
                     const ctx = document.getElementById('bar');
 
                     new Chart(ctx as ChartItem, {
                         type: 'bar',
                         data: {
-                            labels: history.map(h => h.date),
+                            labels: histories.map(h => h.date),
                             datasets: [{
                                 label: 'Charge utilisée',
-                                data: history.map(h => h.weight),
+                                data: histories.map(h => h.weight),
                                 borderWidth: 1
                             }]
                         },
@@ -133,19 +129,6 @@ export class GraphsComponent implements OnInit {
         this.historyService.countMaxWeight(this.exerciseId)
             .subscribe({
                 next: (maxWeight => this.maxWeight = maxWeight),
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Erreur lors de la récupération des données'
-                    });
-                }
-            });
-    }
-
-    private countTotalDaysWorkout() {
-        this.workoutService.countTotalDaysWorkout()
-            .subscribe({
-                next: (totalDaysWorkout => this.totalDaysWorkout = totalDaysWorkout),
                 error: (err) => {
                     this.alertService.alert$.next({
                         severity: 'error',
