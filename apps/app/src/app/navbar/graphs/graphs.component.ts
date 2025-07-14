@@ -7,6 +7,7 @@ import { ExerciseService } from '../../services/exercise.service';
 import { Exercise } from '../../../../../../libs/interfaces/exercise';
 import { WorkoutService } from '../../services/workout.service';
 import { ActivatedRoute } from '@angular/router';
+import { ThemeService } from '../../theme/theme.service';
 
 @Component({
     selector: 'app-graphs',
@@ -26,12 +27,15 @@ export class GraphsComponent implements OnInit {
     maxWeight = 0;
     totalDaysWorkout = 0;
 
+    isDarkMode = false;
+
     constructor(
         private readonly historyService: HistoryService,
         private readonly exerciseService: ExerciseService,
         private readonly workoutService: WorkoutService,
         private readonly activatedRoute: ActivatedRoute,
-        private readonly alertService: AlertService
+        private readonly alertService: AlertService,
+        private readonly themeService: ThemeService
     ) {
     }
 
@@ -55,6 +59,8 @@ export class GraphsComponent implements OnInit {
                     });
                 }
             });
+
+        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     private bar() {

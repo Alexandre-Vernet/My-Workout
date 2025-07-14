@@ -2,25 +2,46 @@
 
 <canvas id="bar" class="mt-8 mb-6"></canvas>
 
-<div class="p-1 flex justify-center align-items-center gap-2 text-xl">
-    <span>Charge totale utilisée : </span>
-    <span>{{ totalWeight }} kg</span>
+<div class="m-3 p-4 border-round-2xl text-primary" [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+
+    <div class="p-1 flex justify-center align-items-center gap-3 text-xl">
+        <i class="pi pi-chart-bar" style="font-size: 1.2rem"></i>
+        <span>Charge totale utilisée : {{ totalWeight }} kg</span>
+    </div>
 </div>
 
-<div class="p-1 flex justify-center align-items-center gap-2 text-xl">
-    <span>Nombre de séries totale exécutées : </span>
-    <span>{{ totalReps }}</span>
+<div class="m-3 p-4 border-round-2xl text-primary" [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+
+    <div class="p-1 flex justify-center align-items-center gap-3 text-xl">
+        <i class="pi pi-gauge" style="font-size: 1.2rem"></i>
+        <span>Nombre de séries totale exécutées : {{ totalReps }}</span>
+    </div>
 </div>
 
+<div class="m-3 p-4 border-round-2xl text-primary" [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
 
-<div class="p-1 flex justify-center align-items-center gap-2 text-xl">
-    <span>Charge la plus lourde utilisée : </span>
-    <span>{{ maxWeight }} kg</span>
+    <div class="p-1 flex justify-center align-items-center gap-3 text-xl">
+        <i class="pi pi-gauge" style="font-size: 1.2rem"></i>
+        <span>Charge la plus lourde utilisée : {{ maxWeight }} kg</span>
+    </div>
 </div>
 
+<div class="m-3 p-4 border-round-2xl text-primary" [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
 
-
-<div class="p-1 flex justify-center align-items-center gap-2 text-xl">
-    <span>Nombre jour d'entraînement : </span>
-    <span>{{ totalDaysWorkout }} </span>
+    <div class="p-1 flex justify-center align-items-center gap-3 text-xl">
+        <i class="pi pi-gauge" style="font-size: 1.2rem"></i>
+        <span>Nombre jour d'entraînement : {{ totalDaysWorkout }} </span>
+    </div>
 </div>
