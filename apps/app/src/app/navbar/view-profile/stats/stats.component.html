@@ -1,10 +1,3 @@
-<div *ngFor="let exercise of exercises" class="p-2">
-    <a [routerLink]="['/', 'user', 'graphs', exercise?.id]" class="text-primary">
-        {{ exercise.name }}
-    </a>
-</div>
-
-
 <div class="m-3 p-4 border-round-2xl text-primary" [ngClass]="{
             'shadow-dark': isDarkMode,
             'shadow-light': !isDarkMode,
@@ -14,4 +7,11 @@
         <i class="pi pi-calendar-times" style="font-size: 1.2rem"></i>
         <span>Nombre jour d'entraînement : {{ totalDaysWorkout }} </span>
     </div>
+</div>
+
+
+<div *ngFor="let exercise of exercises" class="p-2">
+    <a [routerLink]="['/', 'user', 'graphs', exercise?.id]" class="text-primary">
+        {{ exercise.name }}
+    </a>
 </div>

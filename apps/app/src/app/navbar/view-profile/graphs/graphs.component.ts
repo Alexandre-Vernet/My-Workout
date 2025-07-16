@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HistoryService } from '../../services/history.service';
+import { HistoryService } from '../../../services/history.service';
 import Chart, { ChartItem } from 'chart.js/auto';
-import { AlertService } from '../../services/alert.service';
-import { ExerciseService } from '../../services/exercise.service';
-import { Exercise } from '../../../../../../libs/interfaces/exercise';
+import { AlertService } from '../../../services/alert.service';
+import { ExerciseService } from '../../../services/exercise.service';
+import { Exercise } from '../../../../../../../libs/interfaces/exercise';
 import { ActivatedRoute } from '@angular/router';
-import { ThemeService } from '../../theme/theme.service';
+import { ThemeService } from '../../../theme/theme.service';
 
 @Component({
     selector: 'app-graphs',

@@ -100,20 +100,27 @@ export class HistoryService {
     }
 
     async graphs(userId: number, exerciseId: number) {
-        return this.historyRepository
-            .createQueryBuilder('h')
-            .select([
-                'TO_CHAR(w.date, \'MM-YYYY\') AS date',
-                'cast(MAX(h.weight) as integer) AS weight'
-            ])
-            .leftJoin('h.exercise', 'e')
-            .leftJoin('h.workout', 'w')
-            .where('w.user.id = :userId', { userId })
-            .andWhere('e.id = :exerciseId', { exerciseId })
-            .groupBy('TO_CHAR(w.date, \'MM-YYYY\')')
-            .orderBy('TO_CHAR(w.date, \'MM-YYYY\')', 'ASC')
-            .getRawMany();
+        return this.historyRepository.query(`
+                SELECT date, weight
+                FROM (
+                    SELECT DISTINCT ON (weight)
+                    TO_CHAR(date, 'MM-YYYY') AS date, weight
+                    FROM (
+                    SELECT
+                    MAX (h.weight) AS weight, MIN (w.date) AS date
+                    FROM history h
+                    JOIN workout w ON w.id = h.workout_id
+                    JOIN exercises e ON e.id = h.exercise_id
+                    WHERE w.user_id = $1
+                    AND e.id = $2
+                    GROUP BY TO_CHAR(w.date, 'MM-YYYY')
+                    ) AS monthly_max
+                    ORDER BY weight, date
+                    ) AS distinct_weights
+                ORDER BY TO_DATE(date, 'MM-YYYY') ASC;`,
+            [userId, exerciseId]);
     }
+
 
     async countTotalWeight(userId: number, exerciseId: number) {
         const histories: History[] = await this.historyRepository.find({
