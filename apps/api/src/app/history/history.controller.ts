@@ -29,6 +29,26 @@ export class HistoryController {
         return this.historyService.existingWorkout(user.id, muscleGroupId, exerciseId);
     }
 
+    @Get('graphs')
+    graphs(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
+        return this.historyService.graphs(user.id, exerciseId);
+    }
+
+    @Get('count-total-weight')
+    countTotalWeight(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
+        return this.historyService.countTotalWeight(user.id, exerciseId);
+    }
+
+    @Get('count-total-reps')
+    countTotalReps(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
+        return this.historyService.countTotalReps(user.id, exerciseId);
+    }
+
+    @Get('count-max-weight')
+    countMaxWeight(@CurrentUser() user: User, @Query('exerciseId') exerciseId: number) {
+        return this.historyService.countMaxWeight(user.id, exerciseId);
+    }
+
     @Put(':id')
     update(@CurrentUser() user: User, @Body() history: History) {
         history.user = user;

@@ -44,6 +44,10 @@ export class WorkoutService {
         });
     }
 
+    countTotalDaysWorkout() {
+        return this.http.get<number>(`${ this.workoutUrl }/count-total-days-workout`);
+    }
+
     delete(id: number) {
         return this.http.delete<void>(`${ this.workoutUrl }`, {
             params: {

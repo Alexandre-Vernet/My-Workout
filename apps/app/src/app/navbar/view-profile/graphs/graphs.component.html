@@ -1,0 +1,57 @@
+<h1 class="text-center mt-1">{{ exercise?.name }}</h1>
+
+<div class="flex-1 flex">
+    <canvas id="bar" class="mt-8 mb-6"></canvas>
+</div>
+
+<div class="flex-1 flex align-items-stretch justify-center">
+
+    <div class="m-3 p-4 border-round-2xl text-primary" [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+        <div
+            class="p-1 flex-1 flex flex-column justify-center align-items-center flex-grow-1 flex-shrink-0 gap-4 text-center">
+            <i class="pi pi-chart-bar" style="font-size: 1.2rem"></i>
+            <div class="flex flex-column gap-2">
+                <span class="text-lg">Total soulevé</span>
+                <span class="text-lg text-no-wrap">
+                {{ totalWeight }} kg
+            </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-3 p-4 border-round-2xl text-primary" [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+        <div
+            class="p-1 flex-1 flex flex-column justify-center align-items-center flex-grow-1 flex-shrink-0 gap-4 text-center">
+            <i class="pi pi-gauge" style="font-size: 1.2rem"></i>
+            <div class="flex flex-column gap-2">
+                <span class="text-lg">Nombre de séries exécutées</span>
+                <span class="text-lg">
+                    {{ totalReps }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-3 p-4 border-round-2xl text-primary" [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+
+        <div
+            class="p-1 flex-1 flex flex-column justify-center align-items-center flex-grow-1 flex-shrink-0 gap-4 text-center">
+            <i class="pi pi-trophy" style="font-size: 1.2rem"></i>
+            <div class="flex flex-column gap-2">
+                <span class="text-lg">Charge la plus lourde utilisée</span>
+                <span class="text-lg text-no-wrap">
+                {{ maxWeight }} kg
+            </span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -36,6 +36,38 @@ export class HistoryService {
         });
     }
 
+    graphs(exerciseId: number) {
+        return this.http.get<History[]>(`${ this.historyUrl }/graphs`, {
+            params: {
+                exerciseId
+            }
+        });
+    }
+
+    countTotalWeight(exerciseId: number) {
+        return this.http.get<number>(`${ this.historyUrl }/count-total-weight`, {
+            params: {
+                exerciseId
+            }
+        });
+    }
+
+    countTotalReps(exerciseId: number) {
+        return this.http.get<number>(`${ this.historyUrl }/count-total-reps`, {
+            params: {
+                exerciseId
+            }
+        });
+    }
+
+    countMaxWeight(exerciseId: number) {
+        return this.http.get<number>(`${ this.historyUrl }/count-max-weight`, {
+            params: {
+                exerciseId
+            }
+        });
+    }
+
     update(history: History) {
         return this.http.put<History>(`${ this.historyUrl }/${ history.id }`, history);
     }

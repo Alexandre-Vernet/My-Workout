@@ -9,10 +9,11 @@ import { Alert } from '../../../../../../libs/interfaces/alert';
 import { AccountActionsComponent } from './account-actions/account-actions.component';
 import { ThemeService } from '../../theme/theme.service';
 import { AlertService } from '../../services/alert.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-view-profile',
-    imports: [CommonModule, ReactiveFormsModule, DropdownModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent],
+    imports: [CommonModule, ReactiveFormsModule, DropdownModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink],
     templateUrl: './view-profile.component.html',
     styleUrl: './view-profile.component.scss',
     standalone: true,

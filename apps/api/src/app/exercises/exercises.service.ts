@@ -17,6 +17,21 @@ export class ExercisesService {
     ) {
     }
 
+    findByUserId(userId: number) {
+        return this.exerciseRepository.createQueryBuilder('e')
+            .select([
+                'e.id',
+                'e.name'
+            ])
+            .leftJoin('e.history', 'h')
+            .leftJoin('h.workout', 'w')
+            .where('w.user.id = :userId', { userId })
+            .andWhere('h.weight IS NOT NULL')
+            .andWhere('h.reps IS NOT NULL')
+            .orderBy('e.name', 'ASC')
+            .getMany();
+    }
+
     async findAllExercisesByMuscleGroupId(muscleGroupId: number, user?: User) {
         const muscleGroupExist = await this.muscleGroupService.checkMuscleGroupIdExist(muscleGroupId);
         if (!muscleGroupExist) {
@@ -65,7 +80,7 @@ export class ExercisesService {
                           'id', m.id,
                           'name', m.name
                         )
-                      ) as "muscles"`,
+                      ) as "muscles"`
                 ])
                 .innerJoin('e.exerciseMuscle', 'em')
                 .innerJoin('em.muscle', 'm')
@@ -129,7 +144,17 @@ export class ExercisesService {
         });
     }
 
-    getExercise(exerciseId: number, user?: User) {
+    async getExercise(exerciseId: number, user?: User) {
+        const exerciseExist = await this.exerciseRepository.exists({
+            where: {
+                id: exerciseId
+            }
+        });
+
+        if (!exerciseExist) {
+            throw new CustomBadRequestException(ErrorCode.exerciseDoesntExist);
+        }
+
         if (user?.id) {
             return this.exerciseRepository.createQueryBuilder('e')
                 .select([
@@ -143,7 +168,7 @@ export class ExercisesService {
                           'name', m.name
                         )
                       ) as "muscles"`,
-                    'CASE WHEN ue.id IS NOT NULL THEN TRUE ELSE FALSE END as "addedToWorkout"',
+                    'CASE WHEN ue.id IS NOT NULL THEN TRUE ELSE FALSE END as "addedToWorkout"'
                 ])
                 .leftJoin('e.userExercise', 'ue', 'ue.user_id = :userId', { userId: user.id })
                 .leftJoin('e.exerciseMuscle', 'em')
@@ -164,7 +189,7 @@ export class ExercisesService {
                           'id', m.id,
                           'name', m.name
                         )
-                      ) as "muscles"`,
+                      ) as "muscles"`
                 ])
                 .leftJoin('e.exerciseMuscle', 'em')
                 .leftJoin('em.muscle', 'm')

@@ -18,6 +18,8 @@ import { CalendarComponent } from './navbar/calendar/calendar.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { HistoryComponent } from './navbar/history/history.component';
 import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exercise.component';
+import { GraphsComponent } from './navbar/view-profile/graphs/graphs.component';
+import { StatsComponent } from './navbar/view-profile/stats/stats.component';
 
 
 @Component({
@@ -85,9 +87,17 @@ export const appRoutes: Route[] = [
                 component: ViewProfileComponent
             },
             {
+                path: 'stats',
+                component: StatsComponent
+            },
+            {
+                path: 'graphs/:exerciseId',
+                component: GraphsComponent
+            },
+            {
                 path: '**',
                 redirectTo: 'view-profile'
-            }
+            },
         ],
         canActivate: [authGuard]
     },
