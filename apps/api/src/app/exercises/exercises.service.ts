@@ -17,6 +17,19 @@ export class ExercisesService {
     ) {
     }
 
+    findByUserId(userId: number) {
+        return this.exerciseRepository.createQueryBuilder('e')
+            .select([
+                'e.id',
+                'e.name'
+            ])
+            .leftJoin('e.history', 'h')
+            .leftJoin('h.workout', 'w')
+            .where('w.user.id = :userId', { userId })
+            .orderBy('e.name', 'ASC')
+            .getMany();
+    }
+
     async findAllExercisesByMuscleGroupId(muscleGroupId: number, user?: User) {
         const muscleGroupExist = await this.muscleGroupService.checkMuscleGroupIdExist(muscleGroupId);
         if (!muscleGroupExist) {
@@ -105,21 +118,6 @@ export class ExercisesService {
             .andWhere('mg.id = :muscleGroupId', { muscleGroupId })
             .orderBy('ue.order', 'ASC')
             .getRawMany();
-    }
-
-    async findAddedExercises(userId: number) {
-        return this.exerciseRepository.find({
-            where: {
-                userExercise: {
-                    user: {
-                        id: userId
-                    }
-                }
-            },
-            order: {
-                id: 'ASC'
-            }
-        });
     }
 
     findCardioExercises(userId: number) {

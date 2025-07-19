@@ -25,16 +25,15 @@ export class ExercisesController {
     }
 
     @UseGuards(AuthGuard)
-    @Get('find-added-exercises')
-    @HttpCode(200)
-    findAddedExercises(@CurrentUser() user: User) {
-        return this.exercisesService.findAddedExercises(user.id);
-    }
-
-    @UseGuards(AuthGuard)
     @Get('find-cardio-exercises')
     findCardioExercises(@CurrentUser() user: User) {
         return this.exercisesService.findCardioExercises(user.id);
+    }
+
+    @UseGuards(AuthGuard)
+    @Get('find-by-user-id')
+    findByUserId(@CurrentUser() user: User) {
+        return this.exercisesService.findByUserId(user.id);
     }
 
     @Get(':exerciseId')

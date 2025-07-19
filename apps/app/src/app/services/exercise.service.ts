@@ -33,15 +33,15 @@ export class ExerciseService {
         });
     }
 
-    findAddedExercises() {
-        return this.httpClient.get<Exercise[]>(`${ this.exerciseUrl }/find-added-exercises`);
-    }
-
     findCardioExercises() {
         return this.httpClient.get<Exercise[]>(`${ this.exerciseUrl }/find-cardio-exercises`);
     }
 
     getExercise(exerciseId: number) {
         return this.httpClient.get<Exercise>(`${ this.exerciseUrl }/${ exerciseId }`);
+    }
+
+    findByUserId() {
+        return this.httpClient.get<Exercise[]>(`${ this.exerciseUrl }/find-by-user-id`);
     }
 }

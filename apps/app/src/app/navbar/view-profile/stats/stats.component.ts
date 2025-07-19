@@ -32,7 +32,7 @@ export class StatsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.exerciseService.findAddedExercises()
+        this.exerciseService.findByUserId()
             .subscribe({
                 next: (exercises) => {
                     this.isLoading = false;

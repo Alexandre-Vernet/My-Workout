@@ -47,6 +47,7 @@ export class HistoryService {
             .andWhere('e.id = :exerciseId', { exerciseId })
             .andWhere('w.muscleGroup.id = :muscleGroupId', { muscleGroupId })
             .andWhere('w.date >= :since', { since: twelveHoursAgo })
+            .andWhere('w.date <= :until', { until: new Date() })
             .orderBy('h.id', 'ASC')
             .getMany();
     }
