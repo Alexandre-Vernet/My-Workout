@@ -26,6 +26,8 @@ export class ExercisesService {
             .leftJoin('e.history', 'h')
             .leftJoin('h.workout', 'w')
             .where('w.user.id = :userId', { userId })
+            .andWhere('h.weight IS NOT NULL')
+            .andWhere('h.reps IS NOT NULL')
             .orderBy('e.name', 'ASC')
             .getMany();
     }
