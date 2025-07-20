@@ -17,7 +17,6 @@ export class ExercisesController {
         return this.exercisesService.findAllExercisesByMuscleGroupId(Number(muscleGroupId), optionalCurrentUser);
     }
 
-
     @UseGuards(AuthGuard)
     @Get('find-added-exercises-by-muscle-group-id')
     @HttpCode(200)
@@ -29,6 +28,12 @@ export class ExercisesController {
     @Get('find-cardio-exercises')
     findCardioExercises(@CurrentUser() user: User) {
         return this.exercisesService.findCardioExercises(user.id);
+    }
+
+    @UseGuards(AuthGuard)
+    @Get('find-by-user-id')
+    findByUserId(@CurrentUser() user: User) {
+        return this.exercisesService.findByUserId(user.id);
     }
 
     @Get(':exerciseId')

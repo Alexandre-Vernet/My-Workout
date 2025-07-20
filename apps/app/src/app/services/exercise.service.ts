@@ -40,4 +40,8 @@ export class ExerciseService {
     getExercise(exerciseId: number) {
         return this.httpClient.get<Exercise>(`${ this.exerciseUrl }/${ exerciseId }`);
     }
+
+    findByUserId() {
+        return this.httpClient.get<Exercise[]>(`${ this.exerciseUrl }/find-by-user-id`);
+    }
 }

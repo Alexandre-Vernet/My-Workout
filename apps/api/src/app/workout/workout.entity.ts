@@ -1,4 +1,4 @@
-import { CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { MuscleGroupEntity } from '../muscle-group/muscle-group.entity';
 import { HistoryEntity } from '../history/history.entity';
@@ -16,7 +16,7 @@ export class WorkoutEntity {
     @JoinColumn({ name: 'muscle_group_id' })
     muscleGroup: MuscleGroupEntity;
 
-    @CreateDateColumn()
+    @Column({ type: 'timestamp' })
     date: Date;
 
     @OneToMany(() => HistoryEntity, history => history.workout)

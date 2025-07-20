@@ -36,12 +36,8 @@ export class WorkoutService {
         });
     }
 
-    checkDuplicateWorkout(muscleGroupId: number) {
-        return this.http.get<Workout[]>(`${ this.workoutUrl }/duplicate-workout`, {
-            params: {
-                muscleGroupId
-            }
-        });
+    countTotalDaysWorkout() {
+        return this.http.get<number>(`${ this.workoutUrl }/count-total-days-workout`);
     }
 
     delete(id: number) {

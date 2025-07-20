@@ -13,7 +13,8 @@ import { AuthModule } from '../auth/auth.module';
         AuthModule
     ],
     controllers: [ExercisesController],
-    providers: [ExercisesService]
+    providers: [ExercisesService],
+    exports: [ExercisesService]
 })
 export class ExercisesModule {
 }

@@ -44,6 +44,15 @@ html, body {
     margin-right: 8px;
 }
 
+a {
+    text-decoration: none;
+}
+
+
+.text-no-wrap {
+    text-wrap: nowrap;
+}
+
 
 img {
     max-width: 100%;

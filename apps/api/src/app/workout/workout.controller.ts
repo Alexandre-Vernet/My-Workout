@@ -30,9 +30,9 @@ export class WorkoutController {
         return this.workoutService.find(user.id);
     }
 
-    @Get('duplicate-workout')
-    checkDuplicateWorkout(@CurrentUser() user: User, @Query('muscleGroupId') muscleGroupId: string) {
-        return this.workoutService.checkDuplicateWorkout(user.id, Number(muscleGroupId));
+    @Get('count-total-days-workout')
+    countTotalDaysWorkout(@CurrentUser() user: User) {
+        return this.workoutService.countTotalDaysWorkout(user.id);
     }
 
     @Get(':id')

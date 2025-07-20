@@ -18,6 +18,8 @@ import { CalendarComponent } from './navbar/calendar/calendar.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { HistoryComponent } from './navbar/history/history.component';
 import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exercise.component';
+import { GraphsComponent } from './navbar/view-profile/graphs/graphs.component';
+import { StatsComponent } from './navbar/view-profile/stats/stats.component';
 import { TricepsComponent } from './muscle-structure/triceps/triceps.component';
 import { JambesComponent } from './muscle-structure/jambes/jambes.component';
 import { PectorauxComponent } from './muscle-structure/pectoraux/pectoraux.component';
@@ -92,9 +94,17 @@ export const appRoutes: Route[] = [
                 component: ViewProfileComponent
             },
             {
+                path: 'stats',
+                component: StatsComponent
+            },
+            {
+                path: 'graphs/:exerciseId',
+                component: GraphsComponent
+            },
+            {
                 path: '**',
                 redirectTo: 'view-profile'
-            }
+            },
         ],
         canActivate: [authGuard]
     },

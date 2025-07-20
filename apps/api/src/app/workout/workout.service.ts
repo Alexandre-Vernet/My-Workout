@@ -176,6 +176,15 @@ export class WorkoutService {
             .getOne();
     }
 
+    countTotalDaysWorkout(userId: number) {
+        return this.workoutRepository.count({
+            where: {
+                user: {
+                    id: userId
+                }
+            }
+        });
+    }
 
     async delete(userId: number, id: number) {
         const historyToDelete = await this.workoutRepository.findOne({
