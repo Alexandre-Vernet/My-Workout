@@ -80,9 +80,10 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
         const cardioExercise = this.muscleGroups.find(m => m.id === 8);
         if (cardioExercise.exerciseCount <= 0) {
             this.showDialogNoExercisesAdded(cardioExercise.id);
-        } else {
-            this.checkDuplicateWorkout();
+            return;
         }
+
+        this.isOpenModalExerciseCardio = true;
     }
 
 
@@ -110,38 +111,6 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
             },
             accept: () => this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]),
             reject: () => this.router.navigate(['/', 'workout'])
-        });
-    }
-
-    private checkDuplicateWorkout() {
-        this.workoutService.checkDuplicateWorkout(8)
-            .subscribe(workout => {
-                if (workout) {
-                    this.showDialogConfirmDuplicateWorkout();
-                } else {
-                    this.isOpenModalExerciseCardio = true;
-                }
-            });
-    }
-
-    private showDialogConfirmDuplicateWorkout() {
-        this.confirmationService.confirm({
-            header: 'Attention',
-            message: 'Vous avez déjà réalisé une séance cardio aujourd’hui.<br/>Souhaitez-vous en faire une autre ?',
-            closable: true,
-            closeOnEscape: true,
-            dismissableMask: true,
-            icon: 'pi pi-exclamation-triangle',
-            acceptButtonProps: {
-                label: 'Confirmer'
-            },
-            rejectButtonProps: {
-                label: 'Annuler',
-                severity: 'secondary',
-                outlined: true
-            },
-            accept: () => this.isOpenModalExerciseCardio = true,
-            reject: () => this.isOpenModalExerciseCardio = false
         });
     }
 }
