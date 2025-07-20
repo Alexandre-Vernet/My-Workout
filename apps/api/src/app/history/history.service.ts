@@ -35,7 +35,7 @@ export class HistoryService {
             .getOne();
     }
 
-    existingWorkout(userId: number, muscleGroupId: number, exerciseId: number) {
+    findTodayExercices(userId: number, muscleGroupId: number, exerciseId: number) {
         const twelveHoursAgo = new Date();
         twelveHoursAgo.setHours(twelveHoursAgo.getHours() - 12);
 
