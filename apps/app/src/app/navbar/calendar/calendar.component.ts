@@ -35,6 +35,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     @ViewChild('calendarComponent', { static: false }) calendarComponent!: FullCalendarComponent;
     calendarOptions: CalendarOptions = {
+        timeZone: 'local',
         locale: 'fr',
         plugins: [dayGridPlugin, interactionPlugin],
         initialView: 'dayGridMonth',
@@ -66,11 +67,18 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
                         this.getMuscleGroups();
 
-                        const events: EventInput[] = this.filterWorkouts.map(w => ({
-                            id: w.id.toString(),
-                            title: w.muscleGroup.name,
-                            start: w.date
-                        }));
+                        const events: EventInput[] = this.filterWorkouts.map(w => {
+                            const start = new Date(w.date);
+                            const end = new Date(start);
+                            end.setSeconds(end.getSeconds() + 1);
+
+                            return {
+                                id: w.id.toString(),
+                                title: w.muscleGroup.name,
+                                start,
+                                end,
+                            };
+                        });
 
                         success(events);
                     },
