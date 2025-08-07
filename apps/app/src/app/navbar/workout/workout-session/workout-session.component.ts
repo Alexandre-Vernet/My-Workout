@@ -323,10 +323,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     private fillInputWeightRepsLastSavedValue() {
         this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise.id)
             .subscribe(history => {
-                if (history?.weight) {
-                    this.weight = history?.weight;
-                    this.convertWeightToElastics();
-                }
+                this.weight = history?.weight;
+                this.convertWeightToElastics();
+
                 if (history?.reps) {
                     this.reps = history?.reps;
                 } else {
