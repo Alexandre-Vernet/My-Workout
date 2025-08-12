@@ -5,6 +5,6 @@
         <span *ngIf="gp.weight">{{ gp.weight }} kg</span>
         <span *ngIf="!gp.weight && gp.reps <= 1 && gp.reps > 0">répétition</span>
         <span *ngIf="!gp.weight && gp.reps > 1">répétitions</span>
-        <span *ngIf="!gp.weight && !gp.reps && gp.duration">{{ gp.duration }} mn</span>
+        <span *ngIf="!gp.weight && !gp.reps && gp.duration">{{ formatMinutesToReadableTime(gp.duration) }} </span>
     </div>
 </ng-container>
