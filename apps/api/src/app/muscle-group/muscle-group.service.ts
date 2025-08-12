@@ -36,13 +36,12 @@ export class MuscleGroupService {
             group by mg.id, mg.name
         `, [userId]);
 
-        return muscleGroup.map(m => {
-            return {
-                id: m.id,
-                name: m.name,
-                exerciseCount: Number(m.exerciseCount)
-            };
-        });
+        return muscleGroup.map(m => ({
+            id: m.id,
+            name: m.name,
+            exerciseCount: Number(m.exerciseCount)
+        }))
+            .sort((a, b) => a.name.localeCompare(b.name));
     }
 
     findById(muscleGroupId: number) {
