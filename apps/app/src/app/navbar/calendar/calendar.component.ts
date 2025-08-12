@@ -22,10 +22,11 @@ import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
 import { Tag } from 'primeng/tag';
 import { ExerciseService } from '../../services/exercise.service';
+import { HistoryDetailComponent } from '../history/history-detail/history-detail.component';
 
 @Component({
     selector: 'app-calendar',
-    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, RouterLink, Tag],
+    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, RouterLink, Tag, HistoryDetailComponent],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
