@@ -3,7 +3,7 @@
 
 <p-dialog header="Sélectionner un type d'entraînement" [modal]="true" [(visible)]="openModal"
           [closable]="true" (onHide)="onHideModal()">
-    <div class="cardio-flow">
+    <div class="cardio-flow mb-1">
         <div *ngFor="let cardioExercise of cardioExercises"
              [ngClass]="{
                 'shadow-dark': isDarkMode,
@@ -13,10 +13,21 @@
               background: isDarkMode ? '#1f2a36' : '#ffff'
             }" class="cardio-card">
             <div
-                (click)="createCardioWorkout(cardioExercise)"
+                (click)="showInputDuration(cardioExercise)"
                 class="flex-1 flex align-items-center justify-content-between">
                 <h2 class="text-xl font-bold text-primary">{{ cardioExercise?.name }}</h2>
             </div>
         </div>
     </div>
+
+    <ng-container *ngIf="selectedExercise">
+        <div class="cardio-flow">
+            <p-floatlabel variant="on">
+                <p-input-number [(ngModel)]="inputDuration" size="small" min="1" max="999" suffix=" mn" id="duration" />
+                <label for="duration">Durée</label>
+            </p-floatlabel>
+            <p-button [disabled]="!inputDuration" severity="primary" label="Confirmer"
+                      (click)="clickDuration()"></p-button>
+        </div>
+    </ng-container>
 </p-dialog>

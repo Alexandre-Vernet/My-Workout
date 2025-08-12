@@ -49,6 +49,7 @@
                                 <span *ngIf="groupedHistory.weight">{{ groupedHistory.weight }} kg</span>
                                 <span *ngIf="!groupedHistory.weight && groupedHistory.reps && groupedHistory.reps <= 1 && groupedHistory.reps > 0">répétition</span>
                                 <span *ngIf="!groupedHistory.weight && groupedHistory.reps && groupedHistory.reps > 1">répétitions</span>
+                                <span *ngIf="!groupedHistory.weight && !groupedHistory.reps && groupedHistory.duration">{{ groupedHistory.duration }} mn</span>
                             </div>
                         </ng-container>
                         <div class="flex justify-content-end mt-3">
