@@ -19,6 +19,9 @@ export class WorkoutEntity {
     @Column({ type: 'timestamp' })
     date: Date;
 
+    @Column()
+    duration: number;
+
     @OneToMany(() => HistoryEntity, history => history.workout)
     history: HistoryEntity[];
 }

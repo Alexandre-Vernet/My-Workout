@@ -12,10 +12,11 @@ import { Button } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
 import { GroupedHistory } from '../../../../../../libs/interfaces/history';
 import { HistoryService } from '../../services/history.service';
+import { HistoryDetailComponent } from './history-detail/history-detail.component';
 
 @Component({
     selector: 'app-history',
-    imports: [CommonModule, Skeleton, ConfirmDialog, Button, Ripple],
+    imports: [CommonModule, Skeleton, ConfirmDialog, Button, Ripple, HistoryDetailComponent],
     templateUrl: './history.component.html',
     styleUrl: './history.component.scss',
     standalone: true,

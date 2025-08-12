@@ -83,7 +83,12 @@ export class WorkoutService {
                     groupEntry.history.push(exerciseEntry);
                 }
 
-                exerciseEntry.groupedHistory.push({ id, reps, weight });
+                exerciseEntry.groupedHistory.push({
+                    id,
+                    reps,
+                    weight,
+                    duration: workout.duration
+                });
             }
         }
 
@@ -114,7 +119,8 @@ export class WorkoutService {
             historyGroupedByExercise.get(exerciseId)!.push({
                 id: h.id,
                 weight: h.weight,
-                reps: h.reps ?? null
+                reps: h.reps ?? null,
+                duration: workout.duration
             });
 
             delete h.id;

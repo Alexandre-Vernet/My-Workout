@@ -1,0 +1,10 @@
+<ng-container *ngFor="let gp of groupedHistory">
+    <div class="flex flex-row text-sm text-color-secondary gap-1">
+        <span *ngIf="gp.reps">{{ gp.reps }}</span>
+        <span *ngIf="gp.reps && gp.weight">x</span>
+        <span *ngIf="gp.weight">{{ gp.weight }} kg</span>
+        <span *ngIf="!gp.weight && gp.reps <= 1 && gp.reps > 0">répétition</span>
+        <span *ngIf="!gp.weight && gp.reps > 1">répétitions</span>
+        <span *ngIf="!gp.weight && !gp.reps && gp.duration">{{ formatMinutesToReadableTime(gp.duration) }} </span>
+    </div>
+</ng-container>

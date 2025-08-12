@@ -15,7 +15,7 @@
                     </h3>
 
                     <ng-container *ngFor="let exercise of [1, 2, 3]">
-                            <p-skeleton width="5rem" styleClass="mb-2" />
+                        <p-skeleton width="5rem" styleClass="mb-2" />
                     </ng-container>
                     <div class="flex justify-content-end mt-3">
                         <p-skeleton width="2rem" height="2rem" />
@@ -42,15 +42,7 @@
                     'shadow-light': !isDarkMode
                     }">
                         <h3 class="text-primary mb-2">{{ h.exercise.name }}</h3>
-                        <ng-container *ngFor="let groupedHistory of h.groupedHistory">
-                            <div class="flex flex-row text-sm text-color-secondary gap-1">
-                                <span *ngIf="groupedHistory.reps">{{ groupedHistory.reps }}</span>
-                                <span *ngIf="groupedHistory.reps && groupedHistory.weight">x</span>
-                                <span *ngIf="groupedHistory.weight">{{ groupedHistory.weight }} kg</span>
-                                <span *ngIf="!groupedHistory.weight && groupedHistory.reps && groupedHistory.reps <= 1 && groupedHistory.reps > 0">répétition</span>
-                                <span *ngIf="!groupedHistory.weight && groupedHistory.reps && groupedHistory.reps > 1">répétitions</span>
-                            </div>
-                        </ng-container>
+                        <app-history-detail [groupedHistory]="h.groupedHistory"></app-history-detail>
                         <div class="flex justify-content-end mt-3">
                             <p-button pRipple icon="pi pi-trash" severity="danger"
                                       (onClick)="deleteWorkout(h.groupedHistory, h.exercise.name, w.date)" />
