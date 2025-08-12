@@ -1,3 +1,15 @@
+<div class="m-1 p-3 flex flex-row gap-2 mb-3 overflow-auto">
+    <ng-container *ngFor="let muscleGroup of muscleGroups">
+        <p-tag (click)="filterByMuscleGroup(muscleGroup)" severity="info"
+               [ngClass]="{
+                'border border-blue-500 bg-blue-100 text-blue-700': activeFilter?.name === muscleGroup.name,
+            }"
+        >{{ muscleGroup.name }}
+        </p-tag>
+    </ng-container>
+</div>
+
+
 <div class="history">
     <ng-container *ngIf="isLoading else content">
         <div *ngFor="let skeleton of [1, 2]">
@@ -26,7 +38,7 @@
     </ng-container>
 
     <ng-template #content>
-        <div *ngFor="let w of workout">
+        <div *ngFor="let w of filterWorkouts">
             <div class="p-3 mb-3">
                 <h2 class="mb-2 text-2xl">{{ w.date | date:'fullDate' | titlecase }}</h2>
 
