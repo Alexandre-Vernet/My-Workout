@@ -57,7 +57,8 @@
                                 <div class="text-sm text-secondary">
                                     <span *ngFor="let muscle of item.muscles; let last = last">
                                         <a class="text-sm text-secondary"
-                                           [routerLink]="['/', 'muscle-structure', removeAccents(muscleGroup?.name.toLowerCase())]"
+                                           [routerLink]=" muscleGroup?.id !== 8 ? ['/', 'muscle-structure', removeAccents(muscleGroup?.name.toLowerCase())] :
+                                           ['/', 'library', 'muscle-group', muscleGroup.id]"
                                            [fragment]="replaceSpaces(muscle.name)">
                                             {{ muscle.name }}
                                         </a>
