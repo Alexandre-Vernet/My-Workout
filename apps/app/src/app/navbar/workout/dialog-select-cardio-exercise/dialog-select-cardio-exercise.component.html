@@ -2,7 +2,7 @@
 
 
 <p-dialog header="Sélectionner un type d'entraînement" [modal]="true" [(visible)]="openModal"
-          [closable]="true"  (onHide)="onHideModal()">
+          [closable]="true" dismissableMask="true" (onHide)="onHideModal()">
     <div class="cardio-flow mb-1">
         <div *ngFor="let cardioExercise of cardioExercises"
              [ngClass]="{
