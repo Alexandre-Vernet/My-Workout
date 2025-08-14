@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GroupedHistory } from '../../../../../../../libs/interfaces/history';
 
@@ -9,22 +9,35 @@ import { GroupedHistory } from '../../../../../../../libs/interfaces/history';
     styleUrl: './history-detail.component.scss',
     standalone: true
 })
-export class HistoryDetailComponent {
+export class HistoryDetailComponent implements OnInit {
 
     @Input() groupedHistory: GroupedHistory[];
 
-    formatMinutesToReadableTime(minutes: number): string {
-        if (minutes < 60) {
-            return `${ minutes } mn`;
-        }
+    ngOnInit() {
+        this.groupedHistory = this.groupedHistory.map(gp => {
+            let durationConvert = '';
+            if (typeof gp.duration === 'number') {
 
-        const hours = Math.floor(minutes / 60);
-        const remainingMinutes = minutes % 60;
+                if (gp.duration < 60) {
+                    durationConvert = `${ gp.duration } mn`;
+                } else {
+                    const hours = Math.floor(gp.duration / 60);
+                    const remainingMinutes = gp.duration % 60;
 
-        if (remainingMinutes === 0) {
-            return `${ hours } h`;
-        }
+                    if (remainingMinutes === 0) {
+                        durationConvert = `${ hours } h`;
+                    } else {
+                        durationConvert = `${ hours }h${ remainingMinutes }`;
+                    }
+                }
 
-        return `${ hours }h${ remainingMinutes }`;
+                return {
+                    ...gp,
+                    duration: durationConvert
+                };
+            }
+
+            return gp;
+        });
     }
 }

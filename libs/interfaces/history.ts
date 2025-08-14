@@ -19,5 +19,5 @@ export interface GroupedHistory {
     id: number;
     weight: number;
     reps: number;
-    duration: number;
+    duration: number | string;
 }

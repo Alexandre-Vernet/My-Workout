@@ -15,6 +15,18 @@
             </div>
         </a>
     </div>
+    <div class="m-2 p-3 border-round-2xl"
+         [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+        <a routerLink="/user/stats" class="text-primary">
+            <div class="flex-1 flex justify-center align-items-center gap-3">
+                <i class="pi pi-wave-pulse" style="font-size: 1.2rem"></i>
+                <span class="text-primary text-xl stats">Disques</span>
+            </div>
+        </a>
+    </div>
 
     <div class="m-2 p-3 border-round-2xl"
          [ngClass]="{
