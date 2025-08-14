@@ -37,18 +37,11 @@
 
             <h2 class="mb-3">{{ showWorkout.muscleGroup.name }}</h2>
 
-
             <!-- List exercises -->
             <ng-container *ngFor="let history of showWorkout.history; let i = index">
                 <hr class="mt-3 mb-3" *ngIf="i > 0" />
 
-                <!-- Exercise name -->
-                <div [routerLink]="['/', 'library', 'exercises', history?.exercise?.id]"
-                     class="text-primary text-lg mb-1">
-                    {{ history.exercise.name }}
-                </div>
-
-                <app-history-detail [groupedHistory]="history.groupedHistory"></app-history-detail>
+                <app-history-detail [exercise]="history.exercise" [groupedHistory]="history.groupedHistory"></app-history-detail>
             </ng-container>
         </div>
         <div class="flex justify-content-end mt-3">

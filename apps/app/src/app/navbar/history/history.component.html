@@ -53,8 +53,7 @@
                     'shadow-dark': isDarkMode,
                     'shadow-light': !isDarkMode
                     }">
-                        <h3 class="text-primary mb-2">{{ h.exercise.name }}</h3>
-                        <app-history-detail [groupedHistory]="h.groupedHistory"></app-history-detail>
+                        <app-history-detail [exercise]="h.exercise" [groupedHistory]="h.groupedHistory"></app-history-detail>
                         <div class="flex justify-content-end mt-3">
                             <p-button pRipple icon="pi pi-trash" severity="danger"
                                       (onClick)="deleteWorkout(h.groupedHistory, h.exercise.name, w.date)" />

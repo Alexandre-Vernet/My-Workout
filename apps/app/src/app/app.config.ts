@@ -13,7 +13,8 @@ export const appConfig: ApplicationConfig = {
     providers: [
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideRouter(appRoutes, withInMemoryScrolling({
-            scrollPositionRestoration: 'top'
+            scrollPositionRestoration: 'top',
+            anchorScrolling: 'enabled'
         })),
         provideHttpClient(withInterceptors([authInterceptor])),
         provideAnimationsAsync(),

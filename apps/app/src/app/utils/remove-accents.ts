@@ -4,3 +4,7 @@ export const removeAccents = (str: string) => {
         .replace(/[\u0300-\u036f]/g, '') // Removes diacritical marks (accents)
         .trim();                         // Removes leading and trailing whitespace
 };
+
+export const replaceSpaces = (str: string) => {
+    return removeAccents(str).split(' ').join('-');
+}

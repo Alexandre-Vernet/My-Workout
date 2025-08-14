@@ -1,0 +1,112 @@
+<div class="p-2">
+    <h1 class="text-center mb-5">Épaules – Deltoïde</h1>
+
+    <img src="/assets/images/epaules.jpg" alt="épaules">
+
+    <div class="mb-4">
+        <div class="mb-3">
+            <h2>🧠 Présentation générale du deltoïde</h2>
+            <p>
+                Le deltoïde est le principal muscle de l'épaule. Il est constitué de trois faisceaux :
+            </p>
+            <ol>
+                <li>Faisceau antérieur (deltoïde antérieur)</li>
+                <li>Faisceau moyen (deltoïde moyen)</li>
+                <li>Faisceau postérieur (deltoïde postérieur)</li>
+            </ol>
+        </div>
+
+        <h3>🎯 Rôle principal</h3>
+        <p>
+            Le deltoïde permet les mouvements de l'épaule dans plusieurs directions : flexion, abduction et extension. Il est
+            fortement sollicité dans la majorité des mouvements de poussée, de tirage ou d'élévation du bras. Chaque faisceau
+            a un rôle spécifique.
+        </p>
+    </div>
+
+    <h2>🔍 Détails des 3 faisceaux :</h2>
+
+    <div id="deltoide-anterieur" class="detail-muscle">
+        <h3>🟠 Deltoïde antérieur</h3>
+        <ul>
+            <li>Origine : clavicule (tiers latéral)</li>
+            <li>
+                Rôle :
+                <ul>
+                    <li>Flexion de l’épaule</li>
+                    <li>Rotation interne</li>
+                    <li>Légère adduction horizontale</li>
+                </ul>
+            </li>
+            <li>
+                Exercices ciblés :
+                <ul>
+                    <li>Développé militaire ou haltères en position assise ou debout</li>
+                    <li>Élévations frontales (haltères, barre ou poulie)</li>
+                    <li>Développé couché (indirectement)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="deltoide-moyen" class="detail-muscle">
+        <h3>🟡 Deltoïde moyen</h3>
+        <ul>
+            <li>Origine : acromion (omoplate)</li>
+            <li>
+                Rôle : abduction du bras (élévation latérale)
+            </li>
+            <li>
+                Exercices ciblés :
+                <ul>
+                    <li>Élévations latérales avec haltères ou à la poulie</li>
+                    <li>Oiseau debout incliné latéral à la poulie</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="deltoide-posterieur" class="detail-muscle">
+        <h3>🔵 Deltoïde postérieur</h3>
+        <ul>
+            <li>Origine : épine de l'omoplate</li>
+            <li>
+                Rôle :
+                <ul>
+                    <li>Extension de l’épaule</li>
+                    <li>Rotation externe</li>
+                    <li>Abduction horizontale</li>
+                </ul>
+            </li>
+            <li>
+                Exercices ciblés :
+                <ul>
+                    <li>Oiseau (haltères, poulie ou machine) en position penchée</li>
+                    <li>Face pull à la poulie</li>
+                    <li>Rowing coudes écartés (prise large)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <h3>🏋️ Résumé pratique</h3>
+    <p-table [value]="[
+        { faisceau: 'Antérieur', exercice: 'Élévations frontales', position: 'Bras levés vers l’avant' },
+        { faisceau: 'Moyen', exercice: 'Élévations latérales', position: 'Bras levés sur les côtés' },
+        { faisceau: 'Postérieur', exercice: 'Oiseau buste penché', position: 'Bras tirés vers l’arrière' }]">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Faisceau</th>
+                <th>Exercice recommandé</th>
+                <th>Position / angle</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-exercise>
+            <tr>
+                <td>{{ exercise.faisceau }}</td>
+                <td>{{ exercise.exercice }}</td>
+                <td>{{ exercise.position }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

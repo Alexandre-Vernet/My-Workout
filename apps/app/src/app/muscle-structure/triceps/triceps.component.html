@@ -1,0 +1,114 @@
+<div class="p-2">
+    <h1 class="text-center mb-5">Triceps brachial</h1>
+
+    <img src="/assets/images/triceps.jpg" alt="triceps">
+
+    <div class="mb-4">
+        <div class="mb-3">
+            <h2>🧠 Présentation générale du triceps</h2>
+            <p>
+                Le triceps brachial est un muscle situé à l'arrière du bras. Il est composé de trois chefs :
+            </p>
+            <ol>
+                <li>Chef long (longue portion)</li>
+                <li>Chef latéral</li>
+                <li>Chef médial</li>
+            </ol>
+        </div>
+
+        <h3>🎯 Rôle principal</h3>
+        <p>
+            Ce muscle est principalement responsable de l'extension du coude, permettant ainsi de
+            redresser le bras. Il joue également un rôle dans la stabilisation de l'articulation de l'épaule. Le triceps
+            est
+            souvent sollicité lors d'exercices tels que les pompes, les dips et les extensions de triceps. Il représente
+            environ
+            2/3 de la masse du bras.
+        </p>
+    </div>
+
+    <h2>🔍 Détails des 3 chefs :</h2>
+    <div id="chef-long" class="detail-muscle">
+        <h3>🟢 Chef long (longue portion)</h3>
+        <ul>
+            <li>Origine : scapula</li>
+            <li>
+                Rôle :
+                <ul>
+                    <li>Extension du coude</li>
+                    <li>Extension des adduction de l'épaule</li>
+                </ul>
+            </li>
+            <li>
+                Exercices ciblés :
+                <ul>
+                    <li>Extensions au-dessus de la tête (ex : barre, haltères, corde) : favorisent l'étirement et le
+                        travail
+                        du
+                        chef long.
+                    </li>
+                    <li>Dips (plus complet, mais recrute fortement le chef long)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="chef-lateral" class="detail-muscle">
+        <h3>🔵 Chef latéral</h3>
+        <ul>
+            <li>Origine : face postérieure de l’humérus (au-dessus du sillon radial)</li>
+            <li>
+                Rôle : extension du coude
+            </li>
+            <li>
+                Exercices ciblés :
+                <ul>
+                    <li>Extensions à la poulie avec corde en pronation</li>
+                    <li>Extensions à la barre en pronation</li>
+                    <li>Pompes serrées (mains proches)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="chef-medial" class="detail-muscle">
+        <h3>🔴 Chef médial</h3>
+        <ul>
+            <li>Origine : face postérieure de l’humérus (sous le sillon radial)</li>
+            <li>
+                Rôle : extension du coude
+            </li>
+            <li>
+                Exercices ciblés :
+                <ul>
+                    <li>Kickbacks (extensions à l’haltère ou à la poulie, bras parallèle au sol)</li>
+                    <li>Extensions à la poulie en supination (poignets retournés vers le haut)</li>
+                    <li>Travail en tempo lent ou en fin de séance (pompes diamant)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+
+    <h3>🏋️ Résumé pratique</h3>
+    <p-table [value]="[
+    { chef: 'Long', exercice: 'Extensions au-dessus de la tête', position: 'Bras tendu vers le haut' },
+    { chef: 'Latéral', exercice: 'Extensions à la poulie avec corde', position: 'Bras le long du corps' },
+    { chef: 'Médial', exercice: 'Kickbacks', position: 'Bras parallèle au sol' }]">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Chef</th>
+                <th>Exercice recommandé</th>
+                <th>Position / angle</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-exercise>
+            <tr>
+                <td>{{ exercise.chef }}</td>
+                <td>{{ exercise.exercice }}</td>
+                <td>{{ exercise.position }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+</div>

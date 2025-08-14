@@ -5,9 +5,12 @@
         <div class="flex flex-column">
             <div class="flex flex-row gap-2 flex-wrap">
                 <ng-container *ngFor="let muscle of exercise.muscles">
-                    <p-tag value="{{ muscle.name }}"
-                           role="button"
-                           tabindex="0" />
+                    <a class="text-sm text-secondary" [routerLink]="['muscle-structure', exercise?.muscleGroup.toLowerCase()]"
+                       [fragment]="replaceSpaces(muscle.name)">
+                        <p-tag value="{{ muscle.name }}"
+                               role="button"
+                               tabindex="0" />
+                    </a>
                 </ng-container>
             </div>
         </div>
@@ -24,7 +27,7 @@
                 </div>
             }
 
-            <img *ngIf="showImage" class="image-width" (error)="showImage = false; isLoading = false" [src]="imagePath"
+            <img *ngIf="showImage" (error)="showImage = false; isLoading = false" [src]="imagePath"
                  (load)="isLoading = false"
                  [alt]="exercise.name" />
         </div>
