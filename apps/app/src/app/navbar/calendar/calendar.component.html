@@ -48,15 +48,7 @@
                     {{ history.exercise.name }}
                 </div>
 
-                <ng-container *ngFor="let gp of history.groupedHistory">
-                    <div class="flex flex-row text-sm text-color-secondary gap-1">
-                        <span *ngIf="gp.reps">{{ gp.reps }}</span>
-                        <span *ngIf="gp.reps && gp.weight">x</span>
-                        <span *ngIf="gp.weight">{{ gp.weight }} kg</span>
-                        <span *ngIf="!gp.weight && gp.reps <= 1 && gp.reps > 0">répétition</span>
-                        <span *ngIf="!gp.weight && gp.reps > 1">répétitions</span>
-                    </div>
-                </ng-container>
+                <app-history-detail [groupedHistory]="history.groupedHistory"></app-history-detail>
             </ng-container>
         </div>
         <div class="flex justify-content-end mt-3">

@@ -13,10 +13,14 @@ import { Alert } from '../../../../../../../libs/interfaces/alert';
 import { ThemeService } from '../../../theme/theme.service';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { InputNumber } from 'primeng/inputnumber';
+import { Button } from 'primeng/button';
+import { FormsModule } from '@angular/forms';
+import { FloatLabel } from 'primeng/floatlabel';
 
 @Component({
     selector: 'app-dialog-select-cardio-exercise',
-    imports: [CommonModule, Dialog, ConfirmDialog],
+    imports: [CommonModule, Dialog, ConfirmDialog, InputNumber, Button, FormsModule, FloatLabel],
     templateUrl: './dialog-select-cardio-exercise.component.html',
     styleUrl: './dialog-select-cardio-exercise.component.scss',
     standalone: true,
@@ -29,6 +33,9 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
     @Input() workoutDate: Date;
     @Output() createdWorkout = new Subject<Workout>();
     @Output() showAlert = new Subject<Alert>();
+
+    selectedExercise: Exercise;
+    inputDuration: number;
 
     cardioExercises: Exercise[] = [];
 
@@ -49,30 +56,40 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
     }
 
     onHideModal() {
+        this.resetDuration();
         this.openModalChange.next();
     }
 
-    createCardioWorkout(exercise: Exercise) {
+    showInputDuration(exercise: Exercise) {
+        this.selectedExercise = exercise;
+    }
+
+    clickDuration() {
+        this.createCardioWorkout();
+    }
+
+    createCardioWorkout() {
         const muscleGroup: MuscleGroup = {
             id: 8
         };
 
         const workout: Workout = {
             muscleGroup,
-            date: this.workoutDate ?? new Date()
+            date: this.workoutDate ?? new Date(),
+            duration: Number(this.inputDuration)
         };
 
         this.workoutService.create(workout)
             .pipe(
                 switchMap(createdWorkout => {
 
-                    const newExercise: Exercise = {
-                        id: exercise.id
+                    const exercise: Exercise = {
+                        id: this.selectedExercise.id
                     };
 
                     const history: History = {
                         workout: createdWorkout,
-                        exercise: newExercise
+                        exercise: exercise
                     };
 
                     return this.historyService.create(history)
@@ -82,15 +99,15 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
             .subscribe({
                 next: (workout) => {
                     const h: History = {
-                        exercise
-                    }
+                        exercise: this.selectedExercise
+                    };
                     workout.history = [];
                     workout.history.push(h);
                     this.createdWorkout.next(workout);
 
                     this.showAlert.next({
                         severity: 'success',
-                        message: `L'entraînement ${ exercise.name } a été créé avec succès`
+                        message: `L'entraînement ${ this.selectedExercise.name } a été créé avec succès`
                     });
                 },
                 error: (err) => {
@@ -98,12 +115,12 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible de créer l\'entraînement'
                     });
-                }
+                },
+                complete: () => this.resetDuration()
             });
 
         this.openModalChange.next();
     }
-
 
     private findCardioExercises() {
         this.exerciseService.findCardioExercises()
@@ -118,5 +135,10 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
                     });
                 }
             });
+    }
+
+    private resetDuration() {
+        this.selectedExercise = null;
+        this.inputDuration = null;
     }
 }

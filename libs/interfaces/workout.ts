@@ -9,4 +9,5 @@ export class Workout {
     muscleGroups?: { muscleGroup: MuscleGroup, history: History[] }[];
     date: Date;
     history?: History[];
+    duration?: number;
 }

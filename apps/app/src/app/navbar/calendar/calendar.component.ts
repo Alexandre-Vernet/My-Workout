@@ -21,10 +21,12 @@ import { Alert } from '../../../../../../libs/interfaces/alert';
 import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
 import { Tag } from 'primeng/tag';
+import { ExerciseService } from '../../services/exercise.service';
+import { HistoryDetailComponent } from '../history/history-detail/history-detail.component';
 
 @Component({
     selector: 'app-calendar',
-    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, RouterLink, Tag],
+    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, RouterLink, Tag, HistoryDetailComponent],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
@@ -76,7 +78,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                                 id: w.id.toString(),
                                 title: w.muscleGroup.name,
                                 start,
-                                end,
+                                end
                             };
                         });
 
@@ -107,6 +109,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     constructor(
         private readonly workoutService: WorkoutService,
+        private readonly exerciseService: ExerciseService,
         private readonly confirmationService: ConfirmationService,
         private readonly alertService: AlertService,
         private readonly themeService: ThemeService
@@ -252,10 +255,22 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     private dateClick(info: DateClickArg) {
-        this.isOpenModalExerciseCardio = true;
-        // Set day to info.date but hour to current time
-        this.setWorkoutDate = new Date(info.date);
-        this.setWorkoutDate.setHours(new Date().getHours(), new Date().getMinutes(), 0, 0);
+        this.exerciseService.findCardioExercises()
+            .subscribe({
+                next: (exercises) => {
+                    if (exercises.length > 0) {
+                        this.isOpenModalExerciseCardio = true;
+                        // Set day to info.date but hour to current time
+                        this.setWorkoutDate = new Date(info.date);
+                        this.setWorkoutDate.setHours(new Date().getHours(), new Date().getMinutes(), 0, 0);
+                    } else {
+                        this.alertService.alert$.next({
+                            severity: 'error',
+                            message: 'Aucun exercice cardio n\'a été ajouté, ajoutez en un depuis la bibliothèque'
+                        })
+                    }
+                }
+            });
     }
 
     private previousMonth() {

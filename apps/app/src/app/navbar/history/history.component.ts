@@ -12,10 +12,13 @@ import { Button } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
 import { GroupedHistory } from '../../../../../../libs/interfaces/history';
 import { HistoryService } from '../../services/history.service';
+import { HistoryDetailComponent } from './history-detail/history-detail.component';
+import { Tag } from 'primeng/tag';
+import { MuscleGroup } from '../../../../../../libs/interfaces/MuscleGroup';
 
 @Component({
     selector: 'app-history',
-    imports: [CommonModule, Skeleton, ConfirmDialog, Button, Ripple],
+    imports: [CommonModule, Skeleton, ConfirmDialog, Button, Ripple, HistoryDetailComponent, Tag],
     templateUrl: './history.component.html',
     styleUrl: './history.component.scss',
     standalone: true,
@@ -24,7 +27,11 @@ import { HistoryService } from '../../services/history.service';
 export class HistoryComponent implements OnInit {
 
     workout: Workout[];
+    filterWorkouts: Workout[] = [];
     isLoading = true;
+
+    muscleGroups: MuscleGroup[] = [];
+    activeFilter: MuscleGroup;
 
     isDarkMode = false;
 
@@ -90,7 +97,9 @@ export class HistoryComponent implements OnInit {
                 next: (workout) => {
                     this.isLoading = false;
                     this.workout = workout;
+                    this.filterWorkouts = workout;
                     this.checkNoWorkout();
+                    this.getMuscleGroups();
                 },
                 error: (err) => {
                     this.alertService.alert$.next({
@@ -117,5 +126,37 @@ export class HistoryComponent implements OnInit {
                 accept: () => this.router.navigate(['/workout'])
             });
         }
+    }
+
+    private getMuscleGroups() {
+        this.muscleGroups = [];
+        // Filter by name because all cardio exercises has the same id
+        this.workout.forEach(w => {
+            w.muscleGroups.forEach(mgObj => {
+                const name = mgObj.muscleGroup.name;
+                if (!this.muscleGroups.some(mg => mg.name === name)) {
+                    this.muscleGroups.push(mgObj.muscleGroup);
+                }
+            });
+        });
+
+        this.muscleGroups.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    filterByMuscleGroup(muscleGroup: MuscleGroup) {
+        if (muscleGroup.name === this.activeFilter?.name) {
+            this.filterWorkouts = this.workout;
+            this.activeFilter = null;
+            return;
+        }
+
+        this.filterWorkouts = this.workout
+            .map(w => ({
+                ...w,
+                muscleGroups: w.muscleGroups.filter(mg => mg.muscleGroup.name === muscleGroup.name)
+            }))
+            .filter(w => w.muscleGroups.length > 0);
+
+        this.activeFilter = muscleGroup;
     }
 }

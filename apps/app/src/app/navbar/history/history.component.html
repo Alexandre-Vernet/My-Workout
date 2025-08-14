@@ -1,3 +1,15 @@
+<div class="m-1 p-3 flex flex-row gap-2 mb-3 overflow-auto">
+    <ng-container *ngFor="let muscleGroup of muscleGroups">
+        <p-tag (click)="filterByMuscleGroup(muscleGroup)" severity="info"
+               [ngClass]="{
+                'border border-blue-500 bg-blue-100 text-blue-700': activeFilter?.name === muscleGroup.name,
+            }"
+        >{{ muscleGroup.name }}
+        </p-tag>
+    </ng-container>
+</div>
+
+
 <div class="history">
     <ng-container *ngIf="isLoading else content">
         <div *ngFor="let skeleton of [1, 2]">
@@ -15,7 +27,7 @@
                     </h3>
 
                     <ng-container *ngFor="let exercise of [1, 2, 3]">
-                            <p-skeleton width="5rem" styleClass="mb-2" />
+                        <p-skeleton width="5rem" styleClass="mb-2" />
                     </ng-container>
                     <div class="flex justify-content-end mt-3">
                         <p-skeleton width="2rem" height="2rem" />
@@ -26,7 +38,7 @@
     </ng-container>
 
     <ng-template #content>
-        <div *ngFor="let w of workout">
+        <div *ngFor="let w of filterWorkouts">
             <div class="p-3 mb-3">
                 <h2 class="mb-2 text-2xl">{{ w.date | date:'fullDate' | titlecase }}</h2>
 
@@ -42,15 +54,7 @@
                     'shadow-light': !isDarkMode
                     }">
                         <h3 class="text-primary mb-2">{{ h.exercise.name }}</h3>
-                        <ng-container *ngFor="let groupedHistory of h.groupedHistory">
-                            <div class="flex flex-row text-sm text-color-secondary gap-1">
-                                <span *ngIf="groupedHistory.reps">{{ groupedHistory.reps }}</span>
-                                <span *ngIf="groupedHistory.reps && groupedHistory.weight">x</span>
-                                <span *ngIf="groupedHistory.weight">{{ groupedHistory.weight }} kg</span>
-                                <span *ngIf="!groupedHistory.weight && groupedHistory.reps && groupedHistory.reps <= 1 && groupedHistory.reps > 0">répétition</span>
-                                <span *ngIf="!groupedHistory.weight && groupedHistory.reps && groupedHistory.reps > 1">répétitions</span>
-                            </div>
-                        </ng-container>
+                        <app-history-detail [groupedHistory]="h.groupedHistory"></app-history-detail>
                         <div class="flex justify-content-end mt-3">
                             <p-button pRipple icon="pi pi-trash" severity="danger"
                                       (onClick)="deleteWorkout(h.groupedHistory, h.exercise.name, w.date)" />

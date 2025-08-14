@@ -86,7 +86,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     activeStep: number = 1;
 
-    weight: number = 0;
+    weight: number;
     reps: number = 8;
 
     timer = {
@@ -222,7 +222,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             return;
         }
         this.currentExercise = exercise;
-        this.fillInputWeightLastSavedValue();
+        this.fillInputWeightRepsLastSavedValue();
         this.exercisesMade = [];
         this.stopTimer();
         this.setTabUrl(index);
@@ -256,7 +256,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                         this.currentExercise = this.exercises[0];
                         this.switchPanel(this.currentExercise);
                     }
-                    this.fillInputWeightLastSavedValue();
+                    this.fillInputWeightRepsLastSavedValue();
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {
@@ -320,14 +320,16 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
 
-    private fillInputWeightLastSavedValue() {
+    private fillInputWeightRepsLastSavedValue() {
         this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise.id)
             .subscribe(history => {
-                if (history) {
-                    this.weight = history?.weight;
-                    this.convertWeightToElastics();
+                this.weight = history?.weight;
+                this.convertWeightToElastics();
+
+                if (history?.reps) {
+                    this.reps = history?.reps;
                 } else {
-                    this.weight = null;
+                    this.reps = 8;
                 }
             });
     }
