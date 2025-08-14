@@ -1,16 +1,19 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GroupedHistory } from '../../../../../../../libs/interfaces/history';
+import { Exercise } from '../../../../../../../libs/interfaces/exercise';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-history-detail',
-    imports: [CommonModule],
+    imports: [CommonModule, RouterLink],
     templateUrl: './history-detail.component.html',
     styleUrl: './history-detail.component.scss',
     standalone: true
 })
 export class HistoryDetailComponent implements OnInit {
 
+    @Input() exercise: Exercise;
     @Input() groupedHistory: GroupedHistory[];
 
     ngOnInit() {

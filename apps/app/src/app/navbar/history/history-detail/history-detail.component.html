@@ -1,3 +1,7 @@
+<div [routerLink]="['/', 'library', 'exercises', exercise?.id]">
+    <h3 class="text-primary mb-2">{{ exercise.name }}</h3>
+</div>
+
 <ng-container *ngFor="let gp of groupedHistory">
     <div class="flex flex-row text-sm text-color-secondary gap-1">
         <span *ngIf="gp.reps">{{ gp.reps }}</span>
