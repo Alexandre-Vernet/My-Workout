@@ -266,7 +266,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                         this.alertService.alert$.next({
                             severity: 'error',
                             message: 'Aucun exercice cardio n\'a été ajouté, ajoutez en un depuis la bibliothèque'
-                        })
+                        });
                     }
                 }
             });
