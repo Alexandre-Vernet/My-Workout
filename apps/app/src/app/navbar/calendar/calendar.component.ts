@@ -22,6 +22,7 @@ import { AlertService } from '../../services/alert.service';
 import { Tag } from 'primeng/tag';
 import { ExerciseService } from '../../services/exercise.service';
 import { HistoryDetailComponent } from '../history/history-detail/history-detail.component';
+import { Exercise } from '../../../../../../libs/interfaces/exercise';
 
 @Component({
     selector: 'app-calendar',
@@ -97,6 +98,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     muscleGroups: MuscleGroup[] = [];
 
+    cardioExercises: Exercise[] = [];
+
     @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
     swipeStartX = 0;
     swipeEndX = 0;
@@ -118,6 +121,11 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.isDarkMode = this.themeService.isDarkMode();
+
+        this.exerciseService.findCardioExercises()
+            .subscribe({
+                next: (exercises) => this.cardioExercises = exercises
+            });
     }
 
 
@@ -254,22 +262,17 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     private dateClick(info: DateClickArg) {
-        this.exerciseService.findCardioExercises()
-            .subscribe({
-                next: (exercises) => {
-                    if (exercises.length > 0) {
-                        this.isOpenModalExerciseCardio = true;
-                        // Set day to info.date but hour to current time
-                        this.setWorkoutDate = new Date(info.date);
-                        this.setWorkoutDate.setHours(new Date().getHours(), new Date().getMinutes(), 0, 0);
-                    } else {
-                        this.alertService.alert$.next({
-                            severity: 'error',
-                            message: 'Aucun exercice cardio n\'a été ajouté, ajoutez en un depuis la bibliothèque'
-                        });
-                    }
-                }
+        if (this.cardioExercises.length > 0) {
+            this.isOpenModalExerciseCardio = true;
+            // Set day to info.date but hour to current time
+            this.setWorkoutDate = new Date(info.date);
+            this.setWorkoutDate.setHours(new Date().getHours(), new Date().getMinutes(), 0, 0);
+        } else {
+            this.alertService.alert$.next({
+                severity: 'error',
+                message: 'Aucun exercice cardio n\'a été ajouté, ajoutez en un depuis la bibliothèque'
             });
+        }
     }
 
     private previousMonth() {
