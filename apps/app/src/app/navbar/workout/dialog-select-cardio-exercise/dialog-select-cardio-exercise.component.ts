@@ -78,9 +78,6 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
         this.workoutService.create(workout)
             .pipe(
                 switchMap(createdWorkout => {
-
-                    console.log('selectedExercise:', this.selectedExercise);
-
                     const exercise: Exercise = {
                         id: this.selectedExercise.id
                     };
@@ -109,7 +106,6 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
                     });
                 },
                 error: (err) => {
-                    console.log(err);
                     this.showAlert.next({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible de créer l\'entraînement'
