@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
 
     isLoginPage = false;
     isIphone: boolean = false;
+    isDesktop: boolean = false;
 
     constructor(
         private readonly sw: SwPush,
@@ -66,5 +67,11 @@ export class AppComponent implements OnInit {
         ).subscribe((event: NavigationEnd) => {
             this.isLoginPage = event.url.includes('auth');
         });
+
+
+      if (this.deviceDetection.isDesktop()) {
+          this.isDesktop = true;
+          this.router.navigate(['desktop']);
+      }
     }
 }
