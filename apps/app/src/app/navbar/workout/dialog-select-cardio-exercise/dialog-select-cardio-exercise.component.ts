@@ -64,10 +64,6 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
         this.selectedExercise = exercise;
     }
 
-    clickDuration() {
-        this.createCardioWorkout();
-    }
-
     createCardioWorkout() {
         const muscleGroup: MuscleGroup = {
             id: 8
@@ -82,7 +78,6 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
         this.workoutService.create(workout)
             .pipe(
                 switchMap(createdWorkout => {
-
                     const exercise: Exercise = {
                         id: this.selectedExercise.id
                     };
@@ -116,10 +111,12 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
                         message: err?.error?.message ?? 'Impossible de créer l\'entraînement'
                     });
                 },
-                complete: () => this.resetDuration()
+                complete: () => {
+                    this.resetDuration();
+                    this.openModalChange.next();
+                }
             });
 
-        this.openModalChange.next();
     }
 
     private findCardioExercises() {
