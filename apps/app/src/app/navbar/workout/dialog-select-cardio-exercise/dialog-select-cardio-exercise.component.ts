@@ -2,7 +2,6 @@ import { Component, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
 import { map, Subject, switchMap } from 'rxjs';
-import { ExerciseService } from '../../../services/exercise.service';
 import { Exercise } from '../../../../../../../libs/interfaces/exercise';
 import { MuscleGroup } from '../../../../../../../libs/interfaces/MuscleGroup';
 import { Workout } from '../../../../../../../libs/interfaces/workout';
@@ -33,17 +32,15 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
     @Input() workoutDate: Date;
     @Output() createdWorkout = new Subject<Workout>();
     @Output() showAlert = new Subject<Alert>();
+    @Input() cardioExercises: Exercise[];
 
     selectedExercise: Exercise;
     inputDuration: number;
-
-    cardioExercises: Exercise[] = [];
 
     isDarkMode = false;
 
 
     constructor(
-        private readonly exerciseService: ExerciseService,
         private readonly workoutService: WorkoutService,
         private readonly historyService: HistoryService,
         private readonly themeService: ThemeService
@@ -51,7 +48,6 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.findCardioExercises();
         this.isDarkMode = this.themeService.isDarkMode();
     }
 
@@ -117,21 +113,6 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
                 }
             });
 
-    }
-
-    private findCardioExercises() {
-        this.exerciseService.findCardioExercises()
-            .subscribe({
-                next: (cardioExercises) => this.cardioExercises = cardioExercises,
-                error: (err) => {
-                    this.openModalChange.next();
-
-                    this.showAlert.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'afficher les exercices'
-                    });
-                }
-            });
     }
 
     private resetDuration() {
