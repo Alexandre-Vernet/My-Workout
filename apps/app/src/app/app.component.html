@@ -1,13 +1,14 @@
 <div class="router" [ngClass]="{
- 'iphone': isIphone
+    iphone: isIphone,
+    router: !isDesktop
 }">
     <app-alert></app-alert>
     <div [ngClass]="{
-    'mb-6': !isLoginPage
+    'mb-6': !hideNavbar
     }">
         <router-outlet></router-outlet>
     </div>
 </div>
 <app-navbar [ngClass]="{
-    'display-none': isLoginPage
+    'display-none': hideNavbar || isDesktop
 }"></app-navbar>

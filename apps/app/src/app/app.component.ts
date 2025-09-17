@@ -18,8 +18,9 @@ import { AlertComponent } from './alert/alert.component';
 })
 export class AppComponent implements OnInit {
 
-    isLoginPage = false;
+    hideNavbar = false;
     isIphone: boolean = false;
+    isDesktop: boolean = false;
 
     constructor(
         private readonly sw: SwPush,
@@ -64,7 +65,13 @@ export class AppComponent implements OnInit {
         this.router.events.pipe(
             filter(event => event instanceof NavigationEnd)
         ).subscribe((event: NavigationEnd) => {
-            this.isLoginPage = event.url.includes('auth');
+            this.hideNavbar = event.url.includes('auth') || event.url.includes('desktop');
         });
+
+
+      if (this.deviceDetection.isDesktop()) {
+          this.isDesktop = true;
+          this.router.navigate(['desktop']);
+      }
     }
 }
