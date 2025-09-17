@@ -39,7 +39,7 @@
         }
 
         img {
-            max-width: 50%;
+            width: 40%;
             height: auto;
             border-radius: 10px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
@@ -54,7 +54,7 @@
 
     .desktop .banner .banner-right {
         img {
-            max-width: 60%;
+            width: 60%;
         }
     }
 }
@@ -62,7 +62,7 @@
 @media (max-width: 1400px) {
     .desktop .banner .banner-right {
         img {
-            max-width: 70%;
+            width: 70%;
         }
     }
 }
@@ -81,7 +81,7 @@
 
     .desktop .banner .banner-right {
         img {
-            max-width: 80%;
+            width: 60%;
         }
     }
 }
@@ -124,6 +124,12 @@
             .banner-left {
                 h1 {
                     font-size: 3em;
+                }
+            }
+
+            .banner-right {
+                img {
+                    width: 90%;
                 }
             }
         }
