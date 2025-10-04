@@ -36,6 +36,12 @@ Des filtres sont disponibles pour chaque groupe musculaire pour cibler une porti
 
 Au clic du bouton favori, l'exercice sera ajouté à votre séance. Vous pouvez également changer l'ordre des exercices afin de commencer un exercice avant un autre.
 
+En cliquant sur le nom d'un muscle, l'utilisateur est redirigé sur le muscle sélectionné pour y afficher des détails concernant son anatomie.
+
+![muscle-structure](https://github.com/user-attachments/assets/76d2103a-db7d-4165-b3b3-cbc6ee3b383e)
+
+
+
 ### Détail d'un exercice
 
 Vous pouvez cliquer sur un exercice pour y afficher une description de l'exercice ainsi qu'une animation du mouvement.
@@ -50,7 +56,7 @@ Le calendrier répertorie l'ensemble des séances réalisées. Vous pourrez filt
 
 Swipez vers la gauche / droite pour changer de mois.
 
-![calendrier](https://github.com/user-attachments/assets/8e2cef8b-075d-48be-ab2b-d977b567bd3c)
+![calendrier](https://github.com/user-attachments/assets/c0341896-a0ec-4d24-b58a-2cc528455d22)
 
 Cliquez sur un jour pour ajouter une séance de cardio.
 
@@ -84,10 +90,13 @@ Pour la charge à utiliser, le champ est pré-rempli avec la charge la plus éle
 - La charge utilisée
 - Le nombre de répétitions
 - Le temps de repos (vide tant qu'on n'arrête pas le chronomètre)
+- Une icône de corbeille pour supprimer l'enregistrement
+
+Il est possible de modifier un enregistrement en cliquant sur la charge utilisée ou sur le nombre de répétitions.
 
 En appuyant de nouveau sur le chronomètre, ce dernier s'arrête, ajoute le temps de repos dans le tableau et vous pouvez démarrer une nouvelle série. Refaite ce circuit jusqu'à vouloir changer d'exercice.
 
-En cas de fermeture de l'application ou changement de page, les données sont conservées et seront de nouveau affichées (sauf le temps de repos qui n'est pas sauvegardé).
+En cas de fermeture de l'application ou changement de page, les données sont conservées (excepté le temps de repos) et seront de nouveau affichées.
 
 ![chronometre](https://github.com/user-attachments/assets/34a9711b-3ec0-4e9a-8398-48d16a17ae7f)
 
@@ -100,7 +109,7 @@ La partie historique détaille chaque séance effectuée avec le nombre de séri
 
 Vous pouvez supprimer une séance en cliquant sur la corbeille
 
-![historique](https://github.com/user-attachments/assets/f9399789-2816-41a1-8a93-948312a7e15d)
+![historique](https://github.com/user-attachments/assets/08cb0d38-c02b-49b5-a07c-c861eef50166)
 
 ### Mon compte
 
@@ -108,7 +117,14 @@ La section mon compte permet de modifier des informations de l'utilisateur : mai
 
 Vous pourrez aussi y changer de thème parmi les 17 proposés et activer / désactiver le mode sombre.
 
-![mon compte](https://github.com/user-attachments/assets/0f7dac19-35d2-4687-a656-c31df3b8b512)
+![mon compte](https://github.com/user-attachments/assets/f1993160-2e83-4f19-9730-e50cd608ca74)
+
+### Statistiques
+
+La section statistiques affiche la liste des exercices que l'utilisateur a réalisé. En cliquant sur un de ces exercices, il pourra visualiser sa progression avec la charge utilisée lors de ces entraînement et le moment où il a augmenté cette charge.
+
+![statistiques](https://github.com/user-attachments/assets/ff03a702-6839-4b46-a19f-fc9df56be431)
+
 
 ### Authentification
 
@@ -131,3 +147,10 @@ Connectez-vous avec votre email et mot de passe. Si vous n'avez pas de compte, v
 Cliquez sur le bouton "Mot de passe oublié ?" pour réinitialiser votre mot de passe. Un email vous sera envoyé avec un lien pour réinitialiser votre mot de passe.
 
 ![mot de passe oublié](https://github.com/user-attachments/assets/8141f960-72b6-4048-b1bc-def09e7bdd7d)
+
+
+### Accessibilité
+L'application n'est disponible que sur appareil mobile. En y accédant depuis un ordinateur, vous serez invité à télécharger l'application sur un smartphone.
+
+![desktop-version](https://github.com/user-attachments/assets/7760b9af-e2a4-46fe-b137-87f6579b6321)
+
