@@ -12,128 +12,146 @@
 
 ## Introduction
 
-My-Workout est une application de suivi pour les pratiquants de musculation. Elle permet d'enregistrer et de suivre une progression sur une série d'exercices. Vous pouvez enregistrer le nombre de répétitions, de série et la charge utilisée. Ces séances peuvent être visualisées depuis un calendrier ou depuis la page historique.
+My-Workout is a tracking app for weightlifters. It allows you to record and track progress across a series of exercises. You can log the number of repetitions, sets, and the weight used. These sessions can be viewed from a calendar or from the history page.
 
-Vous pouvez définir un programme en choisissant vos exercices depuis une bibliothèque et agencer votre séance en choisissant l'ordre de vos exercices.
+You can define a workout program by choosing your exercises from a library and arranging your session by selecting the order of your exercises.
 
-## Fonctionnalités
+## Features
 
-- Bibliothèque d'exercices avec description et animation du mouvement
-- Sélection d'exercices pour chaque groupe musculaire parmi ceux présents dans la bibliothèque
-- Calendrier de suivi de séances
-- Enregistrement d'une séance avec le nombre de séries, de répétitions et la charge utilisée lors de l'exercice
-- Chronomètre intégré à l'entraînement pour les temps de repos
-- Suggestion de séance
-- Historique de séance
-- Personnalisation de l'application pour changer le thème + thème sombre
-- Authentification
+- Exercise library with description and movement animation  
+- Exercise selection for each muscle group from those available in the library  
+- Workout tracking calendar  
+- Session logging with number of sets, reps, and weight used for each exercise  
+- Built-in timer for rest periods  
+- Workout suggestions  
+- Workout history  
+- App customization with theme selection + dark mode  
+- Authentication  
 
-### Bibliothèque
+### Library
 
-L'application recense une 100ène d'exercices dans la bibliothèque. Chacun de ces exercices peuvent être ajouté à un entraînement et vous seront affiché lors de vos entraînements afin d'enregistrer la séance.
+The app includes around 100 exercises in the library. Each of these exercises can be added to a workout and will be displayed during your training sessions so you can log your progress.
 
-![apercu bibliothèque](https://github.com/user-attachments/assets/b1443344-93dd-48a4-b05e-7baafbf730bc)
+![library preview](https://github.com/user-attachments/assets/b1443344-93dd-48a4-b05e-7baafbf730bc)
 
-Choisissez un groupe musculaire pour ajouter / supprimer des exercices.
+Choose a muscle group to add/remove exercises.  
 
-![groupe musculaire biceps](https://github.com/user-attachments/assets/130a583b-52ed-4da1-b0f7-4868253ef3ed)
+![biceps muscle group](https://github.com/user-attachments/assets/130a583b-52ed-4da1-b0f7-4868253ef3ed)
 
-Des filtres sont disponibles pour chaque groupe musculaire pour cibler une portion précise d'un muscle.
+Filters are available for each muscle group to target a specific portion of a muscle.  
 
-Au clic du bouton favori, l'exercice sera ajouté à votre séance. Vous pouvez également changer l'ordre des exercices afin de commencer un exercice avant un autre.
+Clicking the favorite button adds the exercise to your session. You can also change the order of the exercises to start with one before another.  
 
-### Détail d'un exercice
+Clicking on the name of a muscle redirects the user to the selected muscle page to display details about its anatomy.  
 
-Vous pouvez cliquer sur un exercice pour y afficher une description de l'exercice ainsi qu'une animation du mouvement.
+![muscle-structure](https://github.com/user-attachments/assets/76d2103a-db7d-4165-b3b3-cbc6ee3b383e)
 
-En bas de la page, vous aurez de nouveau la possibilité d'ajouter / supprimer cet exercice à la séance.
+### Exercise Detail
 
-![detail exercice](https://github.com/user-attachments/assets/a4bc38a8-e577-4638-8db9-b23d05be31fd)
+You can click on an exercise to display its description as well as an animation of the movement.  
 
-### Calendrier
+At the bottom of the page, you will again have the option to add/remove this exercise to/from your session.  
 
-Le calendrier répertorie l'ensemble des séances réalisées. Vous pourrez filtrer par groupe musculaire pour n'afficher que lui. Au clic d'une séance, vous pourrez visualiser le détail d'une séance.
+![exercise detail](https://github.com/user-attachments/assets/a4bc38a8-e577-4638-8db9-b23d05be31fd)
 
-Swipez vers la gauche / droite pour changer de mois.
+### Calendar
 
-![calendrier](https://github.com/user-attachments/assets/8e2cef8b-075d-48be-ab2b-d977b567bd3c)
+The calendar lists all completed sessions. You can filter by muscle group to display only that group. By clicking on a session, you can view its details.  
 
-Cliquez sur un jour pour ajouter une séance de cardio.
+Swipe left/right to change months.  
 
-![ajouter seance cardio](https://github.com/user-attachments/assets/bd988a3b-8cd7-4647-a76a-0c44578b4313)
+![calendar](https://github.com/user-attachments/assets/c0341896-a0ec-4d24-b58a-2cc528455d22)
 
-## Enregistrer une séance
+Click on a day to add a cardio session.  
 
-Cette partie de l'application concerne l'enregistrement d'une séance. Il s'agit du point clé de l'application.
+![add cardio session](https://github.com/user-attachments/assets/bd988a3b-8cd7-4647-a76a-0c44578b4313)
 
-#### 1. Sélectionner un entraînement
-   Vous pourrez ici choisir un groupe musculaire à travailler et démarrer une séance.
+## Log a Session
 
-L'application recommande la plus ancienne des séances effectuées.
+This part of the app concerns session logging. It is the key feature of the application.  
 
-![choisir entrainement](https://github.com/user-attachments/assets/5f4f42f9-c34e-4a45-a86a-e4a6840eb777)
+#### 1. Select a Workout
+Here you can choose a muscle group to train and start a session.  
 
-#### 2. Aperçu
+The app recommends the oldest session performed.  
 
-Vous retrouverez tout en haut de l'écran les exercices à effectuer durant la séance choisi (trier selon votre préférence définie depuis la bibliothèque). Dans notre exemple, nous avons 4 exercices, vous pouvez cliquer sur un des numéros pour changer d'exercice ou swiper vers la gauche / droite.
+![choose workout](https://github.com/user-attachments/assets/5f4f42f9-c34e-4a45-a86a-e4a6840eb777)
 
-Augmentez / diminuez la charge utilisée via les boutons + ou moins ou en entrant un nombre dans le champ. Même principe pour les répétitions.
+#### 2. Overview
 
-Pour la charge à utiliser, le champ est pré-rempli avec la charge la plus élevée qui a été utilisé lors la dernière séance (ici curl biceps).
+At the top of the screen, you will see the exercises to be performed during the chosen session (sorted according to your preference set in the library). In our example, we have 4 exercises. You can click on one of the numbers to switch exercises or swipe left/right.  
 
-![apercu entrainement](https://github.com/user-attachments/assets/b9da1985-b1d9-49fd-a48c-ff03e4dbf550)
+Increase/decrease the weight used via the + or - buttons or by entering a number in the field. Same principle for repetitions.  
 
-#### 3. Chronomètre
-   Une fois votre série effectuée, cliquez sur l'icône du chronomètre pour lancer ce dernier. Une fois lancé, un tableau apparaîtra pour afficher :
+For the weight to use, the field is pre-filled with the highest weight used during the last session (here bicep curls).  
 
-- Le numéro de la série
-- La charge utilisée
-- Le nombre de répétitions
-- Le temps de repos (vide tant qu'on n'arrête pas le chronomètre)
+![workout overview](https://github.com/user-attachments/assets/b9da1985-b1d9-49fd-a48c-ff03e4dbf550)
 
-En appuyant de nouveau sur le chronomètre, ce dernier s'arrête, ajoute le temps de repos dans le tableau et vous pouvez démarrer une nouvelle série. Refaite ce circuit jusqu'à vouloir changer d'exercice.
+#### 3. Timer
+Once your set is complete, click on the timer icon to start it. Once started, a table will appear showing:
 
-En cas de fermeture de l'application ou changement de page, les données sont conservées et seront de nouveau affichées (sauf le temps de repos qui n'est pas sauvegardé).
+- Set number  
+- Weight used  
+- Number of repetitions  
+- Rest time (empty until the timer is stopped)  
+- A trash icon to delete the log  
 
-![chronometre](https://github.com/user-attachments/assets/34a9711b-3ec0-4e9a-8398-48d16a17ae7f)
+You can edit an entry by clicking on the weight or number of repetitions.  
 
-#### 4. Fin de séance
-   Une fois la séance terminée, vous pourrez la visualiser depuis le calendrier ou depuis la page historique.
+Pressing the timer again stops it, adds the rest time to the table, and lets you start a new set. Repeat this process until you want to switch to another exercise.  
 
-### Historique
+If the app is closed or the page is changed, the data is saved (except rest time) and will be displayed again.  
 
-La partie historique détaille chaque séance effectuée avec le nombre de séries, de répétitions et la charge soulevée.
+![timer](https://github.com/user-attachments/assets/34a9711b-3ec0-4e9a-8398-48d16a17ae7f)
 
-Vous pouvez supprimer une séance en cliquant sur la corbeille
+#### 4. End of Session
+Once the session is complete, you can view it from the calendar or the history page.  
 
-![historique](https://github.com/user-attachments/assets/f9399789-2816-41a1-8a93-948312a7e15d)
+### History
 
-### Mon compte
+The history section details each completed session with the number of sets, reps, and weight lifted.  
 
-La section mon compte permet de modifier des informations de l'utilisateur : mail / mot de passe
+You can delete a session by clicking on the trash icon.  
 
-Vous pourrez aussi y changer de thème parmi les 17 proposés et activer / désactiver le mode sombre.
+![history](https://github.com/user-attachments/assets/08cb0d38-c02b-49b5-a07c-c861eef50166)
 
-![mon compte](https://github.com/user-attachments/assets/0f7dac19-35d2-4687-a656-c31df3b8b512)
+### My Account
 
-### Authentification
+The My Account section allows you to update user information: email / password.  
 
-L'application propose une authentification pour sauvegarder vos données. Vous pouvez vous connecter avec un compte déjà existant ou en créer un nouveau.
-Vos données seront sauvegardées dans une base de données et vous pourrez y accéder depuis n'importe quel appareil.
+You can also change the theme from the 17 available and enable/disable dark mode.  
 
-#### 1. Page de connexion
+![my account](https://github.com/user-attachments/assets/f1993160-2e83-4f19-9730-e50cd608ca74)
 
-Connectez-vous avec votre email et mot de passe. Si vous n'avez pas de compte, vous pouvez en créer un en cliquant sur le lien "Pas encore inscrit ?".
+### Statistics
 
-![page de connexion](https://github.com/user-attachments/assets/8bb3f0ca-6eb8-444b-bc4a-38a5f8afefe5)
+The statistics section displays a list of exercises the user has performed. By clicking on one of these exercises, you can view your progression with the weight used in past workouts and when you increased that weight.  
 
-#### 2. Page d'inscription
-   Créez un compte en remplissant le formulaire avec votre email et mot de passe.
+![statistics](https://github.com/user-attachments/assets/ff03a702-6839-4b46-a19f-fc9df56be431)
 
-![Page d inscription](https://github.com/user-attachments/assets/349e1fde-11e8-496b-8781-ec3709a3dc97)
+### Authentication
 
-#### 3. Mot de passe oublié
+The app provides authentication to save your data. You can log in with an existing account or create a new one.  
+Your data will be saved in a database and you can access it from any device.  
 
-Cliquez sur le bouton "Mot de passe oublié ?" pour réinitialiser votre mot de passe. Un email vous sera envoyé avec un lien pour réinitialiser votre mot de passe.
+#### 1. Login Page
 
-![mot de passe oublié](https://github.com/user-attachments/assets/8141f960-72b6-4048-b1bc-def09e7bdd7d)
+Log in with your email and password. If you don’t have an account, you can create one by clicking the "Not registered yet?" link.  
+
+![login page](https://github.com/user-attachments/assets/8bb3f0ca-6eb8-444b-bc4a-38a5f8afefe5)
+
+#### 2. Registration Page
+Create an account by filling in the form with your email and password.  
+
+![registration page](https://github.com/user-attachments/assets/349e1fde-11e8-496b-8781-ec3709a3dc97)
+
+#### 3. Forgot Password
+
+Click the "Forgot password?" button to reset your password. An email will be sent to you with a link to reset it.  
+
+![forgot password](https://github.com/user-attachments/assets/8141f960-72b6-4048-b1bc-def09e7bdd7d)
+
+### Accessibility
+The app is only available on mobile devices. When accessed from a computer, you will be prompted to download the app on a smartphone.  
+
+![desktop-version](https://github.com/user-attachments/assets/7760b9af-e2a4-46fe-b137-87f6579b6321)
