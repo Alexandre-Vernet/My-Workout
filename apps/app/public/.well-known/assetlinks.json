@@ -1,8 +1,0 @@
-[{
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-        "namespace": "android_app",
-        "package_name": "fr.alexandre_vernet.my_workout.twa",
-        "sha256_cert_fingerprints": ["94:B6:BE:93:5B:87:A3:E3:59:44:A9:80:2B:AB:BE:99:C4:14:1F:53:B3:7A:8F:3F:25:56:5C:0A:4A:0E:C9:7A"]
-    }
-}]
