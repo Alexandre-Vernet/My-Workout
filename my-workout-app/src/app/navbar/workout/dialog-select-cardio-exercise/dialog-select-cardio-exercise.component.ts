@@ -2,13 +2,8 @@ import { Component, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
 import { map, Subject, switchMap } from 'rxjs';
-import { Exercise } from '../../../../interfaces/exercise';
-import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
-import { Workout } from '../../../../interfaces/workout';
 import { WorkoutService } from '../../../services/workout.service';
 import { HistoryService } from '../../../services/history.service';
-import { History } from '../../../../interfaces/history';
-import { Alert } from '../../../../interfaces/alert';
 import { ThemeService } from '../../../theme/theme.service';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
@@ -16,6 +11,11 @@ import { InputNumber } from 'primeng/inputnumber';
 import { Button } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { FloatLabel } from 'primeng/floatlabel';
+import { Workout } from '../../../interfaces/workout';
+import { Exercise } from '../../../interfaces/exercise';
+import { Alert } from '../../../interfaces/alert';
+import { MuscleGroup } from '../../../interfaces/MuscleGroup';
+import { History } from '../../../interfaces/history';
 
 @Component({
     selector: 'app-dialog-select-cardio-exercise',

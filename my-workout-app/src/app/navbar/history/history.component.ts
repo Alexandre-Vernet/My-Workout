@@ -7,19 +7,18 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { AlertService } from '../../services/alert.service';
 import { Router } from '@angular/router';
-import { Workout } from '../../../interfaces/workout';
+import { Workout } from '../../interfaces/workout';
 import { Button } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
-import { GroupedHistory } from '../../../interfaces/history';
+import { GroupedHistory } from '../../interfaces/history';
 import { HistoryService } from '../../services/history.service';
 import { HistoryDetailComponent } from './history-detail/history-detail.component';
 import { Tag } from 'primeng/tag';
-import { MuscleGroup } from '../../../interfaces/MuscleGroup';
-import { IonContent } from '@ionic/angular/standalone';
+import { MuscleGroup } from '../../interfaces/MuscleGroup';
 
 @Component({
     selector: 'app-history',
-  imports: [CommonModule, Skeleton, ConfirmDialog, Button, Ripple, HistoryDetailComponent, Tag, IonContent],
+    imports: [CommonModule, Skeleton, ConfirmDialog, Button, Ripple, HistoryDetailComponent, Tag],
     templateUrl: './history.component.html',
     styleUrl: './history.component.scss',
     standalone: true,

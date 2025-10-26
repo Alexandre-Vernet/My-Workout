@@ -8,7 +8,7 @@ import { Dialog } from 'primeng/dialog';
 import { FloatLabel } from 'primeng/floatlabel';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
-import { User } from '../../../interfaces/user';
+import { User } from '../../interfaces/user';
 
 @Component({
     selector: 'app-reset-password',

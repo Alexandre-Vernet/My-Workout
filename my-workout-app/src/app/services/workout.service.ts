@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Workout } from '../../interfaces/workout';
+import { Workout } from '../interfaces/workout';
 
 @Injectable({
     providedIn: 'root'

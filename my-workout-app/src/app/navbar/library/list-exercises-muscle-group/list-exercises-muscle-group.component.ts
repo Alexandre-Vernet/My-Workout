@@ -2,25 +2,24 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ExerciseService } from '../../../services/exercise.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Exercise } from '../../../../interfaces/exercise';
+import { Exercise } from '../../../interfaces/exercise';
 import { switchMap } from 'rxjs';
 import { DataView } from 'primeng/dataview';
 import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
-import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
+import { MuscleGroup } from '../../../interfaces/MuscleGroup';
 import { Badge } from 'primeng/badge';
 import { Skeleton } from 'primeng/skeleton';
 import { AlertService } from '../../../services/alert.service';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { UserExercise } from '../../../../interfaces/user-exercise';
+import { UserExercise } from '../../../interfaces/user-exercise';
 import { Tag } from 'primeng/tag';
-import { Muscle } from '../../../../interfaces/muscle';
+import { Muscle } from '../../../interfaces/muscle';
 import { removeAccents, replaceSpaces } from '../../../utils/remove-accents';
-import { IonContent } from '@ionic/angular/standalone';
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [CommonModule, DataView, Button, Badge, Skeleton, DragDropModule, RouterLink, Tag, IonContent],
+    imports: [CommonModule, DataView, Button, Badge, Skeleton, DragDropModule, RouterLink, Tag],
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })

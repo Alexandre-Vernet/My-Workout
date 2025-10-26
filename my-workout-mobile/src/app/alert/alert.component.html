@@ -1,0 +1,4 @@
+<p-message *ngIf="alert" closable="true"
+           (onClose)="alert = null"
+           [severity]="alert?.severity">{{ alert?.message }}
+</p-message>

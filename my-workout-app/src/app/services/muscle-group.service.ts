@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { MuscleGroup } from '../../interfaces/MuscleGroup';
+import { MuscleGroup } from '../interfaces/MuscleGroup';
 
 @Injectable({
     providedIn: 'root'

@@ -1,0 +1,31 @@
+img {
+    margin-bottom: 40px;
+}
+
+h2, h3 {
+    margin-bottom: 5px;
+}
+
+
+p {
+    text-align: justify;
+}
+
+
+.detail-muscle {
+    margin-bottom: 20px;
+}
+
+ul, ol {
+    margin-left: 15px;
+
+    li {
+        line-height: 2;
+        list-style: none;
+    }
+    li::before {
+        content: "🔹 ";
+        color: red;
+        margin-right: 0.5em;
+    }
+}

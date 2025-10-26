@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GroupedHistory } from '../../../../interfaces/history';
-import { Exercise } from '../../../../interfaces/exercise';
+import { GroupedHistory } from '../../../interfaces/history';
+import { Exercise } from '../../../interfaces/exercise';
 import { RouterLink } from '@angular/router';
 
 @Component({

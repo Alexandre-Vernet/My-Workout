@@ -4,7 +4,7 @@ import { HistoryService } from '../../../services/history.service';
 import Chart, { ChartItem } from 'chart.js/auto';
 import { AlertService } from '../../../services/alert.service';
 import { ExerciseService } from '../../../services/exercise.service';
-import { Exercise } from '../../../../interfaces/exercise';
+import { Exercise } from '../../../interfaces/exercise';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../../theme/theme.service';
 

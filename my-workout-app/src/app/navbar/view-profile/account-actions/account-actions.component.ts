@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 import { ConfirmationService } from 'primeng/api';
 import { AuthService } from '../../../auth/auth.service';
 import { Router } from '@angular/router';
-import { Alert } from '../../../../interfaces/alert';
+import { Alert } from '../../../interfaces/alert';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({

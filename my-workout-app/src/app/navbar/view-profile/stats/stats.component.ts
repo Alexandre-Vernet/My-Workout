@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ExerciseService } from '../../../services/exercise.service';
-import { Exercise } from '../../../../interfaces/exercise';
+import { Exercise } from '../../../interfaces/exercise';
 import { RouterLink } from '@angular/router';
 import { WorkoutService } from '../../../services/workout.service';
 import { AlertService } from '../../../services/alert.service';
 import { ThemeService } from '../../../theme/theme.service';
 import { Skeleton } from 'primeng/skeleton';
-import { IonContent } from '@ionic/angular/standalone';
 
 @Component({
     selector: 'app-stats',
-    imports: [CommonModule, RouterLink, Skeleton, IonContent],
+    imports: [CommonModule, RouterLink, Skeleton],
     templateUrl: './stats.component.html',
     styleUrl: './stats.component.scss'
 })

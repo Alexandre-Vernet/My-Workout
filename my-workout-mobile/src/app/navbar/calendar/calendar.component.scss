@@ -1,0 +1,42 @@
+.fc-prev-button {
+    display: none !important;
+}
+
+.fc-next-button {
+    display: none !important;
+}
+
+.fc-header-toolbar {
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+}
+
+.fc-today-button {
+    background: var(--p-primary-800) !important;
+    border: 1px solid var(--p-primary-800) !important;
+}
+
+
+.fc-day-today {
+    background-color: transparent !important;
+
+    .fc-daygrid-day-frame > .fc-daygrid-day-top > a.fc-daygrid-day-number {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 2em;
+        aspect-ratio: 1;
+        background: var(--p-primary-700);
+        color: #FFFFFF;
+        border-radius: 50%;
+        font-size: 0.9em;
+        line-height: 1;
+    }
+}
+
+.event-color-style {
+    padding-left: 3px;
+    border-left-width: 3px;
+    border-left-style: solid;
+}

@@ -5,7 +5,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { ConfirmationService } from 'primeng/api';
 import { ChangeThemeComponent } from './change-theme/change-theme.component';
 import { ManageAccountComponent } from './manage-account/manage-account.component';
-import { Alert } from '../../../interfaces/alert';
+import { Alert } from '../../interfaces/alert';
 import { AccountActionsComponent } from './account-actions/account-actions.component';
 import { ThemeService } from '../../theme/theme.service';
 import { AlertService } from '../../services/alert.service';

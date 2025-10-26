@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { Router, RouterLink } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
@@ -11,16 +10,16 @@ import { ThemeService } from '../../../theme/theme.service';
 import {
     DialogSelectCardioExerciseComponent
 } from '../dialog-select-cardio-exercise/dialog-select-cardio-exercise.component';
-import { Alert } from '../../../../interfaces/alert';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { WorkoutService } from '../../../services/workout.service';
 import { AlertService } from '../../../services/alert.service';
-import { IonContent } from '@ionic/angular/standalone';
+import { MuscleGroup } from '../../../interfaces/MuscleGroup';
+import { Alert } from '../../../interfaces/alert';
 
 @Component({
     selector: 'select-muscle-group-workout',
-    imports: [CommonModule, RouterLink, Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog, IonContent],
+    imports: [CommonModule, RouterLink, Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
     standalone: true,

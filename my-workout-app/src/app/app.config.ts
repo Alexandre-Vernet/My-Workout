@@ -1,13 +1,13 @@
-import { ApplicationConfig, importProvidersFrom, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, isDevMode, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
+import { provideServiceWorker } from '@angular/service-worker';
 import { presetCyan } from './theme/preset-cyan';
 import { authInterceptor } from './auth/auth.interceptor';
-import { CommonModule, registerLocaleData } from '@angular/common';
-import { provideIonicAngular } from '@ionic/angular/standalone';
+import { LOCALE_ID } from '@angular/core';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -25,11 +25,11 @@ export const appConfig: ApplicationConfig = {
                     darkModeSelector: '.dark-mode'
                 }
             }
+        }), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
         }),
-
-      importProvidersFrom(CommonModule),
-      provideIonicAngular(),
-      { provide: LOCALE_ID, useValue: 'fr-FR' },
-]
+        { provide: LOCALE_ID, useValue: 'fr-FR' },
+    ]
 };
 
