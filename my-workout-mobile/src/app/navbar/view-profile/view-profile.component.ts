@@ -10,10 +10,11 @@ import { AccountActionsComponent } from './account-actions/account-actions.compo
 import { ThemeService } from '../../theme/theme.service';
 import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
+import { IonContent } from "@ionic/angular/standalone";
 
 @Component({
     selector: 'app-view-profile',
-    imports: [CommonModule, ReactiveFormsModule, DropdownModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink, IonContent],
     templateUrl: './view-profile.component.html',
     styleUrl: './view-profile.component.scss',
     standalone: true,

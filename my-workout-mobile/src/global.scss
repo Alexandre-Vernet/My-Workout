@@ -100,17 +100,12 @@ img {
 }
 
 
-:root {
-  --ion-color-primary: #007ad9;
-  --ion-color-primary-contrast: #ffffff;
-}
-
-body {
-  font-family: var(--font-family, 'Open Sans', sans-serif);
-  background: var(--surface-ground, #f9fafb);
-}
+//:root {
+//  --ion-color-primary: #007ad9;
+//  --ion-color-primary-contrast: #ffffff;
+//}
 
 
-ion-content {
-  all: unset; /* retire le style encapsulé Ionic */
-}
+//ion-content {
+//  all: unset; /* retire le style encapsulé Ionic */
+//}

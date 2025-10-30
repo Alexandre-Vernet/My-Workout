@@ -41,7 +41,7 @@
     <ng-template #content>
       <div *ngFor="let w of filterWorkouts">
         <div class="p-3 mb-3">
-          <h2 class="mb-2 text-2xl">{{ w.date | date:'fullDate' | titlecase }}</h2>
+          <h2 class="mb-2 text-2xl font-bold">{{ w.date | date:'fullDate' | titlecase }}</h2>
 
           <!-- Muscle group name -->
           <div *ngFor="let muscleGroup of w.muscleGroups" class="flex flex-column mb-3">

@@ -7,10 +7,11 @@ import { ExerciseService } from '../../../services/exercise.service';
 import { Exercise } from '../../../../interfaces/exercise';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../../theme/theme.service';
+import { IonContent } from "@ionic/angular/standalone";
 
 @Component({
     selector: 'app-graphs',
-    imports: [CommonModule],
+  imports: [CommonModule, IonContent],
     templateUrl: './graphs.component.html',
     styleUrl: './graphs.component.scss',
     standalone: true
