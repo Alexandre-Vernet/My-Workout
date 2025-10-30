@@ -21,3 +21,6 @@ my-workout-api/.env
 
 
 my-workout-app/.idea
+my-workout-app/.angular
+/my-workout-app/.angular/
+/my-workout-app/dist/

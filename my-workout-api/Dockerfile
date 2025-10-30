@@ -2,12 +2,12 @@ FROM node:alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY my-workout-api/package*.json ./
 
 RUN npm install --include=optional
 
-COPY . .
+COPY my-workout-api/ .
 
-RUN npm run build:api
+RUN npm run build
 
-CMD ["node", "dist/main.js"]
+CMD ["node", "my-workout-api/dist/main.js"]

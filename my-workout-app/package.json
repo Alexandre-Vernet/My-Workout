@@ -1,15 +1,13 @@
 {
   "name": "my-workout-app",
   "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "author": "Alexandre Vernet",
+  "homepage": "https://my-workout.alexandre-vernet.fr/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "lint": "ng lint"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
@@ -44,12 +42,12 @@
     "primeng": "^19.1.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
-  },
-  "devDependencies": {
+    "zone.js": "~0.15.0",
     "@angular-devkit/build-angular": "^19.2.15",
     "@angular/cli": "^19.2.15",
-    "@angular/compiler-cli": "^19.2.15",
+    "@angular/compiler-cli": "^19.2.15"
+  },
+  "devDependencies": {
     "@angular/language-service": "^19.2.15",
     "@capacitor/cli": "7.4.4",
     "@types/jasmine": "~5.1.0",

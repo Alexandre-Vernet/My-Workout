@@ -26,7 +26,6 @@ const {
     POSTGRES_DATABASE,
     JWT_SECRET,
 } = process.env;
-console.log( "couco", POSTGRES_HOST);
 
 @Module({
     imports: [
