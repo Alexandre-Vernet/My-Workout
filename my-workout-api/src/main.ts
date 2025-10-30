@@ -14,7 +14,10 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
 
   app.enableCors({
-    origin: process.env.ALLOWED_ORIGIN,
+    origin: [
+        process.env.ALLOWED_ORIGIN_APP,
+        process.env.ALLOWED_ORIGIN_MOBILE,
+    ],
   });
 
 

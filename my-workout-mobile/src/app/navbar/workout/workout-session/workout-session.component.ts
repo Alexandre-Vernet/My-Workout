@@ -28,6 +28,7 @@ import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../utils/convert-weight-elastic';
 import { animate, group, query, style, transition, trigger } from '@angular/animations';
 import { PreventFocusOnButtonClickDirective } from '../../../directives/prevent-focus-on-button-click.directive';
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
 @Component({
     selector: 'app-workout-session',
@@ -120,6 +121,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     private currentTab: number;
 
+    hapticsImpactLight = async () => {
+        await Haptics.impact({ style: ImpactStyle.Medium });
+    };
+
     constructor(
         private readonly activatedRoute: ActivatedRoute,
         private readonly workoutService: WorkoutService,
@@ -205,14 +210,16 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             });
     }
 
-    toggleTimer() {
+    async toggleTimer() {
         if (this.weight < 0 || this.weight >= 500) {
             return;
         }
 
         if (this.timer.interval !== null) {
+            await this.hapticsImpactLight();
             this.stopTimer();
         } else {
+            await this.hapticsImpactLight();
             this.startTimer();
         }
     }
