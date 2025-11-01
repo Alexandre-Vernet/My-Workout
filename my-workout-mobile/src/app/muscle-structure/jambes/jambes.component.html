@@ -1,0 +1,152 @@
+<div class="p-2">
+    <h1 class="text-center mb-5">Jambes</h1>
+
+    <img src="/assets/images/jambes.jpg" alt="legs">
+
+    <div class="mb-4">
+        <div class="mb-3">
+            <h2>🧠 Présentation générale des muscles des jambes</h2>
+            <p>
+                Les jambes sont composées de plusieurs groupes musculaires essentiels à la locomotion, à la stabilité, à
+                la puissance et à la posture. En musculation, ils sont souvent regroupés par fonction et localisation.
+            </p>
+            <ol>
+                <li>Quadriceps</li>
+                <li>Ischio-jambiers</li>
+                <li>Fessiers</li>
+                <li>Mollets (jumeaux et soléaire)</li>
+            </ol>
+        </div>
+    </div>
+
+    <h2>🔍 Détails des muscles des jambes :</h2>
+    <div id="quadriceps" class="detail-muscle">
+        <h3>🟢 Quadriceps</h3>
+        <ul>
+            <li>📍 Localisation : Avant de la cuisse</li>
+            <li>
+                Rôle :
+                <ul>
+                    <li>Extension du genou (redresser la jambe)</li>
+                </ul>
+            </li>
+            <li>
+                Exemples d'exercices :
+                <ul>
+                    <li>Squats</li>
+                    <li>Fentes</li>
+                    <li>Presse à jambes</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="ischio-jambier" class="detail-muscle">
+        <h3>🔵 Ischio-jambiers</h3>
+        <ul>
+            <li>📍 Localisation : Arrière de la cuisse</li>
+            <li>
+                Rôle :
+                <ul>
+                    <li>Flexion du genou</li>
+                    <li>Extension de la hanche</li>
+                </ul>
+            </li>
+            <li>
+                Exercices ciblés :
+                <ul>
+                    <li>Leg curl</li>
+                    <li>Soulevé de terre</li>
+                    <li>Hip thrust</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="fessier" class="detail-muscle">
+        <h3>🟠 Fessier</h3>
+        <ul>
+            <li>📍 Localisation : Arrière du bassin (grand, moyen et petit fessier)</li>
+            <li>
+                Rôle :
+                <ul>
+                    <li>Extension de la hanche (passage de position assise à debout, montée d'escalier)</li>
+                    <li>Stabilisation du bassin</li>
+                    <li>Abduction et rotation de la cuisse</li>
+                </ul>
+            </li>
+            <li>
+                Exercices ciblés :
+                <ul>
+                    <li>Hip thrust</li>
+                    <li>Squats profonds</li>
+                    <li>Fentes arrière</li>
+                    <li>Kickbacks</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="jumeau" class="detail-muscle">
+        <h3>🟣 Jumeau</h3>
+        <ul>
+            <li>📍 Localisation : Arrière de la jambe sous le genoux</li>
+            <li>
+                Rôle : Flexion plantaire (se mettre sur la pointe des pieds)
+            </li>
+            <li>
+                Exercices ciblés :
+                <ul>
+                    <li>Extensions mollets debout</li>
+                    <li>Presse à jambes debout</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="soleaire" class="detail-muscle">
+        <h3>🟡 Soléaire</h3>
+        <ul>
+            <li>📍 Localisation : Muscle profond situé sous les jumeaux, à l’arrière de la jambe, partant du tibia et du péroné, jusqu’au tendon d’Achille.</li>
+            <li>
+                Rôle :
+                <ul>
+                    <li>Flexion plantaire de la cheville (se mettre sur la pointe des pieds)</li>
+                    <li>Rôle important dans la stabilisation debout prolongée (position statique)</li>
+                </ul>
+            </li>
+            <li>
+                Exercices ciblés :
+                <ul>
+                    <li>Extensions mollets assis</li>
+                    <li>Presse à mollets assis</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+
+    <h3>🏋️ Résumé pratique</h3>
+
+    <p-table [value]="[
+        { groupeMusculaire: 'Quadriceps', exercice: 'Squats, fentes, presse à jambes' },
+        { groupeMusculaire: 'Ischio-jambier', exercice: 'Soulevé de terre, leg curl, hip thrust' },
+        { groupeMusculaire: 'Fessier', exercice: 'Hip thrust, squats profonds, fentes arrière, kickbacks' },
+        { groupeMusculaire: 'Jumeau', exercice: 'Extensions mollets debout, presse à jambes debout' },
+        { groupeMusculaire: 'Soléaire', exercice: 'Extensions mollets assis, presse à mollets assis' }
+    ]">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Groupe musculaire</th>
+                <th>Exercices</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-exercise>
+            <tr>
+                <td>{{ exercise.groupeMusculaire }}</td>
+                <td>{{ exercise.exercice }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+</div>

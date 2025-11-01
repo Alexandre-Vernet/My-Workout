@@ -1,0 +1,122 @@
+<div class="p-2">
+    <h1 class="text-center mb-5">Bras – Biceps et muscles associés</h1>
+
+    <img src="/assets/images/biceps.jpg" alt="biceps">
+
+    <div class="mb-4">
+        <div class="mb-3">
+            <h2>🧠 Présentation générale du biceps brachial</h2>
+            <p>
+                Le biceps brachial est un muscle du bras composé de deux chefs (faisceaux) : le chef court et le chef long.
+                Il est accompagné de muscles voisins comme le <strong>brachial</strong> (situé en profondeur) et le
+                <strong>brachio-radial</strong> (muscle de l'avant-bras) qui contribuent aussi à la flexion du coude.
+            </p>
+        </div>
+
+        <h3>🎯 Rôle principal</h3>
+        <p>
+            Le biceps permet principalement la flexion du coude et la supination de l’avant-bras. Le brachial renforce la
+            flexion du coude en profondeur, tandis que le brachio-radial intervient selon la position de la main.
+        </p>
+    </div>
+
+    <h2>🔍 Détails des 4 muscles :</h2>
+
+    <div id="biceps-court" class="detail-muscle">
+        <h3>🟢 Biceps – Chef court</h3>
+        <ul>
+            <li>Origine : processus coracoïde de l’omoplate</li>
+            <li>Rôle :
+                <ul>
+                    <li>Flexion du coude</li>
+                    <li>Supination de l’avant-bras</li>
+                    <li>Flexion de l’épaule (accessoire)</li>
+                </ul>
+            </li>
+            <li>Exercices ciblés :
+                <ul>
+                    <li>Curl barre en prise serrée</li>
+                    <li>Curl haltères en rotation</li>
+                    <li>Tractions supination prise serrée</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="biceps-long" class="detail-muscle">
+        <h3>🔵 Biceps – Chef long</h3>
+        <ul>
+            <li>Origine : tubercule supra-glénoïdal de l’omoplate</li>
+            <li>Rôle :
+                <ul>
+                    <li>Flexion du coude</li>
+                    <li>Supination de l’avant-bras</li>
+                </ul>
+            </li>
+            <li>Exercices ciblés :
+                <ul>
+                    <li>Curl incliné aux haltères</li>
+                    <li>Curl à la poulie basse bras en arrière</li>
+                    <li>Curl barre droite en prise large</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="brachial" class="detail-muscle">
+        <h3>🟠 Brachial</h3>
+        <ul>
+            <li>Origine : face antérieure de l’humérus</li>
+            <li>Rôle : flexion du coude (puissant, quelle que soit la position de la main)</li>
+            <li>Exercices ciblés :
+                <ul>
+                    <li>Curl marteau (haltères ou poulie corde)</li>
+                    <li>Curl inversé à la barre</li>
+                    <li>Curl au pupitre en prise neutre</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div id="brachio-radial" class="detail-muscle">
+        <h3>🟡 Brachio-radial</h3>
+        <ul>
+            <li>Origine : bord latéral de l’humérus</li>
+            <li>Rôle :
+                <ul>
+                    <li>Flexion du coude (surtout en prise neutre ou pronation)</li>
+                    <li>Stabilisation de l’avant-bras</li>
+                </ul>
+            </li>
+            <li>Exercices ciblés :
+                <ul>
+                    <li>Curl marteau</li>
+                    <li>Curl inversé à la barre ou aux haltères</li>
+                    <li>Tractions en prise neutre</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <h3>🏋️ Résumé pratique</h3>
+    <p-table [value]="[
+        { muscle: 'Biceps (chef court)', exercice: 'Curl prise serrée', position: 'Paumes vers le haut (supination)' },
+        { muscle: 'Biceps (chef long)', exercice: 'Curl incliné', position: 'Bras en arrière' },
+        { muscle: 'Brachial', exercice: 'Curl marteau', position: 'Prise neutre' },
+        { muscle: 'Brachio-radial', exercice: 'Curl inversé', position: 'Paumes vers le bas (pronation)' }]">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Muscle</th>
+                <th>Exercice recommandé</th>
+                <th>Position / angle</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-exercise>
+            <tr>
+                <td>{{ exercise.muscle }}</td>
+                <td>{{ exercise.exercice }}</td>
+                <td>{{ exercise.position }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
