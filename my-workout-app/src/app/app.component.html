@@ -1,14 +1,14 @@
-<div class="router" [ngClass]="{
+<ion-app>
+    <div class="router" [ngClass]="{
     iphone: isIphone,
     router: !isDesktop
-}">
-    <app-alert></app-alert>
-    <div [ngClass]="{
-    'mb-6': !hideNavbar
+  }">
+        <app-alert></app-alert>
+        <div [ngClass]="{
+      'mb-6': !hideNavbar
     }">
-        <router-outlet></router-outlet>
+            <ion-router-outlet></ion-router-outlet>
+        </div>
+        <app-navbar></app-navbar>
     </div>
-</div>
-<app-navbar [ngClass]="{
-    'display-none': hideNavbar || isDesktop
-}"></app-navbar>
+</ion-app>

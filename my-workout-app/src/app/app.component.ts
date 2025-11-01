@@ -1,20 +1,29 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { filter } from 'rxjs';
-import { SwPush, SwUpdate } from '@angular/service-worker';
-import { environment } from '../environments/environment';
+import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { NavbarComponent } from './navbar/navbar.component';
-import { NgClass } from '@angular/common';
-import { PrimeNG } from 'primeng/config';
-import { ThemeService } from './theme/theme.service';
-import { DeviceDetectionService } from './services/device-detection.service';
-import { AlertComponent } from './alert/alert.component';
+import { NgClass } from "@angular/common";
+import { NavigationEnd, Router } from "@angular/router";
+import { PrimeNG } from "primeng/config";
+import { ThemeService } from "./theme/theme.service";
+import { DeviceDetectionService } from "./services/device-detection.service";
+import { filter } from "rxjs";
+import { AlertComponent } from "./alert/alert.component";
+import { Capacitor } from "@capacitor/core";
+import { SwPush, SwUpdate } from "@angular/service-worker";
+import { environment } from 'src/environments/environment';
 
 @Component({
-    imports: [RouterModule, NavbarComponent, NgClass, AlertComponent],
     selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+    templateUrl: 'app.component.html',
+    imports: [
+        IonRouterOutlet,
+        IonApp,
+        NavbarComponent,
+        NgClass,
+        AlertComponent
+    ],
+    styleUrls: ['app.component.scss']
+
 })
 export class AppComponent implements OnInit {
 
@@ -69,9 +78,16 @@ export class AppComponent implements OnInit {
         });
 
 
-      if (this.deviceDetection.isDesktop()) {
-          this.isDesktop = true;
-          this.router.navigate(['desktop']);
-      }
+        if (this.deviceDetection.isDesktop()) {
+            this.isDesktop = true;
+            this.router.navigate(['desktop']);
+        }
+
+
+        const platform = Capacitor.getPlatform();
+
+        if (platform === 'android') {
+            document.body.classList.add('android-app');
+        }
     }
 }

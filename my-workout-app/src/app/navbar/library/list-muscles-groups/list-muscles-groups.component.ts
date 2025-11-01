@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
+import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { RouterLink } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
 import { AlertService } from '../../../services/alert.service';
-import { MuscleGroup } from '../../../interfaces/MuscleGroup';
+import { IonContent } from '@ionic/angular/standalone';
 
 @Component({
     selector: 'app-list-muscle-group',
-    imports: [CommonModule, RouterLink, Skeleton],
+  imports: [CommonModule, RouterLink, Skeleton, IonContent],
     templateUrl: './list-muscles-groups.component.html',
     styleUrl: './list-muscles-groups.component.scss',
     standalone: true
