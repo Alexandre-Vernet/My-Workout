@@ -54,21 +54,21 @@ jobs:
           push: true
           tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
 
-  # redeploy-containers:
-  #   needs: build-push-images
-  #   runs-on: ubuntu-latest
-  #   environment: production
-  #   steps:
-  #     - name: executing remote ssh commands using password
-  #       uses: appleboy/ssh-action@v1.1.0
-  #       with:
-  #         host: ${{ env.SERVER_HOST }}
-  #         username: ${{ env.SERVER_USERNAME }}
-  #         password: ${{ env.SERVER_PASSWORD }}
-  #         port: ${{ env.SERVER_PORT }}
-  #         script: |
-  #           docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:app
-  #           docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
-  #           docker system prune -f
-  #           cd /home/debian/apps/${{ env.DOCKERHUB_REPOSITORY_NAME }}/
-  #           docker-compose up -d
+  redeploy-containers:
+    needs: build-push-images
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ env.SERVER_HOST }}
+          username: ${{ env.SERVER_USERNAME }}
+          password: ${{ env.SERVER_PASSWORD }}
+          port: ${{ env.SERVER_PORT }}
+          script: |
+            docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:app
+            docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
+            docker system prune -f
+            cd /home/debian/apps/${{ env.DOCKERHUB_REPOSITORY_NAME }}/
+            docker-compose up -d
