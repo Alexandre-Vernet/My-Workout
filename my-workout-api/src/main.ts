@@ -14,7 +14,11 @@ async function bootstrap() {
     const port = process.env.PORT || 3000;
 
     app.enableCors({
-        origin: process.env.ALLOWED_ORIGIN,
+        origin: [
+            process.env.ALLOWED_ORIGIN,
+            'capacitor://localhost',
+            'http://localhost',
+        ]
     });
 
 
