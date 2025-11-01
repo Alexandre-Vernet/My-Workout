@@ -10,4 +10,4 @@ COPY my-workout-api/ .
 
 RUN npm run build
 
-CMD ["node", "my-workout-api/dist/main.js"]
+CMD ["node", "dist/main.js"]
