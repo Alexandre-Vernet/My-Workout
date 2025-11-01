@@ -27,7 +27,6 @@ import { EpaulesComponent } from './muscle-structure/epaules/epaules.component';
 import { BicepsComponent } from './muscle-structure/biceps/biceps.component';
 import { AbdominauxComponent } from './muscle-structure/abdominaux/abdominaux.component';
 import { DosComponent } from './muscle-structure/dos/dos.component';
-import { DesktopVersionComponent } from './desktop-version/desktop-version.component';
 
 
 @Component({
@@ -162,10 +161,6 @@ export const appRoutes: Route[] = [
                 redirectTo: 'sign-in'
             }
         ]
-    },
-    {
-      path: 'desktop',
-      component: DesktopVersionComponent
     },
     {
         path: '**',

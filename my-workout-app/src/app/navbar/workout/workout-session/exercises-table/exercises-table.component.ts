@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { HistoryService } from '../../../../services/history.service';
 import { InputNumber } from 'primeng/inputnumber';
-import { History } from '../../../../interfaces/history';
+import { History } from '../../../../../interfaces/history';
 import { AlertService } from '../../../../services/alert.service';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';

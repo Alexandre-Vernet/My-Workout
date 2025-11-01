@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
 import { FormsModule } from '@angular/forms';
+import { Exercise } from '../../../../interfaces/exercise';
 import { InputNumber } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
 import { ConfirmationService } from 'primeng/api';
@@ -12,22 +13,22 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { HistoryService } from '../../../services/history.service';
+import { History } from '../../../../interfaces/history';
 import { Skeleton } from 'primeng/skeleton';
 import { ExercisesTableComponent } from './exercises-table/exercises-table.component';
+import { Elastic } from '../../../../interfaces/elastic';
 import { Popover } from 'primeng/popover';
 import { DeviceDetectionService } from '../../../services/device-detection.service';
 import { WorkoutService } from '../../../services/workout.service';
+import { Workout } from '../../../../interfaces/workout';
+import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
+import { ErrorCode } from '../../../../error-code/error-code';
 import { ThemeService } from '../../../theme/theme.service';
 import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../utils/convert-weight-elastic';
 import { animate, group, query, style, transition, trigger } from '@angular/animations';
 import { PreventFocusOnButtonClickDirective } from '../../../directives/prevent-focus-on-button-click.directive';
-import { Workout } from '../../../interfaces/workout';
-import { Exercise } from '../../../interfaces/exercise';
-import { History } from '../../../interfaces/history';
-import { Elastic } from '../../../interfaces/elastic';
-import { ErrorCode } from '../../../interfaces/error-code';
-import { MuscleGroup } from '../../../interfaces/MuscleGroup';
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
 @Component({
     selector: 'app-workout-session',
@@ -120,6 +121,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     private currentTab: number;
 
+    hapticsImpactLight = async () => {
+        await Haptics.impact({ style: ImpactStyle.Medium });
+    };
+
     constructor(
         private readonly activatedRoute: ActivatedRoute,
         private readonly workoutService: WorkoutService,
@@ -205,14 +210,16 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             });
     }
 
-    toggleTimer() {
+    async toggleTimer() {
         if (this.weight < 0 || this.weight >= 500) {
             return;
         }
 
         if (this.timer.interval !== null) {
+            await this.hapticsImpactLight();
             this.stopTimer();
         } else {
+            await this.hapticsImpactLight();
             this.startTimer();
         }
     }

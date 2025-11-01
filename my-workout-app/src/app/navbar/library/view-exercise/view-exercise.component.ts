@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
-import { Exercise } from '../../../interfaces/exercise';
+import { Exercise } from '../../../../interfaces/exercise';
 import { AlertService } from '../../../services/alert.service';
 import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
@@ -13,10 +13,11 @@ import { Drawer } from 'primeng/drawer';
 import { DeviceDetectionService } from '../../../services/device-detection.service';
 import { Skeleton } from 'primeng/skeleton';
 import { replaceSpaces } from '../../../utils/remove-accents';
+import { IonContent } from '@ionic/angular/standalone';
 
 @Component({
     selector: 'app-view-exercise',
-    imports: [CommonModule, Button, Fieldset, Tag, Drawer, Skeleton, RouterLink],
+  imports: [CommonModule, Button, Fieldset, Tag, Drawer, Skeleton, RouterLink, IonContent],
     templateUrl: './view-exercise.component.html',
     styleUrl: './view-exercise.component.scss',
     standalone: true

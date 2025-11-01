@@ -1,4 +1,4 @@
-import { Elastic, elastics } from '../interfaces/elastic';
+import { Elastic, elastics } from '../../interfaces/elastic';
 
 export const convertWeightElastic = (weight: number) => {
     // Check if the weight is a multiple of 5, since all elastics come in 5kg steps

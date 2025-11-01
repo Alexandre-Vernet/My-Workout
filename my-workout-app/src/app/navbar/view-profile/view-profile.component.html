@@ -1,6 +1,7 @@
-<div class="view-profile">
+<ion-content>
+  <div class="view-profile">
     <div class="flex-1 flex justify-center align-items-center flex-column gap-3">
-        <i class="pi pi-user mt-2 mb-5" style="font-size: 6rem; color: var(--p-primary-900)"></i>
+      <i class="pi pi-user mt-2 mb-5" style="font-size: 6rem; color: var(--p-primary-900)"></i>
     </div>
 
     <div class="m-2 p-3 border-round-2xl"
@@ -8,12 +9,12 @@
             'shadow-dark': isDarkMode,
             'shadow-light': !isDarkMode,
         }">
-        <a routerLink="/user/stats" class="text-primary">
-            <div class="flex-1 flex justify-center align-items-center gap-3">
-                <i class="pi pi-wave-pulse" style="font-size: 1.2rem"></i>
-                <span class="text-primary text-xl stats">Statistiques</span>
-            </div>
-        </a>
+      <a routerLink="/user/stats" class="text-primary">
+        <div class="flex-1 flex justify-center align-items-center gap-3">
+          <i class="pi pi-wave-pulse" style="font-size: 1.2rem"></i>
+          <span class="text-primary text-xl stats">Statistiques</span>
+        </div>
+      </a>
     </div>
 
     <div class="m-2 p-3 border-round-2xl"
@@ -21,16 +22,7 @@
             'shadow-dark': isDarkMode,
             'shadow-light': !isDarkMode,
         }">
-        <app-manage-account (showAlert)="displayAlert($event)"></app-manage-account>
-    </div>
-
-
-    <div class="m-2 p-3 border-round-2xl"
-         [ngClass]="{
-            'shadow-dark': isDarkMode,
-            'shadow-light': !isDarkMode,
-        }">
-        <app-change-theme (isDarkMode)="updateDarkMode($event)"></app-change-theme>
+      <app-manage-account (showAlert)="displayAlert($event)"></app-manage-account>
     </div>
 
 
@@ -39,6 +31,16 @@
             'shadow-dark': isDarkMode,
             'shadow-light': !isDarkMode,
         }">
-        <app-account-actions (showAlert)="displayAlert($event)"></app-account-actions>
+      <app-change-theme (isDarkMode)="updateDarkMode($event)"></app-change-theme>
     </div>
-</div>
+
+
+    <div class="m-2 p-3 border-round-2xl"
+         [ngClass]="{
+            'shadow-dark': isDarkMode,
+            'shadow-light': !isDarkMode,
+        }">
+      <app-account-actions (showAlert)="displayAlert($event)"></app-account-actions>
+    </div>
+  </div>
+</ion-content>

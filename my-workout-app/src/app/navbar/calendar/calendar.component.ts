@@ -7,26 +7,27 @@ import { FormsModule } from '@angular/forms';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { WorkoutService } from '../../services/workout.service';
-import { Workout } from '../../interfaces/workout';
+import { Workout } from '../../../interfaces/workout';
 import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
 import { ThemeService } from '../../theme/theme.service';
 import { removeAccents } from '../../utils/remove-accents';
-import { MuscleGroup, muscleGroupMap } from '../../interfaces/MuscleGroup';
+import { MuscleGroup, muscleGroupMap } from '../../../interfaces/MuscleGroup';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import {
     DialogSelectCardioExerciseComponent
 } from '../workout/dialog-select-cardio-exercise/dialog-select-cardio-exercise.component';
-import { Alert } from '../../interfaces/alert';
+import { Alert } from '../../../interfaces/alert';
 import { AlertService } from '../../services/alert.service';
 import { Tag } from 'primeng/tag';
 import { ExerciseService } from '../../services/exercise.service';
 import { HistoryDetailComponent } from '../history/history-detail/history-detail.component';
-import { Exercise } from '../../interfaces/exercise';
+import { Exercise } from '../../../interfaces/exercise';
+import { IonContent } from "@ionic/angular/standalone";
 
 @Component({
     selector: 'app-calendar',
-    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, Tag, HistoryDetailComponent],
+  imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, Tag, HistoryDetailComponent, IonContent],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
