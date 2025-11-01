@@ -16,6 +16,7 @@ import { HistoryEntity } from './history/history.entity';
 import { WorkoutEntity } from './workout/workout.entity';
 import { WorkoutModule } from './workout/workout.module';
 import { config } from 'dotenv';
+import { RootModule } from "./root/root.module";
 
 config({ path: '.env' });
 const {
@@ -58,7 +59,8 @@ const {
         AuthModule,
         UserExerciseModule,
         HistoryModule,
-        WorkoutModule
+        WorkoutModule,
+        RootModule
     ],
 })
 export class AppModule {}
