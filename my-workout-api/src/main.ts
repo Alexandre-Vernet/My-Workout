@@ -18,7 +18,9 @@ async function bootstrap() {
             process.env.ALLOWED_ORIGIN,
             'capacitor://localhost',
             'http://localhost',
-        ]
+            'https://localhost',
+        ],
+        credentials: true
     });
 
 
