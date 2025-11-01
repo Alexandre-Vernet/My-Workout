@@ -6,6 +6,7 @@
     "scripts": {
         "serve": "ionic serve --port 4200",
         "build:pwa": "ng build",
+        "build:android": "ionic build && ionic cap sync android",
         "android": "ionic build && ionic cap sync android && ionic cap open android"
     },
     "private": true,

@@ -2,7 +2,7 @@ name: Docker build images, push to DockerHub and redeploy containers
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "*" ]
 
 env:
   APP_NAME: my-workout-app
@@ -16,59 +16,91 @@ env:
   SERVER_PORT: ${{ secrets.SERVER_PORT }}
 
 jobs:
-  build-push-images:
+  # build-push-images:
+  #   runs-on: ubuntu-latest
+  #   environment: production
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Build images app and api
+  #       run: |
+  #         docker build -t  ${{ env.DOCKERHUB_REPOSITORY_NAME }}:app -f ${{ env.APP_NAME }}/Dockerfile .
+  #         docker build -t  ${{ env.DOCKERHUB_REPOSITORY_NAME }}:api -f ${{ env.API_NAME }}/Dockerfile .
+
+  #     - name: Login to Docker Hub
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: ${{ env.DOCKERHUB_USERNAME }}
+  #         password: ${{ env.DOCKERHUB_TOKEN }}
+
+  #     - name: Extract metadata (tags, labels) for Docker
+  #       id: meta
+  #       uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+  #       with:
+  #         images: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}
+
+  #     - name: Push image app
+  #       uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+  #       with:
+  #         context: .
+  #         file: ${{ env.APP_NAME }}/Dockerfile
+  #         push: true
+  #         tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:app
+
+  #     - name: Push image api
+  #       uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+  #       with:
+  #         context: .
+  #         file: ${{ env.API_NAME }}/Dockerfile
+  #         push: true
+  #         tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
+
+  # redeploy-containers:
+  #   needs: build-push-images
+  #   runs-on: ubuntu-latest
+  #   environment: production
+  #   steps:
+  #     - name: executing remote ssh commands using password
+  #       uses: appleboy/ssh-action@v1.1.0
+  #       with:
+  #         host: ${{ env.SERVER_HOST }}
+  #         username: ${{ env.SERVER_USERNAME }}
+  #         password: ${{ env.SERVER_PASSWORD }}
+  #         port: ${{ env.SERVER_PORT }}
+  #         script: |
+  #           docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:app
+  #           docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
+  #           docker system prune -f
+  #           cd /home/debian/apps/${{ env.DOCKERHUB_REPOSITORY_NAME }}/
+  #           docker-compose up -d
+
+  download-apk:
     runs-on: ubuntu-latest
     environment: production
     steps:
       - uses: actions/checkout@v3
-      - name: Build images app and api
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 35
+          build-tools: 35.0.0
+
+      - name: Build Ionic Android
         run: |
-          docker build -t  ${{ env.DOCKERHUB_REPOSITORY_NAME }}:app -f ${{ env.APP_NAME }}/Dockerfile .
-          docker build -t  ${{ env.DOCKERHUB_REPOSITORY_NAME }}:api -f ${{ env.API_NAME }}/Dockerfile .
+          cd ${{ env.APP_NAME }}
+          npm ci
+          npm run build:android
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ env.DOCKERHUB_USERNAME }}
-          password: ${{ env.DOCKERHUB_TOKEN }}
+      - name: Build Debug APK
+        run: cd ${{ env.APP_NAME }}/android && ./gradlew assembleDebug
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
         with:
-          images: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}
-
-      - name: Push image app
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-        with:
-          context: .
-          file: ${{ env.APP_NAME }}/Dockerfile
-          push: true
-          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:app
-
-      - name: Push image api
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-        with:
-          context: .
-          file: ${{ env.API_NAME }}/Dockerfile
-          push: true
-          tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
-
-  redeploy-containers:
-    needs: build-push-images
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.1.0
-        with:
-          host: ${{ env.SERVER_HOST }}
-          username: ${{ env.SERVER_USERNAME }}
-          password: ${{ env.SERVER_PASSWORD }}
-          port: ${{ env.SERVER_PORT }}
-          script: |
-            docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:app
-            docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
-            docker system prune -f
-            cd /home/debian/apps/${{ env.DOCKERHUB_REPOSITORY_NAME }}/
-            docker-compose up -d
+          name: android-debug-build
+          path: ${{ env.APP_NAME }}/android/app/build/outputs/apk/debug/app-debug.apk
