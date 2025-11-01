@@ -8,6 +8,7 @@ import { ThemeService } from "./theme/theme.service";
 import { DeviceDetectionService } from "./services/device-detection.service";
 import { filter } from "rxjs";
 import { AlertComponent } from "./alert/alert.component";
+import { Capacitor } from "@capacitor/core";
 
 @Component({
     selector: 'app-root',
@@ -52,6 +53,13 @@ export class AppComponent implements OnInit {
         if (this.deviceDetection.isDesktop()) {
             this.isDesktop = true;
             this.router.navigate(['desktop']);
+        }
+
+
+        const platform = Capacitor.getPlatform();
+
+        if (platform === 'android') {
+            document.body.classList.add('android-app');
         }
     }
 }

@@ -100,12 +100,6 @@ img {
 }
 
 
-//:root {
-//  --ion-color-primary: #007ad9;
-//  --ion-color-primary-contrast: #ffffff;
-//}
-
-
-//ion-content {
-//  all: unset; /* retire le style encapsulé Ionic */
-//}
+body.android-app ion-app {
+    margin-top: 20px;
+}
