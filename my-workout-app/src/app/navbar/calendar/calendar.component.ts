@@ -24,6 +24,7 @@ import { ExerciseService } from '../../services/exercise.service';
 import { HistoryDetailComponent } from '../history/history-detail/history-detail.component';
 import { Exercise } from '../../../interfaces/exercise';
 import { IonContent } from "@ionic/angular/standalone";
+import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-calendar',
@@ -34,7 +35,7 @@ import { IonContent } from "@ionic/angular/standalone";
     encapsulation: ViewEncapsulation.None,
     providers: [ConfirmationService]
 })
-export class CalendarComponent implements OnInit, AfterViewInit {
+export class CalendarComponent implements OnInit, AfterViewInit, ViewWillEnter {
 
     @ViewChild('calendarComponent', { static: false }) calendarComponent!: FullCalendarComponent;
     calendarOptions: CalendarOptions = {
@@ -121,12 +122,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
+       this.init();
         this.isDarkMode = this.themeService.isDarkMode();
-
-        this.exerciseService.findCardioExercises()
-            .subscribe({
-                next: (exercises) => this.cardioExercises = exercises
-            });
     }
 
 
@@ -141,6 +138,17 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             this.swipeEndX = e.changedTouches[0].screenX;
             this.handleSwipe();
         });
+    }
+
+    ionViewWillEnter() {
+        this.init();
+    }
+
+    private init() {
+        this.exerciseService.findCardioExercises()
+            .subscribe({
+                next: (exercises) => this.cardioExercises = exercises
+            });
     }
 
     handleSwipe() {

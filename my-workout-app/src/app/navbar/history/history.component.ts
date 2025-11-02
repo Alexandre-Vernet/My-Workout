@@ -16,6 +16,7 @@ import { HistoryDetailComponent } from './history-detail/history-detail.componen
 import { Tag } from 'primeng/tag';
 import { MuscleGroup } from '../../../interfaces/MuscleGroup';
 import { IonContent } from '@ionic/angular/standalone';
+import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-history',
@@ -25,7 +26,7 @@ import { IonContent } from '@ionic/angular/standalone';
     standalone: true,
     providers: [ConfirmationService]
 })
-export class HistoryComponent implements OnInit {
+export class HistoryComponent implements OnInit, ViewWillEnter {
 
     workout: Workout[];
     filterWorkouts: Workout[] = [];
@@ -48,8 +49,16 @@ export class HistoryComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.getHistories();
+       this.init();
         this.isDarkMode = this.themeService.isDarkMode();
+    }
+
+    ionViewWillEnter() {
+        this.init();
+    }
+
+    private init() {
+        this.getHistories();
     }
 
     deleteWorkout(groupedHistory: GroupedHistory[], muscleGroupName: string, date: Date) {

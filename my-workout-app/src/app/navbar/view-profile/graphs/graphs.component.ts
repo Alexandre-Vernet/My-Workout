@@ -8,6 +8,7 @@ import { Exercise } from '../../../../interfaces/exercise';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../../theme/theme.service';
 import { IonContent } from "@ionic/angular/standalone";
+import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-graphs',
@@ -16,7 +17,7 @@ import { IonContent } from "@ionic/angular/standalone";
     styleUrl: './graphs.component.scss',
     standalone: true
 })
-export class GraphsComponent implements OnInit {
+export class GraphsComponent implements OnInit, ViewWillEnter {
 
     exercise: Exercise;
 
@@ -38,6 +39,15 @@ export class GraphsComponent implements OnInit {
     }
 
     ngOnInit() {
+       this.init();
+        this.isDarkMode = this.themeService.isDarkMode();
+    }
+
+    ionViewWillEnter() {
+        this.init();
+    }
+
+    private init() {
         this.exerciseId = Number(this.activatedRoute.snapshot.paramMap.get('exerciseId'));
 
         this.exerciseService.getExercise(this.exerciseId)
@@ -56,8 +66,6 @@ export class GraphsComponent implements OnInit {
                     });
                 }
             });
-
-        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     private bar() {

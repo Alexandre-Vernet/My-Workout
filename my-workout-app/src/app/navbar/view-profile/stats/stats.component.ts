@@ -8,6 +8,7 @@ import { AlertService } from '../../../services/alert.service';
 import { ThemeService } from '../../../theme/theme.service';
 import { Skeleton } from 'primeng/skeleton';
 import { IonContent } from '@ionic/angular/standalone';
+import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-stats',
@@ -15,7 +16,7 @@ import { IonContent } from '@ionic/angular/standalone';
     templateUrl: './stats.component.html',
     styleUrl: './stats.component.scss'
 })
-export class StatsComponent implements OnInit {
+export class StatsComponent implements OnInit, ViewWillEnter {
 
     exercises: Exercise[] = [];
 
@@ -33,6 +34,15 @@ export class StatsComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.init();
+        this.isDarkMode = this.themeService.isDarkMode();
+    }
+
+    ionViewWillEnter() {
+        this.init();
+    }
+
+    private init() {
         this.exerciseService.findByUserId()
             .subscribe({
                 next: (exercises) => {
@@ -48,8 +58,6 @@ export class StatsComponent implements OnInit {
             });
 
         this.countTotalDaysWorkout();
-
-        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     private countTotalDaysWorkout() {

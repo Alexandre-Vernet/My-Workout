@@ -29,6 +29,7 @@ import { convertWeightElastic } from '../../../utils/convert-weight-elastic';
 import { animate, group, query, style, transition, trigger } from '@angular/animations';
 import { PreventFocusOnButtonClickDirective } from '../../../directives/prevent-focus-on-button-click.directive';
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-workout-session',
@@ -77,7 +78,7 @@ import { Haptics, ImpactStyle } from "@capacitor/haptics";
         ])
     ]
 })
-export class WorkoutSessionComponent implements OnInit, AfterViewInit {
+export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillEnter {
 
     workout: Workout;
     exercises: Exercise[] = [];
@@ -140,10 +141,18 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.muscleGroupId = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
-        this.getCurrentTabFromUrl();
-        this.findExercises();
+        this.init();
         this.isIphone = this.deviceDetectionService.isIphone();
         this.isDarkMode = this.themeService.isDarkMode();
+    }
+
+    ionViewWillEnter() {
+        this.init();
+    }
+
+    private init() {
+        this.getCurrentTabFromUrl();
+        this.findExercises();
     }
 
     ngAfterViewInit() {
