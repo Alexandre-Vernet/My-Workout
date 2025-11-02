@@ -14,6 +14,10 @@ env:
     SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
     SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
     SERVER_PORT: ${{ secrets.SERVER_PORT }}
+    KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+    KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+    KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+    KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
 jobs:
     #    build-push-images:
@@ -107,25 +111,25 @@ jobs:
                 run: cd ${{ env.APP_NAME }}/android && chmod +x gradlew
 
             -   name: Decode keystore
-                run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > ${{ env.APP_NAME }}/android/app/my-release-key.keystore
+                run: echo "${{ env.KEYSTORE_BASE64 }}" | base64 --decode > ${{ env.APP_NAME }}/android/app/my-release-key.keystore
 
             -   name: Build signed release APK
                 run: |
                     cd ${{ env.APP_NAME }}/android
                     ./gradlew assembleRelease \
                       -Pandroid.injected.signing.store.file=$PWD/app/my-release-key.keystore \
-                      -Pandroid.injected.signing.store.password=${{ secrets.KEY_STORE_PASSWORD }} \
-                      -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
-                      -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+                      -Pandroid.injected.signing.store.password=${{ env.KEY_STORE_PASSWORD }} \
+                      -Pandroid.injected.signing.key.alias=${{ env.KEY_ALIAS }} \
+                      -Pandroid.injected.signing.key.password=${{ env.KEY_PASSWORD }}
 
             -   name: Build signed release AAB
                 run: |
                     cd ${{ env.APP_NAME }}/android
                     ./gradlew bundleRelease \
                       -Pandroid.injected.signing.store.file=$PWD/app/my-release-key.keystore \
-                      -Pandroid.injected.signing.store.password=${{ secrets.KEY_STORE_PASSWORD }} \
-                      -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
-                      -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+                      -Pandroid.injected.signing.store.password=${{ env.KEY_STORE_PASSWORD }} \
+                      -Pandroid.injected.signing.key.alias=${{ env.KEY_ALIAS }} \
+                      -Pandroid.injected.signing.key.password=${{ env.KEY_PASSWORD }}
 
             -   name: Upload signed APK
                 uses: actions/upload-artifact@v4
