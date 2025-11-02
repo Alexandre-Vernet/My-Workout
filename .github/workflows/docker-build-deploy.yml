@@ -117,9 +117,24 @@ jobs:
                       -Pandroid.injected.signing.store.password=${{ secrets.KEY_STORE_PASSWORD }} \
                       -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
                       -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
-                    
-            -   name: Upload signed release APK
+
+            -   name: Build signed release AAB
+                run: |
+                    cd ${{ env.APP_NAME }}/android
+                    ./gradlew bundleRelease \
+                      -Pandroid.injected.signing.store.file=$PWD/app/my-release-key.keystore \
+                      -Pandroid.injected.signing.store.password=${{ secrets.KEY_STORE_PASSWORD }} \
+                      -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+                      -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+
+            -   name: Upload signed APK
                 uses: actions/upload-artifact@v4
                 with:
-                    name: android-release-signed
+                    name: android-release-signed-apk
                     path: ${{ env.APP_NAME }}/android/app/build/outputs/apk/release/app-release.apk
+
+            -   name: Upload signed AAB
+                uses: actions/upload-artifact@v4
+                with:
+                    name: android-release-signed-aab
+                    path: ${{ env.APP_NAME }}/android/app/build/outputs/bundle/release/app-release.aab
