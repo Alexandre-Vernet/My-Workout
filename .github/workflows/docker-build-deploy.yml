@@ -16,65 +16,65 @@ env:
     SERVER_PORT: ${{ secrets.SERVER_PORT }}
 
 jobs:
-    build-push-images:
-        runs-on: ubuntu-latest
-        environment: production
-        steps:
-            -   uses: actions/checkout@v3
-            -   name: Build images app and api
-                run: |
-                    docker build -t  ${{ env.DOCKERHUB_REPOSITORY_NAME }}:app -f ${{ env.APP_NAME }}/Dockerfile .
-                    docker build -t  ${{ env.DOCKERHUB_REPOSITORY_NAME }}:api -f ${{ env.API_NAME }}/Dockerfile .
-
-            -   name: Login to Docker Hub
-                uses: docker/login-action@v3
-                with:
-                    username: ${{ env.DOCKERHUB_USERNAME }}
-                    password: ${{ env.DOCKERHUB_TOKEN }}
-
-            -   name: Extract metadata (tags, labels) for Docker
-                id: meta
-                uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-                with:
-                    images: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}
-
-            -   name: Push image app
-                uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-                with:
-                    context: .
-                    file: ${{ env.APP_NAME }}/Dockerfile
-                    push: true
-                    tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:app
-
-            -   name: Push image api
-                uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-                with:
-                    context: .
-                    file: ${{ env.API_NAME }}/Dockerfile
-                    push: true
-                    tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
-
-    redeploy-containers:
-        needs: build-push-images
-        runs-on: ubuntu-latest
-        environment: production
-        steps:
-            -   name: executing remote ssh commands using password
-                uses: appleboy/ssh-action@v1.1.0
-                with:
-                    host: ${{ env.SERVER_HOST }}
-                    username: ${{ env.SERVER_USERNAME }}
-                    password: ${{ env.SERVER_PASSWORD }}
-                    port: ${{ env.SERVER_PORT }}
-                    script: |
-                        docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:app
-                        docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
-                        docker system prune -f
-                        cd /home/debian/apps/${{ env.DOCKERHUB_REPOSITORY_NAME }}/
-                        docker-compose up -d
+#    build-push-images:
+#        runs-on: ubuntu-latest
+#        environment: production
+#        steps:
+#            -   uses: actions/checkout@v3
+#            -   name: Build images app and api
+#                run: |
+#                    docker build -t  ${{ env.DOCKERHUB_REPOSITORY_NAME }}:app -f ${{ env.APP_NAME }}/Dockerfile .
+#                    docker build -t  ${{ env.DOCKERHUB_REPOSITORY_NAME }}:api -f ${{ env.API_NAME }}/Dockerfile .
+#
+#            -   name: Login to Docker Hub
+#                uses: docker/login-action@v3
+#                with:
+#                    username: ${{ env.DOCKERHUB_USERNAME }}
+#                    password: ${{ env.DOCKERHUB_TOKEN }}
+#
+#            -   name: Extract metadata (tags, labels) for Docker
+#                id: meta
+#                uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+#                with:
+#                    images: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}
+#
+#            -   name: Push image app
+#                uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+#                with:
+#                    context: .
+#                    file: ${{ env.APP_NAME }}/Dockerfile
+#                    push: true
+#                    tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:app
+#
+#            -   name: Push image api
+#                uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+#                with:
+#                    context: .
+#                    file: ${{ env.API_NAME }}/Dockerfile
+#                    push: true
+#                    tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
+#
+#    redeploy-containers:
+#        needs: build-push-images
+#        runs-on: ubuntu-latest
+#        environment: production
+#        steps:
+#            -   name: executing remote ssh commands using password
+#                uses: appleboy/ssh-action@v1.1.0
+#                with:
+#                    host: ${{ env.SERVER_HOST }}
+#                    username: ${{ env.SERVER_USERNAME }}
+#                    password: ${{ env.SERVER_PASSWORD }}
+#                    port: ${{ env.SERVER_PORT }}
+#                    script: |
+#                        docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:app
+#                        docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
+#                        docker system prune -f
+#                        cd /home/debian/apps/${{ env.DOCKERHUB_REPOSITORY_NAME }}/
+#                        docker-compose up -d
 
     build-signed-apk:
-        needs: redeploy-containers
+#        needs: redeploy-containers
         runs-on: ubuntu-latest
         environment: production
         steps:
@@ -105,11 +105,11 @@ jobs:
 
             -   name: Make gradlew executable
                 run: cd ${{ env.APP_NAME }}/android && chmod +x gradlew
-            
+
             # 🧩 Recréer le fichier .keystore à partir du secret encodé
             -   name: Decode keystore
                 run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > ${{ env.APP_NAME }}/android/app/my-release-key.keystore
-            
+
             # 🏗️ Générer l’APK signé
             -   name: Build signed release APK
                 run: |
@@ -119,11 +119,10 @@ jobs:
                       -Pandroid.injected.signing.store.password=${{ secrets.KEY_STORE_PASSWORD }} \
                       -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
                       -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
-            
+
             # 📦 Uploader l’APK signé comme artefact téléchargeable
             -   name: Upload signed release APK
                 uses: actions/upload-artifact@v4
                 with:
                     name: android-release-signed
                     path: ${{ env.APP_NAME }}/android/app/build/outputs/apk/release/app-release.apk
-   
