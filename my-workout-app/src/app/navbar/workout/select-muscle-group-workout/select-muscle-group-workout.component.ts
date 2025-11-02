@@ -14,9 +14,9 @@ import {
 import { Alert } from '../../../../interfaces/alert';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { WorkoutService } from '../../../services/workout.service';
 import { AlertService } from '../../../services/alert.service';
 import { IonContent } from '@ionic/angular/standalone';
+import { ViewWillEnter } from '@ionic/angular';
 
 @Component({
     selector: 'select-muscle-group-workout',
@@ -26,7 +26,7 @@ import { IonContent } from '@ionic/angular/standalone';
     standalone: true,
     providers: [ConfirmationService]
 })
-export class SelectMuscleGroupWorkoutComponent implements OnInit {
+export class SelectMuscleGroupWorkoutComponent implements OnInit, ViewWillEnter {
 
     protected readonly MenuUrls = MenuUrls;
 
@@ -40,7 +40,6 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     constructor(
         private readonly muscleGroupService: MuscleGroupService,
-        private readonly workoutService: WorkoutService,
         private readonly alertService: AlertService,
         private readonly themeService: ThemeService,
         private readonly confirmationService: ConfirmationService,
@@ -49,6 +48,15 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.init();
+        this.isDarkMode = this.themeService.isDarkMode();
+    }
+
+    ionViewWillEnter() {
+        this.init();
+    }
+
+    private init() {
         forkJoin([
             this.muscleGroupService.findAllMuscleGroupAndCountAddedExercises(),
             this.muscleGroupService.suggestMuscleGroup()
@@ -72,8 +80,6 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
                     });
                 }
             });
-
-        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     openModalExerciseCardio() {

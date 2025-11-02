@@ -17,6 +17,7 @@ import { Tag } from 'primeng/tag';
 import { Muscle } from '../../../../interfaces/muscle';
 import { removeAccents, replaceSpaces } from '../../../utils/remove-accents';
 import { IonContent } from '@ionic/angular/standalone';
+import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-list-exercises',
@@ -24,7 +25,7 @@ import { IonContent } from '@ionic/angular/standalone';
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })
-export class ListExercisesMuscleGroupComponent implements OnInit {
+export class ListExercisesMuscleGroupComponent implements OnInit, ViewWillEnter {
 
     muscleGroup: MuscleGroup;
     exercises: Exercise[];
@@ -46,6 +47,14 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.init();
+    }
+
+    ionViewWillEnter() {
+        this.init();
+    }
+
+    private init() {
         this.findAllExercisesByMuscleGroupId();
     }
 
