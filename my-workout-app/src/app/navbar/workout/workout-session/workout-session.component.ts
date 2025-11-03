@@ -18,7 +18,6 @@ import { Skeleton } from 'primeng/skeleton';
 import { ExercisesTableComponent } from './exercises-table/exercises-table.component';
 import { Elastic } from '../../../../interfaces/elastic';
 import { Popover } from 'primeng/popover';
-import { DeviceDetectionService } from '../../../services/device-detection.service';
 import { WorkoutService } from '../../../services/workout.service';
 import { Workout } from '../../../../interfaces/workout';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
@@ -116,8 +115,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
     swipeStartX = 0;
     swipeEndX = 0;
 
-    isIphone = false;
-
     animationDirection: 'left' | 'right' = 'right';
 
     private currentTab: number;
@@ -135,14 +132,12 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
         private readonly themeService: ThemeService,
         private readonly confirmationService: ConfirmationService,
         private readonly router: Router,
-        private readonly deviceDetectionService: DeviceDetectionService
     ) {
     }
 
     ngOnInit() {
         this.muscleGroupId = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
         this.init();
-        this.isIphone = this.deviceDetectionService.isIphone();
         this.isDarkMode = this.themeService.isDarkMode();
     }
 

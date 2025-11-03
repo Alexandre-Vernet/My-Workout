@@ -124,7 +124,6 @@
 
             <div (click)="toggleTimer()" class="button-toggle-timer" [ngClass]="{
                 'disabled': this.weight < 0 || this.weight >= 500,
-                'mb-5': isIphone
             }">
                 <ng-container *ngIf="timer.interval !== null else play">
                     <fa-icon [icon]="faIcons.faPause"></fa-icon>

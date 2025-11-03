@@ -28,7 +28,6 @@ import { environment } from 'src/environments/environment';
 export class AppComponent implements OnInit {
 
     hideNavbar = false;
-    isIphone: boolean = false;
     isDesktop: boolean = false;
 
     constructor(
@@ -68,8 +67,6 @@ export class AppComponent implements OnInit {
         this.primeng.ripple.set(true);
         this.themeService.loadTheme();
         this.themeService.loadDarkMode();
-
-        this.isIphone = this.deviceDetection.isIphone();
 
         this.router.events.pipe(
             filter(event => event instanceof NavigationEnd)
