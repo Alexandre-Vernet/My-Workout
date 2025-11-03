@@ -1,11 +1,7 @@
 <ion-app>
-    <div class="router" [ngClass]="{
-    router: !isDesktop
-  }">
+    <div>
         <app-alert></app-alert>
-        <div [ngClass]="{'mb-8': !hideNavbar}">
-            <ion-router-outlet></ion-router-outlet>
-        </div>
+        <ion-router-outlet></ion-router-outlet>
         <app-navbar [ngClass]="{
             'display-none': hideNavbar || isDesktop
         }"></app-navbar>
