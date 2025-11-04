@@ -2,7 +2,7 @@ name: Docker build images, push to DockerHub and redeploy containers
 
 on:
     push:
-        branches: [ "main" ]
+        branches: [ "*" ]
 
 env:
     APP_NAME: my-workout-app
@@ -57,7 +57,7 @@ jobs:
                     file: ${{ env.API_NAME }}/Dockerfile
                     push: true
                     tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:api
-    
+
     redeploy-containers:
         needs: build-push-images
         runs-on: ubuntu-latest
@@ -76,69 +76,69 @@ jobs:
                         docker system prune -f
                         cd /home/debian/apps/${{ env.DOCKERHUB_REPOSITORY_NAME }}/
                         docker-compose up -d
-    
-    build-signed-apk:
-        needs: redeploy-containers
-        runs-on: ubuntu-latest
-        environment: production
-        steps:
-            -   uses: actions/checkout@v3
 
-            -   name: Setup Node.js
-                uses: actions/setup-node@v3
-                with:
-                    node-version: 20
-
-            -   name: Setup Android SDK
-                uses: android-actions/setup-android@v2
-                with:
-                    api-level: 35
-                    build-tools: 35.0.0
-
-            -   name: Build Ionic Android
-                run: |
-                    cd ${{ env.APP_NAME }}
-                    npm ci
-                    npm run build:android
-
-            -   name: Setup Java 21
-                uses: actions/setup-java@v4
-                with:
-                    distribution: 'temurin'
-                    java-version: '21'
-
-            -   name: Make gradlew executable
-                run: cd ${{ env.APP_NAME }}/android && chmod +x gradlew
-
-            -   name: Decode keystore
-                run: echo "${{ env.KEYSTORE_BASE64 }}" | base64 --decode > ${{ env.APP_NAME }}/android/app/my-release-key.keystore
-
-            -   name: Build signed release APK
-                run: |
-                    cd ${{ env.APP_NAME }}/android
-                    ./gradlew assembleRelease \
-                      -Pandroid.injected.signing.store.file=$PWD/app/my-release-key.keystore \
-                      -Pandroid.injected.signing.store.password=${{ env.KEY_STORE_PASSWORD }} \
-                      -Pandroid.injected.signing.key.alias=${{ env.KEY_ALIAS }} \
-                      -Pandroid.injected.signing.key.password=${{ env.KEY_PASSWORD }}
-
-            -   name: Build signed release AAB
-                run: |
-                    cd ${{ env.APP_NAME }}/android
-                    ./gradlew bundleRelease \
-                      -Pandroid.injected.signing.store.file=$PWD/app/my-release-key.keystore \
-                      -Pandroid.injected.signing.store.password=${{ env.KEY_STORE_PASSWORD }} \
-                      -Pandroid.injected.signing.key.alias=${{ env.KEY_ALIAS }} \
-                      -Pandroid.injected.signing.key.password=${{ env.KEY_PASSWORD }}
-
-            -   name: Upload signed APK
-                uses: actions/upload-artifact@v4
-                with:
-                    name: android-release-signed-apk
-                    path: ${{ env.APP_NAME }}/android/app/build/outputs/apk/release/app-release.apk
-
-            -   name: Upload signed AAB
-                uses: actions/upload-artifact@v4
-                with:
-                    name: android-release-signed-aab
-                    path: ${{ env.APP_NAME }}/android/app/build/outputs/bundle/release/app-release.aab
+#    build-signed-apk:
+#        needs: redeploy-containers
+#        runs-on: ubuntu-latest
+#        environment: production
+#        steps:
+#            -   uses: actions/checkout@v3
+#
+#            -   name: Setup Node.js
+#                uses: actions/setup-node@v3
+#                with:
+#                    node-version: 20
+#
+#            -   name: Setup Android SDK
+#                uses: android-actions/setup-android@v2
+#                with:
+#                    api-level: 35
+#                    build-tools: 35.0.0
+#
+#            -   name: Build Ionic Android
+#                run: |
+#                    cd ${{ env.APP_NAME }}
+#                    npm ci
+#                    npm run build:android
+#
+#            -   name: Setup Java 21
+#                uses: actions/setup-java@v4
+#                with:
+#                    distribution: 'temurin'
+#                    java-version: '21'
+#
+#            -   name: Make gradlew executable
+#                run: cd ${{ env.APP_NAME }}/android && chmod +x gradlew
+#
+#            -   name: Decode keystore
+#                run: echo "${{ env.KEYSTORE_BASE64 }}" | base64 --decode > ${{ env.APP_NAME }}/android/app/my-release-key.keystore
+#
+#            -   name: Build signed release APK
+#                run: |
+#                    cd ${{ env.APP_NAME }}/android
+#                    ./gradlew assembleRelease \
+#                      -Pandroid.injected.signing.store.file=$PWD/app/my-release-key.keystore \
+#                      -Pandroid.injected.signing.store.password=${{ env.KEY_STORE_PASSWORD }} \
+#                      -Pandroid.injected.signing.key.alias=${{ env.KEY_ALIAS }} \
+#                      -Pandroid.injected.signing.key.password=${{ env.KEY_PASSWORD }}
+#
+#            -   name: Build signed release AAB
+#                run: |
+#                    cd ${{ env.APP_NAME }}/android
+#                    ./gradlew bundleRelease \
+#                      -Pandroid.injected.signing.store.file=$PWD/app/my-release-key.keystore \
+#                      -Pandroid.injected.signing.store.password=${{ env.KEY_STORE_PASSWORD }} \
+#                      -Pandroid.injected.signing.key.alias=${{ env.KEY_ALIAS }} \
+#                      -Pandroid.injected.signing.key.password=${{ env.KEY_PASSWORD }}
+#
+#            -   name: Upload signed APK
+#                uses: actions/upload-artifact@v4
+#                with:
+#                    name: android-release-signed-apk
+#                    path: ${{ env.APP_NAME }}/android/app/build/outputs/apk/release/app-release.apk
+#
+#            -   name: Upload signed AAB
+#                uses: actions/upload-artifact@v4
+#                with:
+#                    name: android-release-signed-aab
+#                    path: ${{ env.APP_NAME }}/android/app/build/outputs/bundle/release/app-release.aab
