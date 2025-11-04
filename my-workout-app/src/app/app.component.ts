@@ -83,8 +83,8 @@ export class AppComponent implements OnInit {
 
         const platform = Capacitor.getPlatform();
 
-        if (platform === 'android') {
-            document.body.classList.add('android-app');
+        if (platform === 'android' || platform === 'ios') {
+            document.body.classList.add('app-margin-top');
         }
     }
 }

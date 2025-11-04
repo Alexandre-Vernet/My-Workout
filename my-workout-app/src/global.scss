@@ -99,10 +99,6 @@ img {
 }
 
 
-body.android-app ion-app {
+body.app-margin-top ion-app {
     margin-top: 30px;
-}
-
-ion-router-outlet {
-    margin-bottom: 90px;
 }

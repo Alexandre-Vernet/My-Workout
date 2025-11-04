@@ -1,4 +1,4 @@
-<div *ngIf="exercisesMade.length > 0">
+<div class="exercises-table" [style.visibility]="exercisesMade.length > 0 ? 'visible' : 'hidden'">
     <p-table #exerciseTable [value]="exercisesMade" stripedRows scrollable="true" scrollHeight="225px">
         <ng-template #header>
             <tr>

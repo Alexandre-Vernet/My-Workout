@@ -29,10 +29,11 @@ import { animate, group, query, style, transition, trigger } from '@angular/anim
 import { PreventFocusOnButtonClickDirective } from '../../../directives/prevent-focus-on-button-click.directive';
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import { ViewWillEnter } from "@ionic/angular";
+import { IonContent } from "@ionic/angular/standalone";
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective],
+    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective, IonContent],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -119,8 +120,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
 
     private currentTab: number;
 
-    hapticsImpactLight = async () => {
-        await Haptics.impact({ style: ImpactStyle.Medium });
+    hapticsImpactHeavy = async () => {
+        await Haptics.impact({ style: ImpactStyle.Heavy });
     };
 
     constructor(
@@ -220,10 +221,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
         }
 
         if (this.timer.interval !== null) {
-            await this.hapticsImpactLight();
+            await this.hapticsImpactHeavy();
             this.stopTimer();
         } else {
-            await this.hapticsImpactLight();
+            await this.hapticsImpactHeavy();
             this.startTimer();
         }
     }

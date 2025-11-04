@@ -1,152 +1,155 @@
 <p-confirmdialog></p-confirmdialog>
 
-<div #swipeZone class="workout-session">
-    <ng-container *ngIf="isLoading else content">
-        <div class="mt-2">
-            <div class="flex-1 flex justify-content-around align-items-center">
-                <p-skeleton shape="circle" size="3rem" styleClass="mr-2" />
-                <p-skeleton shape="circle" size="3rem" styleClass="mr-2" />
-                <p-skeleton shape="circle" size="3rem" styleClass="mr-2" />
-                <p-skeleton shape="circle" size="3rem" styleClass="mr-2" />
-            </div>
-
-
-            <div class="flex-1 flex flex-column justify-center align-items-center mt-6 mb-8">
-                <p-skeleton class="mb-4" width="10rem" height="3rem" />
-                <p-skeleton width="15rem" height="4rem" />
-            </div>
-
-            <div class="bottom-page">
-                <div class="stopwatch text-primary mb-3">
-                <span>
-                    <p-skeleton width="8rem" height="3rem" />
-                </span>
+<ion-content>
+    <div #swipeZone class="workout-session">
+        <ng-container *ngIf="isLoading else content">
+            <div class="mt-2">
+                <div class="flex-1 flex justify-content-around align-items-center">
+                    <p-skeleton shape="circle" size="3rem" styleClass="mr-2"/>
+                    <p-skeleton shape="circle" size="3rem" styleClass="mr-2"/>
+                    <p-skeleton shape="circle" size="3rem" styleClass="mr-2"/>
+                    <p-skeleton shape="circle" size="3rem" styleClass="mr-2"/>
                 </div>
-                <p-skeleton shape="circle" size="4rem" styleClass="mr-2" />
+
+
+                <div class="flex-1 flex flex-column justify-center align-items-center mt-6 mb-8">
+                    <p-skeleton class="mb-4" width="10rem" height="3rem"/>
+                    <p-skeleton width="15rem" height="4rem"/>
+                </div>
+
+                <div class="bottom-page">
+                    <div class="stopwatch text-primary mb-3">
+                <span>
+                    <p-skeleton width="8rem" height="3rem"/>
+                </span>
+                    </div>
+                    <p-skeleton shape="circle" size="4rem" styleClass="mr-2"/>
+                </div>
             </div>
-        </div>
-    </ng-container>
+        </ng-container>
 
 
-    <ng-template #content>
-        <p-confirmdialog></p-confirmdialog>
+        <ng-template #content>
+            <p-confirmdialog></p-confirmdialog>
 
 
-        <p-stepper [(value)]="activeStep" class="basis-[40rem]">
-            <div #stepper>
-                <p-step-list class="flex justify-center w-full">
-                    <ng-container *ngFor="let exercise of exercises; let index = index">
-                        <p-step [value]="index + 1">
-                            <ng-template #content let-activateCallback="activateCallback" let-value="value">
-                                <button class="step-button"
-                                        [ngClass]="{
+            <p-stepper [(value)]="activeStep" class="basis-[40rem]">
+                <div #stepper>
+                    <p-step-list class="flex justify-center w-full">
+                        <ng-container *ngFor="let exercise of exercises; let index = index">
+                            <p-step [value]="index + 1">
+                                <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                                    <button class="step-button"
+                                            [ngClass]="{
                         'bg-primary text-primary-contrast border-primary': value === activeStep,
                         'border-surface': value > activeStep
                     }"
-                                        (click)="switchPanel(exercise, index + 1)">
-                                    <span class="step-button-span">{{ index + 1 }}</span>
-                                </button>
+                                            (click)="switchPanel(exercise, index + 1)">
+                                        <span class="step-button-span">{{ index + 1 }}</span>
+                                    </button>
+                                </ng-template>
+                            </p-step>
+                        </ng-container>
+                    </p-step-list>
+                </div>
+
+
+                <p-step-panels>
+                    <ng-container *ngFor="let exercise of exercises; let index = index">
+                        <p-step-panel [value]="index + 1">
+                            <ng-template #content let-activateCallback="activateCallback">
+                                <div [@slidePanel]="animationDirection"
+                                     class="flex-1 flex flex-column justify-content-center ">
+                                    <div class="text-center mb-4 text-xl font-semibold">
+                                        <h3 [routerLink]="['/', 'library', 'exercises', exercise?.id]"
+                                            class="text-2xl font-bold">{{ exercise.name | uppercase }}</h3>
+                                    </div>
+
+
+                                    <div class="flex-1 flex flex-column justify-center align-items-center w-full gap-3">
+                                        <div class="flex align-items-center">
+                                            <p-inputnumber
+                                                preventFocusOnButtonClick
+                                                [disabled]="timer.interval" [(ngModel)]="weight"
+                                                (ngModelChange)="convertWeightToElastics()" [showButtons]="true"
+                                                buttonLayout="horizontal" inputId="horizontal"
+                                                spinnerMode="horizontal" [step]="2.5"
+                                                suffix=" kg" min="0" max="500">
+                                                <ng-template #incrementbuttonicon>
+                                                    <span class="pi pi-plus"></span>
+                                                </ng-template>
+                                                <ng-template #decrementbuttonicon>
+                                                    <span class="pi pi-minus"></span>
+                                                </ng-template>
+                                            </p-inputnumber>
+
+                                            <i class="ml-2 pi pi-info-circle cursor-pointer"
+                                               (click)="dialogConvertWeightToElastics.toggle($event)"
+                                               [style.visibility]="exercise.isSmartWorkout && this.weight % 5 === 0 && this.weight > 0 ? 'visible' : 'hidden'">
+                                            </i>
+                                        </div>
+
+
+                                        <div class="flex align-items-center mr-4">
+                                            <p-inputnumber
+                                                preventFocusOnButtonClick
+                                                class="mb-6" size="small" [disabled]="timer.interval" [(ngModel)]="reps"
+                                                [showButtons]="true"
+                                                buttonLayout="horizontal"
+                                                inputId="horizontal" spinnerMode="horizontal" [step]="1"
+                                                [suffix]=" reps <= 1 ? ' rep' : ' reps'" min="0" max="50">
+                                                <ng-template #incrementbuttonicon>
+                                                    <span class="pi pi-plus"></span>
+                                                </ng-template>
+                                                <ng-template #decrementbuttonicon>
+                                                    <span class="pi pi-minus"></span>
+                                                </ng-template>
+                                            </p-inputnumber>
+                                        </div>
+                                    </div>
+
+                                    <app-exercises-table [muscleGroupId]="muscleGroupId"
+                                                         [(exercisesMade)]="exercisesMade"
+                                                         [exerciseId]="currentExercise.id"></app-exercises-table>
+                                </div>
                             </ng-template>
-                        </p-step>
+                        </p-step-panel>
                     </ng-container>
-                </p-step-list>
-            </div>
+                </p-step-panels>
+            </p-stepper>
 
 
-            <p-step-panels>
-                <ng-container *ngFor="let exercise of exercises; let index = index">
-                    <p-step-panel [value]="index + 1">
-                        <ng-template #content let-activateCallback="activateCallback">
-                            <div [@slidePanel]="animationDirection"
-                                 class="flex-1 flex flex-column justify-content-center mb-6">
-                                <div class="text-center mt-4 mb-4 text-xl font-semibold">
-                                    <h3 [routerLink]="['/', 'library', 'exercises', exercise?.id]"
-                                        class="text-2xl font-bold">{{ exercise.name | uppercase }}</h3>
-                                </div>
+            <div class="bottom-page">
+                <div class="stopwatch text-primary">
+                    <span>{{ timer.text }}</span>
+                </div>
 
-
-                                <div class="flex-1 flex flex-column justify-center align-items-center w-full gap-3">
-                                    <div class="flex align-items-center">
-                                        <p-inputnumber
-                                            preventFocusOnButtonClick
-                                            [disabled]="timer.interval" [(ngModel)]="weight"
-                                                       (ngModelChange)="convertWeightToElastics()" [showButtons]="true"
-                                                       buttonLayout="horizontal" inputId="horizontal"
-                                                       spinnerMode="horizontal" [step]="2.5"
-                                                       suffix=" kg" min="0" max="500">
-                                            <ng-template #incrementbuttonicon>
-                                                <span class="pi pi-plus"></span>
-                                            </ng-template>
-                                            <ng-template #decrementbuttonicon>
-                                                <span class="pi pi-minus"></span>
-                                            </ng-template>
-                                        </p-inputnumber>
-
-                                        <i class="ml-2 pi pi-info-circle cursor-pointer"
-                                           (click)="dialogConvertWeightToElastics.toggle($event)"
-                                           [style.visibility]="exercise.isSmartWorkout && this.weight % 5 === 0 && this.weight > 0 ? 'visible' : 'hidden'">
-                                        </i>
-                                    </div>
-
-
-                                    <div class="flex align-items-center mr-4">
-                                        <p-inputnumber
-                                            preventFocusOnButtonClick
-                                            class="mb-6" size="small" [disabled]="timer.interval" [(ngModel)]="reps"
-                                                       [showButtons]="true"
-                                                       buttonLayout="horizontal"
-                                                       inputId="horizontal" spinnerMode="horizontal" [step]="1"
-                                                       [suffix]=" reps <= 1 ? ' rep' : ' reps'" min="0" max="50">
-                                            <ng-template #incrementbuttonicon>
-                                                <span class="pi pi-plus"></span>
-                                            </ng-template>
-                                            <ng-template #decrementbuttonicon>
-                                                <span class="pi pi-minus"></span>
-                                            </ng-template>
-                                        </p-inputnumber>
-                                    </div>
-                                </div>
-
-                                <app-exercises-table [muscleGroupId]="muscleGroupId" [(exercisesMade)]="exercisesMade"
-                                                     [exerciseId]="currentExercise.id"></app-exercises-table>
-                            </div>
-                        </ng-template>
-                    </p-step-panel>
-                </ng-container>
-            </p-step-panels>
-        </p-stepper>
-
-
-        <div class="bottom-page">
-            <div class="stopwatch text-primary">
-                <span>{{ timer.text }}</span>
-            </div>
-
-            <div (click)="toggleTimer()" class="button-toggle-timer" [ngClass]="{
+                <div (click)="toggleTimer()" class="button-toggle-timer" [ngClass]="{
                 'disabled': this.weight < 0 || this.weight >= 500,
             }">
-                <ng-container *ngIf="timer.interval !== null else play">
-                    <fa-icon [icon]="faIcons.faPause"></fa-icon>
-                </ng-container>
-                <ng-template #play>
-                    <fa-icon [icon]="faIcons.faPlay"></fa-icon>
-                </ng-template>
+                    <ng-container *ngIf="timer.interval !== null else play">
+                        <fa-icon [icon]="faIcons.faPause"></fa-icon>
+                    </ng-container>
+                    <ng-template #play>
+                        <fa-icon [icon]="faIcons.faPlay"></fa-icon>
+                    </ng-template>
+                </div>
             </div>
-        </div>
-    </ng-template>
-</div>
+        </ng-template>
+    </div>
 
-<div class="card flex justify-center">
-    <p-popover #dialogConvertWeightToElastics>
-        <div class="p-3">
-            <h4 class="mb-2 font-semibold text-lg">Élastiques utilisés</h4>
-            <ul>
-                <li *ngFor="let elastic of weightToElastics"
-                    class="flex items-center justify-between p-2 gap-1 rounded">
-                    <span class="font-medium text-primary">{{ elastic.name }}</span>
-                    <span class="text-sm"> ({{ elastic.weight }} kg)</span>
-                </li>
-            </ul>
-        </div>
-    </p-popover>
-</div>
+    <div class="card flex justify-center">
+        <p-popover #dialogConvertWeightToElastics>
+            <div class="p-3">
+                <h4 class="mb-2 font-semibold text-lg">Élastiques utilisés</h4>
+                <ul>
+                    <li *ngFor="let elastic of weightToElastics"
+                        class="flex items-center justify-between p-2 gap-1 rounded">
+                        <span class="font-medium text-primary">{{ elastic.name }}</span>
+                        <span class="text-sm"> ({{ elastic.weight }} kg)</span>
+                    </li>
+                </ul>
+            </div>
+        </p-popover>
+    </div>
+</ion-content>
