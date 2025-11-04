@@ -54,7 +54,7 @@ export class SignUpComponent {
         }
 
         const user: User = {
-            email,
+            email: email.toLowerCase(),
             password,
             confirmPassword
         };

@@ -55,7 +55,7 @@ export class SignInComponent {
         } = this.formSignIn.value;
 
         const user: User = {
-            email,
+            email: email.toLowerCase(),
             password
         };
 

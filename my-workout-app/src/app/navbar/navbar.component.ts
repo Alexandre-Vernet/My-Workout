@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MenuUrls } from '../shared/menu-urls';
 import { delay, filter } from 'rxjs';
-import { DeviceDetectionService } from '../services/device-detection.service';
 
 @Component({
     selector: 'app-navbar',
@@ -14,17 +13,13 @@ import { DeviceDetectionService } from '../services/device-detection.service';
 })
 export class NavbarComponent implements AfterViewInit {
 
-    isIphone: boolean = false;
 
     constructor(
         private router: Router,
-        private readonly deviceDetection: DeviceDetectionService
     ) {
     }
 
     ngAfterViewInit() {
-        this.isIphone = this.deviceDetection.isIphone();
-
         const body = document.body;
         const menu = body.querySelector('.menu') as HTMLElement;
         const menuItems = menu.querySelectorAll('.menu__item');
