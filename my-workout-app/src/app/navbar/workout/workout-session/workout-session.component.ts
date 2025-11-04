@@ -121,7 +121,11 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
     private currentTab: number;
 
     hapticsImpactHeavy = async () => {
-        await Haptics.impact({ style: ImpactStyle.Heavy });
+        try {
+            await Haptics.impact({ style: ImpactStyle.Heavy });
+        } catch (e) {
+            console.warn('Haptics non supporté', e);
+        }
     };
 
     constructor(
@@ -221,10 +225,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
         }
 
         if (this.timer.interval !== null) {
-            await this.hapticsImpactHeavy();
+            this.hapticsImpactHeavy();
             this.stopTimer();
         } else {
-            await this.hapticsImpactHeavy();
+            this.hapticsImpactHeavy();
             this.startTimer();
         }
     }
