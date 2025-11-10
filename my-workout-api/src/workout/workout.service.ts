@@ -32,6 +32,11 @@ export class WorkoutService {
     async find(userId: number) {
         const workoutEntity = await this.workoutRepository.find({
             where: { user: { id: userId } },
+            order: {
+                history: {
+                    id: 'ASC'
+                }
+            },
             relations: {
                 muscleGroup: true,
                 history: { exercise: true }
@@ -101,6 +106,11 @@ export class WorkoutService {
     async findById(id: number) {
         const workout: Workout = await this.workoutRepository.findOne({
             where: { id },
+            order: {
+                history: {
+                    id: 'ASC'
+                }
+            },
             relations: {
                 history: {
                     exercise: true
