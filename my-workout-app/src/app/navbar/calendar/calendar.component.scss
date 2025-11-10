@@ -37,8 +37,20 @@
 
 .fc-col-header-cell-cushion,
 .fc-daygrid-day-number,
-.fc-event,fc-event-start,fc-eve {
-  color: black;
+.fc-event,
+.fc-event-start,
+.fc-eve {
+    color: black;
+}
+
+html.dark-mode {
+    .fc-col-header-cell-cushion,
+    .fc-daygrid-day-number,
+    .fc-event,
+    .fc-event-start,
+    .fc-eve {
+        color: white !important;
+    }
 }
 
 .event-color-style {
