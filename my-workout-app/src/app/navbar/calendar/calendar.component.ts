@@ -145,6 +145,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, ViewWillEnter {
     }
 
     private init() {
+        setTimeout(() => this.calendarComponent.getApi().refetchEvents(), 0);
         this.exerciseService.findCardioExercises()
             .subscribe({
                 next: (exercises) => this.cardioExercises = exercises
