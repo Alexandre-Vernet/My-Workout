@@ -102,3 +102,13 @@ img {
 body.app-margin-top ion-app {
     margin-top: 30px;
 }
+
+:root {
+    --ion-background-color: #ffffff;
+    --ion-text-color: #000000;
+}
+
+html.dark-mode {
+    --ion-background-color: #121212;
+    --ion-text-color: #ffffff;
+}
