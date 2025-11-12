@@ -4,10 +4,10 @@
     "author": "Alexandre Vernet",
     "homepage": "https://my-workout.alexandre-vernet.fr/",
     "scripts": {
-        "serve": "ionic serve --port 4200",
+        "serve": "ng serve",
         "build:pwa": "ng build",
-        "build:android": "ionic build && ionic cap sync android",
-        "android": "ionic build && ionic cap sync android && ionic cap open android"
+        "android": "ionic build && ionic cap sync android && ionic cap open android",
+        "build:android": "ionic build && ionic cap sync android"
     },
     "private": true,
     "dependencies": {

@@ -59,12 +59,9 @@
                         <p-step-panel [value]="index + 1">
                             <ng-template #content let-activateCallback="activateCallback">
                                 <div [@slidePanel]="animationDirection"
-                                     class="flex-1 flex flex-column justify-content-center ">
-                                    <div class="text-center mb-4 text-xl font-semibold">
-                                        <h3 [routerLink]="['/', 'library', 'exercises', exercise?.id]"
-                                            class="text-2xl font-bold">{{ exercise.name | uppercase }}</h3>
-                                    </div>
-
+                                     class="flex-1 flex flex-column justify-content-center">
+                                    <h3 [routerLink]="['/', 'library', 'exercises', exercise?.id]"
+                                        class="text-center text-2xl font-bold mb-4">{{ exercise.name | uppercase }}</h3>
 
                                     <div class="flex-1 flex flex-column justify-center align-items-center w-full gap-3">
                                         <div class="flex align-items-center">
