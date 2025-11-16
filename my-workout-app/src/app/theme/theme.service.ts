@@ -18,7 +18,7 @@ export class ThemeService {
             return;
         }
 
-        this.updateTheme(presets[presetName], presetName);
+        this.updateTheme(presets[presetName].preset, presetName);
     }
 
     updateTheme(preset: string, presetName: string) {
