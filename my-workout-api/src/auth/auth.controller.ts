@@ -30,6 +30,12 @@ export class AuthController {
         return await this.authService.signInWithAccessToken(accessToken);
     }
 
+    @HttpCode(200)
+    @Post('refresh')
+    async refresh(@Body() { refreshToken }: { refreshToken: string }) {
+        return await this.authService.refresh(refreshToken);
+    }
+
    @UseGuards(AuthGuard)
     @Put()
     updateUser(@CurrentUser() currentUser: User, @Body() { user }: { user: User }) {

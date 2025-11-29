@@ -1,4 +1,4 @@
-import { Route, RouterOutlet } from '@angular/router';
+import { Route } from '@angular/router';
 import {
     ListExercisesMuscleGroupComponent
 } from './navbar/library/list-exercises-muscle-group/list-exercises-muscle-group.component';
@@ -11,7 +11,6 @@ import {
 } from './navbar/workout/select-muscle-group-workout/select-muscle-group-workout.component';
 import { MenuUrls } from './shared/menu-urls';
 import { WorkoutSessionComponent } from './navbar/workout/workout-session/workout-session.component';
-import { defaultRedirect } from './auth/default-redirect.guard';
 import { Component } from '@angular/core';
 import { ViewProfileComponent } from './navbar/view-profile/view-profile.component';
 import { CalendarComponent } from './navbar/calendar/calendar.component';
@@ -164,7 +163,6 @@ export const appRoutes: Route[] = [
     },
     {
         path: '**',
-        canActivate: [defaultRedirect],
-        component: RouterOutlet // Let the guard decide redirection
+        redirectTo: MenuUrls.library
     }
 ];

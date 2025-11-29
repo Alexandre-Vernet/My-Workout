@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { FindOneOptions, Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -59,10 +59,19 @@ export class AuthService {
 
 
         delete user.password;
-        return {
-            accessToken: await this.jwtService.signAsync({ user: existingUser }),
-            user
-        };
+        return await this.generateToken(existingUser);
+    }
+
+    refresh(refreshToken: string) {
+        try {
+            const payload = this.jwtService.verify(refreshToken, {
+                secret: process.env.JWT_REFRESH_SECRET,
+            });
+
+            return this.generateToken(payload.user);
+        } catch (e) {
+            throw new UnauthorizedException('Votre session a expiré. Veuillez vous reconnecter.');
+        }
     }
 
     async signInWithAccessToken(accessToken: string) {
@@ -83,10 +92,9 @@ export class AuthService {
                 };
             })
             .catch(() => {
-                throw new ConflictException('Your session has expired. Please sign in again.');
+                throw new UnauthorizedException('Votre session a expiré. Veuillez vous reconnecter.');
             });
     }
-
 
     async updateUser(currentUser: User, user: User) {
         const existingUser = await this.userRepository.findOne({
@@ -182,5 +190,19 @@ export class AuthService {
         const user: User = decoded.user;
 
         return user;
+    }
+
+
+    private async generateToken(user: User) {
+        return {
+            accessToken: await this.jwtService.signAsync({ user }, {
+                secret: process.env.JWT_ACCESS_SECRET,
+                expiresIn: '5m',
+            }),
+            refreshToken: await this.jwtService.signAsync({ user }, {
+                secret: process.env.JWT_REFRESH_SECRET,
+                expiresIn: '30d',
+            }),
+        }
     }
 }
