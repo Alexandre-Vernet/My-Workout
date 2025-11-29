@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, from, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../../interfaces/user';
+import { Preferences } from "@capacitor/preferences";
 
 @Injectable({
     providedIn: 'root'
@@ -20,24 +21,29 @@ export class AuthService {
     ) {
     }
 
-    signIn(user: User): Observable<{ user: User, accessToken: string }> {
-        return this.http.post<{ user: User, accessToken: string }>(`${ this.authUrl }/sign-in`, user)
+    signIn(user: User) {
+        return this.http.post<{ accessToken: string, refreshToken: string }>(`${ this.authUrl }/sign-in`, user)
             .pipe(
-                tap(({ user, accessToken }) => {
+                tap(({ accessToken, refreshToken }) => {
                     this.userSubject.next(user);
                     localStorage.setItem('access-token', accessToken);
-                })
+                    localStorage.setItem('refresh-token', refreshToken);
+                }),
+                switchMap(() => from(Preferences.set({
+                    key: 'email',
+                    value: user.email,
+                }))),
             );
     }
 
-    signUp(user: User): Observable<{ accessToken: string, user: User }> {
+    signUp(user: User) {
         return this.http.post<{ accessToken: string, user: User }>(`${ this.authUrl }/sign-up`, user)
             .pipe(
                 tap(({ accessToken }) => localStorage.setItem('access-token', accessToken))
             );
     }
 
-    signInWithAccessToken(): Observable<{ user: User, accessToken: string }> {
+    signInWithAccessToken() {
         const accessToken = localStorage.getItem('access-token');
         return this.http.post<{
             user: User,
@@ -51,6 +57,22 @@ export class AuthService {
             );
     }
 
+    refresh() {
+        const refreshToken = localStorage.getItem('refresh-token');
+        return this.http.post<{
+            user: User,
+            accessToken: string,
+            refreshToken: string
+        }>(`${ this.authUrl }/refresh`, { refreshToken })
+            .pipe(
+                tap(({ user, accessToken, refreshToken }) => {
+                    this.userSubject.next(user);
+                    localStorage.setItem('access-token', accessToken);
+                    localStorage.setItem('refresh-token', refreshToken);
+                })
+            );
+    }
+
     updateUser(user: User) {
         return this.http.put<User>(`${ this.authUrl }`, { user });
     }
@@ -60,7 +82,10 @@ export class AuthService {
     }
 
     updatePassword(userId: number, password: string) {
-        return this.http.put<{ user: User, accessToken: string }>(`${ this.authUrl }/reset-password/${ userId }`, { password })
+        return this.http.put<{
+            user: User,
+            accessToken: string
+        }>(`${ this.authUrl }/reset-password/${ userId }`, { password })
             .pipe(
                 tap(({ user, accessToken }) => {
                     this.userSubject.next(user);
@@ -80,5 +105,7 @@ export class AuthService {
     signOut() {
         this.userSubject.next(null);
         localStorage.removeItem('access-token');
+        localStorage.removeItem('refresh-token');
+        Preferences.remove({ key: 'email' });
     }
 }

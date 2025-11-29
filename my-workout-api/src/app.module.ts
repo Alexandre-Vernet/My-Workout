@@ -25,7 +25,7 @@ const {
     POSTGRES_USERNAME,
     POSTGRES_PASSWORD,
     POSTGRES_DATABASE,
-    JWT_SECRET,
+    JWT_ACCESS_SECRET,
 } = process.env;
 
 @Module({
@@ -51,8 +51,8 @@ const {
         }),
         JwtModule.register({
             global: true,
-            secret: JWT_SECRET,
-            signOptions: { expiresIn: '1d' },
+            secret: JWT_ACCESS_SECRET,
+            signOptions: { expiresIn: '5m' },
         }),
         MuscleGroupModule,
         ExercisesModule,

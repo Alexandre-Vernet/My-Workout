@@ -1,33 +1,22 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, Observable, of, switchMap } from 'rxjs';
-import { AuthService } from './auth.service';
-import { AlertService } from '../services/alert.service';
+import { AlertService } from "../services/alert.service";
 
-export const authGuard = (): Observable<boolean> => {
-    const authService = inject(AuthService);
-    const alertService = inject(AlertService);
+export const authGuard = () => {
     const router = inject(Router);
+    const alertService = inject(AlertService);
 
-    return authService.signInWithAccessToken()
-        .pipe(
-            switchMap(({ user }) => {
-                if (!user) {
-                    return handleError(router, alertService);
-                }
-                return of(true);
-            }),
-            catchError(() => {
-                return handleError(router, alertService);
-            })
-        );
-};
+    const access = localStorage.getItem('access-token');
+    const refresh = localStorage.getItem('refresh-token');
 
-const handleError = (router: Router, alertService: AlertService): Observable<boolean> => {
-    alertService.alert$.next({
-        severity: 'error',
-        message: 'Vous devez être connecté pour accéder à cette page'
-    });
-    router.navigate(['/auth/sign-in']);
-    return of(false);
+    if (!access && !refresh) {
+        router.navigate(['/auth/sign-in']);
+        alertService.alert$.next({
+            severity: 'error',
+            message: 'Vous devez être connecté pour accéder à cette page'
+        });
+        return false;
+    }
+
+    return true;
 };

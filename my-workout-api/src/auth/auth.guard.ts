@@ -1,6 +1,5 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CustomBadRequestException } from '../exceptions/CustomBadRequestException';
 import { ErrorCode } from '../interfaces/error-code';
 
 @Injectable()
@@ -16,13 +15,13 @@ export class AuthGuard implements CanActivate {
         const token = request.headers.authorization?.split(' ')[1];
 
         if (!token) {
-            throw new CustomBadRequestException(ErrorCode.userMustBeLoggedToContinue);
+            throw new UnauthorizedException(ErrorCode.userMustBeLoggedToContinue);
         }
 
         const { user } = await this.authService.signInWithAccessToken(token);
 
         if (!user) {
-            throw new CustomBadRequestException(ErrorCode.sessionHasExpired);
+            throw new UnauthorizedException(ErrorCode.sessionHasExpired);
         }
 
         request.user = user;
