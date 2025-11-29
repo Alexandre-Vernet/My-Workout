@@ -11,6 +11,7 @@ import { AlertComponent } from "./alert/alert.component";
 import { Capacitor } from "@capacitor/core";
 import { SwPush, SwUpdate } from "@angular/service-worker";
 import { environment } from 'src/environments/environment';
+import { AuthService } from "./auth/auth.service";
 
 @Component({
     selector: 'app-root',
@@ -36,7 +37,8 @@ export class AppComponent implements OnInit {
         private router: Router,
         private primeng: PrimeNG,
         private readonly themeService: ThemeService,
-        private readonly deviceDetection: DeviceDetectionService
+        private readonly deviceDetection: DeviceDetectionService,
+        private readonly authService: AuthService
     ) {
         if (environment.production) {
             // Force refresh PWA
@@ -64,6 +66,8 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.authService.signInWithAccessToken().subscribe();
+
         this.primeng.ripple.set(true);
         this.themeService.loadTheme();
         this.themeService.loadDarkMode();
