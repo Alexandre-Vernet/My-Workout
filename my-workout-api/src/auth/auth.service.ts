@@ -82,7 +82,7 @@ export class AuthService {
             }
         });
         if (!userEntity) {
-            throw new ConflictException('Invalid credentials');
+            throw new UnauthorizedException();
         }
         delete userEntity.password;
         return userEntity;
