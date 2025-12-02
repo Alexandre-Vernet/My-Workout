@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ErrorCode } from '../interfaces/error-code';
+import * as jwt from 'jsonwebtoken';
+import { JwtPayload } from "../interfaces/jwt-payload";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -12,20 +13,24 @@ export class AuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
 
-        const token = request.headers.authorization?.split(' ')[1];
+        const token: string = request.headers.authorization?.split(' ')[1];
 
         if (!token) {
-            throw new UnauthorizedException(ErrorCode.userMustBeLoggedToContinue);
+            throw new UnauthorizedException();
         }
 
-        const { user } = await this.authService.signInWithAccessToken(token);
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET) as JwtPayload;
+            const user = await this.authService.me(decoded.user);
 
-        if (!user) {
-            throw new UnauthorizedException(ErrorCode.sessionHasExpired);
+            if (!user || !decoded) {
+                return false;
+            }
+
+            request.user = user;
+            return true;
+        } catch (e) {
+            return false;
         }
-
-        request.user = user;
-
-        return true;
     }
 }

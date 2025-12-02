@@ -2,8 +2,8 @@ import { Controller, Get, HttpCode, Param, Query, UseGuards } from '@nestjs/comm
 import { ExercisesService } from './exercises.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { CurrentUser } from '../auth/current-user-decorator';
-import { OptionalCurrentUser } from '../auth/optional-current-user-decorator';
 import { User } from '../interfaces/user';
+import { OptionalAuthGuard } from "../auth/optional-auth.guard";
 
 @Controller('exercises')
 export class ExercisesController {
@@ -12,9 +12,10 @@ export class ExercisesController {
     ) {
     }
 
+    @UseGuards(OptionalAuthGuard)
     @Get('find-all-exercises-by-muscle-group-id')
-    findAllExercisesByMuscleGroupIdAndUserId(@OptionalCurrentUser() optionalCurrentUser: User, @Query('muscleGroupId') muscleGroupId: string) {
-        return this.exercisesService.findAllExercisesByMuscleGroupId(Number(muscleGroupId), optionalCurrentUser);
+    findAllExercisesByMuscleGroupIdAndUserId(@CurrentUser() currentUser: User, @Query('muscleGroupId') muscleGroupId: string) {
+        return this.exercisesService.findAllExercisesByMuscleGroupId(Number(muscleGroupId), currentUser);
     }
 
     @UseGuards(AuthGuard)
@@ -37,7 +38,7 @@ export class ExercisesController {
     }
 
     @Get(':exerciseId')
-    getExercise(@OptionalCurrentUser() optionalCurrentUser: User, @Param('exerciseId') exerciseId: number) {
-        return this.exercisesService.getExercise(exerciseId, optionalCurrentUser);
+    getExercise(@CurrentUser() currentUser: User, @Param('exerciseId') exerciseId: number) {
+        return this.exercisesService.getExercise(exerciseId, currentUser);
     }
 }

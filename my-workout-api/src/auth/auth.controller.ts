@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { CurrentUser } from './current-user-decorator';
@@ -24,10 +24,11 @@ export class AuthController {
         return this.authService.signIn(user);
     }
 
+    @UseGuards(AuthGuard)
     @HttpCode(200)
-    @Post('sign-in-with-access-token')
-    async signInWithAccessToken(@Body() { accessToken }: { accessToken: string }) {
-        return await this.authService.signInWithAccessToken(accessToken);
+    @Get('me')
+    async me(@CurrentUser() currentUser: User) {
+        return await this.authService.me(currentUser);
     }
 
     @HttpCode(200)

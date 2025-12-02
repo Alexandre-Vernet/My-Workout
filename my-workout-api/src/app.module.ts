@@ -52,7 +52,7 @@ const {
         JwtModule.register({
             global: true,
             secret: JWT_ACCESS_SECRET,
-            signOptions: { expiresIn: '1d' },
+            signOptions: { expiresIn: '5m' },
         }),
         MuscleGroupModule,
         ExercisesModule,

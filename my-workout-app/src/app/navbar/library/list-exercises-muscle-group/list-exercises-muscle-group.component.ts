@@ -123,11 +123,12 @@ export class ListExercisesMuscleGroupComponent implements OnInit, ViewWillEnter 
     }
 
     private findAllExercisesByMuscleGroupId() {
-        this.route.params.pipe(
-            switchMap((params: {
-                muscleGroupId: number
-            }) => this.exerciseService.findAllExercisesByMuscleGroupId(Number(params.muscleGroupId)))
-        )
+        this.route.params
+            .pipe(
+                switchMap((params: {
+                    muscleGroupId: number
+                }) => this.exerciseService.findAllExercisesByMuscleGroupId(Number(params.muscleGroupId)))
+            )
             .subscribe({
                 next: ({ exercises, muscleGroup }) => {
                     this.isLoading = false;

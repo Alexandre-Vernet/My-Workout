@@ -1,5 +1,5 @@
 import { HttpHandlerFn, HttpRequest } from '@angular/common/http';
-import { catchError, switchMap, throwError } from "rxjs";
+import { catchError, EMPTY, switchMap } from "rxjs";
 import { inject } from "@angular/core";
 import { AuthService } from "./auth.service";
 import { Router } from "@angular/router";
@@ -10,7 +10,12 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
     const router = inject(Router);
     const alertService = inject(AlertService);
 
-    if (request.url.endsWith('/auth/refresh')) {
+    if (request.url.endsWith('/auth/refresh') ||
+        request.url.endsWith('/auth/sign-in') ||
+        request.url.endsWith('/auth/sign-up') ||
+        request.url.endsWith('/auth/send-email-reset-password') ||
+        request.url.includes('/auth/reset-password')
+    ) {
         return next(request);
     }
 
@@ -25,7 +30,7 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
     return next(request)
         .pipe(
             catchError((err) => {
-                if (err.status === 401) {
+                if (err.status === 401 ||err.status === 403) {
                     return authService.refresh()
                         .pipe(
                             switchMap(({ accessToken }) => {
@@ -36,23 +41,20 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
                                 });
                                 return next(newRequest);
                             }),
-                            catchError(() => {
-                                return handleError(router, alertService, err);
-
-                            })
+                            catchError(() => handleError(router, alertService))
                         );
                 }
-                return handleError(router, alertService, err);
+                return handleError(router, alertService);
 
             })
         );
 };
 
-const handleError = (router: Router, alertService: AlertService, err) => {
+const handleError = (router: Router, alertService: AlertService) => {
     alertService.alert$.next({
         severity: 'error',
         message: 'Vous devez être connecté pour accéder à cette page'
     });
     router.navigate(['/auth/sign-in']);
-    return throwError(() => err);
+    return EMPTY;
 }
