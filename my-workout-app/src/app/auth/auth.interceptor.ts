@@ -10,7 +10,12 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
     const router = inject(Router);
     const alertService = inject(AlertService);
 
-    if (request.url.endsWith('/auth/refresh')) {
+    if (request.url.endsWith('/auth/refresh') ||
+        request.url.endsWith('/auth/sign-in') ||
+        request.url.endsWith('/auth/sign-up') ||
+        request.url.endsWith('/auth/send-email-reset-password') ||
+        request.url.includes('/auth/reset-password')
+    ) {
         return next(request);
     }
 
