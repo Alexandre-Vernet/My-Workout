@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { CurrentUser } from './current-user-decorator';
@@ -27,8 +27,8 @@ export class AuthController {
     @UseGuards(AuthGuard)
     @HttpCode(200)
     @Get('me')
-    async signInWithAccessToken(@Req() req) {
-        return await this.authService.me(req.accessToken);
+    async me(@CurrentUser() currentUser: User) {
+        return await this.authService.me(currentUser);
     }
 
     @HttpCode(200)

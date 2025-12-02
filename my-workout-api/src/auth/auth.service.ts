@@ -36,11 +36,12 @@ export class AuthService {
         user.createdAt = new Date();
         user.updatedAt = new Date();
 
-        return this.userRepository.save(user)
-            .then(async (user) => {
-                const accessToken = this.jwtService.sign({ user });
-                return await this.me(accessToken);
-            });
+        try {
+            await this.userRepository.save(user);
+            await this.me(user);
+        } catch (e) {
+            throw new ConflictException('Something went wrong. Please try again later.');
+        }
     }
 
     async signIn(user: User) {
@@ -74,23 +75,17 @@ export class AuthService {
         }
     }
 
-    async me(accessToken: string) {
-        return this.jwtService.verifyAsync(accessToken)
-            .then(async (decoded) => {
-                const user = await this.userRepository.findOne({
-                    where: {
-                        id: decoded.user.id
-                    }
-                });
-                if (!user) {
-                    throw new ConflictException('Invalid credentials');
-                }
-                delete user.password;
-                return user;
-            })
-            .catch(() => {
-                throw new UnauthorizedException('Votre session a expiré. Veuillez vous reconnecter.');
-            });
+    async me(user: User) {
+        const userEntity = await this.userRepository.findOne({
+            where: {
+                id: user.id
+            }
+        });
+        if (!userEntity) {
+            throw new ConflictException('Invalid credentials');
+        }
+        delete userEntity.password;
+        return userEntity;
     }
 
     async updateUser(currentUser: User, user: User) {
