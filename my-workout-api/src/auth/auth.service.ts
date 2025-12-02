@@ -39,7 +39,7 @@ export class AuthService {
         return this.userRepository.save(user)
             .then(async (user) => {
                 const accessToken = this.jwtService.sign({ user });
-                return await this.signInWithAccessToken(accessToken);
+                return await this.me(accessToken);
             });
     }
 
@@ -74,7 +74,7 @@ export class AuthService {
         }
     }
 
-    async signInWithAccessToken(accessToken: string) {
+    async me(accessToken: string) {
         return this.jwtService.verifyAsync(accessToken)
             .then(async (decoded) => {
                 const user = await this.userRepository.findOne({
@@ -86,10 +86,7 @@ export class AuthService {
                     throw new ConflictException('Invalid credentials');
                 }
                 delete user.password;
-                return {
-                    accessToken: await this.jwtService.signAsync({ user }),
-                    user
-                };
+                return user;
             })
             .catch(() => {
                 throw new UnauthorizedException('Votre session a expiré. Veuillez vous reconnecter.');

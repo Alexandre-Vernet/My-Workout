@@ -12,19 +12,20 @@ export class AuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
 
-        const token = request.headers.authorization?.split(' ')[1];
+        const token: string = request.headers.authorization?.split(' ')[1];
 
         if (!token) {
             throw new UnauthorizedException(ErrorCode.userMustBeLoggedToContinue);
         }
 
-        const { user } = await this.authService.signInWithAccessToken(token);
+        const user = await this.authService.me(token);
 
         if (!user) {
             throw new UnauthorizedException(ErrorCode.sessionHasExpired);
         }
 
         request.user = user;
+        request.accessToken = token;
 
         return true;
     }

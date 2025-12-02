@@ -40,10 +40,12 @@ export class ManageAccountComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.authService.user$
+        this.authService.getCurrentUser()
             .subscribe(user => {
-                this.currentEmail = user?.email;
-                this.formControlEmail.setValue(user?.email);
+                if (user) {
+                    this.currentEmail = user.email;
+                    this.formControlEmail.setValue(user.email);
+                }
             });
     }
 

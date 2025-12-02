@@ -36,10 +36,7 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
                                 });
                                 return next(newRequest);
                             }),
-                            catchError(() => {
-                                return handleError(router, alertService, err);
-
-                            })
+                            catchError(() => handleError(router, alertService, err))
                         );
                 }
                 return handleError(router, alertService, err);

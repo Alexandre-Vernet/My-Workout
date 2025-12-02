@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, from, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, from, map, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../../interfaces/user';
 import { Preferences } from "@capacitor/preferences";
@@ -43,17 +43,19 @@ export class AuthService {
             );
     }
 
-    signInWithAccessToken() {
-        const accessToken = localStorage.getItem('access-token');
-        return this.http.post<{
-            user: User,
-            accessToken: string
-        }>(`${ this.authUrl }/sign-in-with-access-token`, { accessToken })
+    getCurrentUser() {
+        if (this.userSubject.value) {
+            return this.user$;
+        }
+
+        return this.http.get<User>(`${ this.authUrl }/me`)
             .pipe(
-                tap(({ user, accessToken }) => {
-                    this.userSubject.next(user);
-                    localStorage.setItem('access-token', accessToken);
-                })
+                tap((user) => this.userSubject.next(user)),
+                catchError(() => this.refresh()
+                    .pipe(
+                        map((e) => e.user)
+                    )
+                )
             );
     }
 
