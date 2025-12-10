@@ -2,7 +2,7 @@ import {
     Component,
     ElementRef,
     Input,
-    OnChanges,
+    OnChanges, OnInit,
     Output,
     SimpleChanges,
     ViewChild,
@@ -16,6 +16,7 @@ import { History } from '../../../../../interfaces/history';
 import { AlertService } from '../../../../services/alert.service';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
+import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-exercises-table',
@@ -24,7 +25,7 @@ import { Subject } from 'rxjs';
     styleUrl: './exercises-table.component.scss',
     encapsulation: ViewEncapsulation.None
 })
-export class ExercisesTableComponent implements OnChanges {
+export class ExercisesTableComponent implements OnInit, ViewWillEnter, OnChanges {
     @Input() muscleGroupId: number;
     @Input() exerciseId: number;
     @Input() exercisesMade: History[] = [];
@@ -42,15 +43,18 @@ export class ExercisesTableComponent implements OnChanges {
     ) {
     }
 
+    ngOnInit() {
+        this.findTodayExercicesHistory();
+    }
+
+    ionViewWillEnter() {
+        this.findTodayExercicesHistory();
+    }
+
 
     ngOnChanges(changes: SimpleChanges) {
-        const changeExerciseId = changes['exerciseId'];
-        if (changeExerciseId?.currentValue) {
-            this.findTodayExercicesHistory();
-        }
-
-        const changeExerciseMade = changes['exercisesMade'];
-        if (changeExerciseMade?.currentValue) {
+        const exercisesMade = changes['exercisesMade'];
+        if (exercisesMade?.currentValue) {
             setTimeout(() => this.scrollTable(), 0);
         }
     }
@@ -123,19 +127,20 @@ export class ExercisesTableComponent implements OnChanges {
 
     private findTodayExercicesHistory() {
         this.historyService.findTodayExercicesHistory(this.muscleGroupId, this.exerciseId)
-            .subscribe(history => {
-                if (history) {
-                    history.forEach(h => {
-                        const exercise: History = {
-                            id: h.id,
-                            weight: h.weight,
-                            reps: h.reps,
-                            restTime: '/'
-                        };
-
-                        this.exercisesMade.push(exercise);
-                    });
-                }
+            .subscribe({
+                next: (history) => {
+                    if (history) {
+                        this.exercisesMade = history.map(h => ({
+                                ...h,
+                                restTime: '/'
+                            })
+                        );
+                    }
+                },
+                error: (err) => this.alertService.alert$.next({
+                    severity: 'error',
+                    message: err.error.message ?? 'Erreur lors de la récupération de l\'historique'
+                })
             });
     }
 }
