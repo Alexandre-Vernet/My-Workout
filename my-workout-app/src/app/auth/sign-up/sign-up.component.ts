@@ -61,7 +61,13 @@ export class SignUpComponent {
         this.authService.signUp(user)
             .subscribe({
                 next: () => this.router.navigateByUrl('/'),
-                error: (err) => this.formSignUp.setErrors({ [err.error.errorCode]: err.error.message })
+                error: (err) => {
+                    if (err?.error?.errorCode) {
+                        this.formSignUp.setErrors({ [err.error.errorCode]: err?.error?.message ?? 'Une erreur s\'est produite' });
+                    } else {
+                        this.formSignUp.setErrors({ unknownError: 'Une erreur s\'est produite' });
+                    }
+                }
             });
     }
 }

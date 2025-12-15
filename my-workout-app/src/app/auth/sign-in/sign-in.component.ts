@@ -73,7 +73,13 @@ export class SignInComponent implements OnInit {
         this.authService.signIn(user)
             .subscribe({
                 next: () => this.router.navigateByUrl('/'),
-                error: (err) => this.formSignIn.setErrors({ [err.error.errorCode]: err.error.message })
+                error: (err) => {
+                    if (err?.error?.errorCode) {
+                        this.formSignIn.setErrors({ [err.error.errorCode]: err?.error?.message ?? 'Une erreur s\'est produite' });
+                    } else {
+                        this.formSignIn.setErrors({ unknownError: 'Une erreur s\'est produite' });
+                    }
+                }
             });
     }
 }

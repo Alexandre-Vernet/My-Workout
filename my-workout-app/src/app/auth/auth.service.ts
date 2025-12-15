@@ -38,9 +38,7 @@ export class AuthService {
 
     signUp(user: User) {
         return this.http.post<{ accessToken: string, user: User }>(`${ this.authUrl }/sign-up`, user)
-            .pipe(
-                tap(({ accessToken }) => localStorage.setItem('access-token', accessToken))
-            );
+            .pipe(switchMap(() => this.signIn(user)));
     }
 
     getCurrentUser() {

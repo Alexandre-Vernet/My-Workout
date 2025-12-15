@@ -17,6 +17,9 @@
                                size="small">
                         {{ formSignIn.getError('invalidCredential') }}
                     </p-message>
+                    <p-message *ngIf="formSignIn.hasError('unknownError')" severity="error" variant="simple" size="small">
+                        {{ formSignIn.getError('unknownError') }}
+                    </p-message>
                 </div>
                 <div class="login__field">
                     <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
