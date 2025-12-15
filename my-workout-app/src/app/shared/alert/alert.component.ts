@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Alert } from '../../interfaces/alert';
+import { Alert } from '../../../interfaces/alert';
 import { Message } from 'primeng/message';
-import { AlertService } from '../services/alert.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
     selector: 'app-alert',

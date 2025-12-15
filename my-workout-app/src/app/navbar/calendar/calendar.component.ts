@@ -10,8 +10,8 @@ import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../../interfaces/workout';
 import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
-import { ThemeService } from '../../theme/theme.service';
-import { removeAccents } from '../../utils/remove-accents';
+import { ThemeService } from '../../shared/theme/theme.service';
+import { removeAccents } from '../../shared/utils/remove-accents';
 import { MuscleGroup, muscleGroupMap } from '../../../interfaces/MuscleGroup';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import {

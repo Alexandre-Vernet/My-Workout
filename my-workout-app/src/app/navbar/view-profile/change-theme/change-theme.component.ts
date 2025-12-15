@@ -1,8 +1,8 @@
 import { Component, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToggleSwitch } from 'primeng/toggleswitch';
-import { ThemeService } from '../../../theme/theme.service';
-import { presets } from '../../../theme/presets';
+import { ThemeService } from '../../../shared/theme/theme.service';
+import { presets } from '../../../shared/theme/presets';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 

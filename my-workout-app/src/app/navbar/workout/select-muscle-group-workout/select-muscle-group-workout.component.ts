@@ -7,7 +7,7 @@ import { MenuUrls } from '../../../shared/menu-urls';
 import { forkJoin } from 'rxjs';
 import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
-import { ThemeService } from '../../../theme/theme.service';
+import { ThemeService } from '../../../shared/theme/theme.service';
 import {
     DialogSelectCardioExerciseComponent
 } from '../dialog-select-cardio-exercise/dialog-select-cardio-exercise.component';

@@ -9,7 +9,7 @@ import { WorkoutService } from '../../../services/workout.service';
 import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../interfaces/history';
 import { Alert } from '../../../../interfaces/alert';
-import { ThemeService } from '../../../theme/theme.service';
+import { ThemeService } from '../../../shared/theme/theme.service';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputNumber } from 'primeng/inputnumber';

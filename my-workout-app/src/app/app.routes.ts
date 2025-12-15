@@ -26,6 +26,7 @@ import { EpaulesComponent } from './muscle-structure/epaules/epaules.component';
 import { BicepsComponent } from './muscle-structure/biceps/biceps.component';
 import { AbdominauxComponent } from './muscle-structure/abdominaux/abdominaux.component';
 import { DosComponent } from './muscle-structure/dos/dos.component';
+import { PrivacyComponent } from "./shared/privacy/privacy.component";
 
 
 @Component({
@@ -160,6 +161,10 @@ export const appRoutes: Route[] = [
                 redirectTo: 'sign-in'
             }
         ]
+    },
+    {
+        path: 'privacy',
+        component: PrivacyComponent
     },
     {
         path: '**',

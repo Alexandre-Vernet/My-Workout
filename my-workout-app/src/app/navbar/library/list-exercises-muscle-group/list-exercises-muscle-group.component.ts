@@ -15,7 +15,7 @@ import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-
 import { UserExercise } from '../../../../interfaces/user-exercise';
 import { Tag } from 'primeng/tag';
 import { Muscle } from '../../../../interfaces/muscle';
-import { removeAccents, replaceSpaces } from '../../../utils/remove-accents';
+import { removeAccents, replaceSpaces } from '../../../shared/utils/remove-accents';
 import { IonContent } from '@ionic/angular/standalone';
 import { ViewWillEnter } from "@ionic/angular";
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Skeleton } from 'primeng/skeleton';
-import { ThemeService } from '../../theme/theme.service';
+import { ThemeService } from '../../shared/theme/theme.service';
 import { WorkoutService } from '../../services/workout.service';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';

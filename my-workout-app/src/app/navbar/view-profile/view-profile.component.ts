@@ -7,7 +7,7 @@ import { ChangeThemeComponent } from './change-theme/change-theme.component';
 import { ManageAccountComponent } from './manage-account/manage-account.component';
 import { Alert } from '../../../interfaces/alert';
 import { AccountActionsComponent } from './account-actions/account-actions.component';
-import { ThemeService } from '../../theme/theme.service';
+import { ThemeService } from '../../shared/theme/theme.service';
 import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
 import { IonContent } from "@ionic/angular/standalone";

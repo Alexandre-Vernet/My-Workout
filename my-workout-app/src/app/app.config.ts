@@ -4,7 +4,7 @@ import { appRoutes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
-import { presetCyan } from './theme/preset-cyan';
+import { presetCyan } from './shared/theme/preset-cyan';
 import { authInterceptor } from './auth/auth.interceptor';
 import { CommonModule } from '@angular/common';
 import { provideIonicAngular } from '@ionic/angular/standalone';

@@ -12,7 +12,7 @@ import { Tag } from 'primeng/tag';
 import { Drawer } from 'primeng/drawer';
 import { DeviceDetectionService } from '../../../services/device-detection.service';
 import { Skeleton } from 'primeng/skeleton';
-import { replaceSpaces } from '../../../utils/remove-accents';
+import { replaceSpaces } from '../../../shared/utils/remove-accents';
 import { IonContent } from '@ionic/angular/standalone';
 import { ViewWillEnter } from "@ionic/angular";
 
