@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { filter, map } from 'rxjs';
+import { BehaviorSubject, filter, map } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
@@ -82,7 +82,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
 
     workout: Workout;
     exercises: Exercise[] = [];
-    exercisesMade: History[] = [];
+    exercisesMade = new BehaviorSubject<History[]>([]);
     currentExercise: Exercise;
     muscleGroupId: number;
 
@@ -206,7 +206,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
                         restTime: '/'
                     };
 
-                    this.exercisesMade = [...this.exercisesMade, exerciseMade];
+                    this.exercisesMade.next([
+                        ...this.exercisesMade.value,
+                        exerciseMade
+                    ]);
 
                     this.alertService.alert$.next(null);
                 },
@@ -239,7 +242,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
         }
         this.currentExercise = exercise;
         this.fillInputWeightRepsLastSavedValue();
-        this.exercisesMade = [];
+        this.exercisesMade.next([]);
         this.stopTimer();
         this.setTabUrl(index);
         this.reps = 8;
@@ -377,9 +380,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
     }
 
     private stopTimer() {
-        if (this.exercisesMade.length > 0) {
+        if (this.exercisesMade.getValue().length > 0) {
             const { minutes, seconds, centiseconds } = this.timer;
-            this.exercisesMade[this.exercisesMade.length - 1].restTime = this.formatTimer(minutes, seconds, centiseconds);
+            this.exercisesMade.getValue()[this.exercisesMade.getValue().length - 1].restTime = this.formatTimer(minutes, seconds, centiseconds);
         }
 
         clearInterval(this.timer.interval);

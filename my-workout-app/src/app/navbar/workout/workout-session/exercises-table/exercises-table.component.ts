@@ -15,7 +15,7 @@ import { InputNumber } from 'primeng/inputnumber';
 import { History } from '../../../../../interfaces/history';
 import { AlertService } from '../../../../services/alert.service';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
@@ -28,7 +28,7 @@ import { ViewWillEnter } from "@ionic/angular";
 export class ExercisesTableComponent implements OnInit, ViewWillEnter, OnChanges {
     @Input() muscleGroupId: number;
     @Input() exerciseId: number;
-    @Input() exercisesMade: History[] = [];
+    @Input() exercisesMade = new BehaviorSubject<History[]>([]);
     @Output() exercisesMadeChange = new Subject<History[]>();
 
     @ViewChild('exerciseTable', { read: ElementRef }) exerciseTable!: ElementRef;
@@ -113,8 +113,8 @@ export class ExercisesTableComponent implements OnInit, ViewWillEnter, OnChanges
         this.historyService.delete(history)
             .subscribe({
                 next: () => {
-                    this.exercisesMade = this.exercisesMade.filter(e => e.id !== history.id);
-                    this.exercisesMadeChange.next(this.exercisesMade);
+                    this.exercisesMade.next(this.exercisesMade.getValue().filter(e => e.id !== history.id));
+                    this.exercisesMadeChange.next(this.exercisesMade.getValue());
                 },
                 error: (err) =>
                     this.alertService.alert$.next({
@@ -130,11 +130,11 @@ export class ExercisesTableComponent implements OnInit, ViewWillEnter, OnChanges
             .subscribe({
                 next: (history) => {
                     if (history) {
-                        this.exercisesMade = history.map(h => ({
+                        this.exercisesMade.next(history.map(h => ({
                                 ...h,
                                 restTime: '/'
                             })
-                        );
+                        ));
                     }
                 },
                 error: (err) => this.alertService.alert$.next({
