@@ -1,10 +1,11 @@
 import {
     Component,
+    DestroyRef,
     ElementRef,
+    inject,
     Input,
-    OnChanges, OnInit,
+    OnInit,
     Output,
-    SimpleChanges,
     ViewChild,
     ViewEncapsulation
 } from '@angular/core';
@@ -17,6 +18,7 @@ import { AlertService } from '../../../../services/alert.service';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ViewWillEnter } from "@ionic/angular";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: 'app-exercises-table',
@@ -25,7 +27,7 @@ import { ViewWillEnter } from "@ionic/angular";
     styleUrl: './exercises-table.component.scss',
     encapsulation: ViewEncapsulation.None
 })
-export class ExercisesTableComponent implements OnInit, ViewWillEnter, OnChanges {
+export class ExercisesTableComponent implements OnInit, ViewWillEnter {
     @Input() muscleGroupId: number;
     @Input() exerciseId: number;
     @Input() exercisesMade = new BehaviorSubject<History[]>([]);
@@ -37,6 +39,8 @@ export class ExercisesTableComponent implements OnInit, ViewWillEnter, OnChanges
     updateWeight: number = 0;
     updateReps: number = 0;
 
+    destroyRef = inject(DestroyRef);
+
     constructor(
         private readonly historyService: HistoryService,
         private readonly alertService: AlertService
@@ -44,22 +48,21 @@ export class ExercisesTableComponent implements OnInit, ViewWillEnter, OnChanges
     }
 
     ngOnInit() {
-        this.findTodayExercicesHistory();
+       this.init();
     }
 
     ionViewWillEnter() {
+       this.init();
+    }
+
+    init() {
         this.findTodayExercicesHistory();
+        this.exercisesMade
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => setTimeout(() => this.scrollBottomTable(), 100))
     }
 
-
-    ngOnChanges(changes: SimpleChanges) {
-        const exercisesMade = changes['exercisesMade'];
-        if (exercisesMade?.currentValue) {
-            setTimeout(() => this.scrollTable(), 0);
-        }
-    }
-
-    scrollTable() {
+    scrollBottomTable() {
         const tableBody = this.exerciseTable?.nativeElement.querySelector('.p-datatable-table-container');
         if (tableBody) {
             tableBody.scrollTop = tableBody.scrollHeight;
