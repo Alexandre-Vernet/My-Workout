@@ -1,7 +1,7 @@
 # My-Workout
 
 <a href="http://my-workout.alexandre-vernet.fr/" target="_blank" rel="noreferrer">
-<img alt="my-workout logo" src="https://raw.githubusercontent.com/Alexandre-Vernet/My-Workout/refs/heads/main/apps/app/public/favicon.ico" width="45">
+    <img width="400" height="400" alt="Image" src="https://github.com/user-attachments/assets/1fbd0e9f-2597-467b-9c35-bbe18a27143f" />
 </a>
 
 ## 🌍 Language / Langue
