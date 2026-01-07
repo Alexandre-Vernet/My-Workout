@@ -115,10 +115,7 @@ export class ExercisesTableComponent implements OnInit, ViewWillEnter {
     deleteHistory(history: History) {
         this.historyService.delete(history)
             .subscribe({
-                next: () => {
-                    this.exercisesMade.next(this.exercisesMade.getValue().filter(e => e.id !== history.id));
-                    this.exercisesMadeChange.next(this.exercisesMade.getValue());
-                },
+                next: () => this.exercisesMade.next(this.exercisesMade.getValue().filter(e => e.id !== history.id)),
                 error: (err) =>
                     this.alertService.alert$.next({
                         severity: 'error',
