@@ -32,6 +32,7 @@ export class ExercisesTableComponent implements OnInit, ViewWillEnter {
     @Input() exerciseId: number;
     @Input() exercisesMade = new BehaviorSubject<History[]>([]);
     @Output() exercisesMadeChange = new Subject<History[]>();
+    @Output() resetWorkout = new Subject<void>();
 
     @ViewChild('exerciseTable', { read: ElementRef }) exerciseTable!: ElementRef;
 
@@ -117,7 +118,10 @@ export class ExercisesTableComponent implements OnInit, ViewWillEnter {
             .subscribe({
                 next: () => {
                     this.exercisesMade.next(this.exercisesMade.getValue().filter(e => e.id !== history.id));
-                    this.exercisesMadeChange.next(this.exercisesMade.getValue());
+
+                    if (this.exercisesMade.getValue().length === 0) {
+                        this.resetWorkout.next();
+                    }
                 },
                 error: (err) =>
                     this.alertService.alert$.next({

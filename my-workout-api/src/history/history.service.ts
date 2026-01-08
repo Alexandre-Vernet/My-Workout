@@ -58,8 +58,21 @@ export class HistoryService {
         return this.historyRepository.save(history);
     }
 
-    delete(historyId: number) {
-        return this.historyRepository.delete(historyId);
+    async delete(historyId: number) {
+        const workout = await this.workoutService.findWorkoutByHistoryId(historyId);
+
+        if (!workout) {
+            return;
+        }
+
+        await this.historyRepository.delete(historyId);
+
+        const remaining = await this.historyRemaining(workout.id);
+
+        // If no history, delete the workout
+        if (!remaining) {
+            return this.workoutService.deleteById(workout.id);
+        }
     }
 
     async deleteIds(userId: number, ids: number[]) {
@@ -88,15 +101,19 @@ export class HistoryService {
 
         const workoutId = histories[0].workout.id;
 
-        const historyRemaining = await this.historyRepository.exists({
+        const remaining = await this.historyRemaining(workoutId);
+
+        if (!remaining) {
+            return this.workoutService.delete(userId, workoutId);
+        }
+    }
+
+    historyRemaining(workoutId: number) {
+        return this.historyRepository.exists({
             where: {
                 workout: { id: workoutId }
             }
         });
-
-        if (!historyRemaining) {
-            return this.workoutService.delete(userId, workoutId);
-        }
     }
 
     async graphs(userId: number, exerciseId: number) {

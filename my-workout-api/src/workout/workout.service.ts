@@ -216,4 +216,21 @@ export class WorkoutService {
             return this.workoutRepository.delete({ id: historyToDelete.id });
         }
     }
+
+    deleteById(id: number) {
+        return this.workoutRepository.delete({ id });
+    }
+
+    findWorkoutByHistoryId(historyId: number) {
+        return this.workoutRepository.findOne({
+            where: {
+                history: {
+                    id: historyId
+                }
+            },
+            relations: {
+                history: true
+            }
+        })
+    }
 }
