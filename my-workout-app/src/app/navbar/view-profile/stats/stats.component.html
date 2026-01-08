@@ -24,7 +24,7 @@
     <ng-template #content>
       <ng-container *ngFor="let exercise of exercises">
         <div [routerLink]="['/', 'user', 'graphs', exercise?.id]"
-             class="flex align-items-center justify-content-center border-round border-1 surface-border w-30rem h-6rem">
+             class="flex align-items-center justify-content-center border-round border-1 surface-border w-full p-4">
             <span class="text-lg font-bold text-primary hover:underline">
                 {{ exercise?.name }}
             </span>
