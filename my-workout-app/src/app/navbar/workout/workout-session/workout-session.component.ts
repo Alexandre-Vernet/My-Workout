@@ -151,6 +151,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
     }
 
     private init() {
+        this.workout = null;
         this.getCurrentTabFromUrl();
         this.findExercises();
     }
@@ -444,5 +445,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
 
     private redirectWorkoutHome() {
         this.router.navigate(['/', 'workout']);
+    }
+
+    resetWorkout() {
+        this.workout = null;
     }
 }

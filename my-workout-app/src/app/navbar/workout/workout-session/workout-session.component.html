@@ -107,7 +107,9 @@
 
                                     <app-exercises-table [muscleGroupId]="muscleGroupId"
                                                          [(exercisesMade)]="exercisesMade"
-                                                         [exerciseId]="currentExercise.id"></app-exercises-table>
+                                                         [exerciseId]="currentExercise.id"
+                                                        (resetWorkout)="resetWorkout()">
+                                    </app-exercises-table>
                                 </div>
                             </ng-template>
                         </p-step-panel>
