@@ -41,20 +41,28 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
                                 });
                                 return next(newRequest);
                             }),
-                            catchError(() => handleError(router, alertService))
+                            catchError(() => handleErrorAuth(router, alertService))
                         );
                 }
-                return handleError(router, alertService);
+                return handleError(alertService);
 
             })
         );
 };
 
-const handleError = (router: Router, alertService: AlertService) => {
+const handleErrorAuth = (router: Router, alertService: AlertService) => {
     alertService.alert$.next({
         severity: 'error',
         message: 'Vous devez être connecté pour accéder à cette page'
     });
     router.navigate(['/auth/sign-in']);
+    return EMPTY;
+}
+
+const handleError = (alertService: AlertService) => {
+    alertService.alert$.next({
+        severity: 'error',
+        message: 'Une erreur s\'est produite'
+    });
     return EMPTY;
 }
