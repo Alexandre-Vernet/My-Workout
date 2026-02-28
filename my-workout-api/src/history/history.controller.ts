@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { HistoryService } from './history.service';
-import { AuthGuard } from '../auth/auth.guard';
+import { JwtAuthGuard } from '../auth/guards/JwtAuth.guard';
 import { CurrentUser } from '../auth/current-user-decorator';
 import { User } from '../interfaces/user';
 import { History } from '../interfaces/history';
 
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('history')
 export class HistoryController {
     constructor(

@@ -1,11 +1,11 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
-import { AuthGuard } from '../auth/auth.guard';
 import { CurrentUser } from '../auth/current-user-decorator';
 import { User } from '../interfaces/user';
-import { OptionalAuthGuard } from '../auth/optional-auth.guard';
+import { OptionalJwtAuthGuard } from '../auth/guards/optional-auth.guard';
 import { Exercise } from '../interfaces/exercise';
-import { AdminGuard } from '../auth/admin.guard';
+import { JwtAuthGuard } from '../auth/guards/JwtAuth.guard';
+import { AdminGuard } from '../auth/guards/admin.guard';
 
 @Controller('exercises')
 export class ExercisesController {
@@ -14,26 +14,26 @@ export class ExercisesController {
     ) {
     }
 
-    @UseGuards(OptionalAuthGuard)
+    @UseGuards(OptionalJwtAuthGuard)
     @Get('find-all-exercises-by-muscle-group-id')
     findAllExercisesByMuscleGroupIdAndUserId(@CurrentUser() currentUser: User, @Query('muscleGroupId') muscleGroupId: string) {
         return this.exercisesService.findAllExercisesByMuscleGroupId(Number(muscleGroupId), currentUser);
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('find-added-exercises-by-muscle-group-id')
     @HttpCode(200)
     findAddedExercisesByMuscleGroupId(@CurrentUser() user: User, @Query('muscleGroupId') muscleGroupId: string) {
         return this.exercisesService.findAddedExercisesByMuscleGroupId(user.id, Number(muscleGroupId));
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('find-cardio-exercises')
     findCardioExercises(@CurrentUser() user: User) {
         return this.exercisesService.findCardioExercises(user.id);
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('find-by-user-id')
     findByUserId(@CurrentUser() user: User) {
         return this.exercisesService.findByUserId(user.id);
@@ -44,7 +44,7 @@ export class ExercisesController {
         return this.exercisesService.getExercise(exerciseId, currentUser);
     }
 
-    @UseGuards(AdminGuard)
+    @UseGuards(JwtAuthGuard, AdminGuard)
     @Post()
     createExercise(@Body() exercise: Exercise) {
         return this.exercisesService.createExercise(exercise);
