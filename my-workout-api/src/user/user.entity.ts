@@ -19,6 +19,9 @@ export class UserEntity {
     @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt: Date;
 
+    @Column({name: 'is_admin', type: 'boolean'})
+    isAdmin: boolean;
+
     @OneToMany(() => UserExerciseEntity, userExercise => userExercise.user)
     userExercise: UserExerciseEntity[];
 

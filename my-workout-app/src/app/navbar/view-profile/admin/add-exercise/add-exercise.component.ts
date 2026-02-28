@@ -85,10 +85,12 @@ export class AddExerciseComponent implements OnInit {
 
                     this.formAddExercise.reset();
                 },
-                error: () => this.alertService.alert$.next({
-                    severity: 'error',
-                    message: 'Une erreur s\'est produite lors de l\'ajout de l\'exercice'
-                })
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Une erreur s\'est produite lors de l\'ajout de l\'exercice'
+                    });
+                }
             });
     }
 

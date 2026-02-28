@@ -3,8 +3,9 @@ import { ExercisesService } from './exercises.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { CurrentUser } from '../auth/current-user-decorator';
 import { User } from '../interfaces/user';
-import { OptionalAuthGuard } from "../auth/optional-auth.guard";
+import { OptionalAuthGuard } from '../auth/optional-auth.guard';
 import { Exercise } from '../interfaces/exercise';
+import { AdminGuard } from '../auth/admin.guard';
 
 @Controller('exercises')
 export class ExercisesController {
@@ -43,6 +44,7 @@ export class ExercisesController {
         return this.exercisesService.getExercise(exerciseId, currentUser);
     }
 
+    @UseGuards(AdminGuard)
     @Post()
     createExercise(@Body() exercise: Exercise) {
         return this.exercisesService.createExercise(exercise);
