@@ -35,8 +35,8 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 export class AddExerciseComponent implements OnInit {
 
     formAddExercise = new FormGroup({
-        name: new FormControl(null, [Validators.required, Validators.maxLength(50)]),
-        description: new FormControl(null, [Validators.required, Validators.maxLength(500)]),
+        name: new FormControl(null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
+        description: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(500)]),
         isSmartWorkout: new FormControl(false, Validators.required),
         muscles: new FormControl<Muscle[]>(null, Validators.required)
     });
