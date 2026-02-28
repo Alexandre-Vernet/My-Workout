@@ -7,17 +7,15 @@ import { ExerciseService } from '../../../services/exercise.service';
 import { Exercise } from '../../../../interfaces/exercise';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../../shared/theme/theme.service';
-import { IonContent } from "@ionic/angular/standalone";
-import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-graphs',
-  imports: [CommonModule, IonContent],
+  imports: [CommonModule],
     templateUrl: './graphs.component.html',
     styleUrl: './graphs.component.scss',
     standalone: true
 })
-export class GraphsComponent implements OnInit, ViewWillEnter {
+export class GraphsComponent implements OnInit {
 
     exercise: Exercise;
 

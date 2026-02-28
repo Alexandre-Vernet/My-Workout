@@ -5,4 +5,5 @@ export interface User {
   confirmPassword?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  isAdmin?: boolean;
 }

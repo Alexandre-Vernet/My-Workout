@@ -1,5 +1,5 @@
 import { HttpHandlerFn, HttpRequest } from '@angular/common/http';
-import { catchError, EMPTY, switchMap } from "rxjs";
+import { catchError, EMPTY, switchMap, throwError } from 'rxjs';
 import { inject } from "@angular/core";
 import { AuthService } from "./auth.service";
 import { Router } from "@angular/router";
@@ -30,7 +30,7 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
     return next(request)
         .pipe(
             catchError((err) => {
-                if (err.status === 401 ||err.status === 403) {
+                if (err.status === 401) {
                     return authService.refresh()
                         .pipe(
                             switchMap(({ accessToken }) => {
@@ -44,7 +44,8 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
                             catchError(() => handleErrorAuth(router, alertService))
                         );
                 }
-                return handleError(alertService);
+
+                return throwError(() => err);
 
             })
         );
@@ -56,13 +57,5 @@ const handleErrorAuth = (router: Router, alertService: AlertService) => {
         message: 'Vous devez être connecté pour accéder à cette page'
     });
     router.navigate(['/auth/sign-in']);
-    return EMPTY;
-}
-
-const handleError = (alertService: AlertService) => {
-    alertService.alert$.next({
-        severity: 'error',
-        message: 'Une erreur s\'est produite'
-    });
     return EMPTY;
 }

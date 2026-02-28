@@ -23,7 +23,7 @@
     <ng-container *ngIf="selectedExercise">
         <div class="cardio-flow">
             <p-floatlabel variant="on">
-                <p-input-number [(ngModel)]="inputDuration" size="small" min="1" max="999" suffix=" mn" id="duration" />
+                <p-input-number [(ngModel)]="inputDuration" size="small" [min]="1" [max]="999" suffix=" mn" id="duration" />
                 <label for="duration">Durée</label>
             </p-floatlabel>
             <p-button [disabled]="!inputDuration" severity="primary" label="Valider"

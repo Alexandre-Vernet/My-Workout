@@ -1,0 +1,38 @@
+<h1 class="mt-2 mb-2 text-center">Ajouter un exercice</h1>
+
+<div class="flex justify-content-center align-items-center gap-7">
+    <form class="gap-3" [formGroup]="formAddExercise">
+        <!--Name-->
+        <p-floatlabel variant="on">
+            <input pInputText id="name" formControlName="name" autocomplete="off"/>
+            <label for="name">Nom de l'exercice</label>
+        </p-floatlabel>
+
+        <!--Description-->
+        <p-floatlabel variant="on">
+                <textarea pTextarea id="over_label" formControlName="description" rows="8" cols="30"
+                          style="resize: none" class="h-full"></textarea>
+            <label for="on_label">Description</label>
+        </p-floatlabel>
+
+        <!--Smart workout-->
+        <div class="flex justify-content-center gap-3">
+            <label for="isSmartWorkout" class="text-color-secondary">
+                Smart-Workout
+            </label>
+            <p-toggleswitch inputId="isSmartWorkout" formControlName="isSmartWorkout"/>
+        </div>
+
+        <!--Muscles-->
+        <div class="card flex justify-center">
+            <p-multiselect [options]="muscles" [group]="true" formControlName="muscles" placeholder="Muscles ciblés"
+                           optionLabel="name"
+                           scrollHeight="250px" display="chip" styleClass="w-full md:w-80">
+            </p-multiselect>
+        </div>
+
+        <p-button label="Valider" (click)="createExercise()" [disabled]="formAddExercise.invalid"/>
+    </form>
+</div>
+
+<p-confirmdialog/>

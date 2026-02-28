@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../auth/auth.guard';
+import { JwtAuthGuard } from '../auth/guards/JwtAuth.guard';
 import { WorkoutService } from './workout.service';
 import { CurrentUser } from '../auth/current-user-decorator';
 import { User } from '../interfaces/user';
 import { Workout } from '../interfaces/workout';
 
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('workout')
 export class WorkoutController {
 

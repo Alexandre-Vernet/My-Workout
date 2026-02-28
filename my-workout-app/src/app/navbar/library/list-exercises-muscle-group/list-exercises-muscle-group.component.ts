@@ -16,16 +16,14 @@ import { UserExercise } from '../../../../interfaces/user-exercise';
 import { Tag } from 'primeng/tag';
 import { Muscle } from '../../../../interfaces/muscle';
 import { removeAccents, replaceSpaces } from '../../../shared/utils/remove-accents';
-import { IonContent } from '@ionic/angular/standalone';
-import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [CommonModule, DataView, Button, Badge, Skeleton, DragDropModule, RouterLink, Tag, IonContent],
+    imports: [CommonModule, DataView, Button, Badge, Skeleton, DragDropModule, RouterLink, Tag],
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })
-export class ListExercisesMuscleGroupComponent implements OnInit, ViewWillEnter {
+export class ListExercisesMuscleGroupComponent implements OnInit {
 
     muscleGroup: MuscleGroup;
     exercises: Exercise[];
@@ -47,10 +45,6 @@ export class ListExercisesMuscleGroupComponent implements OnInit, ViewWillEnter 
     }
 
     ngOnInit() {
-        this.init();
-    }
-
-    ionViewWillEnter() {
         this.init();
     }
 

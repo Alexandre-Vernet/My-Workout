@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './auth.guard';
+import { JwtAuthGuard } from './guards/JwtAuth.guard';
 import { CurrentUser } from './current-user-decorator';
 import { User } from '../interfaces/user';
 
@@ -24,7 +24,7 @@ export class AuthController {
         return this.authService.signIn(user);
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(JwtAuthGuard)
     @HttpCode(200)
     @Get('me')
     async me(@CurrentUser() currentUser: User) {
@@ -37,13 +37,13 @@ export class AuthController {
         return await this.authService.refresh(refreshToken);
     }
 
-   @UseGuards(AuthGuard)
+   @UseGuards(JwtAuthGuard)
     @Put()
     updateUser(@CurrentUser() currentUser: User, @Body() { user }: { user: User }) {
         return this.authService.updateUser(currentUser, user);
     }
 
-   @UseGuards(AuthGuard)
+   @UseGuards(JwtAuthGuard)
     @Delete()
     deleteUser(@CurrentUser() user: User) {
         return this.authService.deleteUser(user);

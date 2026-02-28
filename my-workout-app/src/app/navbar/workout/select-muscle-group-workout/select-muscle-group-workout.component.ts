@@ -15,18 +15,16 @@ import { Alert } from '../../../../interfaces/alert';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { AlertService } from '../../../services/alert.service';
-import { IonContent } from '@ionic/angular/standalone';
-import { ViewWillEnter } from '@ionic/angular';
 
 @Component({
     selector: 'select-muscle-group-workout',
-    imports: [CommonModule, RouterLink, Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog, IonContent],
+    imports: [CommonModule, RouterLink, Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
     standalone: true,
     providers: [ConfirmationService]
 })
-export class SelectMuscleGroupWorkoutComponent implements OnInit, ViewWillEnter {
+export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     protected readonly MenuUrls = MenuUrls;
 
@@ -48,15 +46,6 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit, ViewWillEnter 
     }
 
     ngOnInit() {
-        this.init();
-        this.isDarkMode = this.themeService.isDarkMode();
-    }
-
-    ionViewWillEnter() {
-        this.init();
-    }
-
-    private init() {
         forkJoin([
             this.muscleGroupService.findAllMuscleGroupAndCountAddedExercises(),
             this.muscleGroupService.suggestMuscleGroup()
@@ -80,6 +69,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit, ViewWillEnter 
                     });
                 }
             });
+        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     openModalExerciseCardio() {

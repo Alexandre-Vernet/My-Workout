@@ -8,7 +8,7 @@ RUN npm install --production
 
 COPY my-workout-app/ .
 
-RUN npm run build:pwa
+RUN npm run build
 
 
 FROM nginx:alpine

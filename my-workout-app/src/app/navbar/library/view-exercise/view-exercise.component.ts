@@ -13,17 +13,15 @@ import { Drawer } from 'primeng/drawer';
 import { DeviceDetectionService } from '../../../services/device-detection.service';
 import { Skeleton } from 'primeng/skeleton';
 import { replaceSpaces } from '../../../shared/utils/remove-accents';
-import { IonContent } from '@ionic/angular/standalone';
-import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-view-exercise',
-    imports: [CommonModule, Button, Fieldset, Tag, Drawer, Skeleton, RouterLink, IonContent],
+    imports: [CommonModule, Button, Fieldset, Tag, Drawer, Skeleton, RouterLink],
     templateUrl: './view-exercise.component.html',
     styleUrl: './view-exercise.component.scss',
     standalone: true
 })
-export class ViewExerciseComponent implements OnInit, ViewWillEnter {
+export class ViewExerciseComponent implements OnInit {
 
     exercise: Exercise;
 
@@ -46,15 +44,6 @@ export class ViewExerciseComponent implements OnInit, ViewWillEnter {
     }
 
     ngOnInit() {
-        this.init();
-        this.isIphone = this.deviceDetectionService.isIphone();
-    }
-
-    ionViewWillEnter() {
-        this.init();
-    }
-
-    private init() {
         this.activatedRoute.params.pipe(
             switchMap((params: {
                 exerciseId: number
@@ -63,7 +52,7 @@ export class ViewExerciseComponent implements OnInit, ViewWillEnter {
             .subscribe({
                 next: (exercise) => {
                     this.exercise = exercise;
-                    this.imagePath = `/assets/images/${ exercise.id }.gif`;
+                    this.imagePath = `/assets/images/${exercise.id}.gif`;
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {
@@ -73,10 +62,11 @@ export class ViewExerciseComponent implements OnInit, ViewWillEnter {
                     });
                 }
             });
+        this.isIphone = this.deviceDetectionService.isIphone();
     }
 
     toggleExerciseWorkout() {
-        return this.userExerciseService.toggleExerciseWorkout(this.exercise)
+        this.userExerciseService.toggleExerciseWorkout(this.exercise)
             .subscribe({
                 next: () => {
                     this.exercise.addedToWorkout = !this.exercise.addedToWorkout;

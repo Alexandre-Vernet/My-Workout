@@ -4,7 +4,6 @@ export interface MuscleGroup {
     exerciseCount?: number;
     isRecommended?: boolean;
     date?: Date;
-    muscleGroupInfo?: MuscleGroupInfo;
 }
 
 interface MuscleGroupInfo {

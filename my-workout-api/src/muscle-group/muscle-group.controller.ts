@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { MuscleGroupService } from './muscle-group.service';
 import { CurrentUser } from '../auth/current-user-decorator';
-import { AuthGuard } from '../auth/auth.guard';
+import { JwtAuthGuard } from '../auth/guards/JwtAuth.guard';
 import { User } from '../interfaces/user';
 
 @Controller('muscle-group')
@@ -17,13 +17,13 @@ export class MuscleGroupController {
         return this.muscleGroupService.findAll();
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('count-exercises')
     findAllMuscleGroupAndCountAddedExercises(@CurrentUser() user: User) {
         return this.muscleGroupService.findAllMuscleGroupAndCountAddedExercises(user.id);
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get('suggest-muscle-group')
     suggestMuscleGroup(@CurrentUser() user: User) {
         return this.muscleGroupService.suggestMuscleGroup(user.id);

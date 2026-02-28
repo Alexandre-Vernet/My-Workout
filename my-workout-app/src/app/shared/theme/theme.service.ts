@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { updatePreset } from '@primeng/themes';
+import { updatePreset } from '@primeuix/themes';
 import { presets } from './presets';
 
 @Injectable({
@@ -21,7 +21,7 @@ export class ThemeService {
         this.updateTheme(presets[presetName].preset, presetName);
     }
 
-    updateTheme(preset: string, presetName: string) {
+    updateTheme(preset, presetName: string) {
         updatePreset(preset);
         localStorage.setItem('theme', presetName);
     }

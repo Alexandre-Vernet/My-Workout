@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DropdownModule } from 'primeng/dropdown';
 import { ConfirmationService } from 'primeng/api';
 import { ChangeThemeComponent } from './change-theme/change-theme.component';
 import { ManageAccountComponent } from './manage-account/manage-account.component';
@@ -10,11 +9,12 @@ import { AccountActionsComponent } from './account-actions/account-actions.compo
 import { ThemeService } from '../../shared/theme/theme.service';
 import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
-import { IonContent } from "@ionic/angular/standalone";
+import { AuthService } from '../../auth/auth.service';
+import { User } from '../../../interfaces/user';
 
 @Component({
     selector: 'app-view-profile',
-  imports: [CommonModule, ReactiveFormsModule, DropdownModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink, IonContent],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink],
     templateUrl: './view-profile.component.html',
     styleUrl: './view-profile.component.scss',
     standalone: true,
@@ -24,14 +24,19 @@ export class ViewProfileComponent implements OnInit {
 
     isDarkMode = false;
 
+    user: User;
+
     constructor(
         private readonly alertService: AlertService,
-        private readonly themeService: ThemeService
+        private readonly themeService: ThemeService,
+        private readonly authService: AuthService
     ) {
     }
 
     ngOnInit() {
         this.isDarkMode = this.themeService.isDarkMode();
+        this.authService.getCurrentUser()
+            .subscribe((user) => this.user = user);
     }
 
     updateDarkMode(value: boolean) {
