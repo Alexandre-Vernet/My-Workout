@@ -31,8 +31,10 @@
                 </p-multiselect>
             </div>
 
-            <p-button label="Valider" (click)="createExercise()"/>
+            <p-button label="Valider" (click)="createExercise()" [disabled]="formAddExercise.invalid"/>
         </form>
     </div>
-
 </ion-content>
+
+
+<p-confirmdialog />

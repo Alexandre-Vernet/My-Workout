@@ -13,6 +13,9 @@ import { MuscleDropdown } from '../../../../../interfaces/MuscleDropdown';
 import { MultiSelect } from 'primeng/multiselect';
 import { Muscle } from '../../../../../interfaces/muscle';
 import { AlertService } from '../../../../services/alert.service';
+import { UserExerciseService } from '../../../../services/user-exercise.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
     selector: 'app-add-exercise',
@@ -26,14 +29,16 @@ import { AlertService } from '../../../../services/alert.service';
         Textarea,
         ToggleSwitch,
         IonContent,
-        MultiSelect
-    ]
+        MultiSelect,
+        ConfirmDialog
+    ],
+    providers: [ConfirmationService, MessageService]
 })
 export class AddExerciseComponent implements OnInit {
 
     formAddExercise = new FormGroup({
-        name: new FormControl('toto', [Validators.required, Validators.maxLength(50)]),
-        description: new FormControl('description', [Validators.required, Validators.maxLength(500)]),
+        name: new FormControl(null, [Validators.required, Validators.maxLength(50)]),
+        description: new FormControl(null, [Validators.required, Validators.maxLength(500)]),
         isSmartWorkout: new FormControl(false, Validators.required),
         muscles: new FormControl<Muscle[]>(null, Validators.required)
     });
@@ -43,16 +48,17 @@ export class AddExerciseComponent implements OnInit {
     constructor(
         private readonly exerciseService: ExerciseService,
         private readonly muscleService: MuscleService,
-        private readonly alertService: AlertService
+        private readonly alertService: AlertService,
+        private readonly userExerciseService: UserExerciseService,
+        private confirmationService: ConfirmationService,
+        private messageService: MessageService
     ) {
     }
 
     ngOnInit() {
         this.muscleService.findAllMuscles()
             .subscribe({
-                next: (muscles) => {
-                    this.muscles = muscles;
-                },
+                next: (muscles) => this.muscles = muscles,
                 error: () => {
                     this.alertService.alert$.next({
                         severity: 'error',
@@ -61,7 +67,6 @@ export class AddExerciseComponent implements OnInit {
                 }
             });
     }
-
 
     createExercise() {
         const { name, description, isSmartWorkout, muscles } = this.formAddExercise.getRawValue();
@@ -77,13 +82,14 @@ export class AddExerciseComponent implements OnInit {
         };
         this.exerciseService.createExercise(exercise)
             .subscribe({
-                next: () => {
+                next: (exerciseCreated) => {
                     this.alertService.alert$.next({
                         severity: 'success',
                         message: 'L\'exercice a bien été ajouté'
                     });
 
                     this.formAddExercise.reset();
+                    this.showDialogAddExerciseToWorkout(exerciseCreated);
                 },
                 error: (err) => {
                     this.alertService.alert$.next({
@@ -94,4 +100,52 @@ export class AddExerciseComponent implements OnInit {
             });
     }
 
+
+    private showDialogAddExerciseToWorkout(exercise: Exercise) {
+        this.confirmationService.confirm({
+            target: event.target as EventTarget,
+            message: 'Voulez-vous ajouter cet exercice à vos entraînements ?',
+            header: 'Confirmation',
+            closable: true,
+            closeOnEscape: true,
+            icon: 'pi pi-exclamation-triangle',
+            rejectButtonProps: {
+                label: 'Non',
+                severity: 'secondary',
+                outlined: true,
+            },
+            acceptButtonProps: {
+                label: 'Oui',
+            },
+            accept: () => {
+                this.addExerciseToWorkout(exercise);
+            },
+            reject: () => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Rejected',
+                    detail: 'You have rejected',
+                    life: 3000,
+                });
+            },
+        });
+    }
+
+    private addExerciseToWorkout(exercise: Exercise) {
+        this.userExerciseService.toggleExerciseWorkout(exercise)
+            .subscribe({
+                next: () => {
+                    this.alertService.alert$.next({
+                        severity: 'success',
+                        message: 'Exercice ajouté à vos entraînements'
+                    });
+                },
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'enregistrer cet exercice'
+                    });
+                }
+            });
+    }
 }

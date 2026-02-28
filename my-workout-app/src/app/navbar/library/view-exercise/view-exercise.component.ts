@@ -76,7 +76,7 @@ export class ViewExerciseComponent implements OnInit, ViewWillEnter {
     }
 
     toggleExerciseWorkout() {
-        return this.userExerciseService.toggleExerciseWorkout(this.exercise)
+        this.userExerciseService.toggleExerciseWorkout(this.exercise)
             .subscribe({
                 next: () => {
                     this.exercise.addedToWorkout = !this.exercise.addedToWorkout;
