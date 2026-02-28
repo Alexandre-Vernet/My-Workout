@@ -27,13 +27,10 @@ import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../shared/utils/convert-weight-elastic';
 import { animate, group, query, style, transition, trigger } from '@angular/animations';
 import { PreventFocusOnButtonClickDirective } from '../../../shared/directives/prevent-focus-on-button-click.directive';
-import { Haptics, ImpactStyle } from "@capacitor/haptics";
-import { ViewWillEnter } from "@ionic/angular";
-import { IonContent } from "@ionic/angular/standalone";
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective, IonContent],
+    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -78,7 +75,7 @@ import { IonContent } from "@ionic/angular/standalone";
         ])
     ]
 })
-export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillEnter {
+export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     workout: Workout;
     exercises: Exercise[] = [];
@@ -119,14 +116,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
     animationDirection: 'left' | 'right' = 'right';
 
     private currentTab: number;
-
-    hapticsImpactHeavy = async () => {
-        try {
-            await Haptics.impact({ style: ImpactStyle.Heavy });
-        } catch (e) {
-            console.warn('Haptics non supporté', e);
-        }
-    };
 
     constructor(
         private readonly activatedRoute: ActivatedRoute,
@@ -229,10 +218,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
         }
 
         if (this.timer.interval !== null) {
-            this.hapticsImpactHeavy();
             this.stopTimer();
         } else {
-            this.hapticsImpactHeavy();
             this.startTimer();
         }
     }
@@ -403,7 +390,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit, ViewWillE
         Exemple : 02:05:72
      */
     private formatTimer(minutes: number, seconds: number, centiseconds: number) {
-        return `${ minutes.toString().padStart(2, '0') }:${ seconds.toString().padStart(2, '0') }:${ centiseconds.toString().padStart(2, '0') }`;
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${centiseconds.toString().padStart(2, '0')}`;
     }
 
 

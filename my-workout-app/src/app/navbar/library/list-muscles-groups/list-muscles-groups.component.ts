@@ -5,17 +5,15 @@ import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { RouterLink } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
 import { AlertService } from '../../../services/alert.service';
-import { IonContent } from '@ionic/angular/standalone';
-import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-list-muscle-group',
-  imports: [CommonModule, RouterLink, Skeleton, IonContent],
+    imports: [CommonModule, RouterLink, Skeleton],
     templateUrl: './list-muscles-groups.component.html',
     styleUrl: './list-muscles-groups.component.scss',
     standalone: true
 })
-export class ListMusclesGroupsComponent implements OnInit, ViewWillEnter {
+export class ListMusclesGroupsComponent implements OnInit {
 
     muscleGroups: MuscleGroup[];
 
@@ -29,14 +27,6 @@ export class ListMusclesGroupsComponent implements OnInit, ViewWillEnter {
     }
 
     ngOnInit() {
-        this.init();
-    }
-
-    ionViewWillEnter() {
-        this.init();
-    }
-
-    private init() {
         this.muscleGroupService.findAllMuscleGroup()
             .subscribe({
                 next: (muscleGroups) => {

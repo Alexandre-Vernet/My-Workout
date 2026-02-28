@@ -7,16 +7,14 @@ import { WorkoutService } from '../../../services/workout.service';
 import { AlertService } from '../../../services/alert.service';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { Skeleton } from 'primeng/skeleton';
-import { IonContent } from '@ionic/angular/standalone';
-import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-stats',
-    imports: [CommonModule, RouterLink, Skeleton, IonContent],
+    imports: [CommonModule, RouterLink, Skeleton],
     templateUrl: './stats.component.html',
     styleUrl: './stats.component.scss'
 })
-export class StatsComponent implements OnInit, ViewWillEnter {
+export class StatsComponent implements OnInit {
 
     exercises: Exercise[] = [];
 

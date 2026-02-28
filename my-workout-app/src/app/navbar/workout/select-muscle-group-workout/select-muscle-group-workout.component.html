@@ -1,69 +1,67 @@
 <p-confirmdialog></p-confirmdialog>
-<ion-content>
-  <div class="select-muscle-group-workout">
+<div class="select-muscle-group-workout">
     <h1 class="mt-2 mb-3 text-center font-bold">Sélectionner un entraînement</h1>
 
     <ng-container *ngIf="isLoading else content">
-      <ng-container *ngFor="let skeleton of [1, 2, 3, 4, 5, 6, 7]">
-        <div class="muscle-group-card">
-          <div class="flex-1 flex align-items-center justify-content-between">
-            <h2 class="text-xl font-bold text-primary">
-              <p-skeleton height="2rem" width="5rem" styleClass="mb-2"/>
-            </h2>
-            <ng-container *ngIf="skeleton === 1">
-              <p-skeleton height="2rem" width="7rem" styleClass="mb-2"/>
-            </ng-container>
-          </div>
-          <span class="text-lg">
+        <ng-container *ngFor="let skeleton of [1, 2, 3, 4, 5, 6, 7]">
+            <div class="muscle-group-card">
+                <div class="flex-1 flex align-items-center justify-content-between">
+                    <h2 class="text-xl font-bold text-primary">
+                        <p-skeleton height="2rem" width="5rem" styleClass="mb-2"/>
+                    </h2>
+                    <ng-container *ngIf="skeleton === 1">
+                        <p-skeleton height="2rem" width="7rem" styleClass="mb-2"/>
+                    </ng-container>
+                </div>
+                <span class="text-lg">
                     <p-skeleton height="2rem" width="10rem" styleClass="mb-2"/>
                 </span>
-        </div>
-      </ng-container>
+            </div>
+        </ng-container>
     </ng-container>
 
     <ng-template #content>
-      <div class="muscle-groups" *ngFor="let muscleGroup of muscleGroups">
-        <ng-container *ngIf="muscleGroup?.id !== 8; else noLink">
-          <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroup?.id]">
-            <div class="muscle-group-card" [ngClass]="{
+        <div class="muscle-groups" *ngFor="let muscleGroup of muscleGroups">
+            <ng-container *ngIf="muscleGroup?.id !== 8; else noLink">
+                <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroup?.id]">
+                    <div class="muscle-group-card" [ngClass]="{
                         'selected-light': !isDarkMode && muscleGroup?.isRecommended,
                         'selected-dark': isDarkMode && muscleGroup?.isRecommended,
                         'shadow-dark': isDarkMode,
                         'shadow-light': !isDarkMode
                     }">
-              <div class="flex-1 flex align-items-center justify-content-between">
-                <h2 class="text-xl font-bold text-primary">{{ muscleGroup?.name }}</h2>
-                <p-tag *ngIf="muscleGroup.isRecommended" severity="info">Recommandé</p-tag>
-              </div>
-              <span
-                class="text-lg">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
-            </div>
-          </a>
-        </ng-container>
-        <ng-template #noLink>
-          <div class="muscle-group-card"
-               (click)="openModalExerciseCardio()"
-               [ngClass]="{
+                        <div class="flex-1 flex align-items-center justify-content-between">
+                            <h2 class="text-xl font-bold text-primary">{{ muscleGroup?.name }}</h2>
+                            <p-tag *ngIf="muscleGroup.isRecommended" severity="info">Recommandé</p-tag>
+                        </div>
+                        <span
+                            class="text-lg">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
+                    </div>
+                </a>
+            </ng-container>
+            <ng-template #noLink>
+                <div class="muscle-group-card"
+                     (click)="openModalExerciseCardio()"
+                     [ngClass]="{
                     'selected-light': !isDarkMode && muscleGroup?.isRecommended,
                     'selected-dark': isDarkMode && muscleGroup?.isRecommended,
                     'shadow-dark': isDarkMode,
                     'shadow-light': !isDarkMode
                 }">
-            <div class="flex-1 flex align-items-center justify-content-between">
-              <h2 class="text-xl font-bold text-primary">{{ muscleGroup?.name }}</h2>
-              <p-tag *ngIf="muscleGroup.isRecommended" severity="info">Recommandé</p-tag>
-            </div>
-            <span
-              class="text-lg">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
-          </div>
-        </ng-template>
-      </div>
+                    <div class="flex-1 flex align-items-center justify-content-between">
+                        <h2 class="text-xl font-bold text-primary">{{ muscleGroup?.name }}</h2>
+                        <p-tag *ngIf="muscleGroup.isRecommended" severity="info">Recommandé</p-tag>
+                    </div>
+                    <span
+                        class="text-lg">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
+                </div>
+            </ng-template>
+        </div>
     </ng-template>
-  </div>
-</ion-content>
+</div>
 
 
 <app-dialog-select-cardio-exercise
-  [(openModal)]="isOpenModalExerciseCardio"
-  (showAlert)="showAlert($event)"
+    [(openModal)]="isOpenModalExerciseCardio"
+    (showAlert)="showAlert($event)"
 ></app-dialog-select-cardio-exercise>

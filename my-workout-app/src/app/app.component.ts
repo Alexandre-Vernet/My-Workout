@@ -1,26 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { NavbarComponent } from './navbar/navbar.component';
-import { NgClass } from "@angular/common";
-import { NavigationEnd, Router } from "@angular/router";
-import { PrimeNG } from "primeng/config";
-import { ThemeService } from "./shared/theme/theme.service";
-import { DeviceDetectionService } from "./services/device-detection.service";
-import { filter } from "rxjs";
-import { AlertComponent } from "./shared/alert/alert.component";
-import { Capacitor } from "@capacitor/core";
-import { SwPush, SwUpdate } from "@angular/service-worker";
+import { NgClass } from '@angular/common';
+import { NavigationEnd, Router } from '@angular/router';
+import { PrimeNG } from 'primeng/config';
+import { ThemeService } from './shared/theme/theme.service';
+import { DeviceDetectionService } from './services/device-detection.service';
+import { filter } from 'rxjs';
+import { AlertComponent } from './shared/alert/alert.component';
+import { SwPush, SwUpdate } from '@angular/service-worker';
 import { environment } from 'src/environments/environment';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
     selector: 'app-root',
     templateUrl: 'app.component.html',
     imports: [
-        IonRouterOutlet,
-        IonApp,
         NavbarComponent,
         NgClass,
-        AlertComponent
+        AlertComponent,
+        RouterOutlet
     ],
     styleUrls: ['app.component.scss']
 
@@ -78,13 +76,6 @@ export class AppComponent implements OnInit {
         if (this.deviceDetection.isDesktop()) {
             this.isDesktop = true;
             this.router.navigate(['desktop']);
-        }
-
-
-        const platform = Capacitor.getPlatform();
-
-        if (platform === 'android' || platform === 'ios') {
-            document.body.classList.add('app-margin-top');
         }
     }
 }

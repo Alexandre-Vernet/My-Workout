@@ -15,18 +15,16 @@ import { HistoryService } from '../../services/history.service';
 import { HistoryDetailComponent } from './history-detail/history-detail.component';
 import { Tag } from 'primeng/tag';
 import { MuscleGroup } from '../../../interfaces/MuscleGroup';
-import { IonContent } from '@ionic/angular/standalone';
-import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-history',
-  imports: [CommonModule, Skeleton, ConfirmDialog, Button, Ripple, HistoryDetailComponent, Tag, IonContent],
+    imports: [CommonModule, Skeleton, ConfirmDialog, Button, Ripple, HistoryDetailComponent, Tag],
     templateUrl: './history.component.html',
     styleUrl: './history.component.scss',
     standalone: true,
     providers: [ConfirmationService]
 })
-export class HistoryComponent implements OnInit, ViewWillEnter {
+export class HistoryComponent implements OnInit {
 
     workout: Workout[];
     filterWorkouts: Workout[] = [];
@@ -49,16 +47,8 @@ export class HistoryComponent implements OnInit, ViewWillEnter {
     }
 
     ngOnInit() {
-       this.init();
-        this.isDarkMode = this.themeService.isDarkMode();
-    }
-
-    ionViewWillEnter() {
-        this.init();
-    }
-
-    private init() {
         this.getHistories();
+        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     deleteWorkout(groupedHistory: GroupedHistory[], muscleGroupName: string, date: Date) {
@@ -67,7 +57,7 @@ export class HistoryComponent implements OnInit, ViewWillEnter {
         const newDate = new Date(date);
         this.confirmationService.confirm({
             header: 'Attention',
-            message: `Voulez-vous vraiment supprimer l\'entraînement ${ muscleGroupName } du ${ newDate.toLocaleDateString() } ?`,
+            message: `Voulez-vous vraiment supprimer l\'entraînement ${muscleGroupName} du ${newDate.toLocaleDateString()} ?`,
             closable: true,
             closeOnEscape: true,
             dismissableMask: true,

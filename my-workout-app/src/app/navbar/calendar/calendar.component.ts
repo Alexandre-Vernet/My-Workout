@@ -23,19 +23,17 @@ import { Tag } from 'primeng/tag';
 import { ExerciseService } from '../../services/exercise.service';
 import { HistoryDetailComponent } from '../history/history-detail/history-detail.component';
 import { Exercise } from '../../../interfaces/exercise';
-import { IonContent } from "@ionic/angular/standalone";
-import { ViewWillEnter } from "@ionic/angular";
 
 @Component({
     selector: 'app-calendar',
-  imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, Tag, HistoryDetailComponent, IonContent],
+    imports: [CommonModule, FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, Tag, HistoryDetailComponent],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
     encapsulation: ViewEncapsulation.None,
     providers: [ConfirmationService]
 })
-export class CalendarComponent implements OnInit, AfterViewInit, ViewWillEnter {
+export class CalendarComponent implements OnInit, AfterViewInit {
 
     @ViewChild('calendarComponent', { static: false }) calendarComponent!: FullCalendarComponent;
     calendarOptions: CalendarOptions = {
@@ -122,7 +120,11 @@ export class CalendarComponent implements OnInit, AfterViewInit, ViewWillEnter {
     }
 
     ngOnInit() {
-       this.init();
+        setTimeout(() => this.calendarComponent.getApi().refetchEvents(), 0);
+        this.exerciseService.findCardioExercises()
+            .subscribe({
+                next: (exercises) => this.cardioExercises = exercises
+            });
         this.isDarkMode = this.themeService.isDarkMode();
     }
 
@@ -138,18 +140,6 @@ export class CalendarComponent implements OnInit, AfterViewInit, ViewWillEnter {
             this.swipeEndX = e.changedTouches[0].screenX;
             this.handleSwipe();
         });
-    }
-
-    ionViewWillEnter() {
-        this.init();
-    }
-
-    private init() {
-        setTimeout(() => this.calendarComponent.getApi().refetchEvents(), 0);
-        this.exerciseService.findCardioExercises()
-            .subscribe({
-                next: (exercises) => this.cardioExercises = exercises
-            });
     }
 
     handleSwipe() {
@@ -168,7 +158,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, ViewWillEnter {
         const formattedDate = new Date(date);
         this.confirmationService.confirm({
             header: 'Attention',
-            message: `Voulez-vous vraiment supprimer l'entraînement ${ muscleGroupName } du ${ formattedDate.toLocaleDateString() } ?`,
+            message: `Voulez-vous vraiment supprimer l'entraînement ${muscleGroupName} du ${formattedDate.toLocaleDateString()} ?`,
             closable: true,
             closeOnEscape: true,
             dismissableMask: true,
@@ -212,7 +202,7 @@ export class CalendarComponent implements OnInit, AfterViewInit, ViewWillEnter {
 
         this.alertService.alert$.next({
             severity: 'success',
-            message: `${ workout.history[0].exercise.name } a été ajouté au calendrier`
+            message: `${workout.history[0].exercise.name} a été ajouté au calendrier`
         });
     }
 

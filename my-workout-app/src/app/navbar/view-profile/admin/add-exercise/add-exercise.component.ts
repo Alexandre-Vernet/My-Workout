@@ -7,7 +7,6 @@ import { InputText } from 'primeng/inputtext';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Textarea } from 'primeng/textarea';
 import { ToggleSwitch } from 'primeng/toggleswitch';
-import { IonContent } from '@ionic/angular/standalone';
 import { MuscleService } from '../../../../services/muscle.service';
 import { MuscleDropdown } from '../../../../../interfaces/MuscleDropdown';
 import { MultiSelect } from 'primeng/multiselect';
@@ -28,7 +27,6 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
         ReactiveFormsModule,
         Textarea,
         ToggleSwitch,
-        IonContent,
         MultiSelect,
         ConfirmDialog
     ],

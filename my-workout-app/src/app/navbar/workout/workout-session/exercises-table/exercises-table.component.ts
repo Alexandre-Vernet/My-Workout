@@ -17,8 +17,7 @@ import { History } from '../../../../../interfaces/history';
 import { AlertService } from '../../../../services/alert.service';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { ViewWillEnter } from "@ionic/angular";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-exercises-table',
@@ -27,7 +26,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     styleUrl: './exercises-table.component.scss',
     encapsulation: ViewEncapsulation.None
 })
-export class ExercisesTableComponent implements OnInit, ViewWillEnter {
+export class ExercisesTableComponent implements OnInit {
     @Input() muscleGroupId: number;
     @Input() exerciseId: number;
     @Input() exercisesMade = new BehaviorSubject<History[]>([]);
@@ -49,18 +48,10 @@ export class ExercisesTableComponent implements OnInit, ViewWillEnter {
     }
 
     ngOnInit() {
-       this.init();
-    }
-
-    ionViewWillEnter() {
-       this.init();
-    }
-
-    init() {
         this.findTodayExercicesHistory();
         this.exercisesMade
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => setTimeout(() => this.scrollBottomTable(), 100))
+            .subscribe(() => setTimeout(() => this.scrollBottomTable(), 100));
     }
 
     scrollBottomTable() {
@@ -80,19 +71,19 @@ export class ExercisesTableComponent implements OnInit, ViewWillEnter {
 
 
     clickWeight(history: History) {
-        this.editingField = `weight-${ history.id }`;
+        this.editingField = `weight-${history.id}`;
         this.updateWeight = history.weight;
     }
 
     clickReps(history: History) {
-        this.editingField = `reps-${ history.id }`;
+        this.editingField = `reps-${history.id}`;
         this.updateReps = history.reps;
     }
 
     updateHistory(history: History) {
-        if (this.editingField === `weight-${ history.id }`) {
+        if (this.editingField === `weight-${history.id}`) {
             history.weight = this.updateWeight;
-        } else if (this.editingField === `reps-${ history.id }`) {
+        } else if (this.editingField === `reps-${history.id}`) {
             history.reps = this.updateReps;
         }
 

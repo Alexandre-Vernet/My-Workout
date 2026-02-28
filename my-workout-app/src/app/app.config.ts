@@ -7,7 +7,6 @@ import { providePrimeNG } from 'primeng/config';
 import { presetCyan } from './shared/theme/preset-cyan';
 import { authInterceptor } from './auth/auth.interceptor';
 import { CommonModule } from '@angular/common';
-import { provideIonicAngular } from '@ionic/angular/standalone';
 import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
@@ -29,7 +28,6 @@ export const appConfig: ApplicationConfig = {
         }),
 
       importProvidersFrom(CommonModule),
-      provideIonicAngular(),
       { provide: LOCALE_ID, useValue: 'fr-FR' }, provideServiceWorker('ngsw-worker.js', {
             enabled: !isDevMode(),
             registrationStrategy: 'registerWhenStable:30000'

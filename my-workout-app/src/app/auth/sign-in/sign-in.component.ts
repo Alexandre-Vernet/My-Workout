@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
@@ -9,7 +9,6 @@ import { Message } from 'primeng/message';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 import { Alert } from '../../../interfaces/alert';
 import { User } from '../../../interfaces/user';
-import { Preferences } from "@capacitor/preferences";
 
 @Component({
     selector: 'app-sign-in',
@@ -25,7 +24,7 @@ import { Preferences } from "@capacitor/preferences";
         ForgotPasswordComponent
     ]
 })
-export class SignInComponent implements OnInit {
+export class SignInComponent {
 
     faIcons = {
         faUser,
@@ -47,16 +46,6 @@ export class SignInComponent implements OnInit {
         private readonly authService: AuthService,
         private router: Router
     ) {
-    }
-
-    ngOnInit() {
-        Preferences.get({ key: 'email' })
-            .then((email) => {
-                if (email) {
-                    this.formSignIn.controls.email.setValue(email.value);
-                }
-            })
-            .catch((e) => console.warn("Could not retrieve email from preferences", e));
     }
 
     signIn() {
