@@ -1,9 +1,10 @@
-import { Controller, Get, HttpCode, Param, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ExercisesService } from './exercises.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { CurrentUser } from '../auth/current-user-decorator';
 import { User } from '../interfaces/user';
 import { OptionalAuthGuard } from "../auth/optional-auth.guard";
+import { Exercise } from '../interfaces/exercise';
 
 @Controller('exercises')
 export class ExercisesController {
@@ -41,4 +42,10 @@ export class ExercisesController {
     getExercise(@CurrentUser() currentUser: User, @Param('exerciseId') exerciseId: number) {
         return this.exercisesService.getExercise(exerciseId, currentUser);
     }
+
+    @Post()
+    createExercise(@Body() exercise: Exercise) {
+        return this.exercisesService.createExercise(exercise);
+    }
 }
+

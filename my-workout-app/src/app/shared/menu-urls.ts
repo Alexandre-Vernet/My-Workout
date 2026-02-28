@@ -4,5 +4,6 @@ export enum MenuUrls {
     workout = 'workout',
     history = 'history',
     user = 'user',
+    admin = 'admin',
     muscleStructure = 'muscle-structure',
 }

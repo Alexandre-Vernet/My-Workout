@@ -27,6 +27,7 @@ import { BicepsComponent } from './muscle-structure/biceps/biceps.component';
 import { AbdominauxComponent } from './muscle-structure/abdominaux/abdominaux.component';
 import { DosComponent } from './muscle-structure/dos/dos.component';
 import { PrivacyComponent } from "./shared/privacy/privacy.component";
+import { AddExerciseComponent } from './navbar/view-profile/admin/add-exercise/add-exercise.component';
 
 
 @Component({
@@ -100,6 +101,20 @@ export const appRoutes: Route[] = [
             {
                 path: 'graphs/:exerciseId',
                 component: GraphsComponent
+            },
+            {
+                path: '**',
+                redirectTo: 'view-profile'
+            },
+        ],
+        canActivate: [authGuard]
+    },
+    {
+        path: MenuUrls.admin,
+        children: [
+            {
+                path: 'add-exercise',
+                component: AddExerciseComponent
             },
             {
                 path: '**',

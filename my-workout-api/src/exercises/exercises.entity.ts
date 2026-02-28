@@ -17,7 +17,9 @@ export class ExercisesEntity {
     @Column({ name: 'is_smart_workout' })
     isSmartWorkout: boolean;
 
-    @OneToMany(() => ExerciseMuscleEntity, exerciseMuscle => exerciseMuscle.exercise)
+    @OneToMany(() => ExerciseMuscleEntity, exerciseMuscle => exerciseMuscle.exercise, {
+        cascade: true
+    })
     exerciseMuscle: ExerciseMuscleEntity[];
 
     @OneToMany(() => UserExerciseEntity, userExercise => userExercise.exercise)

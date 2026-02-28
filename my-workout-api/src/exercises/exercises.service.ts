@@ -201,4 +201,11 @@ export class ExercisesService {
                 .getRawOne();
         }
     }
+
+    createExercise(exercise: Exercise) {
+        const exerciseCreated = this.exerciseRepository.create(exercise);
+        exercise.exerciseMuscle.forEach(em => em.exercise = exerciseCreated);
+
+        return this.exerciseRepository.save(exerciseCreated);
+    }
 }
