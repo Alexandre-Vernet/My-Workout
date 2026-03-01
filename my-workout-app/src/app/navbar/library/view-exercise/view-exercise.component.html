@@ -41,10 +41,16 @@
             </p-fieldset>
         </div>
 
-        <div class="m-2 mt-5">
+        <div class="m-2 mt-5 flex gap-2">
             <p-button (click)="toggleExerciseWorkout()"
                       [label]="exercise.addedToWorkout ? 'Supprimer de l\'entraînement' : 'Ajouter à l\'entraînement'"
                       [severity]="exercise.addedToWorkout ? 'danger' : 'primary'"/>
+            @if (user.isAdmin) {
+                <p-button (click)="updateExercise()"
+                          label="Modifier"
+                          severity="info"/>
+            }
+
         </div>
     </ng-container>
 </div>

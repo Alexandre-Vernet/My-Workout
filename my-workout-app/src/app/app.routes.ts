@@ -117,6 +117,10 @@ export const appRoutes: Route[] = [
                 component: AddExerciseComponent
             },
             {
+                path: 'update-exercise/:exerciseId',
+                component: AddExerciseComponent
+            },
+            {
                 path: '**',
                 redirectTo: 'view-profile'
             },

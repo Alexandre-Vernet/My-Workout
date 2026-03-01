@@ -208,4 +208,12 @@ export class ExercisesService {
 
         return this.exerciseRepository.save(exerciseCreated);
     }
+
+    updateExercise(exerciseId: number, exercise: Exercise) {
+        return this.exerciseRepository.update(exerciseId, {
+            name: exercise.name,
+            description: exercise.description,
+            isSmartWorkout: exercise.isSmartWorkout,
+        });
+    }
 }

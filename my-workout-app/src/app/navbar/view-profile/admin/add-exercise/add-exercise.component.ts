@@ -15,6 +15,8 @@ import { AlertService } from '../../../../services/alert.service';
 import { UserExerciseService } from '../../../../services/user-exercise.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { ActivatedRoute } from '@angular/router';
+import { filter, switchMap } from 'rxjs';
 
 @Component({
     selector: 'app-add-exercise',
@@ -35,6 +37,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 export class AddExerciseComponent implements OnInit {
 
     formAddExercise = new FormGroup({
+        id: new FormControl(null),
         name: new FormControl(null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
         description: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(500)]),
         isSmartWorkout: new FormControl(false, Validators.required),
@@ -48,12 +51,29 @@ export class AddExerciseComponent implements OnInit {
         private readonly muscleService: MuscleService,
         private readonly alertService: AlertService,
         private readonly userExerciseService: UserExerciseService,
-        private confirmationService: ConfirmationService,
-        private messageService: MessageService
+        private readonly confirmationService: ConfirmationService,
+        private readonly messageService: MessageService,
+        private readonly activatedRoute: ActivatedRoute,
     ) {
     }
 
     ngOnInit() {
+        this.activatedRoute.params
+            .pipe(
+                filter((params: { exerciseId: number }) => !!params.exerciseId),
+                switchMap(params => this.exerciseService.getExercise(Number(params.exerciseId)))
+            )
+            .subscribe({
+                next: (exercise) => {
+                    this.formAddExercise.patchValue({
+                        id: exercise.id,
+                        name: exercise.name,
+                        description: exercise.description,
+                        isSmartWorkout: exercise.isSmartWorkout,
+                        muscles: exercise.muscles
+                    });
+                }
+            });
         this.muscleService.findAllMuscles()
             .subscribe({
                 next: (muscles) => this.muscles = muscles,
@@ -67,7 +87,7 @@ export class AddExerciseComponent implements OnInit {
     }
 
     createExercise() {
-        const { name, description, isSmartWorkout, muscles } = this.formAddExercise.getRawValue();
+        const { id, name, description, isSmartWorkout, muscles } = this.formAddExercise.getRawValue();
         const exercise: Exercise = {
             name: name.trim(),
             description: description.trim(),
@@ -78,24 +98,44 @@ export class AddExerciseComponent implements OnInit {
                 }
             }))
         };
-        this.exerciseService.createExercise(exercise)
-            .subscribe({
-                next: (exerciseCreated) => {
-                    this.alertService.alert$.next({
-                        severity: 'success',
-                        message: 'L\'exercice a bien été ajouté'
-                    });
 
-                    this.formAddExercise.reset();
-                    this.showDialogAddExerciseToWorkout(exerciseCreated);
-                },
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Une erreur s\'est produite lors de l\'ajout de l\'exercice'
-                    });
-                }
-            });
+        if (!id) {
+            this.exerciseService.createExercise(exercise)
+                .subscribe({
+                    next: (exerciseCreated) => {
+                        this.alertService.alert$.next({
+                            severity: 'success',
+                            message: 'L\'exercice a bien été ajouté'
+                        });
+
+                        this.formAddExercise.reset();
+                        this.showDialogAddExerciseToWorkout(exerciseCreated);
+                    },
+                    error: (err) => {
+                        this.alertService.alert$.next({
+                            severity: 'error',
+                            message: err?.error?.message ?? 'Une erreur s\'est produite lors de l\'ajout de l\'exercice'
+                        });
+                    }
+                });
+        } else {
+            exercise.id = id;
+            this.exerciseService.updateExercise(exercise)
+                .subscribe({
+                    next: () => {
+                        this.alertService.alert$.next({
+                            severity: 'success',
+                            message: 'L\'exercice a bien été mis à jour'
+                        });
+                    },
+                    error: (err) => {
+                        this.alertService.alert$.next({
+                            severity: 'error',
+                            message: err?.error?.message ?? 'Une erreur s\'est produite lors de la mise à jour de l\'exercice'
+                        });
+                    }
+                });
+        }
     }
 
 

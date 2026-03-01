@@ -1,7 +1,7 @@
-<h1 class="mt-2 mb-2 text-center">Ajouter un exercice</h1>
+<h1 class="mt-2 mb-2 text-center">{{ formAddExercise.controls.id.value ? 'Modifier' : 'Ajouter' }} un exercice</h1>
 
-<div class="flex justify-content-center align-items-center gap-7">
-    <form class="gap-3" [formGroup]="formAddExercise">
+<div class="mt-5">
+    <form class="flex justify-content-center align-items-center gap-2 flex-column" [formGroup]="formAddExercise">
         <!--Name-->
         <p-floatlabel variant="on">
             <input pInputText id="name" formControlName="name" autocomplete="off"/>
@@ -10,7 +10,7 @@
 
         <!--Description-->
         <p-floatlabel variant="on">
-                <textarea pTextarea id="over_label" formControlName="description" rows="8" cols="30"
+                <textarea pTextarea id="over_label" formControlName="description" rows="10" cols="40"
                           style="resize: none" class="h-full"></textarea>
             <label for="on_label">Description</label>
         </p-floatlabel>
@@ -24,15 +24,18 @@
         </div>
 
         <!--Muscles-->
-        <div class="card flex justify-center">
+        <div class="card flex justify-center mt-3">
             <p-multiselect [options]="muscles" [group]="true" formControlName="muscles" placeholder="Muscles ciblés"
                            optionLabel="name"
                            scrollHeight="250px" display="chip" styleClass="w-full md:w-80">
             </p-multiselect>
         </div>
 
-        <p-button label="Valider" (click)="createExercise()" [disabled]="formAddExercise.invalid"/>
+        <!--Submit-->
+        <p-button label="Valider" (click)="createExercise()"
+                  [disabled]="formAddExercise.invalid || !formAddExercise.dirty" size="large" class="button-submit"/>
     </form>
+
 </div>
 
 <p-confirmdialog/>
