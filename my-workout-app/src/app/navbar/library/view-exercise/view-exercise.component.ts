@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
 import { Exercise } from '../../../../interfaces/exercise';
@@ -13,6 +13,8 @@ import { Drawer } from 'primeng/drawer';
 import { DeviceDetectionService } from '../../../services/device-detection.service';
 import { Skeleton } from 'primeng/skeleton';
 import { replaceSpaces } from '../../../shared/utils/remove-accents';
+import { AuthService } from '../../../auth/auth.service';
+import { User } from '../../../../interfaces/user';
 
 @Component({
     selector: 'app-view-exercise',
@@ -24,6 +26,7 @@ import { replaceSpaces } from '../../../shared/utils/remove-accents';
 export class ViewExerciseComponent implements OnInit {
 
     exercise: Exercise;
+    user: User;
 
     showDrawerSmartWorkout = false;
 
@@ -39,11 +42,16 @@ export class ViewExerciseComponent implements OnInit {
         private readonly userExerciseService: UserExerciseService,
         private readonly activatedRoute: ActivatedRoute,
         private readonly alertService: AlertService,
-        private readonly deviceDetectionService: DeviceDetectionService
+        private readonly deviceDetectionService: DeviceDetectionService,
+        private readonly authService: AuthService,
+        private readonly router: Router
     ) {
     }
 
     ngOnInit() {
+        this.authService.getCurrentUser()
+            .subscribe(user => this.user = user);
+
         this.activatedRoute.params.pipe(
             switchMap((params: {
                 exerciseId: number
@@ -79,6 +87,10 @@ export class ViewExerciseComponent implements OnInit {
                     });
                 }
             });
+    }
+
+    updateExercise() {
+        this.router.navigate(['admin', 'update-exercise', this.exercise.id]);
     }
 
     protected readonly replaceSpaces = replaceSpaces;
