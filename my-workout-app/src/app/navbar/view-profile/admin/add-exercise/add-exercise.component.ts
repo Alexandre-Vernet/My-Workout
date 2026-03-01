@@ -17,6 +17,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ActivatedRoute } from '@angular/router';
 import { filter, switchMap } from 'rxjs';
+import { Message } from 'primeng/message';
 
 @Component({
     selector: 'app-add-exercise',
@@ -30,7 +31,8 @@ import { filter, switchMap } from 'rxjs';
         Textarea,
         ToggleSwitch,
         MultiSelect,
-        ConfirmDialog
+        ConfirmDialog,
+        Message
     ],
     providers: [ConfirmationService, MessageService]
 })

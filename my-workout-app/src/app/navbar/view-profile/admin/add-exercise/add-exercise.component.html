@@ -3,17 +3,63 @@
 <div class="mt-5">
     <form class="flex justify-content-center align-items-center gap-2 flex-column" [formGroup]="formAddExercise">
         <!--Name-->
-        <p-floatlabel variant="on">
-            <input pInputText id="name" formControlName="name" autocomplete="off"/>
-            <label for="name">Nom de l'exercice</label>
-        </p-floatlabel>
+        <div>
+            <p-floatlabel variant="on">
+                <input pInputText id="name" formControlName="name" autocomplete="off"/>
+                <label for="name">Nom de l'exercice</label>
+            </p-floatlabel>
+            @if (formAddExercise.controls.name.touched && formAddExercise.controls.name.hasError('required')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    Champs requis
+                </p-message>
+            }
+            @if (formAddExercise.controls.name.touched && formAddExercise.controls.name.hasError('minlength')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    3 caractères min.
+                </p-message>
+            }
+            @if (formAddExercise.controls.name.touched && formAddExercise.controls.name.hasError('maxlength')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    50 caractères max.
+                </p-message>
+            }
+        </div>
 
         <!--Description-->
-        <p-floatlabel variant="on">
+        <div>
+            <p-floatlabel variant="on">
                 <textarea pTextarea id="over_label" formControlName="description" rows="10" cols="40"
                           style="resize: none" class="h-full"></textarea>
-            <label for="on_label">Description</label>
-        </p-floatlabel>
+                <label for="on_label">Description</label>
+            </p-floatlabel>
+            @if (formAddExercise.controls.description.touched && formAddExercise.controls.description.hasError('required')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    Champs requis
+                </p-message>
+            }
+            @if (formAddExercise.controls.description.touched && formAddExercise.controls.description.hasError('minlength')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    10 caractères min.
+                </p-message>
+            }
+            @if (formAddExercise.controls.description.touched && formAddExercise.controls.description.hasError('maxlength')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    500 caractères max.
+                </p-message>
+            }
+        </div>
 
         <!--Smart workout-->
         <div class="flex justify-content-center gap-3">
@@ -25,10 +71,19 @@
 
         <!--Muscles-->
         <div class="card flex justify-center mt-3">
-            <p-multiselect [options]="muscles" [group]="true" formControlName="muscles" placeholder="Muscles ciblés"
-                           optionLabel="name"
-                           scrollHeight="250px" display="chip" styleClass="w-full md:w-80">
-            </p-multiselect>
+            <div>
+                <p-multiselect [options]="muscles" [group]="true" formControlName="muscles" placeholder="Muscles ciblés"
+                               optionLabel="name"
+                               scrollHeight="250px" display="chip" styleClass="w-full md:w-80">
+                </p-multiselect>
+                @if (formAddExercise.controls.muscles.touched && formAddExercise.controls.muscles.hasError('required')) {
+                    <p-message
+                        severity="error"
+                        variant="simple" size="small">
+                        Champs requis
+                    </p-message>
+                }
+            </div>
         </div>
 
         <!--Submit-->
