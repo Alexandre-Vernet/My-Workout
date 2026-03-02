@@ -37,15 +37,6 @@ export class GraphsComponent implements OnInit {
     }
 
     ngOnInit() {
-       this.init();
-        this.isDarkMode = this.themeService.isDarkMode();
-    }
-
-    ionViewWillEnter() {
-        this.init();
-    }
-
-    private init() {
         this.exerciseId = Number(this.activatedRoute.snapshot.paramMap.get('exerciseId'));
 
         this.exerciseService.getExercise(this.exerciseId)
@@ -64,6 +55,8 @@ export class GraphsComponent implements OnInit {
                     });
                 }
             });
+
+        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     private bar() {
