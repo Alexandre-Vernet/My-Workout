@@ -131,18 +131,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.muscleGroupId = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
-        this.init();
-        this.isDarkMode = this.themeService.isDarkMode();
-    }
-
-    ionViewWillEnter() {
-        this.init();
-    }
-
-    private init() {
         this.workout = null;
         this.getCurrentTabFromUrl();
         this.findExercises();
+        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     ngAfterViewInit() {

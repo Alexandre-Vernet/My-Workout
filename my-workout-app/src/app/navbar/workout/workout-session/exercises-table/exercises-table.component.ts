@@ -3,9 +3,9 @@ import {
     DestroyRef,
     ElementRef,
     inject,
-    Input,
+    Input, OnChanges,
     OnInit,
-    Output,
+    Output, SimpleChanges,
     ViewChild,
     ViewEncapsulation
 } from '@angular/core';
@@ -26,7 +26,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     styleUrl: './exercises-table.component.scss',
     encapsulation: ViewEncapsulation.None
 })
-export class ExercisesTableComponent implements OnInit {
+export class ExercisesTableComponent implements OnInit, OnChanges {
     @Input() muscleGroupId: number;
     @Input() exerciseId: number;
     @Input() exercisesMade = new BehaviorSubject<History[]>([]);
@@ -52,6 +52,12 @@ export class ExercisesTableComponent implements OnInit {
         this.exercisesMade
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => setTimeout(() => this.scrollBottomTable(), 100));
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['exerciseId']) {
+            this.findTodayExercicesHistory();
+        }
     }
 
     scrollBottomTable() {

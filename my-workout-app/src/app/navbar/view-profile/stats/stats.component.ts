@@ -32,15 +32,6 @@ export class StatsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.init();
-        this.isDarkMode = this.themeService.isDarkMode();
-    }
-
-    ionViewWillEnter() {
-        this.init();
-    }
-
-    private init() {
         this.exerciseService.findByUserId()
             .subscribe({
                 next: (exercises) => {
@@ -56,6 +47,7 @@ export class StatsComponent implements OnInit {
             });
 
         this.countTotalDaysWorkout();
+        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     private countTotalDaysWorkout() {
