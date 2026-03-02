@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { HistoryService } from '../../../services/history.service';
 import Chart, { ChartItem } from 'chart.js/auto';
 import { AlertService } from '../../../services/alert.service';
@@ -7,12 +6,15 @@ import { ExerciseService } from '../../../services/exercise.service';
 import { Exercise } from '../../../../interfaces/exercise';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../../shared/theme/theme.service';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-graphs',
-  imports: [CommonModule],
     templateUrl: './graphs.component.html',
     styleUrl: './graphs.component.scss',
+    imports: [
+        NgClass
+    ],
     standalone: true
 })
 export class GraphsComponent implements OnInit {

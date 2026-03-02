@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
 import { map, Subject, switchMap } from 'rxjs';
 import { Exercise } from '../../../../interfaces/exercise';
@@ -17,10 +16,11 @@ import { Button } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { FloatLabel } from 'primeng/floatlabel';
 import { ExerciseService } from "../../../services/exercise.service";
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-dialog-select-cardio-exercise',
-    imports: [CommonModule, Dialog, ConfirmDialog, InputNumber, Button, FormsModule, FloatLabel],
+    imports: [Dialog, ConfirmDialog, InputNumber, Button, FormsModule, FloatLabel, NgClass],
     templateUrl: './dialog-select-cardio-exercise.component.html',
     styleUrl: './dialog-select-cardio-exercise.component.scss',
     standalone: true,

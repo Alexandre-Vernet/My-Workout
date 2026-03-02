@@ -1,5 +1,4 @@
 import { Component, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { FloatLabel } from 'primeng/floatlabel';
@@ -11,10 +10,11 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from '../auth.service';
 import { AlertService } from '../../services/alert.service';
 import { Subject } from 'rxjs';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-forgot-password',
-    imports: [CommonModule, Button, Dialog, FloatLabel, InputText, Message, ReactiveFormsModule],
+    imports: [Button, Dialog, FloatLabel, InputText, Message, ReactiveFormsModule, NgClass],
     templateUrl: './forgot-password.component.html',
     styleUrl: './forgot-password.component.scss',
     standalone: true

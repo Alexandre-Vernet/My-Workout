@@ -1,5 +1,4 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MenuUrls } from '../shared/menu-urls';
 import { delay, filter } from 'rxjs';
@@ -7,7 +6,7 @@ import { delay, filter } from 'rxjs';
 @Component({
     selector: 'app-navbar',
     standalone: true,
-    imports: [CommonModule, RouterLink, RouterLinkActive],
+    imports: [RouterLink, RouterLinkActive],
     templateUrl: './navbar.component.html',
     styleUrls: ['./navbar.component.scss']
 })

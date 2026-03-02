@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { faChevronRight, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Message } from 'primeng/message';
@@ -17,7 +17,6 @@ import { User } from '../../../interfaces/user';
     imports: [
         ReactiveFormsModule,
         RouterLink,
-        NgIf,
         NgClass,
         FontAwesomeModule,
         Message,

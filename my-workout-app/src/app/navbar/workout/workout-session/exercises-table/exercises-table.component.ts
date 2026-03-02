@@ -9,7 +9,6 @@ import {
     ViewChild,
     ViewEncapsulation
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { HistoryService } from '../../../../services/history.service';
 import { InputNumber } from 'primeng/inputnumber';
@@ -18,10 +17,11 @@ import { AlertService } from '../../../../services/alert.service';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
     selector: 'app-exercises-table',
-    imports: [CommonModule, TableModule, InputNumber, FormsModule],
+    imports: [TableModule, InputNumber, FormsModule, AsyncPipe],
     templateUrl: './exercises-table.component.html',
     styleUrl: './exercises-table.component.scss',
     encapsulation: ViewEncapsulation.None

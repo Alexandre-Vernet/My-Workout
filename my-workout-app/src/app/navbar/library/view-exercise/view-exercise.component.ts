@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
@@ -18,7 +17,7 @@ import { User } from '../../../../interfaces/user';
 
 @Component({
     selector: 'app-view-exercise',
-    imports: [CommonModule, Button, Fieldset, Tag, Drawer, Skeleton, RouterLink],
+    imports: [Button, Fieldset, Tag, Drawer, Skeleton, RouterLink],
     templateUrl: './view-exercise.component.html',
     styleUrl: './view-exercise.component.scss',
     standalone: true
