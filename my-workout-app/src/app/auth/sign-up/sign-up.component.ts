@@ -3,8 +3,6 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faChevronRight, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Message } from 'primeng/message';
 import { User } from '../../../interfaces/user';
 
@@ -16,17 +14,10 @@ import { User } from '../../../interfaces/user';
         ReactiveFormsModule,
         RouterLink,
         NgClass,
-        FaIconComponent,
         Message
     ]
 })
 export class SignUpComponent {
-
-    faIcons = {
-        faUser: faUser,
-        faLock: faLock,
-        faChevronRight: faChevronRight
-    };
 
     formSignUp = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email]),

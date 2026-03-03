@@ -118,18 +118,17 @@
                 <span>{{ timer.text }}</span>
             </div>
 
-            <div (click)="toggleTimer()" class="button-toggle-timer" [ngClass]="{
+            <div class="timer" (click)="toggleTimer()" [ngClass]="{
                 'disabled': this.weight < 0 || this.weight >= 500,
             }">
                 @if (timer.interval !== null) {
-                    <fa-icon [icon]="faIcons.faPause"></fa-icon>
+                    <div class="pause"></div>
                 } @else {
-                    <fa-icon [icon]="faIcons.faPlay"></fa-icon>
+                    <div class="play"></div>
                 }
             </div>
         </div>
     }
-
 </div>
 
 <div class="card flex justify-center">

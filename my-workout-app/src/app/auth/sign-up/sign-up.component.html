@@ -4,7 +4,7 @@
             <form [formGroup]="formSignUp" (ngSubmit)="signUp()" class="login">
                 <div>
                     <div class="login__field">
-                        <fa-icon class="login__icon" [icon]="faIcons.faUser"></fa-icon>
+                        <i class="pi pi-user login__icon"></i>
                         <input formControlName="email" type="text" class="login__input" placeholder="Email">
                     </div>
                     @if (formSignUp.controls.email.touched && formSignUp.controls.email.errors?.['email']) {
@@ -26,7 +26,7 @@
 
                 <div>
                     <div class="login__field">
-                        <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
+                        <i class="pi pi-lock login__icon"></i>
                         <input formControlName="password" type="password" class="login__input"
                                placeholder="Mot de passe">
                     </div>
@@ -46,7 +46,7 @@
 
                 <div>
                     <div class="login__field">
-                        <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
+                        <i class="pi pi-lock login__icon"></i>
                         <input formControlName="confirmPassword" type="password" class="login__input"
                                placeholder="Confirmer le mot de passe">
                     </div>
@@ -63,7 +63,7 @@
                     }"
                         [disabled]="formSignUp.invalid || formSignUp.controls.password.value !== formSignUp.controls.confirmPassword.value">
                     <span class="button__text">S'inscrire</span>
-                    <fa-icon class="button__icon" [icon]="faIcons.faChevronRight"></fa-icon>
+                    <i class="button__icon pi pi-chevron-right" style="font-size: 2rem"></i>
                 </button>
             </form>
             <div class="sign-up">

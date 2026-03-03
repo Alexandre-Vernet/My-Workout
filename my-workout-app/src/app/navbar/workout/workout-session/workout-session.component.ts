@@ -9,8 +9,6 @@ import { InputNumber } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../interfaces/history';
 import { Skeleton } from 'primeng/skeleton';
@@ -30,7 +28,7 @@ import { NgClass, UpperCasePipe } from '@angular/common';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective, NgClass, UpperCasePipe],
+    imports: [Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective, NgClass, UpperCasePipe],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -95,11 +93,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         seconds: 0,
         centiseconds: 0,
         interval: null
-    };
-
-    faIcons = {
-        faPause,
-        faPlay
     };
 
     isLoading = true;
@@ -204,7 +197,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             });
     }
 
-    async toggleTimer() {
+    toggleTimer() {
         if (this.weight < 0 || this.weight >= 500) {
             return;
         }
