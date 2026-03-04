@@ -106,9 +106,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     swipeStartX = 0;
     swipeEndX = 0;
 
-    animationDirection: 'left' | 'right' = 'right';
-
     private currentTab: number;
+    animationDirection: 'left' | 'right' = 'right';
+    animationId = 0;
 
     constructor(
         private readonly activatedRoute: ActivatedRoute,
@@ -213,6 +213,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         if (this.currentTab === index) {
             return;
         }
+        this.animationId++;
         this.currentExercise = exercise;
         this.fillInputWeightRepsLastSavedValue();
         this.exercisesMade.next([]);
@@ -275,6 +276,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
             const nextExercise = this.exercises[this.activeStep - 1];
             this.switchPanel(nextExercise, this.activeStep);
+            this.animationDirection = 'right';
         }
     }
 
@@ -286,6 +288,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
             const previousExercise = this.exercises[this.activeStep - 1];
             this.switchPanel(previousExercise, this.activeStep);
+            this.animationDirection = 'left';
         }
     }
 
