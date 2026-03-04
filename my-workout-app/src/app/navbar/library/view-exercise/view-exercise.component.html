@@ -1,10 +1,10 @@
 <div class="m-2">
-    <ng-container *ngIf="exercise">
+    @if (exercise) {
         <h1 class="text-center mb-3">{{ exercise.name }}</h1>
 
         <div class="flex flex-column">
             <div class="flex flex-row gap-2 flex-wrap">
-                <ng-container *ngFor="let muscle of exercise.muscles">
+                @for (muscle of exercise.muscles; track muscle) {
                     <a class="text-sm text-secondary"
                        [routerLink]="['muscle-structure', exercise?.muscleGroup.toLowerCase()]"
                        [fragment]="replaceSpaces(muscle.name)">
@@ -12,14 +12,16 @@
                                role="button"
                                tabindex="0"/>
                     </a>
-                </ng-container>
+                }
             </div>
         </div>
 
-        <p-tag class="mt-2 inline-flex w-auto" *ngIf="exercise.isSmartWorkout" (click)="showDrawerSmartWorkout = true"
-               severity="info" value="Smart-Workout"
-               role="button"
-               tabindex="0"/>
+        @if (exercise.isSmartWorkout) {
+            <p-tag class="mt-2 inline-flex w-auto" (click)="showDrawerSmartWorkout = true"
+                   severity="info" value="Smart-Workout"
+                   role="button"
+                   tabindex="0"/>
+        }
 
         <div class="mt-4">
             @if (isLoading) {
@@ -28,9 +30,11 @@
                 </div>
             }
 
-            <img *ngIf="showImage" (error)="showImage = false; isLoading = false" [src]="imagePath"
-                 (load)="isLoading = false"
-                 [alt]="exercise.name"/>
+            @if (showImage) {
+                <img (error)="showImage = false; isLoading = false" [src]="imagePath"
+                     (load)="isLoading = false"
+                     [alt]="exercise.name"/>
+            }
         </div>
 
         <div class="card flex justify-center mt-4">
@@ -50,9 +54,8 @@
                           label="Modifier"
                           severity="info"/>
             }
-
         </div>
-    </ng-container>
+    }
 </div>
 
 

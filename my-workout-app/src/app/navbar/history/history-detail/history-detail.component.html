@@ -2,13 +2,25 @@
     <h3 class="text-primary mb-2">{{ exercise.name }}</h3>
 </div>
 
-<ng-container *ngFor="let gp of groupedHistory">
+@for (gp of groupedHistory; track gp.id) {
     <div class="flex flex-row text-sm text-color-secondary gap-1">
-        <span *ngIf="gp.reps">{{ gp.reps }}</span>
-        <span *ngIf="gp.reps && gp.weight">x</span>
-        <span *ngIf="gp.weight">{{ gp.weight }} kg</span>
-        <span *ngIf="!gp.weight && gp.reps <= 1 && gp.reps > 0">répétition</span>
-        <span *ngIf="!gp.weight && gp.reps > 1">répétitions</span>
-        <span *ngIf="!gp.weight && !gp.reps && gp.duration">{{ gp.duration }} </span>
+        @if (gp.reps) {
+            <span>{{ gp.reps }}</span>
+        }
+        @if (gp.reps && gp.weight) {
+            <span>x</span>
+        }
+        @if (gp.weight) {
+            <span>{{ gp.weight }} kg</span>
+        }
+        @if (!gp.weight && gp.reps <= 1 && gp.reps > 0) {
+            <span>répétition</span>
+        }
+        @if (!gp.weight && gp.reps > 1) {
+            <span>répétitions</span>
+        }
+        @if (!gp.weight && !gp.reps && gp.duration) {
+            <span>{{ gp.duration }}</span>
+        }
     </div>
-</ng-container>
+}

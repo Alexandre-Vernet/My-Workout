@@ -2,9 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
-import { NgClass, NgIf } from '@angular/common';
-import { faChevronRight, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgClass } from '@angular/common';
 import { Message } from 'primeng/message';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 import { Alert } from '../../../interfaces/alert';
@@ -17,20 +15,12 @@ import { User } from '../../../interfaces/user';
     imports: [
         ReactiveFormsModule,
         RouterLink,
-        NgIf,
         NgClass,
-        FontAwesomeModule,
         Message,
         ForgotPasswordComponent
     ]
 })
 export class SignInComponent {
-
-    faIcons = {
-        faUser,
-        faLock,
-        faChevronRight
-    };
 
     formSignIn = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email]),

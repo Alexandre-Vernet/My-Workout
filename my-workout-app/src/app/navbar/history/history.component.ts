@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Skeleton } from 'primeng/skeleton';
 import { ThemeService } from '../../shared/theme/theme.service';
 import { WorkoutService } from '../../services/workout.service';
@@ -15,10 +14,11 @@ import { HistoryService } from '../../services/history.service';
 import { HistoryDetailComponent } from './history-detail/history-detail.component';
 import { Tag } from 'primeng/tag';
 import { MuscleGroup } from '../../../interfaces/MuscleGroup';
+import { DatePipe, NgClass, TitleCasePipe } from '@angular/common';
 
 @Component({
     selector: 'app-history',
-    imports: [CommonModule, Skeleton, ConfirmDialog, Button, Ripple, HistoryDetailComponent, Tag],
+    imports: [Skeleton, ConfirmDialog, Button, Ripple, HistoryDetailComponent, Tag, NgClass, TitleCasePipe, DatePipe],
     templateUrl: './history.component.html',
     styleUrl: './history.component.scss',
     standalone: true,

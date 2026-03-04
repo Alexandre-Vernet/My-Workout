@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { Router, RouterLink } from '@angular/router';
@@ -15,10 +14,11 @@ import { Alert } from '../../../../interfaces/alert';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { AlertService } from '../../../services/alert.service';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'select-muscle-group-workout',
-    imports: [CommonModule, RouterLink, Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog],
+    imports: [RouterLink, Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog, NgClass],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
     standalone: true,

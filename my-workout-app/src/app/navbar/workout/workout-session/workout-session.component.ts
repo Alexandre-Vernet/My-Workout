@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { BehaviorSubject, filter, map } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
@@ -10,8 +9,6 @@ import { InputNumber } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../interfaces/history';
 import { Skeleton } from 'primeng/skeleton';
@@ -27,10 +24,11 @@ import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../shared/utils/convert-weight-elastic';
 import { animate, group, query, style, transition, trigger } from '@angular/animations';
 import { PreventFocusOnButtonClickDirective } from '../../../shared/directives/prevent-focus-on-button-click.directive';
+import { NgClass, UpperCasePipe } from '@angular/common';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [CommonModule, Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, FaIconComponent, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective],
+    imports: [Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective, NgClass, UpperCasePipe],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -97,11 +95,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         interval: null
     };
 
-    faIcons = {
-        faPause,
-        faPlay
-    };
-
     isLoading = true;
 
     isDarkMode = false;
@@ -113,9 +106,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     swipeStartX = 0;
     swipeEndX = 0;
 
-    animationDirection: 'left' | 'right' = 'right';
-
     private currentTab: number;
+    animationDirection: 'left' | 'right' = 'right';
+    animationId = 0;
 
     constructor(
         private readonly activatedRoute: ActivatedRoute,
@@ -204,7 +197,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             });
     }
 
-    async toggleTimer() {
+    toggleTimer() {
         if (this.weight < 0 || this.weight >= 500) {
             return;
         }
@@ -220,6 +213,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         if (this.currentTab === index) {
             return;
         }
+        this.animationId++;
         this.currentExercise = exercise;
         this.fillInputWeightRepsLastSavedValue();
         this.exercisesMade.next([]);
@@ -282,6 +276,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
             const nextExercise = this.exercises[this.activeStep - 1];
             this.switchPanel(nextExercise, this.activeStep);
+            this.animationDirection = 'right';
         }
     }
 
@@ -293,6 +288,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
             const previousExercise = this.exercises[this.activeStep - 1];
             this.switchPanel(previousExercise, this.activeStep);
+            this.animationDirection = 'left';
         }
     }
 

@@ -1,5 +1,4 @@
 import { Component, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Button } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
 import { Subject } from 'rxjs';
@@ -11,7 +10,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
     selector: 'app-account-actions',
-    imports: [CommonModule, Button, Ripple, ConfirmDialog],
+    imports: [Button, Ripple, ConfirmDialog],
     templateUrl: './account-actions.component.html',
     styleUrl: './account-actions.component.scss',
     standalone: true,

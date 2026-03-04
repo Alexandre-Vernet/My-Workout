@@ -1,12 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { GroupedHistory } from '../../../../interfaces/history';
 import { Exercise } from '../../../../interfaces/exercise';
 import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-history-detail',
-    imports: [CommonModule, RouterLink],
+    imports: [RouterLink],
     templateUrl: './history-detail.component.html',
     styleUrl: './history-detail.component.scss',
     standalone: true

@@ -1,5 +1,4 @@
 import { Component, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Button } from 'primeng/button';
 import { FloatLabel } from 'primeng/floatlabel';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,7 +14,7 @@ import { Ripple } from 'primeng/ripple';
 
 @Component({
     selector: 'app-manage-account',
-    imports: [CommonModule, Button, FloatLabel, FormsModule, InputText, Message, Password, ToggleSwitch, ReactiveFormsModule, Ripple],
+    imports: [Button, FloatLabel, FormsModule, InputText, Message, Password, ToggleSwitch, ReactiveFormsModule, Ripple],
     templateUrl: './manage-account.component.html',
     styleUrl: './manage-account.component.scss',
     standalone: true

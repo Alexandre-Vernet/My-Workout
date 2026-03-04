@@ -1,28 +1,36 @@
 <div class="auth-container">
     <div class="screen">
         <div class="screen__content">
-            <p-message *ngIf="alert?.message" [severity]="alert?.severity">{{ alert?.message }}</p-message>
+            @if (alert?.message) {
+                <p-message [severity]="alert?.severity">{{ alert?.message }}</p-message>
+            }
 
             <form [formGroup]="formSignIn" (ngSubmit)="signIn()" class="login">
                 <div>
                     <div class="login__field">
-                        <fa-icon class="login__icon" [icon]="faIcons.faUser"></fa-icon>
+                        <i class="pi pi-user login__icon"></i>
                         <input formControlName="email" type="text" class="login__input" placeholder="Email">
                     </div>
-                    <p-message *ngIf="formSignIn.controls.email.touched && formSignIn.controls.email.errors?.['email']"
-                               severity="error" variant="simple" size="small">
-                        L'email n'est pas valide
-                    </p-message>
-                    <p-message *ngIf="formSignIn.hasError('invalidCredential')" severity="error" variant="simple"
-                               size="small">
-                        {{ formSignIn.getError('invalidCredential') }}
-                    </p-message>
-                    <p-message *ngIf="formSignIn.hasError('unknownError')" severity="error" variant="simple" size="small">
-                        {{ formSignIn.getError('unknownError') }}
-                    </p-message>
+                    @if (formSignIn.controls.email.touched && formSignIn.controls.email.errors?.['email']) {
+                        <p-message
+                            severity="error" variant="simple" size="small">
+                            L'email n'est pas valide
+                        </p-message>
+                    }
+                    @if (formSignIn.hasError('invalidCredential')) {
+                        <p-message severity="error" variant="simple"
+                                   size="small">
+                            {{ formSignIn.getError('invalidCredential') }}
+                        </p-message>
+                    }
+                    @if (formSignIn.hasError('unknownError')) {
+                        <p-message severity="error" variant="simple" size="small">
+                            {{ formSignIn.getError('unknownError') }}
+                        </p-message>
+                    }
                 </div>
                 <div class="login__field">
-                    <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
+                    <i class="pi pi-lock login__icon"></i>
                     <input formControlName="password" type="password" class="login__input" placeholder="Mot de passe">
                 </div>
                 <button class="button login__submit" [ngClass]="{
@@ -30,7 +38,7 @@
                     }"
                         [disabled]="formSignIn.invalid">
                     <span class="button__text">Connexion</span>
-                    <fa-icon class="button__icon" [icon]="faIcons.faChevronRight"></fa-icon>
+                    <i class="button__icon pi pi-chevron-right" style="font-size: 2rem"></i>
                 </button>
             </form>
             <div class="sign-up">

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { RouterLink } from '@angular/router';
@@ -8,7 +7,7 @@ import { AlertService } from '../../../services/alert.service';
 
 @Component({
     selector: 'app-list-muscle-group',
-    imports: [CommonModule, RouterLink, Skeleton],
+    imports: [RouterLink, Skeleton],
     templateUrl: './list-muscles-groups.component.html',
     styleUrl: './list-muscles-groups.component.scss',
     standalone: true

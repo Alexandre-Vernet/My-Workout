@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ExerciseService } from '../../../services/exercise.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Exercise } from '../../../../interfaces/exercise';
@@ -16,10 +15,11 @@ import { UserExercise } from '../../../../interfaces/user-exercise';
 import { Tag } from 'primeng/tag';
 import { Muscle } from '../../../../interfaces/muscle';
 import { removeAccents, replaceSpaces } from '../../../shared/utils/remove-accents';
+import { NgClass, UpperCasePipe } from '@angular/common';
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [CommonModule, DataView, Button, Badge, Skeleton, DragDropModule, RouterLink, Tag],
+    imports: [DataView, Button, Badge, Skeleton, DragDropModule, RouterLink, Tag, NgClass, UpperCasePipe],
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })

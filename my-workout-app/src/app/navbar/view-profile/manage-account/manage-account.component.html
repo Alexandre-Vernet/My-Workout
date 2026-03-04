@@ -1,19 +1,22 @@
 <div class="flex-1 flex flex-column gap-2">
     <span class="text-lg text-color-secondary mb-2">Gérer mon compte</span>
     <p-floatlabel variant="on">
-        <input class="w-full" [formControl]="formControlEmail" pInputText id="email" autocomplete="off" />
+        <input class="w-full" [formControl]="formControlEmail" pInputText id="email" autocomplete="off"/>
         <label for="email">Email</label>
-        <p-message *ngIf="formControlEmail.touched && formControlEmail.errors?.['email']" severity="error" variant="simple" size="small">
-            L'email n'est pas valide
-        </p-message>
+        @if (formControlEmail.touched && formControlEmail.errors?.['email']) {
+            <p-message severity="error" variant="simple" size="small">
+                L'email n'est pas valide
+            </p-message>
+
+        }
     </p-floatlabel>
 
     <div class="mt-2 flex-1 flex justify-content-around align-items-center">
         <label for="change-password" class="text-lg text-color-secondary">Changer le mot de passe</label>
-        <p-toggleswitch inputId="change-password" (click)="toggleChangePassword()" />
+        <p-toggleswitch inputId="change-password" (click)="toggleChangePassword()"/>
     </div>
 
-    <ng-container *ngIf="isCheckedChangePassword">
+    @if (isCheckedChangePassword) {
         <p-floatlabel variant="on">
             <p-password [formControl]="formControlPassword" autocomplete="off" [feedback]="false">
             </p-password>
@@ -26,12 +29,13 @@
             <label for="confirmPassword">Confirmer le mot de passe</label>
         </p-floatlabel>
 
-
-        <p-message *ngIf="formControlPassword.value !== formControlConfirmPassword.value"
-                   severity="error" variant="simple" size="small">
-            Les mot de passe ne correspondent pas
-        </p-message>
-    </ng-container>
+        @if (formControlPassword.value !== formControlConfirmPassword.value) {
+            <p-message
+                severity="error" variant="simple" size="small">
+                Les mot de passe ne correspondent pas
+            </p-message>
+        }
+    }
 
     <p-button
         [disabled]="
@@ -52,5 +56,5 @@
 
         pRipple
         class="mt-2"
-        label="Mettre à jour" [loading]="isLoading" (onClick)="updateUser()" />
+        label="Mettre à jour" [loading]="isLoading" (onClick)="updateUser()"/>
 </div>

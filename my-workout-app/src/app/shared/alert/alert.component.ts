@@ -1,12 +1,11 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Alert } from '../../../interfaces/alert';
 import { Message } from 'primeng/message';
 import { AlertService } from '../../services/alert.service';
 
 @Component({
     selector: 'app-alert',
-    imports: [CommonModule, Message],
+    imports: [Message],
     templateUrl: './alert.component.html',
     styleUrl: './alert.component.scss',
     encapsulation: ViewEncapsulation.None

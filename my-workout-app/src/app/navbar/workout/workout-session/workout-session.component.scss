@@ -26,16 +26,92 @@
             font-size: 2.5em;
             font-weight: 700;
         }
+    }
+}
 
-        .button-toggle-timer {
-            background: var(--p-primary-color);
-            border-radius: 50%;
-            padding: .1em 1.5em;
 
-            fa-icon {
-                color: white;
-                font-size: 17px;
-            }
-        }
+.timer {
+    width: 60px;
+    height: 60px;
+    background: var(--p-primary-color);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+    .play {
+        width: 0;
+        height: 0;
+        border-top: 15px solid transparent;
+        border-bottom: 15px solid transparent;
+        border-left: 25px solid white;
+        margin-left: 5px;
+    }
+
+    .pause {
+        width: 20px;
+        height: 30px;
+        position: relative;
+    }
+
+    .pause::before,
+    .pause::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 6px;
+        height: 100%;
+        background: white;
+    }
+
+    .pause::before {
+        left: 0;
+    }
+
+    .pause::after {
+        right: 0;
+    }
+
+}
+
+.panel-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.panel {
+    width: 100%;
+    animation-duration: 300ms;
+    animation-timing-function: ease-out;
+}
+
+.slide-from-right {
+    animation-name: slideFromRight;
+}
+
+.slide-from-left {
+    animation-name: slideFromLeft;
+}
+
+@keyframes slideFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideFromLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
     }
 }

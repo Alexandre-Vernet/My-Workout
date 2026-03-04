@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { ChangeThemeComponent } from './change-theme/change-theme.component';
@@ -11,10 +10,11 @@ import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { User } from '../../../interfaces/user';
+import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-view-profile',
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink],
+    imports: [ReactiveFormsModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink, NgClass],
     templateUrl: './view-profile.component.html',
     styleUrl: './view-profile.component.scss',
     standalone: true,

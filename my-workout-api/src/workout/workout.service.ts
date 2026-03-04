@@ -55,6 +55,7 @@ export class WorkoutService {
 
             if (!dayEntry) {
                 dayEntry = {
+                    id: workout.id,
                     date: workoutDate,
                     muscleGroups: []
                 };

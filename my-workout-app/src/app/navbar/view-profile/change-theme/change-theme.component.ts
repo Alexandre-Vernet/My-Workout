@@ -1,5 +1,4 @@
 import { Component, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { presets } from '../../../shared/theme/presets';
@@ -8,7 +7,7 @@ import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-change-theme',
-    imports: [CommonModule, ToggleSwitch, FormsModule],
+    imports: [ToggleSwitch, FormsModule],
     templateUrl: './change-theme.component.html',
     styleUrl: './change-theme.component.scss',
     standalone: true

@@ -4,42 +4,58 @@
             <form [formGroup]="formSignUp" (ngSubmit)="signUp()" class="login">
                 <div>
                     <div class="login__field">
-                        <fa-icon class="login__icon" [icon]="faIcons.faUser"></fa-icon>
+                        <i class="pi pi-user login__icon"></i>
                         <input formControlName="email" type="text" class="login__input" placeholder="Email">
                     </div>
-                    <p-message *ngIf="formSignUp.controls.email.touched && formSignUp.controls.email.errors?.['email']" severity="error" variant="simple" size="small">
-                        L'email n'est pas valide
-                    </p-message>
-                    <p-message *ngIf="formSignUp.hasError('emailAlreadyInUse')" severity="error" variant="simple" size="small">
-                        {{ formSignUp.getError('emailAlreadyInUse') }}
-                    </p-message>
-                    <p-message *ngIf="formSignUp.hasError('unknownError')" severity="error" variant="simple" size="small">
-                        {{ formSignUp.getError('unknownError') }}
-                    </p-message>
+                    @if (formSignUp.controls.email.touched && formSignUp.controls.email.errors?.['email']) {
+                        <p-message severity="error" variant="simple" size="small">
+                            L'email n'est pas valide
+                        </p-message>
+                    }
+                    @if (formSignUp.hasError('emailAlreadyInUse')) {
+                        <p-message severity="error" variant="simple" size="small">
+                            {{ formSignUp.getError('emailAlreadyInUse') }}
+                        </p-message>
+                    }
+                    @if (formSignUp.hasError('unknownError')) {
+                        <p-message severity="error" variant="simple" size="small">
+                            {{ formSignUp.getError('unknownError') }}
+                        </p-message>
+                    }
                 </div>
 
                 <div>
                     <div class="login__field">
-                        <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
-                        <input formControlName="password" type="password" class="login__input" placeholder="Mot de passe">
+                        <i class="pi pi-lock login__icon"></i>
+                        <input formControlName="password" type="password" class="login__input"
+                               placeholder="Mot de passe">
                     </div>
-                    <p-message *ngIf="formSignUp.controls.password.touched && formSignUp.controls.password.errors?.['minlength']" severity="error" variant="simple" size="small">
-                        Le mot de passe doit contenir au moins 6 caractères
-                    </p-message>
-                    <p-message *ngIf="formSignUp.hasError('passwordNotMatch') || formSignUp.controls.password.value.trim() !== formSignUp.controls.confirmPassword.value.trim()" severity="error" variant="simple" size="small">
-                        Les mots de passe ne correspondent pas
-                    </p-message>
+                    @if (formSignUp.controls.password.touched && formSignUp.controls.password.errors?.['minlength']) {
+                        <p-message
+                            severity="error" variant="simple" size="small">
+                            Le mot de passe doit contenir au moins 6 caractères
+                        </p-message>
+                    }
+                    @if (formSignUp.hasError('passwordNotMatch') || formSignUp.controls.password.value.trim() !== formSignUp.controls.confirmPassword.value.trim()) {
+                        <p-message
+                            severity="error" variant="simple" size="small">
+                            Les mots de passe ne correspondent pas
+                        </p-message>
+                    }
                 </div>
 
                 <div>
                     <div class="login__field">
-                        <fa-icon class="login__icon" [icon]="faIcons.faLock"></fa-icon>
+                        <i class="pi pi-lock login__icon"></i>
                         <input formControlName="confirmPassword" type="password" class="login__input"
                                placeholder="Confirmer le mot de passe">
                     </div>
-                    <p-message *ngIf="formSignUp.hasError('passwordNotMatch')" severity="error" variant="simple" size="small">
-                        {{ formSignUp.getError('passwordNotMatch') }}
-                    </p-message>
+                    @if (formSignUp.hasError('passwordNotMatch')) {
+                        <p-message severity="error" variant="simple"
+                                   size="small">
+                            {{ formSignUp.getError('passwordNotMatch') }}
+                        </p-message>
+                    }
                 </div>
 
                 <button type="submit" class="button login__submit" [ngClass]="{
@@ -47,7 +63,7 @@
                     }"
                         [disabled]="formSignUp.invalid || formSignUp.controls.password.value !== formSignUp.controls.confirmPassword.value">
                     <span class="button__text">S'inscrire</span>
-                    <fa-icon class="button__icon" [icon]="faIcons.faChevronRight"></fa-icon>
+                    <i class="button__icon pi pi-chevron-right" style="font-size: 2rem"></i>
                 </button>
             </form>
             <div class="sign-up">
