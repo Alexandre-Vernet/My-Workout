@@ -1,0 +1,7 @@
+spring.application.name=my-workout-api
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.flyway.baseline-on-migrate=false
