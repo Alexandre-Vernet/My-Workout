@@ -16,7 +16,7 @@ public class ExerciseEntity {
     @Column()
     String name;
 
-    @Column()
+    @Column(columnDefinition = "TEXT")
     String description;
 
     @Column(name = "is_smart_workout")
