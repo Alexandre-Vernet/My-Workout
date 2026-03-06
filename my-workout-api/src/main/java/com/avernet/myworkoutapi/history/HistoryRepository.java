@@ -1,6 +1,6 @@
 package com.avernet.myworkoutapi.history;
 
-import org.springframework.data.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

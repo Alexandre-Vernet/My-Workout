@@ -1,10 +1,8 @@
 package com.avernet.myworkoutapi.userexercise;
 
+import com.avernet.myworkoutapi.config.GenericMapper;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface UserExerciseMapper {
-    UserExercise toDto(UserExerciseEntity userExerciseEntity);
-
-    UserExerciseEntity toEntity(UserExercise userExercise);
+public interface UserExerciseMapper extends GenericMapper<UserExercise, UserExerciseEntity> {
 }

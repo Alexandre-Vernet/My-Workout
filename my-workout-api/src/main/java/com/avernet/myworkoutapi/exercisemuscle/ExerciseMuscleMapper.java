@@ -1,10 +1,8 @@
 package com.avernet.myworkoutapi.exercisemuscle;
 
+import com.avernet.myworkoutapi.config.GenericMapper;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface ExerciseMuscleMapper {
-    ExerciseMuscle toDto(ExerciseMuscleEntity exerciseMuscleEntity);
-
-    ExerciseMuscleEntity toEntity(ExerciseMuscle exerciseMuscle);
+public interface ExerciseMuscleMapper extends GenericMapper<ExerciseMuscle, ExerciseMuscleEntity> {
 }
