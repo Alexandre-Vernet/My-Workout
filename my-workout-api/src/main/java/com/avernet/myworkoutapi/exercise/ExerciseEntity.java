@@ -2,6 +2,7 @@ package com.avernet.myworkoutapi.exercise;
 
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleEntity;
 import com.avernet.myworkoutapi.history.HistoryEntity;
+import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,4 +36,7 @@ public class ExerciseEntity {
 
     @OneToMany(mappedBy = "exercise", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<HistoryEntity> historyList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "exercise", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    List<UserExerciseEntity> userExerciseList = new ArrayList<>();
 }

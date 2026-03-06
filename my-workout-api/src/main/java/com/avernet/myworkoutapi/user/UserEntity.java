@@ -1,5 +1,6 @@
 package com.avernet.myworkoutapi.user;
 
+import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import com.avernet.myworkoutapi.workout.WorkoutEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -38,4 +39,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<WorkoutEntity> workoutList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    List<UserExerciseEntity> userExerciseList = new ArrayList<>();
 }
