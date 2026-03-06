@@ -34,44 +34,6 @@ import { NgClass, UpperCasePipe } from '@angular/common';
     standalone: true,
     providers: [ConfirmationService],
     encapsulation: ViewEncapsulation.None,
-    animations: [
-        trigger('slidePanel', [
-            transition('void => right', [
-                style({ transform: 'translateX(100%)', opacity: 0 }),
-                animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-            ]),
-            transition('void => left', [
-                style({ transform: 'translateX(-100%)', opacity: 0 }),
-                animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-            ]),
-            transition('left => right', [
-                query(':enter, :leave', style({ position: 'absolute', width: '100%' }), { optional: true }),
-                group([
-                    query(':leave', [
-                        style({ transform: 'translateX(0)', opacity: 1 }),
-                        animate('300ms ease-out', style({ transform: 'translateX(-100%)', opacity: 0 }))
-                    ], { optional: true }),
-                    query(':enter', [
-                        style({ transform: 'translateX(100%)', opacity: 0 }),
-                        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-                    ], { optional: true })
-                ])
-            ]),
-            transition('right => left', [
-                query(':enter, :leave', style({ position: 'absolute', width: '100%' }), { optional: true }),
-                group([
-                    query(':leave', [
-                        style({ transform: 'translateX(0)', opacity: 1 }),
-                        animate('300ms ease-out', style({ transform: 'translateX(100%)', opacity: 0 }))
-                    ], { optional: true }),
-                    query(':enter', [
-                        style({ transform: 'translateX(-100%)', opacity: 0 }),
-                        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-                    ], { optional: true })
-                ])
-            ])
-        ])
-    ]
 })
 export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
