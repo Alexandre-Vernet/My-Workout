@@ -5,6 +5,6 @@ import com.avernet.my_workout_api.MuscleGroup.MuscleGroup;
 public record Muscle(
     Long id,
     String name,
-    MuscleGroup MuscleGroup
+    MuscleGroup muscleGroup
 ) {
 }
