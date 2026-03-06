@@ -5,9 +5,9 @@ import com.avernet.myworkoutapi.exercise.Exercise;
 
 public record History(
     Long id,
-    Exercise exercise,
     Float weight,
     Short reps,
-    Workout workout
+    Workout workout,
+    Exercise exercise
 ) {
 }

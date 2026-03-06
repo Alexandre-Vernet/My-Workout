@@ -5,8 +5,8 @@ import com.avernet.myworkoutapi.user.User;
 
 public record UserExercise(
     Long id,
+    Integer order,
     User user,
-    Exercise exercise,
-    Integer order
+    Exercise exercise
 ) {
 }

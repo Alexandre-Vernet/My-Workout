@@ -3,6 +3,8 @@ package com.avernet.myworkoutapi.exercise;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,5 +20,10 @@ public class ExerciseController {
     @GetMapping("/find-all-exercises-by-muscle-group-id/{muscleGroupId}")
     List<Exercise> findAllExercisesByMuscleGroupId(@PathVariable Long muscleGroupId) {
         return exerciseService.findAllExercisesByMuscleGroupId(muscleGroupId);
+    }
+
+    @PostMapping()
+    Exercise createExercise(@RequestBody Exercise exercise) {
+        return exerciseService.createExercise(exercise);
     }
 }

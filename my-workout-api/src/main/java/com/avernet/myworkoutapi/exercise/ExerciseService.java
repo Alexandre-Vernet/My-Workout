@@ -18,4 +18,12 @@ public class ExerciseService {
         List<ExerciseEntity> exerciseEntityList = exerciseRepository.findAllByMuscleGroup(muscleGroupId);
         return exerciseMapper.toDtoList(exerciseEntityList);
     }
+
+    Exercise createExercise(Exercise exercise) {
+        ExerciseEntity exerciseEntity = exerciseMapper.toEntity(exercise);
+        ExerciseEntity finalExerciseEntity = exerciseEntity;
+        exerciseEntity.exerciseMuscleList.forEach(em -> em.setExercise(finalExerciseEntity));
+        exerciseEntity = exerciseRepository.save(exerciseEntity);
+        return exerciseMapper.toDto(exerciseEntity);
+    }
 }

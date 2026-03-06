@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public class HistoryEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Column()

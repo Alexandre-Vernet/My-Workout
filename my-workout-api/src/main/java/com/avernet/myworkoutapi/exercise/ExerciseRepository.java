@@ -13,8 +13,8 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> 
     @Query("""
         SELECT exercise
              from MuscleGroupEntity muscleGroup
-             join muscleGroup.muscle muscle
-             join muscle.exerciseMuscle exerciseMuscle
+             join muscleGroup.muscleList muscle
+             join muscle.exerciseMuscleList exerciseMuscle
              join exerciseMuscle.exercise exercise
                  where muscleGroup.id = :muscleGroup
         """)

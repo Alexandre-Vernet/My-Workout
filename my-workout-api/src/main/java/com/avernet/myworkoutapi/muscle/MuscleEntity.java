@@ -32,5 +32,5 @@ public class MuscleEntity {
 
 
     @OneToMany(mappedBy = "muscle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<ExerciseMuscleEntity> exerciseMuscle = new ArrayList<>();
+    List<ExerciseMuscleEntity> exerciseMuscleList = new ArrayList<>();
 }
