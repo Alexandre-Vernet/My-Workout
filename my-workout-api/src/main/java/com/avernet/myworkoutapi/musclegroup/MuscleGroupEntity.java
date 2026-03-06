@@ -1,10 +1,17 @@
 package com.avernet.myworkoutapi.musclegroup;
 
+import com.avernet.myworkoutapi.muscle.MuscleEntity;
+import com.avernet.myworkoutapi.workout.WorkoutEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "muscle_group")
@@ -15,4 +22,10 @@ public class MuscleGroupEntity {
 
     @Column()
     String name;
+
+    @OneToMany(mappedBy = "muscleGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<WorkoutEntity> workout = new ArrayList<>();
+
+    @OneToMany(mappedBy = "muscleGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<MuscleEntity> muscle = new ArrayList<>();
 }

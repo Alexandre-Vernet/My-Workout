@@ -1,11 +1,12 @@
 package com.avernet.myworkoutapi.history;
 
+import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.workout.WorkoutEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "muscle_group")
+@Table(name = "history")
 @Data
 public class HistoryEntity {
     @Id
@@ -18,5 +19,10 @@ public class HistoryEntity {
     Short reps;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workout_id")
     WorkoutEntity workout;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exercise_id")
+    ExerciseEntity exercise;
 }

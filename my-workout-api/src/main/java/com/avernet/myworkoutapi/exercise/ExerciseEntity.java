@@ -1,10 +1,18 @@
 package com.avernet.myworkoutapi.exercise;
 
+import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleEntity;
+import com.avernet.myworkoutapi.history.HistoryEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "exercises")
@@ -21,4 +29,10 @@ public class ExerciseEntity {
 
     @Column(name = "is_smart_workout")
     Boolean isSmartWorkout;
+
+    @OneToMany(mappedBy = "exercise", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    List<ExerciseMuscleEntity> exerciseMuscleList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "exercise", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    List<HistoryEntity> historyList = new ArrayList<>();
 }
