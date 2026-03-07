@@ -21,4 +21,6 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
             and w.date BETWEEN :start and :end
         """)
     List<WorkoutEntity> findByUserIdAndDateBetween(@Param("userId") Long userId, @Param("start") LocalDate start, @Param("end") LocalDate end);
+
+    Integer countByUserId(Long userId);
 }

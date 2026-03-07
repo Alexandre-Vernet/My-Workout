@@ -44,6 +44,11 @@ public class WorkoutService {
         return workoutMapper.toDtoList(workoutEntityList);
     }
 
+    Integer countTotalDaysWorkout() {
+        UserEntity userEntity = authService.getCurrentUserEntity();
+       return workoutRepository.countByUserId(userEntity.getId());
+    }
+
     private Optional<WorkoutEntity> checkDuplicateWorkout(UserEntity userEntity, Workout workout) {
         return workoutRepository.findByUserIdAndMuscleGroupIdAndDate(userEntity.getId(), workout.getMuscleGroup().id(), workout.getDate());
     }

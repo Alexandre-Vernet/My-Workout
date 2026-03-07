@@ -26,4 +26,9 @@ public class WorkoutController {
     List<Workout> findByDate(@RequestParam String start, @RequestParam String end) {
         return workoutService.findByDate(start, end);
     }
+
+    @GetMapping("count-total-days-workout")
+    Integer countTotalDaysWorkout() {
+        return workoutService.countTotalDaysWorkout();
+    }
 }
