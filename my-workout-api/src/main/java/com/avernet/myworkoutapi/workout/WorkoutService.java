@@ -6,6 +6,8 @@ import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,6 +36,12 @@ public class WorkoutService {
         workout.setUser(authService.getCurrentUserDto());
         WorkoutEntity workoutEntity = workoutRepository.save(workoutMapper.toEntity(workout));
         return workoutMapper.toDto(workoutEntity);
+    }
+
+    List<Workout> findByDate(String start, String end) {
+        UserEntity userEntity = authService.getCurrentUserEntity();
+        List<WorkoutEntity> workoutEntityList = workoutRepository.findByUserIdAndDateBetween(userEntity.getId(), LocalDate.parse(start), LocalDate.parse(end));
+        return workoutMapper.toDtoList(workoutEntityList);
     }
 
     private Optional<WorkoutEntity> checkDuplicateWorkout(UserEntity userEntity, Workout workout) {
