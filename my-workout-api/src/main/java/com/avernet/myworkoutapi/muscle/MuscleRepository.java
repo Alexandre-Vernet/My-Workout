@@ -8,5 +8,5 @@ import java.util.List;
 @Repository
 public interface MuscleRepository extends JpaRepository<MuscleEntity, Long> {
 
-    List<MuscleEntity> findAllByOrderByMuscleGroupNameAsc();
+    List<MuscleEntity> findAllByOrderByMuscleGroupTypeAsc();
 }

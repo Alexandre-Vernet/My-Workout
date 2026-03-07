@@ -5,6 +5,8 @@ import com.avernet.myworkoutapi.workout.WorkoutEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,8 +25,9 @@ public class MuscleGroupEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column()
-    String name;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "name")
+    MuscleGroupType type;
 
     @OneToMany(mappedBy = "muscleGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     List<WorkoutEntity> workoutList = new ArrayList<>();

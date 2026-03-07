@@ -14,7 +14,7 @@ public class MuscleService {
     MuscleMapper muscleMapper;
 
     List<Muscle> findAllMuscle() {
-        List<MuscleEntity> muscleEntityList = muscleRepository.findAllByOrderByMuscleGroupNameAsc();
+        List<MuscleEntity> muscleEntityList = muscleRepository.findAllByOrderByMuscleGroupTypeAsc();
         return muscleMapper.toDtoList(muscleEntityList);
     }
 }

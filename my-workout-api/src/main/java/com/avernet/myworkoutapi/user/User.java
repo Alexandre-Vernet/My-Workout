@@ -1,19 +1,17 @@
 package com.avernet.myworkoutapi.user;
 
-import com.avernet.myworkoutapi.userexercise.UserExercise;
-import com.avernet.myworkoutapi.workout.Workout;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
 
-public record User(
-    Long id,
-    String email,
-    String password,
-    LocalDate createdAt,
-    LocalDate updatedAt,
-    Boolean isAdmin,
-    List<Workout> workoutList,
-    List<UserExercise> userExerciseList
-) {
+@Getter
+@Setter
+public class User {
+    Long id;
+    String email;
+    String password;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
+    Boolean isAdmin;
 }
