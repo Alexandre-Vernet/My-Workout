@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("exercises")
 public class ExerciseController {
@@ -15,9 +17,14 @@ public class ExerciseController {
     @Resource
     ExerciseService exerciseService;
 
-    @GetMapping("/find-all-exercises-by-muscle-group-id/{muscleGroupId}")
+    @GetMapping("find-all-exercises-by-muscle-group-id/{muscleGroupId}")
     MuscleGroupExercises findAllExercisesByMuscleGroupId(@PathVariable Long muscleGroupId) {
         return exerciseService.findAllExercisesByMuscleGroupId(muscleGroupId);
+    }
+
+    @GetMapping("find-cardio-exercises")
+    List<Exercise> findCardioExercises() {
+        return exerciseService.findCardioExercises();
     }
 
     @PostMapping()

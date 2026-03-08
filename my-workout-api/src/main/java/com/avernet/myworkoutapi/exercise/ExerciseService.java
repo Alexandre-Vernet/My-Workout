@@ -1,10 +1,13 @@
 package com.avernet.myworkoutapi.exercise;
 
+import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.exception.NotFoundException;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroup;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupMapper;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
+import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,9 @@ import java.util.List;
 
 @Service
 public class ExerciseService {
+
+    @Resource
+    AuthService authService;
 
     @Resource
     ExerciseRepository exerciseRepository;
@@ -33,6 +39,12 @@ public class ExerciseService {
         MuscleGroup muscleGroup = muscleGroupMapper.toDto(muscleGroupEntity);
 
         return new MuscleGroupExercises(muscleGroup, exerciseList);
+    }
+
+    List<Exercise> findCardioExercises() {
+        UserEntity userEntity = authService.getCurrentUserEntity();
+        List<ExerciseEntity> exerciseEntityList = exerciseRepository.findCardioExercises(userEntity.getId(), MuscleGroupType.CARDIO);
+        return exerciseMapper.toDtoList(exerciseEntityList);
     }
 
     Exercise createExercise(Exercise exercise) {
