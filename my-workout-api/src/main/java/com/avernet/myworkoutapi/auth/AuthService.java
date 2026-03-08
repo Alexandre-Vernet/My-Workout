@@ -1,13 +1,14 @@
 package com.avernet.myworkoutapi.auth;
 
 import com.avernet.myworkoutapi.config.JwtService;
-import com.avernet.myworkoutapi.exception.UserAlreadyExistException;
-import com.avernet.myworkoutapi.exception.UserNotFoundException;
+import com.avernet.myworkoutapi.exception.ApiException;
+import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
 import com.avernet.myworkoutapi.user.User;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserMapper;
 import com.avernet.myworkoutapi.user.UserRepository;
 import jakarta.annotation.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -73,7 +74,7 @@ public class AuthService {
     public User registerUser(User user) {
         boolean userExist = userRepository.existsByEmail(user.getEmail());
         if (userExist) {
-            throw new UserAlreadyExistException();
+            throw new ApiException(ErrorCodeEnum.EMAIL_ALREADY_IN_USE, "Cet email est déjà utilisé", HttpStatus.BAD_REQUEST);
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -83,12 +84,12 @@ public class AuthService {
     }
 
     public User getUserByEmail(String email) {
-        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Utilisateur introuvable", HttpStatus.BAD_REQUEST));
         return userMapper.toDto(userEntity);
     }
 
     public Map<String, String> sendEmailForgotPassword(String email) {
-        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Utilisateur introuvable", HttpStatus.BAD_REQUEST));
 
         UserDetails userDetails = UserEntity.builder()
             .id(userEntity.getId())
@@ -101,7 +102,7 @@ public class AuthService {
 
 
     public void updatePassword(Long id, String newPassword) {
-        UserEntity userEntity = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Utilisateur introuvable", HttpStatus.BAD_REQUEST));
         userEntity.setPassword(passwordEncoder.encode(newPassword));
     }
 }

@@ -4,59 +4,61 @@ import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { Message } from 'primeng/message';
-import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
-import { Alert } from '../../../interfaces/alert';
 import { User } from '../../../interfaces/user';
+import { ErrorCodeEnum } from '../../../error-code/error-code-enum';
 
 @Component({
-    selector: 'app-sign-in',
-    templateUrl: './sign-in.component.html',
+    selector: 'app-sign-up',
+    templateUrl: './register.component.html',
     styleUrls: ['../auth.component.scss'],
     imports: [
         ReactiveFormsModule,
         RouterLink,
         NgClass,
-        Message,
-        ForgotPasswordComponent
+        Message
     ]
 })
-export class SignInComponent {
+export class RegisterComponent {
 
-    formSignIn = new FormGroup({
+    formSignUp = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl('', [Validators.required])
+        password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+        confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     });
 
-
-    showDialogForgotPassword: boolean;
-
-    alert: Alert;
+    ErrorCodeEnum = ErrorCodeEnum;
 
     constructor(
         private readonly authService: AuthService,
-        private router: Router
+        private readonly router: Router
     ) {
     }
 
-    signIn() {
+    signUp() {
         const {
             email,
-            password
-        } = this.formSignIn.value;
+            password,
+            confirmPassword
+        } = this.formSignUp.value;
+
+        if (password !== confirmPassword) {
+            this.formSignUp.setErrors({ passwordNotMatch: 'Passwords does not match' });
+            return;
+        }
 
         const user: User = {
             email: email.toLowerCase(),
-            password
+            password,
+            confirmPassword
         };
-
-        this.authService.login(user)
+        this.authService.register(user)
             .subscribe({
                 next: () => this.router.navigateByUrl('/'),
                 error: (err) => {
                     if (err?.error?.errorCode) {
-                        this.formSignIn.setErrors({ [err.error.errorCode]: err?.error?.message ?? 'Une erreur s\'est produite' });
+                        this.formSignUp.setErrors({ [err.error.errorCode]: err?.error?.message });
                     } else {
-                        this.formSignIn.setErrors({ unknownError: 'Une erreur s\'est produite' });
+                        this.formSignUp.setErrors({ [ErrorCodeEnum.UNKNOWN_ERROR]: 'Une erreur s\'est produite' });
                     }
                 }
             });

@@ -1,7 +1,8 @@
 package com.avernet.myworkoutapi.exercise;
 
 import com.avernet.myworkoutapi.auth.AuthService;
-import com.avernet.myworkoutapi.exception.NotFoundException;
+import com.avernet.myworkoutapi.exception.ApiException;
+import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroup;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupMapper;
@@ -9,6 +10,7 @@ import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,7 +37,8 @@ public class ExerciseService {
         List<ExerciseEntity> exerciseEntityList = exerciseRepository.findAllByMuscleGroup(muscleGroupId);
         List<Exercise> exerciseList = exerciseMapper.toDtoList(exerciseEntityList);
 
-        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(muscleGroupId).orElseThrow(() -> new NotFoundException("Ce muscle n'existe pas"));
+        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(muscleGroupId).orElseThrow(() ->
+            new ApiException(ErrorCodeEnum.UNKNOWN_MUSCLE, "Ce muscle n'existe pas", HttpStatus.NOT_FOUND));
         MuscleGroup muscleGroup = muscleGroupMapper.toDto(muscleGroupEntity);
 
         return new MuscleGroupExercises(muscleGroup, exerciseList);

@@ -7,19 +7,19 @@
                         <i class="pi pi-user login__icon"></i>
                         <input formControlName="email" type="text" class="login__input" placeholder="Email">
                     </div>
-                    @if (formSignUp.controls.email.touched && formSignUp.controls.email.errors?.['email']) {
+                    @if (formSignUp.controls.email.touched && formSignUp.controls.email.hasError('email')) {
                         <p-message severity="error" variant="simple" size="small">
                             L'email n'est pas valide
                         </p-message>
                     }
-                    @if (formSignUp.hasError('emailAlreadyInUse')) {
+                    @if (formSignUp.hasError(ErrorCodeEnum.EMAIL_ALREADY_IN_USE)) {
                         <p-message severity="error" variant="simple" size="small">
-                            {{ formSignUp.getError('emailAlreadyInUse') }}
+                            {{ formSignUp.getError('EMAIL_ALREADY_IN_USE') }}
                         </p-message>
                     }
-                    @if (formSignUp.hasError('unknownError')) {
+                    @if (formSignUp.hasError(ErrorCodeEnum.UNKNOWN_ERROR)) {
                         <p-message severity="error" variant="simple" size="small">
-                            {{ formSignUp.getError('unknownError') }}
+                            {{ formSignUp.getError('EMAIL_ALREADY_IN_USE') }}
                         </p-message>
                     }
                 </div>
@@ -30,7 +30,7 @@
                         <input formControlName="password" type="password" class="login__input"
                                placeholder="Mot de passe">
                     </div>
-                    @if (formSignUp.controls.password.touched && formSignUp.controls.password.errors?.['minlength']) {
+                    @if (formSignUp.controls.password.touched && formSignUp.controls.password.hasError('minlength')) {
                         <p-message
                             severity="error" variant="simple" size="small">
                             Le mot de passe doit contenir au moins 6 caractères

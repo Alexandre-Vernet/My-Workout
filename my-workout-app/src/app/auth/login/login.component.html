@@ -17,15 +17,10 @@
                             L'email n'est pas valide
                         </p-message>
                     }
-                    @if (formSignIn.hasError('invalidCredential')) {
+                    @if (formSignIn.hasError(ErrorCodeEnum.BAD_CREDENTIAL)) {
                         <p-message severity="error" variant="simple"
                                    size="small">
-                            {{ formSignIn.getError('invalidCredential') }}
-                        </p-message>
-                    }
-                    @if (formSignIn.hasError('unknownError')) {
-                        <p-message severity="error" variant="simple" size="small">
-                            {{ formSignIn.getError('unknownError') }}
+                            {{ formSignIn.getError(ErrorCodeEnum.BAD_CREDENTIAL) }}
                         </p-message>
                     }
                 </div>

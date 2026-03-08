@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SignInComponent } from "./sign-in/sign-in.component";
-import { SignUpComponent } from "./sign-up/sign-up.component";
+import { LoginComponent } from "./login/login.component";
+import { RegisterComponent } from "./register/register.component";
 import { ResetPasswordComponent } from "./reset-password/reset-password.component";
 
 const routes: Routes = [
@@ -10,11 +10,11 @@ const routes: Routes = [
         children: [
             {
                 path: 'sign-in',
-                component: SignInComponent
+                component: LoginComponent
             },
             {
                 path: 'sign-up',
-                component: SignUpComponent
+                component: RegisterComponent
             },
             {
                 path: 'reset-password',

@@ -18,7 +18,7 @@ import { Popover } from 'primeng/popover';
 import { WorkoutService } from '../../../services/workout.service';
 import { Workout } from '../../../../interfaces/workout';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
-import { ErrorCode } from '../../../../error-code/error-code';
+import { ErrorCodeEnum } from '../../../../error-code/error-code-enum';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../shared/utils/convert-weight-elastic';
@@ -216,7 +216,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                 error: (err) => {
                     this.isLoading = false;
 
-                    if (err?.error?.errorCode === ErrorCode.muscleGroupDoesntExist) {
+                    if (err?.error?.errorCode === ErrorCodeEnum.muscleGroupDoesntExist) {
                         this.redirectWorkoutHome();
                     }
                     this.alertService.alert$.next({

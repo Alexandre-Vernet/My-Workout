@@ -3,8 +3,8 @@ import {
     ListExercisesMuscleGroupComponent
 } from './navbar/library/list-exercises-muscle-group/list-exercises-muscle-group.component';
 import { ListMusclesGroupsComponent } from './navbar/library/list-muscles-groups/list-muscles-groups.component';
-import { SignInComponent } from './auth/sign-in/sign-in.component';
-import { SignUpComponent } from './auth/sign-up/sign-up.component';
+import { LoginComponent } from './auth/login/login.component';
+import { RegisterComponent } from './auth/register/register.component';
 import { authGuard } from './auth/auth.guard';
 import {
     SelectMuscleGroupWorkoutComponent
@@ -165,11 +165,11 @@ export const appRoutes: Route[] = [
         children: [
             {
                 path: 'sign-in',
-                component: SignInComponent
+                component: LoginComponent
             },
             {
                 path: 'sign-up',
-                component: SignUpComponent
+                component: RegisterComponent
             },
             {
                 path: 'reset-password',
