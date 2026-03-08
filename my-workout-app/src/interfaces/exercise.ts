@@ -9,7 +9,7 @@ export interface Exercise {
     isSmartWorkout?: boolean;
     order?:number;
     addedToWorkout?: boolean;
-    muscles?: Muscle[];
+    muscleList?: Muscle[];
     muscleGroup?: string;
-    exerciseMuscle?: ExerciseMuscle[];
+    exerciseMuscleList?: ExerciseMuscle[];
 }

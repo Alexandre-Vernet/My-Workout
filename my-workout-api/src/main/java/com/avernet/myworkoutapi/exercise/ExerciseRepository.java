@@ -11,12 +11,12 @@ import java.util.List;
 public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> {
 
     @Query("""
-        SELECT exercise
-             from MuscleGroupEntity muscleGroup
-             join muscleGroup.muscleList muscle
-             join muscle.exerciseMuscleList exerciseMuscle
-             join exerciseMuscle.exercise exercise
-                 where muscleGroup.id = :muscleGroup
+            SELECT exercise
+            FROM ExerciseEntity exercise
+            JOIN FETCH exercise.exerciseMuscleList exerciseMuscle
+            JOIN FETCH exerciseMuscle.muscle muscle
+            JOIN muscle.muscleGroup muscleGroup
+            WHERE muscleGroup.id = :muscleGroup
         """)
     List<ExerciseEntity> findAllByMuscleGroup(@Param("muscleGroup") Long muscleGroup);
 }

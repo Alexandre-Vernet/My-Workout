@@ -16,13 +16,9 @@ export class ExerciseService {
 
     findAllExercisesByMuscleGroupId(muscleGroupId: number) {
         return this.http.get<{
-            exercises: Exercise[],
+            exerciseList: Exercise[],
             muscleGroup: MuscleGroup
-        }>(`${this.exerciseUrl}/find-all-exercises-by-muscle-group-id`, {
-            params: {
-                muscleGroupId
-            }
-        });
+        }>(`${this.exerciseUrl}/find-all-exercises-by-muscle-group-id/${muscleGroupId}`);
     }
 
     findAddedExercisesByMuscleGroupId(muscleGroupId: number) {

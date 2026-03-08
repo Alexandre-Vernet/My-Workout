@@ -45,10 +45,6 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.init();
-    }
-
-    private init() {
         this.findAllExercisesByMuscleGroupId();
     }
 
@@ -112,7 +108,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             return;
         }
 
-        this.filteredExercises = this.exercises.filter(e => e.muscles.some(m => m.id === muscle.id));
+        this.filteredExercises = this.exercises.filter(e => e.muscleList.some(m => m.id === muscle.id));
         this.activeFilter = muscle.id;
     }
 
@@ -124,10 +120,10 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
                 }) => this.exerciseService.findAllExercisesByMuscleGroupId(Number(params.muscleGroupId)))
             )
             .subscribe({
-                next: ({ exercises, muscleGroup }) => {
+                next: ({ exerciseList, muscleGroup }) => {
                     this.isLoading = false;
-                    this.exercises = exercises.sort(this.sortExercises);
-                    this.filteredExercises = exercises.sort(this.sortExercises);
+                    this.exercises = exerciseList.sort(this.sortExercises);
+                    this.filteredExercises = exerciseList.sort(this.sortExercises);
                     this.muscleGroup = muscleGroup;
                     this.getMuscles();
                     this.alertService.alert$.next(null);
@@ -159,9 +155,9 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
 
     private getMuscles() {
         this.exercises.forEach(exercise => {
-            exercise.muscles.forEach(muscle => {
-                if (!this.muscles.some(m => m.id === muscle.id)) {
-                    this.muscles.push(muscle);
+            exercise.exerciseMuscleList.forEach(exerciseMuscle => {
+                if (!this.muscles.some(m => m.id === exerciseMuscle.muscle.id)) {
+                    this.muscles.push(exerciseMuscle.muscle);
                 }
             });
         });

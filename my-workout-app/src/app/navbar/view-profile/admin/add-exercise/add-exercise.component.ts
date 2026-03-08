@@ -72,7 +72,7 @@ export class AddExerciseComponent implements OnInit {
                         name: exercise.name,
                         description: exercise.description,
                         isSmartWorkout: exercise.isSmartWorkout,
-                        muscles: exercise.muscles
+                        muscles: exercise.muscleList
                     });
                 }
             });
@@ -94,7 +94,7 @@ export class AddExerciseComponent implements OnInit {
             name: name.trim(),
             description: description.trim(),
             isSmartWorkout,
-            exerciseMuscle: muscles.map(m => ({
+            exerciseMuscleList: muscles.map(m => ({
                 muscle: {
                     id: m.id,
                 }

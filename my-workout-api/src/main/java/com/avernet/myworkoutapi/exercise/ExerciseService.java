@@ -1,5 +1,10 @@
 package com.avernet.myworkoutapi.exercise;
 
+import com.avernet.myworkoutapi.exception.NotFoundException;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroup;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupMapper;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +17,22 @@ public class ExerciseService {
     ExerciseRepository exerciseRepository;
 
     @Resource
+    MuscleGroupRepository muscleGroupRepository;
+
+    @Resource
     ExerciseMapper exerciseMapper;
 
-    List<Exercise> findAllExercisesByMuscleGroupId(Long muscleGroupId) {
+    @Resource
+    private MuscleGroupMapper muscleGroupMapper;
+
+    MuscleGroupExercises findAllExercisesByMuscleGroupId(Long muscleGroupId) {
         List<ExerciseEntity> exerciseEntityList = exerciseRepository.findAllByMuscleGroup(muscleGroupId);
-        return exerciseMapper.toDtoList(exerciseEntityList);
+        List<Exercise> exerciseList = exerciseMapper.toDtoList(exerciseEntityList);
+
+        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(muscleGroupId).orElseThrow(() -> new NotFoundException("Ce muscle n'existe pas"));
+        MuscleGroup muscleGroup = muscleGroupMapper.toDto(muscleGroupEntity);
+
+        return new MuscleGroupExercises(muscleGroup, exerciseList);
     }
 
     Exercise createExercise(Exercise exercise) {

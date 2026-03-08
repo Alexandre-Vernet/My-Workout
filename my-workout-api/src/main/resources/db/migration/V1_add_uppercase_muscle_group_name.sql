@@ -1,0 +1,25 @@
+-- Auto-generated SQL script #202603081903
+UPDATE public.muscle_group
+SET "name"='PECTORAUX'
+WHERE id=1;
+UPDATE public.muscle_group
+SET "name"='TRICEPS'
+WHERE id=2;
+UPDATE public.muscle_group
+SET "name"='JAMBES'
+WHERE id=3;
+UPDATE public.muscle_group
+SET "name"='EPAULES'
+WHERE id=4;
+UPDATE public.muscle_group
+SET "name"='DOS'
+WHERE id=5;
+UPDATE public.muscle_group
+SET "name"='BICEPS'
+WHERE id=6;
+UPDATE public.muscle_group
+SET "name"='ABDOMINAUX'
+WHERE id=7;
+UPDATE public.muscle_group
+SET "name"='CARDIO'
+WHERE id=8;

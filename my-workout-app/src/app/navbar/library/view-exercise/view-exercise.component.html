@@ -4,7 +4,7 @@
 
         <div class="flex flex-column">
             <div class="flex flex-row gap-2 flex-wrap">
-                @for (muscle of exercise.muscles; track muscle) {
+                @for (muscle of exercise.muscleList; track muscle) {
                     <a class="text-sm text-secondary"
                        [routerLink]="['muscle-structure', exercise?.muscleGroup.toLowerCase()]"
                        [fragment]="replaceSpaces(muscle.name)">
