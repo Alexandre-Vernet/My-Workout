@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,15 +24,15 @@ import java.util.List;
 public class MuscleGroupEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Integer id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "name")
-    MuscleGroupType type;
+    MuscleGroupType name;
 
-    @OneToMany(mappedBy = "muscleGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "muscleGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     List<WorkoutEntity> workoutList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "muscleGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "muscleGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     List<MuscleEntity> muscleList = new ArrayList<>();
 }

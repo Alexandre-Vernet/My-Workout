@@ -48,7 +48,7 @@ export class SignUpComponent {
             password,
             confirmPassword
         };
-        this.authService.signUp(user)
+        this.authService.register(user)
             .subscribe({
                 next: () => this.router.navigateByUrl('/'),
                 error: (err) => {

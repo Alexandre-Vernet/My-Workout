@@ -1,6 +1,7 @@
 package com.avernet.myworkoutapi.workout;
 
 import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,5 +31,10 @@ public class WorkoutController {
     @GetMapping("count-total-days-workout")
     Integer countTotalDaysWorkout() {
         return workoutService.countTotalDaysWorkout();
+    }
+
+    @DeleteMapping
+    void delete(@RequestParam Long id) {
+        workoutService.delete(id);
     }
 }

@@ -20,20 +20,20 @@ export class AuthService {
     ) {
     }
 
-    signIn(user: User) {
-        return this.http.post<{ accessToken: string, refreshToken: string }>(`${this.authUrl}/sign-in`, user)
+    login(user: User) {
+        return this.http.post<{ accessToken: string, refreshToken: string }>(`${this.authUrl}/login`, user)
             .pipe(
                 tap(({ accessToken, refreshToken }) => {
-                    this.userSubject.next(user);
                     localStorage.setItem('access-token', accessToken);
                     localStorage.setItem('refresh-token', refreshToken);
                 }),
+                switchMap(() => this.getCurrentUser())
             );
     }
 
-    signUp(user: User) {
-        return this.http.post<{ accessToken: string, user: User }>(`${this.authUrl}/sign-up`, user)
-            .pipe(switchMap(() => this.signIn(user)));
+    register(user: User) {
+        return this.http.post<{ accessToken: string, user: User }>(`${this.authUrl}/register`, user)
+            .pipe(switchMap(() => this.login(user)));
     }
 
     getCurrentUser() {

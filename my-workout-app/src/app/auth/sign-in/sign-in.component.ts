@@ -49,7 +49,7 @@ export class SignInComponent {
             password
         };
 
-        this.authService.signIn(user)
+        this.authService.login(user)
             .subscribe({
                 next: () => this.router.navigateByUrl('/'),
                 error: (err) => {

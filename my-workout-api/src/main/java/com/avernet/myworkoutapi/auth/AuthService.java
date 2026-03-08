@@ -39,7 +39,7 @@ public class AuthService {
     private UserEntity getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() != null && authentication.getPrincipal().equals("anonymousUser")) {
             throw new SecurityException("Utilisateur non authentifié");
         }
 

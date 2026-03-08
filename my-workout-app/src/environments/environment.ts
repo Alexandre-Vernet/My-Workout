@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    API_URL: 'http://localhost:3000/api',
+    API_URL: 'http://localhost:8080/api',
     authUrl: () => `${ environment.API_URL }/auth`,
     muscleGroupUrl: () => `${ environment.API_URL }/muscle-group`,
     muscleUrl: () => `${ environment.API_URL }/muscle`,

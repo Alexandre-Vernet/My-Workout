@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
 
-    Optional<WorkoutEntity> findByUserIdAndMuscleGroupIdAndDate(Long userId, Long muscleGroupId, LocalDate date);
+    Optional<WorkoutEntity> findByUserIdAndMuscleGroupIdAndDate(Long userId, Integer muscleGroupId, LocalDate date);
 
     @Query("""
         select w from WorkoutEntity w
@@ -23,4 +23,6 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
     List<WorkoutEntity> findByUserIdAndDateBetween(@Param("userId") Long userId, @Param("start") LocalDate start, @Param("end") LocalDate end);
 
     Integer countByUserId(Long userId);
+
+    void deleteByIdAndUserId(Long id, Long userId);
 }
