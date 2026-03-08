@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Workout } from '../../interfaces/workout';
+import { DateUtils } from '../shared/utils/date-utils';
 
 @Injectable({
     providedIn: 'root'
@@ -30,8 +31,8 @@ export class WorkoutService {
     findByDate(start: Date, end: Date) {
         return this.http.get<Workout[]>(`${ this.workoutUrl }/find-by-date`, {
             params: {
-                start: start.toISOString(),
-                end: end.toISOString()
+                start: DateUtils.toLocalDate(start),
+                end: DateUtils.toLocalDate(end)
             }
         });
     }
