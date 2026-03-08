@@ -31,6 +31,7 @@ public class SecurityConfig {
                 auth
                     .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                     .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/exercises/find-all-exercises-by-muscle-group-id/{muscleGroupId}").permitAll()
                     .requestMatchers("/error").permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(session -> session
