@@ -18,4 +18,9 @@ public class MuscleGroupController {
     List<MuscleGroup> findAll() {
         return muscleGroupService.findAll();
     }
+
+    @GetMapping("count-exercises")
+    List<MuscleGroupExerciseCount>findAllMuscleGroupAndCountAddedExercises() {
+        return muscleGroupService.findAllMuscleGroupAndCountAddedExercises();
+    }
 }
