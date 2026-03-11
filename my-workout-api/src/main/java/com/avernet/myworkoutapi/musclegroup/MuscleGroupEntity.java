@@ -13,14 +13,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "muscle_group")
-@Data
+@Getter
+@Setter
 public class MuscleGroupEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
