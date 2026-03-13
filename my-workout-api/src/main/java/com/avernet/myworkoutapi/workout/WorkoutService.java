@@ -38,6 +38,11 @@ public class WorkoutService {
         return workoutMapper.toDto(workoutEntity);
     }
 
+    Workout find(Long id) {
+        WorkoutEntity workoutEntity = workoutRepository.test(id);
+        return workoutMapper.toDto(workoutEntity);
+    }
+
     List<Workout> findByDate(String start, String end) {
         UserEntity userEntity = authService.getCurrentUserEntity();
         List<WorkoutEntity> workoutEntityList = workoutRepository.findByUserIdAndDateBetween(userEntity.getId(), LocalDate.parse(start), LocalDate.parse(end));

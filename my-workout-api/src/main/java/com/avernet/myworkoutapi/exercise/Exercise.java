@@ -8,7 +8,7 @@ public record Exercise(
     Long id,
     String name,
     String description,
-    Boolean isSmartWorkout,
+    boolean isSmartWorkout,
     List<ExerciseMuscle> exerciseMuscleList
 ) {
 }

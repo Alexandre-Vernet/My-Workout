@@ -31,17 +31,20 @@ public class ExerciseService {
     ExerciseMapper exerciseMapper;
 
     @Resource
-    private MuscleGroupMapper muscleGroupMapper;
+    MuscleGroupMapper muscleGroupMapper;
+
+    @Resource
+    ExerciseAddedToWorkoutMapper exerciseAddedToWorkoutMapper;
 
     MuscleGroupExercises findAllExercisesByMuscleGroupId(Long muscleGroupId) {
-        List<ExerciseEntity> exerciseEntityList = exerciseRepository.findAllByMuscleGroup(muscleGroupId);
-        List<Exercise> exerciseList = exerciseMapper.toDtoList(exerciseEntityList);
+        List<ExerciseAddedToWorkoutEntity> exerciseAddedToWorkoutEntityList = exerciseRepository.findAllExercisesByMuscleGroupId(muscleGroupId);
+        List<ExerciseAddedToWorkout> exerciseAddedToWorkoutList = exerciseAddedToWorkoutMapper.toDtoList(exerciseAddedToWorkoutEntityList);
 
         MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(muscleGroupId).orElseThrow(() ->
             new ApiException(ErrorCodeEnum.UNKNOWN_MUSCLE, "Ce muscle n'existe pas", HttpStatus.NOT_FOUND));
         MuscleGroup muscleGroup = muscleGroupMapper.toDto(muscleGroupEntity);
 
-        return new MuscleGroupExercises(muscleGroup, exerciseList);
+        return new MuscleGroupExercises(muscleGroup, exerciseAddedToWorkoutList);
     }
 
     List<Exercise> findCardioExercises() {

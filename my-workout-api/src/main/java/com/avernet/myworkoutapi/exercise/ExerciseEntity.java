@@ -34,7 +34,7 @@ public class ExerciseEntity {
     String description;
 
     @Column(name = "is_smart_workout")
-    Boolean isSmartWorkout;
+    boolean isSmartWorkout;
 
     @OneToMany(mappedBy = "exercise", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<ExerciseMuscleEntity> exerciseMuscleList = new ArrayList<>();
