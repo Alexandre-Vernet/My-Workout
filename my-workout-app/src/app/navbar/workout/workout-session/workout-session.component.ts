@@ -360,7 +360,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                 outlined: true
             },
             accept: () => {
-                this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]);
+                this.router.navigate(['/', 'library', 'list-exercises-muscle-group', muscleGroupId]);
             },
             reject: () => this.redirectWorkoutHome()
         });

@@ -19,43 +19,44 @@
             </div>
         }
     } @else {
-        @for (muscleGroup of muscleGroups; track muscleGroup.id) {
+        @for (muscleGroupExerciseCount of muscleGroupExerciseCount; track muscleGroupExerciseCount.muscleGroup.id) {
+            @let muscleGroup = muscleGroupExerciseCount?.muscleGroup;
             <div class="muscle-groups">
-                @if (muscleGroup?.id !== 8) {
-                    <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroup?.id]">
+                @if (muscleGroup.name !== MuscleGroupEnum.CARDIO.toString()) {
+                    <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroup.id]">
                         <div class="muscle-group-card" [ngClass]="{
-                        'selected-light': !isDarkMode && muscleGroup?.isRecommended,
-                        'selected-dark': isDarkMode && muscleGroup?.isRecommended,
+                        'selected-light': !isDarkMode && muscleGroupExerciseCount?.recommended,
+                        'selected-dark': isDarkMode && muscleGroupExerciseCount?.recommended,
                         'shadow-dark': isDarkMode,
                         'shadow-light': !isDarkMode
                     }">
                             <div class="flex-1 flex align-items-center justify-content-between">
-                                <h2 class="text-xl font-bold text-primary">{{ muscleGroup?.name }}</h2>
-                                @if (muscleGroup.isRecommended) {
+                                <h2 class="text-xl font-bold text-primary">{{ muscleGroup.name | firstLetterUppercase }}</h2>
+                                @if (muscleGroupExerciseCount.recommended) {
                                     <p-tag severity="info">Recommandé</p-tag>
                                 }
                             </div>
                             <span
-                                class="text-lg">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
+                                class="text-lg">{{ muscleGroupExerciseCount.exerciseCount }} {{ muscleGroupExerciseCount.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
                         </div>
                     </a>
                 } @else {
                     <div class="muscle-group-card"
                          (click)="openModalExerciseCardio()"
                          [ngClass]="{
-                    'selected-light': !isDarkMode && muscleGroup?.isRecommended,
-                    'selected-dark': isDarkMode && muscleGroup?.isRecommended,
+                    'selected-light': !isDarkMode && muscleGroupExerciseCount?.recommended,
+                    'selected-dark': isDarkMode && muscleGroupExerciseCount?.recommended,
                     'shadow-dark': isDarkMode,
                     'shadow-light': !isDarkMode
                 }">
                         <div class="flex-1 flex align-items-center justify-content-between">
-                            <h2 class="text-xl font-bold text-primary">{{ muscleGroup?.name }}</h2>
-                            @if (muscleGroup.isRecommended) {
+                            <h2 class="text-xl font-bold text-primary">{{ muscleGroup.name | firstLetterUppercase }}</h2>
+                            @if (muscleGroupExerciseCount.recommended) {
                                 <p-tag severity="info">Recommandé</p-tag>
                             }
                         </div>
                         <span
-                            class="text-lg">{{ muscleGroup.exerciseCount }} {{ muscleGroup.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
+                            class="text-lg">{{ muscleGroupExerciseCount.exerciseCount }} {{ muscleGroupExerciseCount.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
                     </div>
                 }
             </div>

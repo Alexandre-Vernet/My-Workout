@@ -1,5 +1,5 @@
 <div class="text-center mt-4 mb-4 text-xl font-semibold">
-    <h3>{{ muscleGroup?.name | uppercase }}</h3>
+    <h3>{{ filterMuscleGroupExercises?.muscleGroup?.name | uppercase }}</h3>
 </div>
 
 @if (isLoading) {
@@ -42,7 +42,7 @@
     </div>
 
 
-    <p-dataview #dv [value]="filteredExercises">
+    <p-dataview #dv [value]="filterMuscleGroupExercises.exerciseAddedToWorkoutList">
         <ng-template #list let-items>
             <div cdkDropList (cdkDropListDropped)="drop($event)" class="flex flex-column">
                 @for (item of items; track item.id) {
@@ -57,12 +57,12 @@
 
                                 <div class="flex-1">
                                     <div class="text-sm text-secondary">
-                                        @for (exerciseMuscle of item.exerciseMuscleList; track exerciseMuscle.id; let last = $last) {
+                                        @for (exerciseMuscle of item.exercise.exerciseMuscleList; track exerciseMuscle.id; let last = $last) {
                                             <span>
                                                 <a class="text-sm text-secondary"
-                                                   [routerLink]=" muscleGroup?.id !== 8 ? ['/', 'muscle-structure', removeAccents(muscleGroup?.name)] :
-                                                   ['/', 'library', 'muscle-group', muscleGroup.id]"
-                                                   [fragment]="replaceSpaces(exerciseMuscle?.name)">
+                                                   [routerLink]=" muscleGroupExercises.muscleGroup?.id !== 8 ? ['/', 'muscle-structure', removeAccents(muscleGroupExercises.muscleGroup?.name)] :
+                                                   ['/', 'library', 'list-exercises-muscle-group', muscleGroupExercises.muscleGroup.id]"
+                                                   [fragment]="replaceSpaces(exerciseMuscle.exerciseMuscle?.name)">
                                                     {{ exerciseMuscle.muscle.name }}
                                                 </a>
                                                 @if (!last) {
@@ -73,7 +73,7 @@
                                     </div>
                                     <div [routerLink]="['/', 'library', 'exercises', item?.id]"
                                          class="text-xl text-surface-900 dark:text-surface-0 mt-2">
-                                        {{ item?.name }}
+                                        {{ item?.exercise.name }}
                                     </div>
                                 </div>
 

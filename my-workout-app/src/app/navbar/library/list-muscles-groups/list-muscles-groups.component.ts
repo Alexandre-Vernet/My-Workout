@@ -7,7 +7,7 @@ import { AlertService } from '../../../services/alert.service';
 import { TitleCasePipe } from '@angular/common';
 
 @Component({
-    selector: 'app-list-muscle-group',
+    selector: 'app-list-list-exercises-muscle-group',
     imports: [RouterLink, Skeleton, TitleCasePipe],
     templateUrl: './list-muscles-groups.component.html',
     styleUrl: './list-muscles-groups.component.scss',

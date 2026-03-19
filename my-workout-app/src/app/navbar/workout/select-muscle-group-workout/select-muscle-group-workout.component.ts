@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { Router, RouterLink } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
-import { forkJoin } from 'rxjs';
 import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
 import { ThemeService } from '../../../shared/theme/theme.service';
@@ -15,10 +13,13 @@ import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { AlertService } from '../../../services/alert.service';
 import { NgClass } from '@angular/common';
+import { MuscleGroupExerciseCount } from '../../../../interfaces/MuscleGroupExerciseCount';
+import { FirstLetterUppercasePipe } from '../../../shared/pipes/first-letter-uppercase.pipe';
+import { MuscleGroupEnum } from '../../../../interfaces/MuscleGroupEnum';
 
 @Component({
     selector: 'select-muscle-group-workout',
-    imports: [RouterLink, Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog, NgClass],
+    imports: [RouterLink, Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog, NgClass, FirstLetterUppercasePipe],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
     standalone: true,
@@ -27,8 +28,9 @@ import { NgClass } from '@angular/common';
 export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     protected readonly MenuUrls = MenuUrls;
+    protected readonly MuscleGroupEnum = MuscleGroupEnum;
 
-    muscleGroups: MuscleGroup[] = [];
+    muscleGroupExerciseCount: MuscleGroupExerciseCount[] = [];
 
     isLoading = true;
 
@@ -46,21 +48,12 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
     }
 
     ngOnInit() {
-        forkJoin([
-            this.muscleGroupService.findAllMuscleGroupAndCountAddedExercises(),
-            this.muscleGroupService.suggestMuscleGroup()
-        ])
+        this.muscleGroupService.findAllMuscleGroupAndRecommendedMuscleGroup()
             .subscribe({
-                next: ([muscleGroups, recommendedWorkout]) => {
+                next: (muscleGroupExerciseCount) => {
                     this.isLoading = false;
-                    this.muscleGroups = muscleGroups;
+                    this.muscleGroupExerciseCount = muscleGroupExerciseCount;
                     this.alertService.alert$.next(null);
-
-                    if (recommendedWorkout) {
-                        const muscleGroupRecommended = this.muscleGroups.find(m => m.id === recommendedWorkout.id);
-                        muscleGroupRecommended.isRecommended = true;
-                        this.muscleGroups.sort(m => m.isRecommended ? -1 : 1);
-                    }
                 },
                 error: (err) => {
                     this.alertService.alert$.next({
@@ -74,9 +67,9 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     openModalExerciseCardio() {
         // If user has no exercise cardio, show dialog to add these exercises
-        const cardioExercise = this.muscleGroups.find(m => m.id === 8);
+        const cardioExercise = this.muscleGroupExerciseCount.find(m => m.muscleGroup.id === 8);
         if (cardioExercise.exerciseCount <= 0) {
-            this.showDialogNoExercisesAdded(cardioExercise.id);
+            this.showDialogNoExercisesAdded(cardioExercise.muscleGroup.id);
             return;
         }
 
@@ -106,7 +99,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
                 severity: 'secondary',
                 outlined: true
             },
-            accept: () => this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]),
+            accept: () => this.router.navigate(['/', 'library', 'list-exercises-muscle-group', muscleGroupId]),
             reject: () => this.router.navigate(['/', 'workout'])
         });
     }

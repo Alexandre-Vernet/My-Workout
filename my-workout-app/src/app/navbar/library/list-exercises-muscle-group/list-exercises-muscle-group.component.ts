@@ -16,6 +16,8 @@ import { Tag } from 'primeng/tag';
 import { Muscle } from '../../../../interfaces/muscle';
 import { removeAccents, replaceSpaces } from '../../../shared/utils/remove-accents';
 import { NgClass, UpperCasePipe } from '@angular/common';
+import { MuscleGroupExercises } from '../../../../interfaces/MuscleGroupExercises';
+import { ExerciseAddedToWorkout } from '../../../../interfaces/ExerciseAddedToWorkout';
 
 @Component({
     selector: 'app-list-exercises',
@@ -25,9 +27,8 @@ import { NgClass, UpperCasePipe } from '@angular/common';
 })
 export class ListExercisesMuscleGroupComponent implements OnInit {
 
-    muscleGroup: MuscleGroup;
-    exercises: Exercise[];
-    filteredExercises: Exercise[];
+    muscleGroupExercises: MuscleGroupExercises;
+    filterMuscleGroupExercises: MuscleGroupExercises;
 
     muscles: Muscle[] = [];
     activeFilter: number = null;
@@ -65,21 +66,21 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     }
 
     drop(event: CdkDragDrop<any[]>) {
-        const dragged = this.exercises[event.previousIndex];
-        const target = this.exercises[event.currentIndex];
+        const dragged = this.muscleGroupExercises.exerciseAddedToWorkoutList[event.previousIndex];
+        const target = this.muscleGroupExercises.exerciseAddedToWorkoutList[event.currentIndex];
 
         // Block movement between added and not added
         if (dragged.addedToWorkout !== target.addedToWorkout) {
             return;
         }
 
-        moveItemInArray(this.exercises, event.previousIndex, event.currentIndex);
+        moveItemInArray(this.muscleGroupExercises.exerciseAddedToWorkoutList, event.previousIndex, event.currentIndex);
 
         const userExercises: UserExercise[] = [];
 
-        this.exercises.forEach((e, index) => {
+        this.muscleGroupExercises.exerciseAddedToWorkoutList.forEach((e, index) => {
             const userExercise: UserExercise = {
-                id: e.userExerciseId,
+                // id: e.userExerciseId,
                 exercise: e,
                 order: index
             };
@@ -103,12 +104,12 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     filterByMuscle(muscle: Muscle) {
         // Reset filter
         if (muscle.id === this.activeFilter) {
-            this.filteredExercises = this.exercises;
+            this.filterMuscleGroupExercises = this.muscleGroupExercises;
             this.activeFilter = null;
             return;
         }
 
-        this.filteredExercises = this.exercises.filter(e => e.muscleList.some(m => m.id === muscle.id));
+        this.filterMuscleGroupExercises.exerciseAddedToWorkoutList = this.muscleGroupExercises.exerciseAddedToWorkoutList.filter(e => e.exercise.muscleList.some(m => m.id === muscle.id));
         this.activeFilter = muscle.id;
     }
 
@@ -120,11 +121,12 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
                 }) => this.exerciseService.findAllExercisesByMuscleGroupId(Number(params.muscleGroupId)))
             )
             .subscribe({
-                next: ({ exerciseList, muscleGroup }) => {
+                next: (muscleGroupExercises) => {
+                    console.log(muscleGroupExercises);
                     this.isLoading = false;
-                    this.exercises = exerciseList.sort(this.sortExercises);
-                    this.filteredExercises = exerciseList.sort(this.sortExercises);
-                    this.muscleGroup = muscleGroup;
+                    this.muscleGroupExercises.exerciseAddedToWorkoutList = muscleGroupExercises.exerciseAddedToWorkoutList.sort(this.sortExercises);
+                    this.filterMuscleGroupExercises.exerciseAddedToWorkoutList = muscleGroupExercises.exerciseAddedToWorkoutList.sort(this.sortExercises);
+                    this.filterMuscleGroupExercises.muscleGroup = muscleGroupExercises.muscleGroup;
                     this.getMuscles();
                     this.alertService.alert$.next(null);
                 },
@@ -138,7 +140,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     }
 
 
-    private sortExercises(a: Exercise, b: Exercise) {
+    private sortExercises(a: ExerciseAddedToWorkout, b: ExerciseAddedToWorkout) {
         // 1. Order by addedToWorkout
         if (a.addedToWorkout !== b.addedToWorkout) {
             return a.addedToWorkout ? -1 : 1;
@@ -150,12 +152,12 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
         }
 
         // 3. Order by id
-        return a.id - b.id;
+        return a.exercise.id - b.exercise.id;
     }
 
     private getMuscles() {
-        this.exercises.forEach(exercise => {
-            exercise.exerciseMuscleList.forEach(exerciseMuscle => {
+        this.muscleGroupExercises.exerciseAddedToWorkoutList.forEach(exercise => {
+            exercise.exercise.exerciseMuscleList.forEach(exerciseMuscle => {
                 if (!this.muscles.some(m => m.id === exerciseMuscle.muscle.id)) {
                     this.muscles.push(exerciseMuscle.muscle);
                 }

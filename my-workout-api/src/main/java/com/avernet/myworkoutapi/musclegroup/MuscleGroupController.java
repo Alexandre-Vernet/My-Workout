@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController()
-@RequestMapping("/muscle-group")
+@RequestMapping("muscle-group")
 public class MuscleGroupController {
 
     @Resource
@@ -19,8 +19,8 @@ public class MuscleGroupController {
         return muscleGroupService.findAll();
     }
 
-    @GetMapping("count-exercises")
-    List<MuscleGroupExerciseCount>findAllMuscleGroupAndCountAddedExercises() {
-        return muscleGroupService.findAllMuscleGroupAndCountAddedExercises();
+    @GetMapping("find-muscle-group-recommended")
+    List<MuscleGroupExerciseCount>findAllMuscleGroupAndRecommendedMuscleGroup() {
+        return muscleGroupService.findAllMuscleGroupAndRecommendedMuscleGroup();
     }
 }

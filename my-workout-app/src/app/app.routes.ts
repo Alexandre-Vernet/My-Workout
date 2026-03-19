@@ -42,11 +42,11 @@ export const appRoutes: Route[] = [
         path: MenuUrls.library,
         children: [
             {
-                path: 'list-muscles-group',
+                path: 'list-muscles-groups',
                 component: ListMusclesGroupsComponent
             },
             {
-                path: 'muscle-group/:muscleGroupId',
+                path: 'list-exercises-muscle-group/:muscleGroupId',
                 component: ListExercisesMuscleGroupComponent
             },
             {
@@ -55,7 +55,7 @@ export const appRoutes: Route[] = [
             },
             {
                 path: '**',
-                redirectTo: 'list-muscles-group'
+                redirectTo: 'list-muscles-groups'
             }
         ]
     },

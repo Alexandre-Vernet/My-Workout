@@ -9,7 +9,7 @@
         }
     } @else {
         @for (muscleGroup of muscleGroups; track muscleGroup.id) {
-            <div [routerLink]="['/', 'library', 'muscle-group', muscleGroup?.id]"
+            <div [routerLink]="['/', 'library', 'list-exercises-muscle-group', muscleGroup?.id]"
                  class="mt-2 flex align-items-center justify-content-center border-round border-1 surface-border w-full p-4">
             <span class="text-xl font-bold text-primary hover:underline">
                 {{ muscleGroup?.name | titlecase }}
