@@ -3,6 +3,7 @@ package com.avernet.myworkoutapi.musclegroup;
 import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,7 +28,7 @@ public class MuscleGroupService {
 
 
     List<MuscleGroup> findAll() {
-        List<MuscleGroupEntity> muscleGroupEntityList = muscleGroupRepository.findAll();
+        List<MuscleGroupEntity> muscleGroupEntityList = muscleGroupRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
         return muscleGroupMapper.toDtoList(muscleGroupEntityList);
     }
 
