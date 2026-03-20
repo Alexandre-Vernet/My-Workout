@@ -20,11 +20,7 @@ export class HistoryService {
     }
 
     findLastHistoryWeightByExerciseId(exerciseId: number) {
-        return this.http.get<History>(`${ this.historyUrl }/last`, {
-            params: {
-                exerciseId
-            }
-        });
+        return this.http.get<History>(`${ this.historyUrl }/last/${ exerciseId }`);
     }
 
     findTodayExercicesHistory(muscleGroupId: number, exerciseId: number) {

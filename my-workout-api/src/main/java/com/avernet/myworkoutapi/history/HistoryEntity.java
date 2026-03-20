@@ -24,10 +24,10 @@ public class HistoryEntity {
     Long id;
 
     @Column()
-    float weight;
+    Float weight;
 
     @Column()
-    short reps;
+    Short reps;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workout_id")
