@@ -4,6 +4,8 @@ import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
 import com.avernet.myworkoutapi.user.UserEntity;
+import com.avernet.myworkoutapi.workout.WorkoutEntity;
+import com.avernet.myworkoutapi.workout.WorkoutRepository;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,9 @@ public class HistoryService {
 
     @Resource
     HistoryRepository historyRepository;
+
+    @Resource
+    WorkoutRepository workoutRepository;
 
     @Resource
     AuthService authService;
@@ -62,5 +67,18 @@ public class HistoryService {
         }
 
         return historyMapper.toDto(historyEntity);
+    }
+
+    @Transactional
+    void delete(Long historyId) {
+        HistoryEntity historyEntity = historyRepository.findById(historyId)
+            .orElseThrow(() -> new ApiException(ErrorCodeEnum.HISTORY_NOT_FOUND, "Cet historique n'existe pas", HttpStatus.BAD_REQUEST));
+
+        WorkoutEntity workoutEntity = historyEntity.getWorkout();
+        workoutEntity.getHistoryList().remove(historyEntity);
+
+        if (workoutEntity.getHistoryList().isEmpty()) {
+            workoutRepository.delete(workoutEntity);
+        }
     }
 }

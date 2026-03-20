@@ -1,6 +1,7 @@
 package com.avernet.myworkoutapi.history;
 
 import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,5 +37,10 @@ public class HistoryController {
     @PatchMapping("{historyId}")
     History update(@PathVariable Long historyId, @RequestBody History history) {
         return historyService.update(historyId, history);
+    }
+
+    @DeleteMapping("{historyId}")
+    void delete(@PathVariable Long historyId) {
+        historyService.delete(historyId);
     }
 }
