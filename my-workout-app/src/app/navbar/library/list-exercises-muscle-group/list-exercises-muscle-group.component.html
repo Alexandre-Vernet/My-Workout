@@ -1,8 +1,8 @@
 <div class="text-center mt-4 mb-4 text-xl font-semibold">
-    <h3>{{ filterMuscleGroupExercises?.muscleGroup?.name | uppercase }}</h3>
+    <h3>{{ muscleGroupExercises?.muscleGroup?.name | uppercase }}</h3>
 </div>
 
-@if (isLoading) {
+@if (!muscleGroupExercises) {
     @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
         <div class="col-span-12">
             <div class="flex flex-col align-items-center p-6 gap-4">
@@ -42,15 +42,15 @@
     </div>
 
 
-    <p-dataview #dv [value]="filterMuscleGroupExercises.exerciseAddedToWorkoutList">
+    <p-dataview #dv [value]="filterMuscleGroupExercises?.exerciseAddedToWorkoutList">
         <ng-template #list let-items>
             <div cdkDropList (cdkDropListDropped)="drop($event)" class="flex flex-column">
-                @for (item of items; track item.id) {
+                @for (item of items; track item.exercise.id) {
                     <div cdkDrag [cdkDragDisabled]="!item.addedToWorkout"
                          class="col-span-12">
                         <div class="flex flex-col align-items-center p-6 gap-4">
                             <div class="md:w-40">
-                                <p-badge [value]="item?.id"/>
+                                <p-badge [value]="item.exercise.id"/>
                             </div>
 
                             <div class="flex-1 flex flex-row justify-content-between align-items-center gap-6">
@@ -91,7 +91,6 @@
                             </div>
                         </div>
                     </div>
-
                 }
             </div>
         </ng-template>

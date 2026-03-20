@@ -40,12 +40,15 @@ public class ExerciseService {
     ExerciseOrderMapper exerciseOrderMapper;
 
     MuscleGroupExercises findAllExercisesByMuscleGroupId(Long muscleGroupId) {
-        List<ExerciseAddedToWorkoutEntity> exerciseAddedToWorkoutEntityList = exerciseRepository.findAllExercisesByMuscleGroupId(muscleGroupId);
-        List<ExerciseAddedToWorkout> exerciseAddedToWorkoutList = exerciseAddedToWorkoutMapper.toDtoList(exerciseAddedToWorkoutEntityList);
-
         MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(muscleGroupId).orElseThrow(() ->
             new ApiException(ErrorCodeEnum.UNKNOWN_MUSCLE, "Ce muscle n'existe pas", HttpStatus.NOT_FOUND));
+
+        UserEntity userEntity = authService.getCurrentUserEntity();
+
         MuscleGroup muscleGroup = muscleGroupMapper.toDto(muscleGroupEntity);
+
+        List<ExerciseAddedToWorkoutEntity> exerciseAddedToWorkoutEntityList = exerciseRepository.findAllExercisesByMuscleGroupId(userEntity.getId(), muscleGroupId);
+        List<ExerciseAddedToWorkout> exerciseAddedToWorkoutList = exerciseAddedToWorkoutMapper.toDtoList(exerciseAddedToWorkoutEntityList);
 
         return new MuscleGroupExercises(muscleGroup, exerciseAddedToWorkoutList);
     }

@@ -6,7 +6,6 @@ import { switchMap } from 'rxjs';
 import { DataView } from 'primeng/dataview';
 import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
-import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { Badge } from 'primeng/badge';
 import { Skeleton } from 'primeng/skeleton';
 import { AlertService } from '../../../services/alert.service';
@@ -17,7 +16,6 @@ import { Muscle } from '../../../../interfaces/muscle';
 import { removeAccents, replaceSpaces } from '../../../shared/utils/remove-accents';
 import { NgClass, UpperCasePipe } from '@angular/common';
 import { MuscleGroupExercises } from '../../../../interfaces/MuscleGroupExercises';
-import { ExerciseAddedToWorkout } from '../../../../interfaces/ExerciseAddedToWorkout';
 
 @Component({
     selector: 'app-list-exercises',
@@ -33,9 +31,8 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     muscles: Muscle[] = [];
     activeFilter: number = null;
 
-    isLoading = true;
-
     protected readonly replaceSpaces = replaceSpaces;
+    protected readonly removeAccents = removeAccents;
 
     constructor(
         private readonly route: ActivatedRoute,
@@ -109,7 +106,8 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             return;
         }
 
-        this.filterMuscleGroupExercises.exerciseAddedToWorkoutList = this.muscleGroupExercises.exerciseAddedToWorkoutList.filter(e => e.exercise.muscleList.some(m => m.id === muscle.id));
+        this.filterMuscleGroupExercises.exerciseAddedToWorkoutList = this.muscleGroupExercises.exerciseAddedToWorkoutList
+            .filter(e => e.exercise.exerciseMuscleList.some(m => m.muscle.id === muscle.id));
         this.activeFilter = muscle.id;
     }
 
@@ -122,11 +120,8 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             )
             .subscribe({
                 next: (muscleGroupExercises) => {
-                    console.log(muscleGroupExercises);
-                    this.isLoading = false;
-                    this.muscleGroupExercises.exerciseAddedToWorkoutList = muscleGroupExercises.exerciseAddedToWorkoutList.sort(this.sortExercises);
-                    this.filterMuscleGroupExercises.exerciseAddedToWorkoutList = muscleGroupExercises.exerciseAddedToWorkoutList.sort(this.sortExercises);
-                    this.filterMuscleGroupExercises.muscleGroup = muscleGroupExercises.muscleGroup;
+                    this.muscleGroupExercises = muscleGroupExercises;
+                    this.filterMuscleGroupExercises = muscleGroupExercises;
                     this.getMuscles();
                     this.alertService.alert$.next(null);
                 },
@@ -139,32 +134,14 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             });
     }
 
-
-    private sortExercises(a: ExerciseAddedToWorkout, b: ExerciseAddedToWorkout) {
-        // 1. Order by addedToWorkout
-        if (a.addedToWorkout !== b.addedToWorkout) {
-            return a.addedToWorkout ? -1 : 1;
-        }
-
-        // 2. Order by "order" field
-        if (a.order !== b.order) {
-            return a.order - b.order;
-        }
-
-        // 3. Order by id
-        return a.exercise.id - b.exercise.id;
-    }
-
     private getMuscles() {
-        this.muscleGroupExercises.exerciseAddedToWorkoutList.forEach(exercise => {
-            exercise.exercise.exerciseMuscleList.forEach(exerciseMuscle => {
+        this.muscleGroupExercises.exerciseAddedToWorkoutList.forEach(exerciseAddedToWorkout => {
+            exerciseAddedToWorkout.exercise.exerciseMuscleList.forEach(exerciseMuscle => {
                 if (!this.muscles.some(m => m.id === exerciseMuscle.muscle.id)) {
                     this.muscles.push(exerciseMuscle.muscle);
                 }
             });
         });
     }
-
-    protected readonly removeAccents = removeAccents;
 }
 

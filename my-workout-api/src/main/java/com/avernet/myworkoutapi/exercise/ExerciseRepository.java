@@ -12,19 +12,20 @@ import java.util.List;
 public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> {
 
     @Query("""
-             SELECT DISTINCT new com.avernet.myworkoutapi.exercise.ExerciseAddedToWorkoutEntity(
-                    exercise,
-                    CASE WHEN ue.id IS NOT NULL THEN true ELSE false END,
-                    ue.order
-                )
-                FROM ExerciseEntity exercise
-                LEFT JOIN exercise.exerciseMuscleList exerciseMuscle
-                LEFT JOIN exerciseMuscle.muscle muscle
-                LEFT JOIN muscle.muscleGroup muscleGroup
-                LEFT JOIN exercise.userExerciseList ue
-                WHERE muscleGroup.id = :muscleGroup
-        """)
-    List<ExerciseAddedToWorkoutEntity> findAllExercisesByMuscleGroupId(@Param("muscleGroup") Long muscleGroup);
+        SELECT DISTINCT new com.avernet.myworkoutapi.exercise.ExerciseAddedToWorkoutEntity(
+            e,
+            CASE WHEN ue.id IS NOT NULL THEN true ELSE false END,
+            ue.order
+        )
+        FROM ExerciseEntity e
+        LEFT JOIN e.exerciseMuscleList em
+        LEFT JOIN em.muscle m
+        LEFT JOIN m.muscleGroup mg
+        LEFT JOIN e.userExerciseList ue ON ue.user.id = :userId
+        WHERE mg.id = :muscleGroup
+        ORDER BY ue.order ASC, e.id ASC
+""")
+    List<ExerciseAddedToWorkoutEntity> findAllExercisesByMuscleGroupId(@Param("userId") Long userId, @Param("muscleGroup") Long muscleGroup);
 
     @Query("""
         SELECT exercise
