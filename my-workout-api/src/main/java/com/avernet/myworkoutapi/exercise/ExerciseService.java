@@ -36,6 +36,9 @@ public class ExerciseService {
     @Resource
     ExerciseAddedToWorkoutMapper exerciseAddedToWorkoutMapper;
 
+    @Resource
+    ExerciseOrderMapper exerciseOrderMapper;
+
     MuscleGroupExercises findAllExercisesByMuscleGroupId(Long muscleGroupId) {
         List<ExerciseAddedToWorkoutEntity> exerciseAddedToWorkoutEntityList = exerciseRepository.findAllExercisesByMuscleGroupId(muscleGroupId);
         List<ExerciseAddedToWorkout> exerciseAddedToWorkoutList = exerciseAddedToWorkoutMapper.toDtoList(exerciseAddedToWorkoutEntityList);
@@ -45,6 +48,12 @@ public class ExerciseService {
         MuscleGroup muscleGroup = muscleGroupMapper.toDto(muscleGroupEntity);
 
         return new MuscleGroupExercises(muscleGroup, exerciseAddedToWorkoutList);
+    }
+
+    List<ExerciseOrder>findAddedExercisesByMuscleGroupId(Integer muscleGroupId) {
+        UserEntity userEntity = authService.getCurrentUserEntity();
+        List<ExerciseOrderEntity> exerciseOrderEntityList = exerciseRepository.findAddedExercisesByMuscleGroupId(userEntity.getId(), muscleGroupId);
+        return exerciseOrderMapper.toDtoList(exerciseOrderEntityList);
     }
 
     List<Exercise> findCardioExercises() {
