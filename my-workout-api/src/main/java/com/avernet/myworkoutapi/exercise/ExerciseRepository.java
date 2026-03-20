@@ -39,7 +39,7 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> 
     List<ExerciseEntity> findCardioExercises(@Param("userId") Long userId, @Param("cardio") MuscleGroupType cardio);
 
     @Query("""
-        SELECT new com.avernet.myworkoutapi.exercise.ExerciseOrderEntity(e, ue.order)
+        SELECT DISTINCT new com.avernet.myworkoutapi.exercise.ExerciseOrderEntity(e, ue.order)
             FROM ExerciseEntity e
             LEFT JOIN e.userExerciseList ue
             LEFT JOIN ue.user u

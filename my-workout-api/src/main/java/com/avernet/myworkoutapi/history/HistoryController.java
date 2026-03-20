@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("history")
 public class HistoryController {
@@ -16,5 +18,10 @@ public class HistoryController {
     @GetMapping("last/{exerciseId}")
     History findLastHistoryWeightByExerciseId(@PathVariable Long exerciseId) {
         return historyService.findLastHistoryWeightByExerciseId(exerciseId);
+    }
+
+    @GetMapping("today/{muscleGroupId}/{exerciseId}")
+    List<History> findTodayExercices(@PathVariable Long muscleGroupId, @PathVariable Long exerciseId) {
+        return historyService.findTodayExercices(muscleGroupId, exerciseId);
     }
 }

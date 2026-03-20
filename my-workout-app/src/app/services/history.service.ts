@@ -24,12 +24,7 @@ export class HistoryService {
     }
 
     findTodayExercicesHistory(muscleGroupId: number, exerciseId: number) {
-        return this.http.get<History[]>(`${ this.historyUrl }/today`, {
-            params: {
-                muscleGroupId,
-                exerciseId
-            }
-        });
+        return this.http.get<History[]>(`${ this.historyUrl }/today/${ muscleGroupId }/${ exerciseId }`);
     }
 
     graphs(exerciseId: number) {
