@@ -2,12 +2,15 @@ package com.avernet.myworkoutapi.history;
 
 import com.avernet.myworkoutapi.workout.Workout;
 import com.avernet.myworkoutapi.exercise.Exercise;
+import lombok.Getter;
+import lombok.Setter;
 
-public record History(
-    Long id,
-    float weight,
-    short reps,
-    Workout workout,
-    Exercise exercise
-) {
+@Getter
+@Setter
+public class History {
+    Long id;
+    float weight;
+    short reps;
+    Workout workout;
+    Exercise exercise;
 }

@@ -33,4 +33,10 @@ public class HistoryService {
         List<HistoryEntity> historyEntity = historyRepository.findTodayExercices(userEntity.getId(), muscleGroupId, exerciseId, now);
         return historyMapper.toDtoList(historyEntity);
     }
+
+    History create(History history) {
+        HistoryEntity historyEntity = historyMapper.toEntity(history);
+        historyEntity = historyRepository.save(historyEntity);
+        return historyMapper.toDto(historyEntity);
+    }
 }

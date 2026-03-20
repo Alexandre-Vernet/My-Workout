@@ -24,6 +24,7 @@ import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../shared/utils/convert-weight-elastic';
 import { PreventFocusOnButtonClickDirective } from '../../../shared/directives/prevent-focus-on-button-click.directive';
 import { NgClass, UpperCasePipe } from '@angular/common';
+import { ExerciseOrder } from '../../../../interfaces/ExerciseOrder';
 
 @Component({
     selector: 'app-workout-session',
@@ -37,7 +38,7 @@ import { NgClass, UpperCasePipe } from '@angular/common';
 export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     workout: Workout;
-    exercises: Exercise[] = [];
+    exerciseOrders: ExerciseOrder[] = [];
     exercisesMade = new BehaviorSubject<History[]>([]);
     currentExercise: Exercise;
     muscleGroupId: number;
@@ -204,10 +205,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             .subscribe({
                 next: (exercises) => {
                     this.isLoading = false;
-                    this.exercises = exercises;
+                    this.exerciseOrders = exercises;
                     this.currentExercise = exercises[this.activeStep - 1].exercise;
                     if (!this.currentExercise) {
-                        this.currentExercise = this.exercises[0];
+                        this.currentExercise = this.exerciseOrders[0];
                         this.switchPanel(this.currentExercise);
                     }
                     this.fillInputWeightRepsLastSavedValue();
@@ -230,12 +231,12 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
 
     private nextStep() {
-        if (this.activeStep < this.exercises.length) {
+        if (this.activeStep < this.exerciseOrders.length) {
             const oldStep = this.activeStep;
             this.activeStep++;
             this.animationDirection = this.activeStep > oldStep ? 'right' : 'left';
 
-            const nextExercise = this.exercises[this.activeStep - 1];
+            const nextExercise = this.exerciseOrders[this.activeStep - 1];
             this.switchPanel(nextExercise, this.activeStep);
             this.animationDirection = 'right';
         }
@@ -247,7 +248,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             this.activeStep--;
             this.animationDirection = this.activeStep < oldStep ? 'left' : 'right';
 
-            const previousExercise = this.exercises[this.activeStep - 1];
+            const previousExercise = this.exerciseOrders[this.activeStep - 1];
             this.switchPanel(previousExercise, this.activeStep);
             this.animationDirection = 'left';
         }

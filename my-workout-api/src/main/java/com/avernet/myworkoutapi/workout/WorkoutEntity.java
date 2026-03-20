@@ -34,7 +34,7 @@ public class WorkoutEntity {
     LocalDate date;
 
     @Column()
-    int duration;
+    Integer duration;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
