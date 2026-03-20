@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 public class History {
     Long id;
-    float weight;
-    short reps;
+    Float weight;
+    Short reps;
     Workout workout;
     Exercise exercise;
 }
