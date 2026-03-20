@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserExerciseRepository extends JpaRepository<UserExerciseEntity, Long> {
+
+    UserExerciseEntity findByUserIdAndExerciseId(Long userId, Long exerciseId);
 }

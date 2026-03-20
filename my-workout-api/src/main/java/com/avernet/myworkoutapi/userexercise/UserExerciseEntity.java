@@ -23,7 +23,7 @@ public class UserExerciseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column()
+    @Column(name = "`order`")
     Integer order;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -2,11 +2,14 @@ package com.avernet.myworkoutapi.userexercise;
 
 import com.avernet.myworkoutapi.exercise.Exercise;
 import com.avernet.myworkoutapi.user.User;
+import lombok.Getter;
+import lombok.Setter;
 
-public record UserExercise(
-    Long id,
-    Integer order,
-    User user,
-    Exercise exercise
-) {
+@Getter
+@Setter
+public class UserExercise {
+    Long id;
+    Integer order;
+    User user;
+    Exercise exercise;
 }
