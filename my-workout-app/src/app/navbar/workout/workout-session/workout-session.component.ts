@@ -237,7 +237,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             this.animationDirection = this.activeStep > oldStep ? 'right' : 'left';
 
             const nextExercise = this.exerciseOrders[this.activeStep - 1];
-            this.switchPanel(nextExercise, this.activeStep);
+            this.switchPanel(nextExercise.exercise, this.activeStep);
             this.animationDirection = 'right';
         }
     }
@@ -249,7 +249,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             this.animationDirection = this.activeStep < oldStep ? 'left' : 'right';
 
             const previousExercise = this.exerciseOrders[this.activeStep - 1];
-            this.switchPanel(previousExercise, this.activeStep);
+            this.switchPanel(previousExercise.exercise, this.activeStep);
             this.animationDirection = 'left';
         }
     }
