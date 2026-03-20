@@ -53,7 +53,7 @@ public class ExerciseService {
         return new MuscleGroupExercises(muscleGroup, exerciseAddedToWorkoutList);
     }
 
-    List<ExerciseOrder>findAddedExercisesByMuscleGroupId(Integer muscleGroupId) {
+    List<ExerciseOrder> findAddedExercisesByMuscleGroupId(Integer muscleGroupId) {
         UserEntity userEntity = authService.getCurrentUserEntity();
         List<ExerciseOrderEntity> exerciseOrderEntityList = exerciseRepository.findAddedExercisesByMuscleGroupId(userEntity.getId(), muscleGroupId);
         return exerciseOrderMapper.toDtoList(exerciseOrderEntityList);
@@ -63,6 +63,13 @@ public class ExerciseService {
         UserEntity userEntity = authService.getCurrentUserEntity();
         List<ExerciseEntity> exerciseEntityList = exerciseRepository.findCardioExercises(userEntity.getId(), MuscleGroupType.CARDIO);
         return exerciseMapper.toDtoList(exerciseEntityList);
+    }
+
+    public Exercise find(Long exerciseId) {
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(exerciseId)
+            .orElseThrow(() -> new ApiException(ErrorCodeEnum.EXERCISE_NOT_FOUND, "Cet exercice n'existe pas", HttpStatus.NOT_FOUND));
+
+        return exerciseMapper.toDto(exerciseEntity);
     }
 
     Exercise createExercise(Exercise exercise) {

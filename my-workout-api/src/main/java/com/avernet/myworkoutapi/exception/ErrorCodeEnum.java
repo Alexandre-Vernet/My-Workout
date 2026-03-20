@@ -6,4 +6,5 @@ public enum ErrorCodeEnum {
     USER_NOT_FOUND,
     WORKOUT_NOT_FOUND,
     HISTORY_NOT_FOUND,
+    EXERCISE_NOT_FOUND,
 }

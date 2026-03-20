@@ -32,6 +32,11 @@ public class ExerciseController {
         return exerciseService.findCardioExercises();
     }
 
+    @GetMapping("{exerciseId}")
+    Exercise find(@PathVariable Long exerciseId) {
+        return exerciseService.find(exerciseId);
+    }
+
     @PostMapping()
     Exercise createExercise(@RequestBody Exercise exercise) {
         return exerciseService.createExercise(exercise);
