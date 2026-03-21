@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                     // If token is invalid, let Spring generate the 401 if the route need auth
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 logger.error("JWT authentication failed", e);
             }
         }

@@ -25,6 +25,6 @@ export class UserExerciseService {
     }
 
     updateOrderExercises(userExercises: UserExercise[]) {
-        return this.http.put<UserExercise>(this.userExerciseUrl, userExercises);
+        return this.http.patch<void>(this.userExerciseUrl, userExercises);
     }
 }

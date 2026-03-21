@@ -208,7 +208,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     this.exerciseOrders = exercises;
                     this.currentExercise = exercises[this.activeStep - 1].exercise;
                     if (!this.currentExercise) {
-                        this.currentExercise = this.exerciseOrders[0];
+                        this.currentExercise = this.exerciseOrders[0].exercise;
                         this.switchPanel(this.currentExercise);
                     }
                     this.fillInputWeightRepsLastSavedValue();

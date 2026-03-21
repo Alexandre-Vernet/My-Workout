@@ -7,7 +7,6 @@ export interface Exercise {
     description?: string;
     userExerciseId?: number;
     isSmartWorkout?: boolean;
-    order?:number;
     addedToWorkout?: boolean;
     muscleList?: Muscle[];
     muscleGroup?: string;

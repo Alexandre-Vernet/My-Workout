@@ -13,7 +13,9 @@ import jakarta.annotation.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExerciseService {
@@ -40,14 +42,25 @@ public class ExerciseService {
     ExerciseOrderMapper exerciseOrderMapper;
 
     MuscleGroupExercises findAllExercisesByMuscleGroupId(Long muscleGroupId) {
-        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(muscleGroupId).orElseThrow(() ->
-            new ApiException(ErrorCodeEnum.UNKNOWN_MUSCLE, "Ce muscle n'existe pas", HttpStatus.NOT_FOUND));
+        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(muscleGroupId)
+            .orElseThrow(() -> new ApiException(ErrorCodeEnum.UNKNOWN_MUSCLE, "Ce muscle n'existe pas", HttpStatus.NOT_FOUND));
 
-        UserEntity userEntity = authService.getCurrentUserEntity();
+        List<ExerciseAddedToWorkoutEntity> exerciseAddedToWorkoutEntityList = new ArrayList<>();
+
+        Optional<UserEntity> userEntity = authService.optionalUser();
+        if (userEntity.isPresent()) {
+            exerciseAddedToWorkoutEntityList = exerciseRepository.findAllExercisesByMuscleGroupId(userEntity.get().getId(), muscleGroupId);
+        } else {
+            List<ExerciseEntity> exerciseEntityList = exerciseRepository.findByMuscleGroup(muscleGroupId);
+            exerciseAddedToWorkoutEntityList.addAll(
+                    exerciseEntityList.stream()
+                    .map(exerciseEntity -> new ExerciseAddedToWorkoutEntity(exerciseEntity, null, null))
+                    .toList()
+            );
+        }
 
         MuscleGroup muscleGroup = muscleGroupMapper.toDto(muscleGroupEntity);
 
-        List<ExerciseAddedToWorkoutEntity> exerciseAddedToWorkoutEntityList = exerciseRepository.findAllExercisesByMuscleGroupId(userEntity.getId(), muscleGroupId);
         List<ExerciseAddedToWorkout> exerciseAddedToWorkoutList = exerciseAddedToWorkoutMapper.toDtoList(exerciseAddedToWorkoutEntityList);
 
         return new MuscleGroupExercises(muscleGroup, exerciseAddedToWorkoutList);

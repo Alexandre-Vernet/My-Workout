@@ -52,4 +52,17 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> 
             ORDER BY ue.order ASC
     """)
     List<ExerciseOrderEntity> findAddedExercisesByMuscleGroupId(@Param("userId") Long userId, @Param("muscleGroupId") Integer muscleGroupId);
+
+    @Query("""
+        SELECT e
+            FROM ExerciseEntity e
+            LEFT JOIN e.userExerciseList ue
+            LEFT JOIN ue.user u
+            LEFT JOIN e.exerciseMuscleList em
+            LEFT JOIN em.muscle m
+            LEFT JOIN m.muscleGroup mg
+            WHERE mg.id = :muscleGroupId
+            ORDER BY e.id ASC
+    """)
+    List<ExerciseEntity> findByMuscleGroup(Long muscleGroupId);
 }

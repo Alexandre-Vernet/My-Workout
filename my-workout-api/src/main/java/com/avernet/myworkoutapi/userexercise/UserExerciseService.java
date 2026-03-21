@@ -3,7 +3,10 @@ package com.avernet.myworkoutapi.userexercise;
 import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserExerciseService {
@@ -31,5 +34,18 @@ public class UserExerciseService {
         }
 
         return userExercise;
+    }
+
+    @Transactional
+    void updateOrderExercises(List<UserExercise> userExerciseList) {
+        UserEntity userEntity = authService.getCurrentUserEntity();
+
+        userExerciseList.forEach(ue -> {
+            UserExerciseEntity entity = userExerciseRepository.findByUserIdAndExerciseId(userEntity.getId(), ue.getExercise().getId());
+            if (entity != null) {
+                entity.setOrder(ue.getOrder());
+                userExerciseRepository.save(entity);
+            }
+        });
     }
 }

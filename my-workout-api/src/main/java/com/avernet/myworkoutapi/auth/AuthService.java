@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -37,7 +38,8 @@ public class AuthService {
     @Resource
     UserMapper userMapper;
 
-    private UserEntity getCurrentUser() {
+
+    public UserEntity getCurrentUserEntity() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() != null && authentication.getPrincipal().equals("anonymousUser")) {
@@ -47,12 +49,16 @@ public class AuthService {
         return (UserEntity) authentication.getPrincipal();
     }
 
-    public UserEntity getCurrentUserEntity() {
-        return getCurrentUser();
+    public Optional<UserEntity> optionalUser() {
+        try {
+            return Optional.ofNullable(getCurrentUserEntity());
+        } catch (Exception exception) {
+            return Optional.empty();
+        }
     }
 
     public User getCurrentUserDto() {
-      UserEntity userEntity = getCurrentUser();
+      UserEntity userEntity = getCurrentUserEntity();
       return userMapper.toDto(userEntity);
     }
 
