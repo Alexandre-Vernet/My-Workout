@@ -18,5 +18,5 @@ public class Workout {
     Integer duration;
     User user;
     MuscleGroup muscleGroup;
-    List<History> historyList = new ArrayList<>();
+    List<History> histories = new ArrayList<>();
 }

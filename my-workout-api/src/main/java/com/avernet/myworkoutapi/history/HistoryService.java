@@ -75,9 +75,9 @@ public class HistoryService {
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.HISTORY_NOT_FOUND, "Cet historique n'existe pas", HttpStatus.BAD_REQUEST));
 
         WorkoutEntity workoutEntity = historyEntity.getWorkout();
-        workoutEntity.getHistoryList().remove(historyEntity);
+        workoutEntity.getHistories().remove(historyEntity);
 
-        if (workoutEntity.getHistoryList().isEmpty()) {
+        if (workoutEntity.getHistories().isEmpty()) {
             workoutRepository.delete(workoutEntity);
         }
     }

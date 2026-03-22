@@ -11,5 +11,4 @@ public class MuscleGroupExerciseCount {
     MuscleGroup muscleGroup;
     Long exerciseCount;
     LocalDateTime lastWorkout;
-    boolean recommended;
 }

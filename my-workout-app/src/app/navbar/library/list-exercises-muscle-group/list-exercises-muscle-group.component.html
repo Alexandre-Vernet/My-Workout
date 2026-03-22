@@ -28,7 +28,7 @@
     }
 } @else {
     <div class="ml-2 flex flex-row gap-2 flex-wrap">
-        @for (muscle of muscles; track muscle.id) {
+        @for (muscle of muscleGroupExercises.muscles; track muscle.id) {
             <span class="flex flex-row-reverse">
             <p-tag severity="info" [value]="muscle.name"
                    role="button"
@@ -42,7 +42,7 @@
     </div>
 
 
-    <p-dataview #dv [value]="filterMuscleGroupExercises?.exerciseAddedToWorkoutList">
+    <p-dataview #dv [value]="filterMuscleGroupExercises?.exerciseAddedToWorkouts">
         <ng-template #list let-items>
             <div cdkDropList (cdkDropListDropped)="drop($event)" class="flex flex-column">
                 @for (item of items; track item.exercise.id) {
@@ -57,13 +57,13 @@
 
                                 <div class="flex-1">
                                     <div class="text-sm text-secondary">
-                                        @for (exerciseMuscle of item.exercise.exerciseMuscleList; track exerciseMuscle.id; let last = $last) {
+                                        @for (exerciseMuscle of item.muscles; track exerciseMuscle.id; let last = $last) {
                                             <span>
                                                 <a class="text-sm text-secondary"
-                                                   [routerLink]=" muscleGroupExercises.muscleGroup?.id !== 8 ? ['/', 'muscle-structure', removeAccents(muscleGroupExercises.muscleGroup?.name)] :
+                                                   [routerLink]=" muscleGroupExercises.muscleGroup?.id !== 8 ? ['/', 'muscle-structure', removeAccents(exerciseMuscle.name)] :
                                                    ['/', 'library', 'list-exercises-muscle-group', muscleGroupExercises.muscleGroup.id]"
-                                                   [fragment]="replaceSpaces(exerciseMuscle.exerciseMuscle?.name)">
-                                                    {{ exerciseMuscle.muscle.name }}
+                                                   [fragment]="replaceSpaces(exerciseMuscle.name)">
+                                                    {{ exerciseMuscle.name }}
                                                 </a>
                                                 @if (!last) {
                                                     <span>,</span>

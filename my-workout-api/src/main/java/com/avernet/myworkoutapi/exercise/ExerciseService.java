@@ -6,19 +6,21 @@ import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleMapper;
-import com.avernet.myworkoutapi.musclegroup.MuscleGroup;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupMapper;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
+import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import jakarta.annotation.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ExerciseService {
@@ -51,25 +53,49 @@ public class ExerciseService {
         MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(muscleGroupId)
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.UNKNOWN_MUSCLE, "Ce muscle n'existe pas", HttpStatus.NOT_FOUND));
 
-        List<ExerciseAddedToWorkoutEntity> exerciseAddedToWorkoutEntityList = new ArrayList<>();
+        List<ExerciseEntity> exerciseEntityList;
 
         Optional<UserEntity> userEntity = authService.optionalUser();
         if (userEntity.isPresent()) {
-            exerciseAddedToWorkoutEntityList = exerciseRepository.findAllExercisesByMuscleGroupId(userEntity.get().getId(), muscleGroupId);
+            exerciseEntityList = exerciseRepository.findAllExercisesByUserAndMuscleGroup(userEntity.get().getId(), muscleGroupId);
         } else {
-            List<ExerciseEntity> exerciseEntityList = exerciseRepository.findByMuscleGroup(muscleGroupId);
-            exerciseAddedToWorkoutEntityList.addAll(
-                    exerciseEntityList.stream()
-                    .map(exerciseEntity -> new ExerciseAddedToWorkoutEntity(exerciseEntity, null, null))
-                    .toList()
-            );
+            exerciseEntityList = exerciseRepository.findByMuscleGroup(muscleGroupId);
         }
 
-        MuscleGroup muscleGroup = muscleGroupMapper.toDto(muscleGroupEntity);
+        List<ExerciseAddedToWorkoutEntity> exerciseAddedToWorkoutEntityList = exerciseEntityList.stream()
+            .map(exerciseEntity -> {
+                UserExerciseEntity ue = exerciseEntity.getUserExercises()
+                    .stream()
+                    .filter(u -> {
+                        Long userId = userEntity.map(UserEntity::getId).orElse(null);
+                        return u.getUser().getId().equals(userId);
+                    })
+                    .findFirst()
+                    .orElse(null);
 
-        List<ExerciseAddedToWorkout> exerciseAddedToWorkoutList = exerciseAddedToWorkoutMapper.toDtoList(exerciseAddedToWorkoutEntityList);
+                boolean ueExist = ue != null && ue.getId() != null;
 
-        return new MuscleGroupExercises(muscleGroup, exerciseAddedToWorkoutList);
+                return new ExerciseAddedToWorkoutEntity(
+                    exerciseEntity,
+                    exerciseEntity.getExerciseMuscles().stream()
+                        .map(ExerciseMuscleEntity::getMuscle).toList(),
+                    ueExist,
+                    ueExist ? ue.getOrder() : null
+                );
+            })
+            .toList();
+
+        Set<MuscleEntity> muscleList = exerciseEntityList.stream()
+            .map(ExerciseEntity::getExerciseMuscles)
+            .flatMap(List::stream)
+            .map(ExerciseMuscleEntity::getMuscle)
+            .collect(Collectors.toSet());
+
+        return new MuscleGroupExercises(
+            muscleGroupMapper.toDto(muscleGroupEntity),
+            exerciseAddedToWorkoutMapper.toDtoList(exerciseAddedToWorkoutEntityList),
+            muscleMapper.toDtoList(muscleList.stream().sorted(Comparator.comparing(MuscleEntity::getName)).toList())
+        );
     }
 
     List<ExerciseOrder> findAddedExercisesByMuscleGroupId(Integer muscleGroupId) {
@@ -87,8 +113,9 @@ public class ExerciseService {
     public ExerciseMuscle findExerciseMuscle(Long exerciseId) {
         ExerciseEntity exerciseEntity = exerciseRepository.findExercise(exerciseId);
 
-        List<MuscleEntity> muscleEntityList = exerciseEntity.exerciseMuscleList.stream()
+        List<MuscleEntity> muscleEntityList = exerciseEntity.exerciseMuscles.stream()
             .map(ExerciseMuscleEntity::getMuscle)
+            .sorted(Comparator.comparing(MuscleEntity::getName))
             .toList();
 
         return new ExerciseMuscle(
@@ -100,7 +127,7 @@ public class ExerciseService {
     Exercise createExercise(Exercise exercise) {
         ExerciseEntity exerciseEntity = exerciseMapper.toEntity(exercise);
         ExerciseEntity finalExerciseEntity = exerciseEntity;
-        exerciseEntity.exerciseMuscleList.forEach(em -> em.setExercise(finalExerciseEntity));
+        exerciseEntity.exerciseMuscles.forEach(em -> em.setExercise(finalExerciseEntity));
         exerciseEntity = exerciseRepository.save(exerciseEntity);
         return exerciseMapper.toDto(exerciseEntity);
     }

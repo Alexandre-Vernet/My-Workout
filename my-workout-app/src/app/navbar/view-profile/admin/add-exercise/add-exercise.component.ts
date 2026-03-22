@@ -95,7 +95,7 @@ export class AddExerciseComponent implements OnInit {
             name: name.trim(),
             description: description.trim(),
             smartWorkout: isSmartWorkout,
-            exerciseMuscleList: muscles.map(m => ({
+            exerciseMuscles: muscles.map(m => ({
                 muscle: {
                     id: m.id,
                 }

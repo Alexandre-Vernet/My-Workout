@@ -1,8 +1,6 @@
 package com.avernet.myworkoutapi.exercisemuscle;
 
 import com.avernet.myworkoutapi.config.GenericMapper;
-import com.avernet.myworkoutapi.exercise.Exercise;
-import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

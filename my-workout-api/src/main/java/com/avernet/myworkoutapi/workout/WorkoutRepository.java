@@ -16,7 +16,7 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
 
     @Query("""
         select w from WorkoutEntity w
-            left join fetch w.historyList
+            left join fetch w.histories
             where w.user.id = :userId
             and w.date BETWEEN :start and :end
         """)
@@ -24,7 +24,7 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
 
     @Query("""
     SELECT w from WorkoutEntity w
-        left join fetch w.historyList h
+        left join fetch w.histories h
         left join fetch h.exercise
         left join fetch w.muscleGroup
         where w.id = :id

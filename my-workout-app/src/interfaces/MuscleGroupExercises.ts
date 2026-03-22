@@ -1,7 +1,9 @@
 import { MuscleGroup } from './MuscleGroup';
 import { ExerciseAddedToWorkout } from './ExerciseAddedToWorkout';
+import { Muscle } from './muscle';
 
 export class MuscleGroupExercises {
     muscleGroup: MuscleGroup;
-    exerciseAddedToWorkoutList: ExerciseAddedToWorkout[];
+    exerciseAddedToWorkouts: ExerciseAddedToWorkout[];
+    muscles: Muscle[];
 }

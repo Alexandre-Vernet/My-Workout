@@ -56,10 +56,10 @@ public class UserEntity implements UserDetails {
     boolean isAdmin = false;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<WorkoutEntity> workoutList = new ArrayList<>();
+    List<WorkoutEntity> workouts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<UserExerciseEntity> userExerciseList = new ArrayList<>();
+    List<UserExerciseEntity> userExercises = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -14,11 +14,11 @@ public interface MuscleGroupRepository extends JpaRepository<MuscleGroupEntity, 
         SELECT new com.avernet.myworkoutapi.musclegroup.MuscleGroupExerciseCountEntity(muscleGroup, count(distinct userExercise.id), MAX(workout.date))
             FROM MuscleGroupEntity muscleGroup
             LEFT JOIN muscleGroup.muscleList muscle
-            LEFT JOIN muscle.exerciseMuscleList exerciseMuscle
+            LEFT JOIN muscle.exerciseMuscles exerciseMuscle
             LEFT JOIN exerciseMuscle.exercise exercise
-            LEFT JOIN exercise.userExerciseList userExercise
+            LEFT JOIN exercise.userExercises userExercise
                 ON userExercise.user.id = :userId
-            LEFT JOIN muscleGroup.workoutList workout
+            LEFT JOIN muscleGroup.workouts workout
                 ON workout.user.id = :userId
             GROUP BY muscleGroup.id
     """)

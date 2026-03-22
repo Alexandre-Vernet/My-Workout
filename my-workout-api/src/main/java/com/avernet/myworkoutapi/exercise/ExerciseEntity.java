@@ -37,11 +37,11 @@ public class ExerciseEntity {
     boolean isSmartWorkout;
 
     @OneToMany(mappedBy = "exercise", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<ExerciseMuscleEntity> exerciseMuscleList = new ArrayList<>();
+    List<ExerciseMuscleEntity> exerciseMuscles = new ArrayList<>();
 
     @OneToMany(mappedBy = "exercise", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<HistoryEntity> historyList = new ArrayList<>();
+    List<HistoryEntity> histories = new ArrayList<>();
 
     @OneToMany(mappedBy = "exercise", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<UserExerciseEntity> userExerciseList = new ArrayList<>();
+    List<UserExerciseEntity> userExercises = new ArrayList<>();
 }

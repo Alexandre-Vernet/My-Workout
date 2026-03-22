@@ -2,63 +2,39 @@
 <div class="select-muscle-group-workout">
     <h1 class="mt-2 mb-3 text-center font-bold">Sélectionner un entraînement</h1>
 
-    @if (isLoading) {
-        @for (skeleton of [1, 2, 3, 4, 5, 6, 7]; track skeleton) {
-            <div class="muscle-group-card">
-                <div class="flex-1 flex align-items-center justify-content-between">
-                    <h2 class="text-xl font-bold text-primary">
-                        <p-skeleton height="2rem" width="5rem" class="mb-2"/>
-                    </h2>
-                    @if (skeleton === 1) {
-                        <p-skeleton height="2rem" width="7rem" class="mb-2"/>
-                    }
+    @if (!muscleGroupExerciseCount) {
+        @for (skeleton of [1, 2, 3, 4, 5, 6, 7]; track skeleton; let first = $first) {
+            <div class="muscle-groups" >
+                <div class="muscle-group-card">
+                    <div class="flex-1 flex align-items-center justify-content-between">
+                        <p-skeleton height="2rem" width="10rem" class="mb-2"/>
+                        @if (first) {
+                            <p-skeleton height="2rem" width="8rem"/>
+                        }
+                    </div>
+                    <p-skeleton height="2rem" width="5rem" class="mb-2"/>
                 </div>
-                <span class="text-lg">
-                    <p-skeleton height="2rem" width="10rem" class="mb-2"/>
-                </span>
             </div>
         }
     } @else {
-        @for (muscleGroupExerciseCount of muscleGroupExerciseCount; track muscleGroupExerciseCount.muscleGroup.id) {
+        @for (muscleGroupExerciseCount of muscleGroupExerciseCount; track muscleGroupExerciseCount.muscleGroup.id; let first = $first) {
             @let muscleGroup = muscleGroupExerciseCount?.muscleGroup;
-            <div class="muscle-groups">
-                @if (muscleGroup.name !== MuscleGroupEnum.CARDIO.toString()) {
-                    <a [routerLink]="['/', MenuUrls.workout, 'workout-session', muscleGroup.id]">
-                        <div class="muscle-group-card" [ngClass]="{
-                        'selected-light': !isDarkMode && muscleGroupExerciseCount?.recommended,
-                        'selected-dark': isDarkMode && muscleGroupExerciseCount?.recommended,
+            <div class="muscle-groups" (click)="clickMuscleGroup(muscleGroup)">
+                <div class="muscle-group-card" [ngClass]="{
+                        'selected-light': !isDarkMode && first,
+                        'selected-dark': isDarkMode && first,
                         'shadow-dark': isDarkMode,
                         'shadow-light': !isDarkMode
                     }">
-                            <div class="flex-1 flex align-items-center justify-content-between">
-                                <h2 class="text-xl font-bold text-primary">{{ muscleGroup.name | firstLetterUppercase }}</h2>
-                                @if (muscleGroupExerciseCount.recommended) {
-                                    <p-tag severity="info">Recommandé</p-tag>
-                                }
-                            </div>
-                            <span
-                                class="text-lg">{{ muscleGroupExerciseCount.exerciseCount }} {{ muscleGroupExerciseCount.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
-                        </div>
-                    </a>
-                } @else {
-                    <div class="muscle-group-card"
-                         (click)="openModalExerciseCardio()"
-                         [ngClass]="{
-                    'selected-light': !isDarkMode && muscleGroupExerciseCount?.recommended,
-                    'selected-dark': isDarkMode && muscleGroupExerciseCount?.recommended,
-                    'shadow-dark': isDarkMode,
-                    'shadow-light': !isDarkMode
-                }">
-                        <div class="flex-1 flex align-items-center justify-content-between">
-                            <h2 class="text-xl font-bold text-primary">{{ muscleGroup.name | firstLetterUppercase }}</h2>
-                            @if (muscleGroupExerciseCount.recommended) {
-                                <p-tag severity="info">Recommandé</p-tag>
-                            }
-                        </div>
-                        <span
-                            class="text-lg">{{ muscleGroupExerciseCount.exerciseCount }} {{ muscleGroupExerciseCount.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
+                    <div class="flex-1 flex align-items-center justify-content-between">
+                        <h2 class="text-xl font-bold text-primary">{{ muscleGroup.name | firstLetterUppercase }}</h2>
+                        @if (first) {
+                            <p-tag severity="info">Recommandé</p-tag>
+                        }
                     </div>
-                }
+                    <span
+                        class="text-lg">{{ muscleGroupExerciseCount.exerciseCount }} {{ muscleGroupExerciseCount.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
+                </div>
             </div>
         }
     }

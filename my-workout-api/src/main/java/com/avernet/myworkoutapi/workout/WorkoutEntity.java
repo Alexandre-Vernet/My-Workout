@@ -46,5 +46,5 @@ public class WorkoutEntity {
 
 
     @OneToMany(mappedBy = "workout", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<HistoryEntity> historyList = new ArrayList<>();
+    List<HistoryEntity> histories = new ArrayList<>();
 }

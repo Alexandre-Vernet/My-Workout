@@ -10,5 +10,5 @@ export interface Exercise {
     addedToWorkout?: boolean;
     muscles?: Muscle[];
     muscleGroup?: string;
-    exerciseMuscleList?: ExerciseMuscle[];
+    exerciseMuscles?: ExerciseMuscle[];
 }
