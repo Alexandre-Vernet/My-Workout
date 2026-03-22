@@ -63,16 +63,17 @@ export class AddExerciseComponent implements OnInit {
         this.activatedRoute.params
             .pipe(
                 filter((params: { exerciseId: number }) => !!params.exerciseId),
-                switchMap(params => this.exerciseService.getExercise(Number(params.exerciseId)))
+                switchMap(params => this.exerciseService.findExerciseMuscle(Number(params.exerciseId)))
             )
             .subscribe({
-                next: (exercise) => {
+                next: (exerciseMuscle) => {
+                    const exercise = exerciseMuscle.exercise;
                     this.formAddExercise.patchValue({
                         id: exercise.id,
                         name: exercise.name,
                         description: exercise.description,
-                        isSmartWorkout: exercise.isSmartWorkout,
-                        muscles: exercise.muscleList
+                        isSmartWorkout: exercise.smartWorkout,
+                        muscles: exercise.muscles
                     });
                 }
             });
@@ -93,7 +94,7 @@ export class AddExerciseComponent implements OnInit {
         const exercise: Exercise = {
             name: name.trim(),
             description: description.trim(),
-            isSmartWorkout,
+            smartWorkout: isSmartWorkout,
             exerciseMuscleList: muscles.map(m => ({
                 muscle: {
                     id: m.id,

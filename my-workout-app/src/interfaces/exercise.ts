@@ -6,9 +6,9 @@ export interface Exercise {
     name?: string;
     description?: string;
     userExerciseId?: number;
-    isSmartWorkout?: boolean;
+    smartWorkout?: boolean;
     addedToWorkout?: boolean;
-    muscleList?: Muscle[];
+    muscles?: Muscle[];
     muscleGroup?: string;
     exerciseMuscleList?: ExerciseMuscle[];
 }

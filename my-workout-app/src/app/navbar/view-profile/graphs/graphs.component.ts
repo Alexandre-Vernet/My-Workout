@@ -41,7 +41,7 @@ export class GraphsComponent implements OnInit {
     ngOnInit() {
         this.exerciseId = Number(this.activatedRoute.snapshot.paramMap.get('exerciseId'));
 
-        this.exerciseService.getExercise(this.exerciseId)
+        this.exerciseService.findExerciseMuscle(this.exerciseId)
             .subscribe({
                 next: (exercise) => {
                     this.exercise = exercise;

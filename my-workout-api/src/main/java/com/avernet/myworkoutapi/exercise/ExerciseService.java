@@ -3,6 +3,9 @@ package com.avernet.myworkoutapi.exercise;
 import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleEntity;
+import com.avernet.myworkoutapi.muscle.MuscleEntity;
+import com.avernet.myworkoutapi.muscle.MuscleMapper;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroup;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupMapper;
@@ -41,6 +44,9 @@ public class ExerciseService {
     @Resource
     ExerciseOrderMapper exerciseOrderMapper;
 
+    @Resource
+    MuscleMapper muscleMapper;
+
     MuscleGroupExercises findAllExercisesByMuscleGroupId(Long muscleGroupId) {
         MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(muscleGroupId)
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.UNKNOWN_MUSCLE, "Ce muscle n'existe pas", HttpStatus.NOT_FOUND));
@@ -78,11 +84,17 @@ public class ExerciseService {
         return exerciseMapper.toDtoList(exerciseEntityList);
     }
 
-    public Exercise find(Long exerciseId) {
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(exerciseId)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.EXERCISE_NOT_FOUND, "Cet exercice n'existe pas", HttpStatus.NOT_FOUND));
+    public ExerciseMuscle findExerciseMuscle(Long exerciseId) {
+        ExerciseEntity exerciseEntity = exerciseRepository.findExercise(exerciseId);
 
-        return exerciseMapper.toDto(exerciseEntity);
+        List<MuscleEntity> muscleEntityList = exerciseEntity.exerciseMuscleList.stream()
+            .map(ExerciseMuscleEntity::getMuscle)
+            .toList();
+
+        return new ExerciseMuscle(
+            exerciseMapper.toDto(exerciseEntity),
+            muscleMapper.toDtoList(muscleEntityList)
+        );
     }
 
     Exercise createExercise(Exercise exercise) {

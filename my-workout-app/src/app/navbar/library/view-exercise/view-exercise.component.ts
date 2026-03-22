@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
-import { Exercise } from '../../../../interfaces/exercise';
 import { AlertService } from '../../../services/alert.service';
 import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
@@ -14,6 +13,7 @@ import { Skeleton } from 'primeng/skeleton';
 import { replaceSpaces } from '../../../shared/utils/remove-accents';
 import { AuthService } from '../../../auth/auth.service';
 import { User } from '../../../../interfaces/user';
+import { ExerciseMuscle } from '../../../../interfaces/ExerciseMuscle';
 
 @Component({
     selector: 'app-view-exercise',
@@ -24,7 +24,7 @@ import { User } from '../../../../interfaces/user';
 })
 export class ViewExerciseComponent implements OnInit {
 
-    exercise: Exercise;
+    exerciseMuscle: ExerciseMuscle;
     user: User;
 
     showDrawerSmartWorkout = false;
@@ -54,12 +54,12 @@ export class ViewExerciseComponent implements OnInit {
         this.activatedRoute.params.pipe(
             switchMap((params: {
                 exerciseId: number
-            }) => this.exerciseService.getExercise(Number(params.exerciseId)))
+            }) => this.exerciseService.findExerciseMuscle(Number(params.exerciseId)))
         )
             .subscribe({
                 next: (exercise) => {
-                    this.exercise = exercise;
-                    this.imagePath = `/assets/images/${exercise.id}.gif`;
+                    this.exerciseMuscle = exercise;
+                    this.imagePath = `/assets/images/${exercise.exercise.id}.gif`;
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {
@@ -73,10 +73,10 @@ export class ViewExerciseComponent implements OnInit {
     }
 
     toggleExerciseWorkout() {
-        this.userExerciseService.toggleExerciseWorkout(this.exercise)
+        this.userExerciseService.toggleExerciseWorkout(this.exerciseMuscle)
             .subscribe({
                 next: () => {
-                    this.exercise.addedToWorkout = !this.exercise.addedToWorkout;
+                    this.exerciseMuscle.exercise.addedToWorkout = !this.exerciseMuscle.exercise.addedToWorkout;
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {
@@ -89,7 +89,7 @@ export class ViewExerciseComponent implements OnInit {
     }
 
     updateExercise() {
-        this.router.navigate(['admin', 'update-exercise', this.exercise.id]);
+        this.router.navigate(['admin', 'update-exercise', this.exerciseMuscle.exercise.id]);
     }
 
     protected readonly replaceSpaces = replaceSpaces;

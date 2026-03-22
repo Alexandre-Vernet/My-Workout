@@ -33,8 +33,8 @@ public class ExerciseController {
     }
 
     @GetMapping("{exerciseId}")
-    Exercise find(@PathVariable Long exerciseId) {
-        return exerciseService.find(exerciseId);
+    ExerciseMuscle findExerciseMuscle(@PathVariable Long exerciseId) {
+        return exerciseService.findExerciseMuscle(exerciseId);
     }
 
     @PostMapping()
