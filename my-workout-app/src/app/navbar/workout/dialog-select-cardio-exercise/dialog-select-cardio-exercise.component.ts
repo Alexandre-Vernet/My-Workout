@@ -15,8 +15,8 @@ import { InputNumber } from 'primeng/inputnumber';
 import { Button } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { FloatLabel } from 'primeng/floatlabel';
-import { ExerciseService } from "../../../services/exercise.service";
 import { NgClass } from '@angular/common';
+import { MuscleGroupEnum } from '../../../../interfaces/MuscleGroupEnum';
 
 @Component({
     selector: 'app-dialog-select-cardio-exercise',
@@ -31,10 +31,9 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
     @Input() openModal: boolean;
     @Output() openModalChange = new Subject<void>();
     @Input() workoutDate: Date;
+    @Input() cardioExercises: Exercise[] = [];
     @Output() createdWorkout = new Subject<Workout>();
     @Output() showAlert = new Subject<Alert>();
-
-    cardioExercises: Exercise[];
 
     selectedExercise: Exercise;
     inputDuration: number;
@@ -45,24 +44,12 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
     constructor(
         private readonly workoutService: WorkoutService,
         private readonly historyService: HistoryService,
-        private readonly exerciseService: ExerciseService,
         private readonly themeService: ThemeService,
     ) {
     }
 
     ngOnInit() {
         this.isDarkMode = this.themeService.isDarkMode();
-        this.exerciseService.findCardioExercises()
-            .subscribe({
-                next: (exercises) => this.cardioExercises = exercises,
-                error: (err) => {
-                    this.showAlert.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible de charger les exercices cardio'
-                    });
-                    this.openModalChange.next();
-                }
-            });
     }
 
     onHideModal() {
@@ -76,7 +63,7 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
 
     createCardioWorkout() {
         const muscleGroup: MuscleGroup = {
-            id: 8
+            id: MuscleGroupEnum.CARDIO
         };
 
         const workout: Workout = {
