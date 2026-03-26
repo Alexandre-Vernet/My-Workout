@@ -1,6 +1,5 @@
 package com.avernet.myworkoutapi.history;
 
-import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
 import com.avernet.myworkoutapi.user.UserEntity;
@@ -24,19 +23,14 @@ public class HistoryService {
     WorkoutRepository workoutRepository;
 
     @Resource
-    AuthService authService;
-
-    @Resource
     HistoryMapper historyMapper;
 
-    History findLastHistoryWeightByExerciseId(Long exerciseId) {
-        UserEntity userEntity = authService.getCurrentUserEntity();
+    History findLastHistoryWeightByExerciseId(UserEntity userEntity, Long exerciseId) {
         HistoryEntity historyEntity = historyRepository.findFirstByExerciseIdAndWorkoutUserIdOrderByWorkoutDate(userEntity.getId(), exerciseId);
         return historyMapper.toDto(historyEntity);
     }
 
-    List<History> findTodayExercices(Long muscleGroupId, Long exerciseId) {
-        UserEntity userEntity = authService.getCurrentUserEntity();
+    List<History> findTodayExercices(UserEntity userEntity, Long muscleGroupId, Long exerciseId) {
         LocalDate now = LocalDate.now();
 
         List<HistoryEntity> historyEntity = historyRepository.findTodayExercices(userEntity.getId(), muscleGroupId, exerciseId, now);

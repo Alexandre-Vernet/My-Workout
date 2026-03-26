@@ -1,6 +1,5 @@
 package com.avernet.myworkoutapi.userexercise;
 
-import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
@@ -12,18 +11,13 @@ import java.util.List;
 public class UserExerciseService {
 
     @Resource
-    AuthService authService;
-
-    @Resource
     UserExerciseRepository userExerciseRepository;
 
     @Resource
     UserExerciseMapper userExerciseMapper;
 
 
-    UserExercise create(UserExercise userExercise) {
-        UserEntity userEntity = authService.getCurrentUserEntity();
-
+    UserExercise create(UserEntity userEntity, UserExercise userExercise) {
         UserExerciseEntity userExerciseEntity = userExerciseRepository.findByUserIdAndExerciseId(userEntity.getId(), userExercise.getExercise().getId());
         if (userExerciseEntity != null) {
             userExerciseRepository.delete(userExerciseEntity);
@@ -37,9 +31,7 @@ public class UserExerciseService {
     }
 
     @Transactional
-    void updateOrderExercises(List<UserExercise> userExerciseList) {
-        UserEntity userEntity = authService.getCurrentUserEntity();
-
+    void updateOrderExercises(UserEntity userEntity, List<UserExercise> userExerciseList) {
         userExerciseList.forEach(ue -> {
             UserExerciseEntity entity = userExerciseRepository.findByUserIdAndExerciseId(userEntity.getId(), ue.getExercise().getId());
             if (entity != null) {

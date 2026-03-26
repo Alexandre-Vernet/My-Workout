@@ -1,8 +1,8 @@
 package com.avernet.myworkoutapi.workout;
 
-import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
+import com.avernet.myworkoutapi.user.UserMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +17,12 @@ public class WorkoutService {
     WorkoutRepository workoutRepository;
 
     @Resource
-    AuthService authService;
-
-    @Resource
     WorkoutMapper workoutMapper;
 
-    Workout createWorkout(Workout workout) {
-        UserEntity userEntity = authService.getCurrentUserEntity();
+    @Resource
+    UserMapper userMapper;
+
+    Workout createWorkout(UserEntity userEntity, Workout workout) {
         if (workout.getMuscleGroup().name() != MuscleGroupType.CARDIO) {
             // Do not create a workout if it already exists for the same user and muscle group on the same day
             // Except cardio workout because it can be done multiple times a day with different exercises (e.g. running, cycling)
@@ -33,29 +32,26 @@ public class WorkoutService {
             }
         }
 
-        workout.setUser(authService.getCurrentUserDto());
+        workout.setUser(userMapper.toDto(userEntity));
         WorkoutEntity workoutEntity = workoutRepository.save(workoutMapper.toEntity(workout));
         return workoutMapper.toDto(workoutEntity);
     }
 
     Workout find(Long id) {
-        WorkoutEntity workoutEntity = workoutRepository.test(id);
+        WorkoutEntity workoutEntity = workoutRepository.findByUserId(id);
         return workoutMapper.toDto(workoutEntity);
     }
 
-    List<Workout> findByDate(String start, String end) {
-        UserEntity userEntity = authService.getCurrentUserEntity();
+    List<Workout> findByDate(UserEntity userEntity, String start, String end) {
         List<WorkoutEntity> workoutEntityList = workoutRepository.findByUserIdAndDateBetween(userEntity.getId(), LocalDate.parse(start), LocalDate.parse(end));
         return workoutMapper.toDtoList(workoutEntityList);
     }
 
-    Integer countTotalDaysWorkout() {
-        UserEntity userEntity = authService.getCurrentUserEntity();
+    Integer countTotalDaysWorkout(UserEntity userEntity) {
        return workoutRepository.countByUserId(userEntity.getId());
     }
 
-    void delete(Long id) {
-        UserEntity userEntity = authService.getCurrentUserEntity();
+    void delete(UserEntity userEntity, Long id) {
         workoutRepository.deleteByIdAndUserId(id, userEntity.getId());
     }
 

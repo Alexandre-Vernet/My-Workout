@@ -55,7 +55,7 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['exerciseId']) {
+        if (changes['exerciseId'].currentValue !== changes['exerciseId'].previousValue) {
             this.findTodayExercicesHistory();
         }
     }

@@ -1,6 +1,5 @@
 package com.avernet.myworkoutapi.musclegroup;
 
-import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
 import org.springframework.data.domain.Sort;
@@ -11,9 +10,6 @@ import java.util.List;
 
 @Service
 public class MuscleGroupService {
-
-    @Resource
-    AuthService authService;
 
     @Resource
     MuscleGroupRepository muscleGroupRepository;
@@ -30,8 +26,7 @@ public class MuscleGroupService {
         return muscleGroupMapper.toDtoList(muscleGroupEntityList);
     }
 
-    List<MuscleGroupExerciseCount> findAllMuscleGroupAndRecommendedMuscleGroup() {
-        UserEntity userEntity = authService.getCurrentUserEntity();
+    List<MuscleGroupExerciseCount> findAllMuscleGroupAndRecommendedMuscleGroup(UserEntity userEntity) {
         List<MuscleGroupExerciseCountEntity> muscleGroupEntityList = muscleGroupRepository.findAllMuscleGroupAndCountAddedExercises(userEntity.getId());
 
         List<MuscleGroupExerciseCountEntity> muscleGroupEntityListSorted = muscleGroupEntityList.stream()

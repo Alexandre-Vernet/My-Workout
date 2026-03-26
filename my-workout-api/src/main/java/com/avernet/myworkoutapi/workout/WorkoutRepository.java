@@ -23,13 +23,13 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
     List<WorkoutEntity> findByUserIdAndDateBetween(@Param("userId") Long userId, @Param("start") LocalDate start, @Param("end") LocalDate end);
 
     @Query("""
-    SELECT w from WorkoutEntity w
-        left join fetch w.histories h
-        left join fetch h.exercise
-        left join fetch w.muscleGroup
-        where w.id = :id
+        SELECT w from WorkoutEntity w
+        LEFT JOIN FETCH w.histories h
+        LEFT JOIN FETCH h.exercise
+        LEFT JOIN FETCH w.muscleGroup
+        WHERE w.id = :id
     """)
-    WorkoutEntity test(@Param("id") Long id);
+    WorkoutEntity findByUserId(@Param("id") Long id);
 
     Integer countByUserId(Long userId);
 

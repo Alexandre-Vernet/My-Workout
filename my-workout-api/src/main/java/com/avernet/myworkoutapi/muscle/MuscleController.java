@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/muscle")
+@RequestMapping("muscle")
 public class MuscleController {
 
     @Resource

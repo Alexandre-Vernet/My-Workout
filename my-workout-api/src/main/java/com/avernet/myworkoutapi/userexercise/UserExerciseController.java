@@ -1,6 +1,8 @@
 package com.avernet.myworkoutapi.userexercise;
 
+import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,12 +19,12 @@ public class UserExerciseController {
     UserExerciseService userExerciseService;
 
     @PostMapping
-    UserExercise create(@RequestBody UserExercise userExercise) {
-        return userExerciseService.create(userExercise);
+    UserExercise create(@AuthenticationPrincipal UserEntity userEntity,  @RequestBody UserExercise userExercise) {
+        return userExerciseService.create(userEntity, userExercise);
     }
 
     @PatchMapping()
-    void updateOrderExercises(@RequestBody List<UserExercise> userExerciseList) {
-        userExerciseService.updateOrderExercises(userExerciseList);
+    void updateOrderExercises(@AuthenticationPrincipal UserEntity userEntity, @RequestBody List<UserExercise> userExerciseList) {
+        userExerciseService.updateOrderExercises(userEntity, userExerciseList);
     }
 }

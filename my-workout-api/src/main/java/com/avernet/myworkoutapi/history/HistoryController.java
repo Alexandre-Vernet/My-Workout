@@ -1,6 +1,8 @@
 package com.avernet.myworkoutapi.history;
 
+import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,16 +22,16 @@ public class HistoryController {
     HistoryService historyService;
 
     @GetMapping("last/{exerciseId}")
-    History findLastHistoryWeightByExerciseId(@PathVariable Long exerciseId) {
-        return historyService.findLastHistoryWeightByExerciseId(exerciseId);
+    History findLastHistoryWeightByExerciseId(@AuthenticationPrincipal UserEntity userEntity,  @PathVariable Long exerciseId) {
+        return historyService.findLastHistoryWeightByExerciseId(userEntity, exerciseId);
     }
 
     @GetMapping("today/{muscleGroupId}/{exerciseId}")
-    List<History> findTodayExercices(@PathVariable Long muscleGroupId, @PathVariable Long exerciseId) {
-        return historyService.findTodayExercices(muscleGroupId, exerciseId);
+    List<History> findTodayExercices(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long muscleGroupId, @PathVariable Long exerciseId) {
+        return historyService.findTodayExercices(userEntity, muscleGroupId, exerciseId);
     }
 
-    @PostMapping()
+    @PostMapping
     History create(@RequestBody History history) {
         return historyService.create(history);
     }

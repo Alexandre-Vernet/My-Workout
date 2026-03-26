@@ -57,8 +57,7 @@ public class AuthService {
         }
     }
 
-    public User getCurrentUserDto() {
-      UserEntity userEntity = getCurrentUserEntity();
+    public User getCurrentUserDto(UserEntity userEntity) {
       return userMapper.toDto(userEntity);
     }
 

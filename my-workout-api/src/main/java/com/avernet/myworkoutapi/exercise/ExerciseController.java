@@ -1,6 +1,8 @@
 package com.avernet.myworkoutapi.exercise;
 
+import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,13 +25,13 @@ public class ExerciseController {
     }
 
     @GetMapping("find-added-exercises-by-muscle-group-id/{muscleGroupId}")
-    List<ExerciseOrder> findAddedExercisesByMuscleGroupId(@PathVariable Integer muscleGroupId) {
-        return exerciseService.findAddedExercisesByMuscleGroupId(muscleGroupId);
+    List<ExerciseOrder> findAddedExercisesByMuscleGroupId(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Integer muscleGroupId) {
+        return exerciseService.findAddedExercisesByMuscleGroupId(userEntity, muscleGroupId);
     }
 
     @GetMapping("find-cardio-exercises")
-    List<Exercise> findCardioExercises() {
-        return exerciseService.findCardioExercises();
+    List<Exercise> findCardioExercises(@AuthenticationPrincipal UserEntity userEntity) {
+        return exerciseService.findCardioExercises(userEntity);
     }
 
     @GetMapping("{exerciseId}")
@@ -37,7 +39,7 @@ public class ExerciseController {
         return exerciseService.findExerciseMuscle(exerciseId);
     }
 
-    @PostMapping()
+    @PostMapping
     Exercise createExercise(@RequestBody Exercise exercise) {
         return exerciseService.createExercise(exercise);
     }

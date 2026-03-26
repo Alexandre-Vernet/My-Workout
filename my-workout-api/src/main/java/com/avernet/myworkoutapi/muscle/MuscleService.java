@@ -13,6 +13,7 @@ public class MuscleService {
     @Resource
     MuscleMapper muscleMapper;
 
+
     List<Muscle> findAllMuscle() {
         List<MuscleEntity> muscleEntityList = muscleRepository.findAllByOrderByMuscleGroupNameAsc();
         return muscleMapper.toDtoList(muscleEntityList);

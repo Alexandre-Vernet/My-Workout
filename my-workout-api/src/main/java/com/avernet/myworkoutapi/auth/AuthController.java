@@ -1,7 +1,9 @@
 package com.avernet.myworkoutapi.auth;
 
 import com.avernet.myworkoutapi.user.User;
+import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,8 +18,8 @@ public class AuthController {
     AuthService authService;
 
     @GetMapping("me")
-    public User me() {
-        return authService.getCurrentUserDto();
+    public User me(@AuthenticationPrincipal UserEntity userEntity) {
+        return authService.getCurrentUserDto(userEntity);
     }
 
     @PostMapping("/login")
