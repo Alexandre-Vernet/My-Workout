@@ -1,6 +1,7 @@
 package com.avernet.myworkoutapi.exercise;
 
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
+import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,20 +35,6 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> 
             and mg.name = :cardio
     """)
     List<ExerciseEntity> findCardioExercises(@Param("userId") Long userId, @Param("cardio") MuscleGroupType cardio);
-
-    @Query("""
-        SELECT DISTINCT new com.avernet.myworkoutapi.exercise.ExerciseOrderEntity(e, ue.order)
-            FROM ExerciseEntity e
-            LEFT JOIN e.userExercises ue
-            LEFT JOIN ue.user u
-            LEFT JOIN e.exerciseMuscles em
-            LEFT JOIN em.muscle m
-            LEFT JOIN m.muscleGroup mg
-            WHERE u.id = :userId
-            AND mg.id = :muscleGroupId
-            ORDER BY ue.order ASC
-    """)
-    List<ExerciseOrderEntity> findAddedExercisesByMuscleGroupId(@Param("userId") Long userId, @Param("muscleGroupId") Integer muscleGroupId);
 
     @Query("""
         SELECT e

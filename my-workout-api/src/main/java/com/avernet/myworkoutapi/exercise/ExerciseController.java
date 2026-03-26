@@ -24,11 +24,6 @@ public class ExerciseController {
         return exerciseService.findAllExercisesByMuscleGroupId(muscleGroupId);
     }
 
-    @GetMapping("find-added-exercises-by-muscle-group-id/{muscleGroupId}")
-    List<ExerciseOrder> findAddedExercisesByMuscleGroupId(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Integer muscleGroupId) {
-        return exerciseService.findAddedExercisesByMuscleGroupId(userEntity, muscleGroupId);
-    }
-
     @GetMapping("find-cardio-exercises")
     List<Exercise> findCardioExercises(@AuthenticationPrincipal UserEntity userEntity) {
         return exerciseService.findCardioExercises(userEntity);

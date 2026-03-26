@@ -3,7 +3,6 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Exercise } from '../../interfaces/exercise';
 import { MuscleGroupExercises } from '../../interfaces/MuscleGroupExercises';
-import { ExerciseOrder } from '../../interfaces/ExerciseOrder';
 import { ExerciseMuscle } from '../../interfaces/ExerciseMuscle';
 
 @Injectable({
@@ -18,10 +17,6 @@ export class ExerciseService {
 
     findAllExercisesByMuscleGroupId(muscleGroupId: number) {
         return this.http.get<MuscleGroupExercises>(`${ this.exerciseUrl }/find-all-exercises-by-muscle-group-id/${ muscleGroupId }`);
-    }
-
-    findAddedExercisesByMuscleGroupId(muscleGroupId: number) {
-        return this.http.get<ExerciseOrder[]>(`${ this.exerciseUrl }/find-added-exercises-by-muscle-group-id/${ muscleGroupId }`);
     }
 
     findCardioExercises() {

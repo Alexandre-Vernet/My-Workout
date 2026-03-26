@@ -17,6 +17,11 @@ public class UserExerciseService {
     UserExerciseMapper userExerciseMapper;
 
 
+    List<UserExercise> findAddedExercisesByMuscleGroupId(UserEntity userEntity, Integer muscleGroupId) {
+        List<UserExerciseEntity> exerciseEntityList = userExerciseRepository.findAddedExercisesByMuscleGroupId(userEntity.getId(), muscleGroupId);
+        return userExerciseMapper.toDtoList(exerciseEntityList);
+    }
+
     UserExercise create(UserEntity userEntity, UserExercise userExercise) {
         UserExerciseEntity userExerciseEntity = userExerciseRepository.findByUserIdAndExerciseId(userEntity.getId(), userExercise.getExercise().getId());
         if (userExerciseEntity != null) {

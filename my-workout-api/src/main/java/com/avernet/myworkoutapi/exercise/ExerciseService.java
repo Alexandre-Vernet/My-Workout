@@ -44,9 +44,6 @@ public class ExerciseService {
     ExerciseAddedToWorkoutMapper exerciseAddedToWorkoutMapper;
 
     @Resource
-    ExerciseOrderMapper exerciseOrderMapper;
-
-    @Resource
     MuscleMapper muscleMapper;
 
 
@@ -97,11 +94,6 @@ public class ExerciseService {
             exerciseAddedToWorkoutMapper.toDtoList(exerciseAddedToWorkoutEntityList),
             muscleMapper.toDtoList(muscleList.stream().sorted(Comparator.comparing(MuscleEntity::getName)).toList())
         );
-    }
-
-    List<ExerciseOrder> findAddedExercisesByMuscleGroupId(UserEntity userEntity, Integer muscleGroupId) {
-        List<ExerciseOrderEntity> exerciseOrderEntityList = exerciseRepository.findAddedExercisesByMuscleGroupId(userEntity.getId(), muscleGroupId);
-        return exerciseOrderMapper.toDtoList(exerciseOrderEntityList);
     }
 
     List<Exercise> findCardioExercises(UserEntity userEntity) {

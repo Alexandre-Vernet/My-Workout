@@ -14,12 +14,12 @@ import { UserExercise } from '../../../../interfaces/user-exercise';
 import { Tag } from 'primeng/tag';
 import { Muscle } from '../../../../interfaces/muscle';
 import { removeAccents, replaceSpaces } from '../../../shared/utils/remove-accents';
-import { JsonPipe, NgClass, UpperCasePipe } from '@angular/common';
+import { NgClass, UpperCasePipe } from '@angular/common';
 import { MuscleGroupExercises } from '../../../../interfaces/MuscleGroupExercises';
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [DataView, Button, Badge, Skeleton, DragDropModule, RouterLink, Tag, NgClass, UpperCasePipe, JsonPipe],
+    imports: [DataView, Button, Badge, Skeleton, DragDropModule, RouterLink, Tag, NgClass, UpperCasePipe],
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })
