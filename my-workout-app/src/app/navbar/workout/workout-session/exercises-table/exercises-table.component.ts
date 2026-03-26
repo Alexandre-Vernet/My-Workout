@@ -30,7 +30,6 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
     @Input() muscleGroupId: number;
     @Input() exerciseId: number;
     @Input() exercisesMade = new BehaviorSubject<History[]>([]);
-    @Output() exercisesMadeChange = new Subject<History[]>();
     @Output() resetWorkout = new Subject<void>();
 
     @ViewChild('exerciseTable', { read: ElementRef }) exerciseTable!: ElementRef;
@@ -61,7 +60,7 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
     }
 
     scrollBottomTable() {
-        const tableBody = this.exerciseTable?.nativeElement.querySelector('.p-datatable-table-container');
+        const tableBody: HTMLElement = this.exerciseTable?.nativeElement.querySelector('.p-datatable-table-container');
         if (tableBody) {
             tableBody.scrollTop = tableBody.scrollHeight;
         }

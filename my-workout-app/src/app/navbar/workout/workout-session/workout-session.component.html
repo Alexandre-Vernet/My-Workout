@@ -106,18 +106,18 @@
                                                 </p-inputnumber>
                                             </div>
                                         </div>
-
-                                        <app-exercises-table [muscleGroupId]="muscleGroupId"
-                                                             [(exercisesMade)]="exercisesMade"
-                                                             [exerciseId]="currentExercise.id"
-                                                             (resetWorkout)="resetWorkout()">
-                                        </app-exercises-table>
                                     </div>
                                 }
                             </div>
                         </ng-template>
                     </p-step-panel>
                 }
+
+                <app-exercises-table [muscleGroupId]="muscleGroupId"
+                                     [exercisesMade]="exercisesMade"
+                                     [exerciseId]="currentExercise.id"
+                                     (resetWorkout)="resetWorkout()">
+                </app-exercises-table>
             </p-step-panels>
         </p-stepper>
 
