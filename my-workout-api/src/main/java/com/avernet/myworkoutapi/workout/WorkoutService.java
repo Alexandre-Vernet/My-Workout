@@ -5,6 +5,7 @@ import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserMapper;
 import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class WorkoutService {
     @Resource
     UserMapper userMapper;
 
+    @Transactional
     Workout createWorkout(UserEntity userEntity, Workout workout) {
         if (workout.getMuscleGroup().name() != MuscleGroupType.CARDIO) {
             // Do not create a workout if it already exists for the same user and muscle group on the same day
@@ -68,6 +70,7 @@ public class WorkoutService {
        return workoutRepository.countByUserId(userEntity.getId());
     }
 
+    @Transactional
     void delete(UserEntity userEntity, Long id) {
         workoutRepository.deleteByIdAndUserId(id, userEntity.getId());
     }

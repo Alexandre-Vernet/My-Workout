@@ -43,10 +43,6 @@ export class WorkoutService {
     }
 
     delete(id: number) {
-        return this.http.delete<void>(`${ this.workoutUrl }`, {
-            params: {
-                id
-            }
-        });
+        return this.http.delete<void>(`${ this.workoutUrl }/${id}`);
     }
 }
