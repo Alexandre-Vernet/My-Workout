@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Exercise } from '../../interfaces/exercise';
+import { Exercise } from '../../interfaces/Exercise';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { UserExercise } from '../../interfaces/user-exercise';
+import { UserExercise } from '../../interfaces/User-exercise';
 
 @Injectable({
     providedIn: 'root'

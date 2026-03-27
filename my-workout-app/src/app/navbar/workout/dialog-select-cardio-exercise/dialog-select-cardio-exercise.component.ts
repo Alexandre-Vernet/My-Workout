@@ -1,11 +1,11 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { Dialog } from 'primeng/dialog';
 import { Subject } from 'rxjs';
-import { Exercise } from '../../../../interfaces/exercise';
+import { Exercise } from '../../../../interfaces/Exercise';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
-import { Workout } from '../../../../interfaces/workout';
+import { Workout } from '../../../../interfaces/Workout';
 import { WorkoutService } from '../../../services/workout.service';
-import { History } from '../../../../interfaces/history';
+import { History } from '../../../../interfaces/History';
 import { Alert } from '../../../../interfaces/alert';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { ConfirmationService } from 'primeng/api';

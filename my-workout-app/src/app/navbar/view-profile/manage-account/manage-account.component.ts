@@ -6,7 +6,7 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { ToggleSwitch } from 'primeng/toggleswitch';
-import { User } from '../../../../interfaces/user';
+import { User } from '../../../../interfaces/User';
 import { Subject } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { Alert } from '../../../../interfaces/alert';

@@ -3,19 +3,19 @@ import { BehaviorSubject, filter, map } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
 import { FormsModule } from '@angular/forms';
-import { Exercise } from '../../../../interfaces/exercise';
+import { Exercise } from '../../../../interfaces/Exercise';
 import { InputNumber } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { HistoryService } from '../../../services/history.service';
-import { History } from '../../../../interfaces/history';
+import { History } from '../../../../interfaces/History';
 import { Skeleton } from 'primeng/skeleton';
 import { ExercisesTableComponent } from './exercises-table/exercises-table.component';
 import { Elastic } from '../../../../interfaces/elastic';
 import { Popover } from 'primeng/popover';
 import { WorkoutService } from '../../../services/workout.service';
-import { Workout } from '../../../../interfaces/workout';
+import { Workout } from '../../../../interfaces/Workout';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { ErrorCodeEnum } from '../../../../error-code/error-code-enum';
 import { ThemeService } from '../../../shared/theme/theme.service';
@@ -24,7 +24,7 @@ import { convertWeightElastic } from '../../../shared/utils/convert-weight-elast
 import { PreventFocusOnButtonClickDirective } from '../../../shared/directives/prevent-focus-on-button-click.directive';
 import { NgClass, UpperCasePipe } from '@angular/common';
 import { UserExerciseService } from '../../../services/user-exercise.service';
-import { UserExercise } from '../../../../interfaces/user-exercise';
+import { UserExercise } from '../../../../interfaces/User-exercise';
 
 @Component({
     selector: 'app-workout-session',

@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { WorkoutService } from '../../services/workout.service';
-import { Workout } from '../../../interfaces/workout';
+import { Workout } from '../../../interfaces/Workout';
 import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
 import { ThemeService } from '../../shared/theme/theme.service';
@@ -21,7 +21,7 @@ import { AlertService } from '../../services/alert.service';
 import { Tag } from 'primeng/tag';
 import { ExerciseService } from '../../services/exercise.service';
 import { HistoryDetailComponent } from '../history/history-detail/history-detail.component';
-import { Exercise } from '../../../interfaces/exercise';
+import { Exercise } from '../../../interfaces/Exercise';
 import { DatePipe, NgClass, TitleCasePipe } from '@angular/common';
 import {WorkoutGroupedHistories} from "../../../interfaces/WorkoutGroupedHistories";
 

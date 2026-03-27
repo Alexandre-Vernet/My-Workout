@@ -4,7 +4,7 @@ import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { Message } from 'primeng/message';
-import { User } from '../../../interfaces/user';
+import { User } from '../../../interfaces/User';
 import { ErrorCodeEnum } from '../../../error-code/error-code-enum';
 
 @Component({

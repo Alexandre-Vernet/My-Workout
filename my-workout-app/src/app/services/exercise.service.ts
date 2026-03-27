@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Exercise } from '../../interfaces/exercise';
+import { Exercise } from '../../interfaces/Exercise';
 import { MuscleGroupExercises } from '../../interfaces/MuscleGroupExercises';
 import { ExerciseMuscle } from '../../interfaces/ExerciseMuscle';
 

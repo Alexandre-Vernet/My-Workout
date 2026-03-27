@@ -6,7 +6,7 @@ import { NgClass } from '@angular/common';
 import { Message } from 'primeng/message';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 import { Alert } from '../../../interfaces/alert';
-import { User } from '../../../interfaces/user';
+import { User } from '../../../interfaces/User';
 import { ErrorCodeEnum } from '../../../error-code/error-code-enum';
 
 @Component({

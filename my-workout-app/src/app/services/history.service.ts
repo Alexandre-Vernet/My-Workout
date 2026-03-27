@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { History } from '../../interfaces/history';
+import { History } from '../../interfaces/History';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({

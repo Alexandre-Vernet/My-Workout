@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ExerciseService } from '../../../../services/exercise.service';
-import { Exercise } from '../../../../../interfaces/exercise';
+import { Exercise } from '../../../../../interfaces/Exercise';
 import { Button } from 'primeng/button';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
@@ -10,7 +10,7 @@ import { ToggleSwitch } from 'primeng/toggleswitch';
 import { MuscleService } from '../../../../services/muscle.service';
 import { MuscleDropdown } from '../../../../../interfaces/MuscleDropdown';
 import { MultiSelect } from 'primeng/multiselect';
-import { Muscle } from '../../../../../interfaces/muscle';
+import { Muscle } from '../../../../../interfaces/Muscle';
 import { AlertService } from '../../../../services/alert.service';
 import { UserExerciseService } from '../../../../services/user-exercise.service';
 import { ConfirmationService, MessageService } from 'primeng/api';

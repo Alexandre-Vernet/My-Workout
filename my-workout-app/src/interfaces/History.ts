@@ -1,6 +1,6 @@
-import { Exercise } from './exercise';
-import { User } from './user';
-import { Workout } from './workout';
+import { Exercise } from './Exercise';
+import { User } from './User';
+import { Workout } from './Workout';
 
 export interface History {
     id?: number;

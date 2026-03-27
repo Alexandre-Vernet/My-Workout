@@ -1,5 +1,5 @@
-import { Exercise } from './exercise';
-import { Muscle } from './muscle';
+import { Exercise } from './Exercise';
+import { Muscle } from './Muscle';
 
 export class ExerciseAddedToWorkout {
     exercise: Exercise;

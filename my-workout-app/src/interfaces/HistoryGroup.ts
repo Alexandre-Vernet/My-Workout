@@ -1,5 +1,5 @@
-import {Exercise} from "./exercise";
-import { History } from "./history";
+import {Exercise} from "./Exercise";
+import { History } from "./History";
 
 export class HistoryGroup {
     exercise?: Exercise;

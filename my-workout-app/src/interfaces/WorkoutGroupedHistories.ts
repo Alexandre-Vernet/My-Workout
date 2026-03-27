@@ -1,4 +1,4 @@
-import {Workout} from "./workout";
+import {Workout} from "./Workout";
 import {MuscleGroup} from "./MuscleGroup";
 import {HistoryGroup} from "./HistoryGroup";
 

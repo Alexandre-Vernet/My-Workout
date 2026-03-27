@@ -1,6 +1,6 @@
-import { User } from './user';
+import { User } from './User';
 import { MuscleGroup } from './MuscleGroup';
-import { History } from './history';
+import { History } from './History';
 
 export class Workout {
     id?: number;

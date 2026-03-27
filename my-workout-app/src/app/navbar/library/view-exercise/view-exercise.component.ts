@@ -12,7 +12,7 @@ import { DeviceDetectionService } from '../../../services/device-detection.servi
 import { Skeleton } from 'primeng/skeleton';
 import { replaceSpaces } from '../../../shared/utils/remove-accents';
 import { AuthService } from '../../../auth/auth.service';
-import { User } from '../../../../interfaces/user';
+import { User } from '../../../../interfaces/User';
 import { ExerciseMuscle } from '../../../../interfaces/ExerciseMuscle';
 
 @Component({

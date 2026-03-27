@@ -1,5 +1,5 @@
-import { Muscle } from './muscle';
-import { ExerciseMuscle } from './exercise-muscle';
+import { Muscle } from './Muscle';
+import { ExerciseMuscle } from './Exercise-muscle';
 
 export interface Exercise {
     id?: number;

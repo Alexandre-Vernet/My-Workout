@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ExerciseService } from '../../../services/exercise.service';
-import { Exercise } from '../../../../interfaces/exercise';
+import { Exercise } from '../../../../interfaces/Exercise';
 import { RouterLink } from '@angular/router';
 import { WorkoutService } from '../../../services/workout.service';
 import { AlertService } from '../../../services/alert.service';

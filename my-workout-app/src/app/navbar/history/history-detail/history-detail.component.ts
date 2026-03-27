@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { History } from '../../../../interfaces/history';
-import { Exercise } from '../../../../interfaces/exercise';
+import { History } from '../../../../interfaces/History';
+import { Exercise } from '../../../../interfaces/Exercise';
 import { RouterLink } from '@angular/router';
 
 @Component({
