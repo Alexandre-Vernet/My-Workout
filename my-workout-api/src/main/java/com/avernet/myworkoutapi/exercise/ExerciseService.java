@@ -13,6 +13,7 @@ import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -115,6 +116,7 @@ public class ExerciseService {
         );
     }
 
+    @Transactional
     Exercise createExercise(Exercise exercise) {
         ExerciseEntity exerciseEntity = exerciseMapper.toEntity(exercise);
         ExerciseEntity finalExerciseEntity = exerciseEntity;

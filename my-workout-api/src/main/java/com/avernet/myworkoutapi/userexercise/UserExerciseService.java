@@ -22,6 +22,7 @@ public class UserExerciseService {
         return userExerciseMapper.toDtoList(exerciseEntityList);
     }
 
+    @Transactional
     UserExercise create(UserEntity userEntity, UserExercise userExercise) {
         UserExerciseEntity userExerciseEntity = userExerciseRepository.findByUserIdAndExerciseId(userEntity.getId(), userExercise.getExercise().getId());
         if (userExerciseEntity != null) {

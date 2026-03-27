@@ -1,14 +1,12 @@
 package com.avernet.myworkoutapi.history;
 
-import com.avernet.myworkoutapi.workout.Workout;
 import com.avernet.myworkoutapi.exercise.Exercise;
-import lombok.Builder;
+import com.avernet.myworkoutapi.workout.Workout;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 public class History {
     Long id;
     Float weight;

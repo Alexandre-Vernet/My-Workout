@@ -37,6 +37,7 @@ public class HistoryService {
         return historyMapper.toDtoList(historyEntity);
     }
 
+    @Transactional
     History create(History history) {
         HistoryEntity historyEntity = historyMapper.toEntity(history);
         historyEntity = historyRepository.save(historyEntity);
