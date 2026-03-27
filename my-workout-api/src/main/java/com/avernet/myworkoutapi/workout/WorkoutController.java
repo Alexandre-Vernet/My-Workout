@@ -22,8 +22,8 @@ public class WorkoutController {
     WorkoutService workoutService;
 
     @PostMapping
-    Workout create(@AuthenticationPrincipal UserEntity userEntity, @RequestBody Workout workout) {
-        return workoutService.createWorkout(userEntity, workout);
+    Workout create(@AuthenticationPrincipal UserEntity userEntity, @RequestBody WorkoutRequest workoutRequest) {
+        return workoutService.createWorkout(userEntity, workoutRequest);
     }
 
     @GetMapping("{id}")

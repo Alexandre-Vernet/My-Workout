@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Workout } from '../../interfaces/workout';
 import { DateUtils } from '../shared/utils/date-utils';
-import {WorkoutGroupedHistories} from "../../interfaces/WorkoutGroupedHistories";
+import { WorkoutGroupedHistories } from "../../interfaces/WorkoutGroupedHistories";
+import { History } from "../../interfaces/history";
 
 @Injectable({
     providedIn: 'root'
@@ -17,8 +18,8 @@ export class WorkoutService {
     ) {
     }
 
-    create(workout: Workout) {
-        return this.http.post<Workout>(this.workoutUrl, workout);
+    create(workout: Workout, history: History) {
+        return this.http.post<Workout>(this.workoutUrl, { workout, history });
     }
 
     findById(id: number) {
@@ -43,6 +44,6 @@ export class WorkoutService {
     }
 
     delete(id: number) {
-        return this.http.delete<void>(`${ this.workoutUrl }/${id}`);
+        return this.http.delete<void>(`${ this.workoutUrl }/${ id }`);
     }
 }

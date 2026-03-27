@@ -1,9 +1,10 @@
 package com.avernet.myworkoutapi.workout;
 
+import com.avernet.myworkoutapi.history.HistoryEntity;
 import com.avernet.myworkoutapi.history.HistoryGroup;
+import com.avernet.myworkoutapi.history.HistoryMapper;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
-import com.avernet.myworkoutapi.user.UserMapper;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -23,21 +24,32 @@ public class WorkoutService {
     WorkoutMapper workoutMapper;
 
     @Resource
-    UserMapper userMapper;
+    HistoryMapper historyMapper;
+
 
     @Transactional
-    Workout createWorkout(UserEntity userEntity, Workout workout) {
-        if (workout.getMuscleGroup().name() != MuscleGroupType.CARDIO) {
+    Workout createWorkout(UserEntity userEntity, WorkoutRequest workoutRequest) {
+        WorkoutEntity workoutEntity = workoutMapper.toEntity(workoutRequest.getWorkout());
+
+        if (workoutRequest.getWorkout().getMuscleGroup().name() != MuscleGroupType.CARDIO) {
             // Do not create a workout if it already exists for the same user and muscle group on the same day
             // Except cardio workout because it can be done multiple times a day with different exercises (e.g. running, cycling)
-            Optional<WorkoutEntity> existingWorkout = checkDuplicateWorkout(userEntity, workout);
+            Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDate(userEntity.getId(),
+                workoutRequest.getWorkout().getMuscleGroup().id(),
+                workoutRequest.getWorkout().getDate());
             if (existingWorkout.isPresent()) {
-                return workoutMapper.toDto(existingWorkout.get());
+                workoutEntity = existingWorkout.get();
             }
         }
 
-        workout.setUser(userMapper.toDto(userEntity));
-        WorkoutEntity workoutEntity = workoutRepository.save(workoutMapper.toEntity(workout));
+        workoutEntity.setUser(userEntity);
+
+        HistoryEntity historyEntity = historyMapper.toEntity(workoutRequest.getHistory());
+        historyEntity.setWorkout(workoutEntity);
+
+        workoutEntity.getHistories().add(historyEntity);
+
+        workoutRepository.save(workoutEntity);
         return workoutMapper.toDto(workoutEntity);
     }
 
@@ -73,9 +85,5 @@ public class WorkoutService {
     @Transactional
     void delete(UserEntity userEntity, Long id) {
         workoutRepository.deleteByIdAndUserId(id, userEntity.getId());
-    }
-
-    private Optional<WorkoutEntity> checkDuplicateWorkout(UserEntity userEntity, Workout workout) {
-        return workoutRepository.findByUserIdAndMuscleGroupIdAndDate(userEntity.getId(), workout.getMuscleGroup().id(), workout.getDate());
     }
 }

@@ -125,40 +125,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         }
     }
 
-    saveExercise() {
-        const history: History = {
-            workout: this.workout,
-            exercise: this.currentExercise,
-            weight: this.weight,
-            reps: this.reps
-        };
-
-        this.historyService.create(history)
-            .subscribe({
-                next: (h) => {
-                    const exerciseMade: History = {
-                        id: h.id,
-                        weight: this.weight,
-                        reps: this.reps,
-                        restTime: '/'
-                    };
-
-                    this.exercisesMade.next([
-                        ...this.exercisesMade.value,
-                        exerciseMade
-                    ]);
-
-                    this.alertService.alert$.next(null);
-                },
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'enregister l\'historique'
-                    });
-                }
-            });
-    }
-
     toggleTimer() {
         if (this.weight < 0 || this.weight >= 500) {
             return;
@@ -187,6 +153,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     convertWeightToElastics() {
         this.weightToElastics = convertWeightElastic(this.weight);
+    }
+
+    resetWorkout() {
+        this.workout = null;
     }
 
     private findExercises() {
@@ -292,15 +262,39 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     private startTimer() {
-        if (!this.workout) {
-            this.createWorkout(this.muscleGroupId)
-                .subscribe(workout => {
+        const history: History = {
+            workout: this.workout,
+            exercise: this.currentExercise,
+            weight: this.weight,
+            reps: this.reps
+        };
+
+        this.createWorkout(this.muscleGroupId, history)
+            .subscribe({
+                next: (workout) => {
+                    this.alertService.alert$.next(null);
+
                     this.workout = workout;
-                    this.saveExercise();
-                });
-        } else {
-            this.saveExercise();
-        }
+                    const lastHistoryId = workout.histories[workout.histories.length - 1].id;
+                    const exerciseMade: History = {
+                        id: lastHistoryId,
+                        weight: this.weight,
+                        reps: this.reps,
+                        restTime: '/'
+                    };
+
+                    this.exercisesMade.next([
+                        ...this.exercisesMade.value,
+                        exerciseMade
+                    ]);
+                },
+                error: () => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: 'Erreur lors de l\'enregistrement'
+                    });
+                }
+            });
 
         this.timer.startTime = performance.now();
         this.timer.interval = setInterval(() => {
@@ -340,7 +334,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         Exemple : 02:05:72
      */
     private formatTimer(minutes: number, seconds: number, centiseconds: number) {
-        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${centiseconds.toString().padStart(2, '0')}`;
+        return `${ minutes.toString().padStart(2, '0') }:${ seconds.toString().padStart(2, '0') }:${ centiseconds.toString().padStart(2, '0') }`;
     }
 
 
@@ -367,7 +361,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         });
     }
 
-    private createWorkout(muscleGroupId: number) {
+    private createWorkout(muscleGroupId: number, history: History) {
         const muscleGroup: MuscleGroup = {
             id: muscleGroupId
         };
@@ -376,15 +370,11 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             muscleGroup,
             date: new Date()
         };
-        return this.workoutService.create(workout);
+        return this.workoutService.create(workout, history);
     }
 
 
     private redirectWorkoutHome() {
         this.router.navigate(['/', 'workout']);
-    }
-
-    resetWorkout() {
-        this.workout = null;
     }
 }

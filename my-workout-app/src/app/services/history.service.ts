@@ -15,10 +15,6 @@ export class HistoryService {
     ) {
     }
 
-    create(history: History) {
-        return this.http.post<History>(this.historyUrl, history);
-    }
-
     findLastHistoryWeightByExerciseId(exerciseId: number) {
         return this.http.get<History>(`${ this.historyUrl }/last/${ exerciseId }`);
     }

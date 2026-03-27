@@ -1,11 +1,10 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { Dialog } from 'primeng/dialog';
-import { map, Subject, switchMap } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Exercise } from '../../../../interfaces/exercise';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { Workout } from '../../../../interfaces/workout';
 import { WorkoutService } from '../../../services/workout.service';
-import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../interfaces/history';
 import { Alert } from '../../../../interfaces/alert';
 import { ThemeService } from '../../../shared/theme/theme.service';
@@ -43,7 +42,6 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
 
     constructor(
         private readonly workoutService: WorkoutService,
-        private readonly historyService: HistoryService,
         private readonly themeService: ThemeService,
     ) {
     }
@@ -72,29 +70,19 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
             duration: Number(this.inputDuration)
         };
 
-        this.workoutService.create(workout)
-            .pipe(
-                switchMap(createdWorkout => {
-                    const exercise: Exercise = {
-                        id: this.selectedExercise.id
-                    };
+        const history: History = {
+            exercise: {
+                id: this.selectedExercise.id
+            }
+        };
 
-                    const history: History = {
-                        workout: createdWorkout,
-                        exercise: exercise
-                    };
-
-                    return this.historyService.create(history)
-                        .pipe(map(() => createdWorkout));
-                })
-            )
+        this.workoutService.create(workout, history)
             .subscribe({
                 next: (workout) => {
                     const h: History = {
                         exercise: this.selectedExercise
                     };
-                    workout.history = [];
-                    workout.history.push(h);
+                    workout.histories.push(h);
                     this.createdWorkout.next(workout);
 
                     this.showAlert.next({

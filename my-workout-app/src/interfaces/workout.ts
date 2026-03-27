@@ -8,6 +8,6 @@ export class Workout {
     muscleGroup?: MuscleGroup;
     muscleGroups?: { muscleGroup: MuscleGroup, history: History[] }[];
     date: Date;
-    history?: History[];
+    histories?: History[];
     duration?: number;
 }

@@ -198,7 +198,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
         this.alertService.alert$.next({
             severity: 'success',
-            message: `${ workout.history[0].exercise.name } a été ajouté au calendrier`
+            message: `${ workout.histories[0].exercise.name } a été ajouté au calendrier`
         });
     }
 
