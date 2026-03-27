@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { GroupedHistory } from '../../../../interfaces/history';
+import { History } from '../../../../interfaces/history';
 import { Exercise } from '../../../../interfaces/exercise';
 import { RouterLink } from '@angular/router';
 
@@ -13,23 +13,23 @@ import { RouterLink } from '@angular/router';
 export class HistoryDetailComponent implements OnInit {
 
     @Input() exercise: Exercise;
-    @Input() groupedHistory: GroupedHistory[];
+    @Input() histories: History[];
 
     ngOnInit() {
-        this.groupedHistory = this.groupedHistory.map(gp => {
+        this.histories = this.histories.map(gp => {
             let durationConvert = '';
-            if (typeof gp.duration === 'number') {
+            if (typeof gp?.workout?.duration === 'number') {
 
-                if (gp.duration < 60) {
-                    durationConvert = `${gp.duration} mn`;
+                if (gp.workout.duration < 60) {
+                    durationConvert = `${ gp.workout.duration } mn`;
                 } else {
-                    const hours = Math.floor(gp.duration / 60);
-                    const remainingMinutes = gp.duration % 60;
+                    const hours = Math.floor(gp.workout.duration / 60);
+                    const remainingMinutes = gp.workout.duration % 60;
 
                     if (remainingMinutes === 0) {
-                        durationConvert = `${hours} h`;
+                        durationConvert = `${ hours } h`;
                     } else {
-                        durationConvert = `${hours}h${remainingMinutes}`;
+                        durationConvert = `${ hours }h${ remainingMinutes }`;
                     }
                 }
 

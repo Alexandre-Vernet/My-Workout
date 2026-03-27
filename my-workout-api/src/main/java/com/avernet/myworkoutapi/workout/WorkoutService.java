@@ -1,5 +1,6 @@
 package com.avernet.myworkoutapi.workout;
 
+import com.avernet.myworkoutapi.history.HistoryGroup;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserMapper;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class WorkoutService {
@@ -37,9 +39,24 @@ public class WorkoutService {
         return workoutMapper.toDto(workoutEntity);
     }
 
-    Workout find(Long id) {
-        WorkoutEntity workoutEntity = workoutRepository.findByUserId(id);
-        return workoutMapper.toDto(workoutEntity);
+    WorkoutGroupedHistories find(Long id) {
+        Workout workout = workoutMapper.toDto(workoutRepository.findById(id).orElse(null));
+
+        List<HistoryGroup> historyGroupList = workout.getHistories().stream()
+            .collect(Collectors.groupingBy(h -> h.getExercise().getId()))
+            .values()
+            .stream()
+            .map(historyList -> new HistoryGroup(
+                historyList.get(0).getExercise(),
+                historyList
+            ))
+            .toList();
+
+        return WorkoutGroupedHistories.builder()
+            .workout(workout)
+            .historyGroups(historyGroupList)
+            .muscleGroup(workout.getMuscleGroup())
+            .build();
     }
 
     List<Workout> findByDate(UserEntity userEntity, String start, String end) {

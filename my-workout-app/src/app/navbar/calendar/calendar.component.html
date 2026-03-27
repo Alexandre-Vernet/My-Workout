@@ -26,7 +26,7 @@
 ></app-dialog-select-cardio-exercise>
 
 
-<p-dialog [header]="showWorkout?.date | date:'fullDate' | titlecase" [modal]="true" [(visible)]="showModalViewWorkout"
+<p-dialog [header]="showWorkout?.workout.date | date:'fullDate' | titlecase" [modal]="true" [(visible)]="showModalViewWorkout"
           dismissableMask="true"
           [style]="{ width: '25rem',  background: isDarkMode ? '#1f2a36' : '#ffff' }">
     @if (showWorkout) {
@@ -40,19 +40,19 @@
                 <h2 class="mb-3">{{ showWorkout.muscleGroup.name | titlecase }}</h2>
 
                 <!-- List exercises -->
-                @for (history of showWorkout.history; track history.id; let i = $index) {
+                @for (history of showWorkout.historyGroups; track i; let i = $index) {
                     @if (i > 0) {
                         <hr class="mt-3 mb-3"/>
                     }
 
                     <app-history-detail [exercise]="history.exercise"
-                                        [groupedHistory]="history.groupedHistory"></app-history-detail>
+                                        [histories]="history.histories"></app-history-detail>
                 }
 
             </div>
             <div class="flex justify-content-end mt-3">
                 <p-button severity="danger"
-                          (onClick)="openModalDeleteWorkout(showWorkout.id, showWorkout.muscleGroup.name, showWorkout.date)"
+                          (onClick)="openModalDeleteWorkout(showWorkout.workout.id, showWorkout.muscleGroup.name, showWorkout.workout.date)"
                           icon="pi pi-trash" label="Supprimer"/>
             </div>
         </div>

@@ -1,18 +1,16 @@
 package com.avernet.myworkoutapi.history;
 
-import com.avernet.myworkoutapi.workout.Workout;
 import com.avernet.myworkoutapi.exercise.Exercise;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
-@Builder
-public class History {
-    Long id;
-    Float weight;
-    Short reps;
-    Workout workout;
+@AllArgsConstructor
+public class HistoryGroup {
     Exercise exercise;
+    List<History> histories;
 }

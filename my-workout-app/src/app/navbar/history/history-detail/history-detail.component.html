@@ -2,25 +2,25 @@
     <h3 class="text-primary mb-2">{{ exercise.name }}</h3>
 </div>
 
-@for (gp of groupedHistory; track gp.id) {
+@for (history of histories; track history.id) {
     <div class="flex flex-row text-sm text-color-secondary gap-1">
-        @if (gp.reps) {
-            <span>{{ gp.reps }}</span>
+        @if (history.reps) {
+            <span>{{ history.reps }}</span>
         }
-        @if (gp.reps && gp.weight) {
+        @if (history.reps && history.weight) {
             <span>x</span>
         }
-        @if (gp.weight) {
-            <span>{{ gp.weight }} kg</span>
+        @if (history.weight) {
+            <span>{{ history.weight }} kg</span>
         }
-        @if (!gp.weight && gp.reps <= 1 && gp.reps > 0) {
+        @if (!history.weight && history.reps <= 1 && history.reps > 0) {
             <span>répétition</span>
         }
-        @if (!gp.weight && gp.reps > 1) {
+        @if (!history.weight && history.reps > 1) {
             <span>répétitions</span>
         }
-        @if (!gp.weight && !gp.reps && gp.duration) {
-            <span>{{ gp.duration }}</span>
+        @if (!history.weight && !history.reps && history.workout?.duration) {
+            <span>{{ history.workout.duration }}</span>
         }
     </div>
 }

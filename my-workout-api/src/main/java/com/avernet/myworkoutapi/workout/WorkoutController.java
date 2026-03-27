@@ -27,7 +27,7 @@ public class WorkoutController {
     }
 
     @GetMapping("{id}")
-    Workout find(@PathVariable Long id) {
+    WorkoutGroupedHistories find(@PathVariable Long id) {
         return workoutService.find(id);
     }
 

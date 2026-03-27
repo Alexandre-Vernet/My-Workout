@@ -15,21 +15,12 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
     Optional<WorkoutEntity> findByUserIdAndMuscleGroupIdAndDate(Long userId, Integer muscleGroupId, LocalDate date);
 
     @Query("""
-        select w from WorkoutEntity w
-            left join fetch w.histories
-            where w.user.id = :userId
-            and w.date BETWEEN :start and :end
+        SELECT w FROM WorkoutEntity w
+            LEFT JOIN FETCH w.histories
+            WHERE w.user.id = :userId
+            AND w.date BETWEEN :start and :end
         """)
     List<WorkoutEntity> findByUserIdAndDateBetween(@Param("userId") Long userId, @Param("start") LocalDate start, @Param("end") LocalDate end);
-
-    @Query("""
-        SELECT w from WorkoutEntity w
-        LEFT JOIN FETCH w.histories h
-        LEFT JOIN FETCH h.exercise
-        LEFT JOIN FETCH w.muscleGroup
-        WHERE w.id = :id
-    """)
-    WorkoutEntity findByUserId(@Param("id") Long id);
 
     Integer countByUserId(Long userId);
 

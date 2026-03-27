@@ -23,6 +23,7 @@ import { ExerciseService } from '../../services/exercise.service';
 import { HistoryDetailComponent } from '../history/history-detail/history-detail.component';
 import { Exercise } from '../../../interfaces/exercise';
 import { DatePipe, NgClass, TitleCasePipe } from '@angular/common';
+import {WorkoutGroupedHistories} from "../../../interfaces/WorkoutGroupedHistories";
 
 @Component({
     selector: 'app-calendar',
@@ -52,7 +53,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             center: '',
             right: 'today'
         },
-        eventClick: this.viewHistory.bind(this),
+        eventClick: this.eventClick.bind(this),
         eventDidMount: this.customizeCalendar.bind(this),
         dateClick: this.dateClick.bind(this),
         events: ((info, success, failure) => {
@@ -93,7 +94,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     filterWorkouts: Workout[] = [];
     activeFilter: MuscleGroup;
 
-    showWorkout: Workout;
+    showWorkout: WorkoutGroupedHistories;
     showModalViewWorkout = false;
 
     muscleGroups: MuscleGroup[] = [];
@@ -219,15 +220,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         this.muscleGroups.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    private viewHistory(info: EventClickArg) {
-        const workoutId = Number(info.event.id);
-        this.workoutService.findById(workoutId)
-            .subscribe(workout => {
-                this.showModalViewWorkout = true;
-                this.showWorkout = workout;
-            });
-    }
-
     filterByMuscleGroup(muscleGroup: MuscleGroup) {
         if (muscleGroup.name === this.activeFilter?.name) {
             this.filterWorkouts = this.workouts;
@@ -254,6 +246,15 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         info.el.classList.add('event-color-style');
         info.el.style.borderLeftColor = color;
 
+    }
+
+    private eventClick(info: EventClickArg) {
+        const workoutId = Number(info.event.id);
+        this.workoutService.findById(workoutId)
+            .subscribe(workout => {
+                this.showModalViewWorkout = true;
+                this.showWorkout = workout;
+            });
     }
 
     private dateClick(info: DateClickArg) {

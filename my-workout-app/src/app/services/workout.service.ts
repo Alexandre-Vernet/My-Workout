@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Workout } from '../../interfaces/workout';
 import { DateUtils } from '../shared/utils/date-utils';
+import {WorkoutGroupedHistories} from "../../interfaces/WorkoutGroupedHistories";
 
 @Injectable({
     providedIn: 'root'
@@ -21,7 +22,7 @@ export class WorkoutService {
     }
 
     findById(id: number) {
-        return this.http.get<Workout>(`${ this.workoutUrl }/${ id }`);
+        return this.http.get<WorkoutGroupedHistories>(`${ this.workoutUrl }/${ id }`);
     }
 
     find() {
