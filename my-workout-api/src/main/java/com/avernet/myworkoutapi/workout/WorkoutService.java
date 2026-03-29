@@ -78,10 +78,6 @@ public class WorkoutService {
         return workoutMapper.toDtoList(workoutEntityList);
     }
 
-    Integer countTotalDaysWorkout(UserEntity userEntity) {
-       return workoutRepository.countByUserId(userEntity.getId());
-    }
-
     @Transactional
     void delete(UserEntity userEntity, Long id) {
         workoutRepository.deleteByIdAndUserId(id, userEntity.getId());

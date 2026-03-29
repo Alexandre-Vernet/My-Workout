@@ -1,5 +1,7 @@
 package com.avernet.myworkoutapi.history;
 
+import com.avernet.myworkoutapi.history.stats.UserExercisesCountTotalWorkout;
+import com.avernet.myworkoutapi.history.stats.exercisegraphs.ExerciseGraphs;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +31,16 @@ public class HistoryController {
     @GetMapping("today/{muscleGroupId}/{exerciseId}")
     List<History> findTodayExercices(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long muscleGroupId, @PathVariable Long exerciseId) {
         return historyService.findTodayExercices(userEntity, muscleGroupId, exerciseId);
+    }
+
+    @GetMapping("get-global-stats")
+    UserExercisesCountTotalWorkout getGlobalStatsWithListExercises(@AuthenticationPrincipal UserEntity userEntity) {
+        return historyService.getGlobalStatsWithListExercises(userEntity);
+    }
+
+    @GetMapping("exercise-graph/{exerciseId}")
+    ExerciseGraphs getExerciseGraphs(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long exerciseId) {
+        return historyService.getExerciseGraphs(userEntity, exerciseId);
     }
 
     @PostMapping

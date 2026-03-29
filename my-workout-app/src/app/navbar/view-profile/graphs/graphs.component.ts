@@ -1,37 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { HistoryService } from '../../../services/history.service';
-import Chart, { ChartItem } from 'chart.js/auto';
 import { AlertService } from '../../../services/alert.service';
-import { ExerciseService } from '../../../services/exercise.service';
-import { Exercise } from '../../../../interfaces/Exercise';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { NgClass } from '@angular/common';
+import { ExerciseGraphs } from "../../../../interfaces/ExerciseGraphs";
+import Chart, { ChartItem } from 'chart.js/auto';
+import { Skeleton } from "primeng/skeleton";
 
 @Component({
     selector: 'app-graphs',
     templateUrl: './graphs.component.html',
     styleUrl: './graphs.component.scss',
     imports: [
-        NgClass
+        NgClass,
+        Skeleton
     ],
     standalone: true
 })
 export class GraphsComponent implements OnInit {
 
-    exercise: Exercise;
-
-    exerciseId = 0;
-
-    totalWeight = 0;
-    totalReps = 0;
-    maxWeight = 0;
+    exerciseGraphs: ExerciseGraphs;
 
     isDarkMode = false;
 
     constructor(
         private readonly historyService: HistoryService,
-        private readonly exerciseService: ExerciseService,
         private readonly activatedRoute: ActivatedRoute,
         private readonly alertService: AlertService,
         private readonly themeService: ThemeService
@@ -39,16 +33,39 @@ export class GraphsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.exerciseId = Number(this.activatedRoute.snapshot.paramMap.get('exerciseId'));
+        const exerciseId = Number(this.activatedRoute.snapshot.paramMap.get('exerciseId'));
 
-        this.exerciseService.findExerciseMuscle(this.exerciseId)
+        this.historyService.getExerciseGraphs(exerciseId)
             .subscribe({
-                next: (exercise) => {
-                    this.exercise = exercise;
-                    this.bar();
-                    this.countTotalWeight();
-                    this.countTotalReps();
-                    this.countMaxWeight();
+                next: (exerciseGraphs) => {
+                    this.exerciseGraphs = exerciseGraphs;
+
+                    const ctx = document.getElementById('bar');
+
+                    new Chart(ctx as ChartItem, {
+                        type: 'bar',
+                        data: {
+                            labels: this.exerciseGraphs.historyPoints.map(h => h.date),
+                            datasets: [{
+                                label: 'Charge utilisée',
+                                data: this.exerciseGraphs.historyPoints.map(h => h.weight),
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return `${ value } kg`;
+                                        }
+                                    },
+                                }
+                            }
+                        }
+                    });
+
                 },
                 error: (err) => {
                     this.alertService.alert$.next({
@@ -59,84 +76,5 @@ export class GraphsComponent implements OnInit {
             });
 
         this.isDarkMode = this.themeService.isDarkMode();
-    }
-
-    private bar() {
-        this.historyService.graphs(this.exerciseId)
-            .subscribe({
-                next: (histories => {
-                    const ctx = document.getElementById('bar');
-
-                    new Chart(ctx as ChartItem, {
-                        type: 'bar',
-                        data: {
-                            labels: histories.map(h => h.date),
-                            datasets: [{
-                                label: 'Charge utilisée',
-                                data: histories.map(h => h.weight),
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: {
-                                        callback: function(value) {
-                                            return `${ value } kg`;
-                                        }
-                                    },
-                                    labels: ['test']
-                                }
-                            }
-                        }
-                    });
-                }),
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Erreur lors de la récupération des données'
-                    });
-                }
-            });
-    }
-
-    private countTotalWeight() {
-        this.historyService.countTotalWeight(this.exerciseId)
-            .subscribe({
-                next: (totalWeight => this.totalWeight = totalWeight),
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Erreur lors de la récupération des données'
-                    });
-                }
-            });
-    }
-
-    private countTotalReps() {
-        this.historyService.countTotalReps(this.exerciseId)
-            .subscribe({
-                next: (totalReps => this.totalReps = totalReps),
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Erreur lors de la récupération des données'
-                    });
-                }
-            });
-    }
-
-    private countMaxWeight() {
-        this.historyService.countMaxWeight(this.exerciseId)
-            .subscribe({
-                next: (maxWeight => this.maxWeight = maxWeight),
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Erreur lors de la récupération des données'
-                    });
-                }
-            });
     }
 }

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { History } from '../../interfaces/History';
 import { HttpClient } from '@angular/common/http';
+import { ExerciseGraphs } from "../../interfaces/ExerciseGraphs";
+import { UserExercisesCountTotalWorkout } from "../../interfaces/UserExercisesCountTotalWorkout";
 
 @Injectable({
     providedIn: 'root'
@@ -23,36 +25,13 @@ export class HistoryService {
         return this.http.get<History[]>(`${ this.historyUrl }/today/${ muscleGroupId }/${ exerciseId }`);
     }
 
-    graphs(exerciseId: number) {
-        return this.http.get<History[]>(`${ this.historyUrl }/graphs`, {
-            params: {
-                exerciseId
-            }
-        });
+
+    getGlobalStatsWithListExercises() {
+        return this.http.get<UserExercisesCountTotalWorkout>(`${ this.historyUrl }/get-global-stats`);
     }
 
-    countTotalWeight(exerciseId: number) {
-        return this.http.get<number>(`${ this.historyUrl }/count-total-weight`, {
-            params: {
-                exerciseId
-            }
-        });
-    }
-
-    countTotalReps(exerciseId: number) {
-        return this.http.get<number>(`${ this.historyUrl }/count-total-reps`, {
-            params: {
-                exerciseId
-            }
-        });
-    }
-
-    countMaxWeight(exerciseId: number) {
-        return this.http.get<number>(`${ this.historyUrl }/count-max-weight`, {
-            params: {
-                exerciseId
-            }
-        });
+    getExerciseGraphs(exerciseId: number) {
+        return this.http.get<ExerciseGraphs>(`${ this.historyUrl }/exercise-graph/${ exerciseId }`);
     }
 
     update(history: History) {

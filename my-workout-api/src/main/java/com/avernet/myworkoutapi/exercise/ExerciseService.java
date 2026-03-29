@@ -56,7 +56,7 @@ public class ExerciseService {
 
         Optional<UserEntity> userEntity = authService.optionalUser();
         if (userEntity.isPresent()) {
-            exerciseEntityList = exerciseRepository.findAllExercisesByUserAndMuscleGroup(userEntity.get().getId(), muscleGroupId);
+            exerciseEntityList = exerciseRepository.findExercisesByUserAndMuscleGroup(userEntity.get().getId(), muscleGroupId);
         } else {
             exerciseEntityList = exerciseRepository.findByMuscleGroup(muscleGroupId);
         }

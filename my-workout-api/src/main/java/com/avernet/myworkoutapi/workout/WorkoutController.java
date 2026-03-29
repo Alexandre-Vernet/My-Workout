@@ -36,11 +36,6 @@ public class WorkoutController {
         return workoutService.findByDate(userEntity, start, end);
     }
 
-    @GetMapping("count-total-days-workout")
-    Integer countTotalDaysWorkout(@AuthenticationPrincipal UserEntity userEntity) {
-        return workoutService.countTotalDaysWorkout(userEntity);
-    }
-
     @DeleteMapping("{id}")
     void delete(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long id) {
         workoutService.delete(userEntity, id);

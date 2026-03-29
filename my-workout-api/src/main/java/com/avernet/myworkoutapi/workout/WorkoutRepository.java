@@ -22,7 +22,7 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
         """)
     List<WorkoutEntity> findByUserIdAndDateBetween(@Param("userId") Long userId, @Param("start") LocalDate start, @Param("end") LocalDate end);
 
-    Integer countByUserId(Long userId);
+    Long countByUserId(Long userId);
 
     void deleteByIdAndUserId(Long id, Long userId);
 }

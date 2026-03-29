@@ -27,10 +27,6 @@ export class ExerciseService {
         return this.http.get<ExerciseMuscle>(`${ this.exerciseUrl }/${ exerciseId }`);
     }
 
-    findByUserId() {
-        return this.http.get<Exercise[]>(`${ this.exerciseUrl }/find-by-user-id`);
-    }
-
     createExercise(exercise: Exercise) {
         return this.http.post<Exercise>(`${ this.exerciseUrl }`, exercise);
     }
