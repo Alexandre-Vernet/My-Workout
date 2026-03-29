@@ -26,15 +26,10 @@ export class ViewExerciseComponent implements OnInit {
 
     exerciseMuscle: ExerciseMuscle;
     user: User;
-
-    showDrawerSmartWorkout = false;
-
-    isIphone = false;
-
-    showImage = true;
     imagePath = '';
 
-    isLoading = true;
+    showDrawerSmartWorkout = false;
+    isIphone = false;
 
     constructor(
         private readonly exerciseService: ExerciseService,
@@ -59,7 +54,7 @@ export class ViewExerciseComponent implements OnInit {
             .subscribe({
                 next: (exercise) => {
                     this.exerciseMuscle = exercise;
-                    this.imagePath = `/assets/images/${exercise.exercise.id}.gif`;
+                    this.imagePath = `/assets/images/${ exercise.exercise.id }.gif`;
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {

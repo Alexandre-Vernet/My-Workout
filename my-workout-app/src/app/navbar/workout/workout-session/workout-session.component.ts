@@ -57,7 +57,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         interval: null
     };
 
-    isLoading = true;
 
     isDarkMode = false;
 
@@ -174,7 +173,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             )
             .subscribe({
                 next: (exercises) => {
-                    this.isLoading = false;
                     this.userExercises = exercises;
                     this.currentExercise = exercises[this.activeStep - 1].exercise;
                     if (!this.currentExercise) {
@@ -185,8 +183,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {
-                    this.isLoading = false;
-
                     if (err?.error?.errorCode === ErrorCodeEnum.muscleGroupDoesntExist) {
                         this.redirectWorkoutHome();
                     }

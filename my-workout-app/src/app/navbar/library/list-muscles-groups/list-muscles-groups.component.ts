@@ -17,9 +17,6 @@ export class ListMusclesGroupsComponent implements OnInit {
 
     muscleGroups: MuscleGroup[];
 
-    isLoading = true;
-
-
     constructor(
         private readonly muscleGroupService: MuscleGroupService,
         private readonly alertService: AlertService
@@ -30,7 +27,6 @@ export class ListMusclesGroupsComponent implements OnInit {
         this.muscleGroupService.findAllMuscleGroup()
             .subscribe({
                 next: (muscleGroups) => {
-                    this.isLoading = false;
                     this.muscleGroups = muscleGroups;
                     this.alertService.alert$.next(null);
                 },
