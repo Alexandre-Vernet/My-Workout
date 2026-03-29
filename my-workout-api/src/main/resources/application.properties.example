@@ -12,6 +12,7 @@ allowed.origin=http://localhost:4200
 
 security.jwt.secret-key=
 security.jwt.expiration-time=
+security.jwt.refresh.expiration-time=
 
 server.port=8080
 server.address=0.0.0.0

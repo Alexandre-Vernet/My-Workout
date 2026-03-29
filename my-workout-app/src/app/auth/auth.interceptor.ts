@@ -10,15 +10,6 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
     const router = inject(Router);
     const alertService = inject(AlertService);
 
-    if (request.url.endsWith('/auth/refresh') ||
-        request.url.endsWith('/auth/sign-in') ||
-        request.url.endsWith('/auth/sign-up') ||
-        request.url.endsWith('/auth/send-email-reset-password') ||
-        request.url.includes('/auth/reset-password')
-    ) {
-        return next(request);
-    }
-
     const token = localStorage.getItem('access-token');
     if (token) {
         request = request.clone({
@@ -30,7 +21,7 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
     return next(request)
         .pipe(
             catchError((err) => {
-                if (err.status === 401) {
+                if (err.status === 401 || err.status === 403) {
                     return authService.refresh()
                         .pipe(
                             switchMap(({ accessToken }) => {

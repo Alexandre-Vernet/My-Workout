@@ -1,4 +1,4 @@
 package com.avernet.myworkoutapi.auth;
 
-public record AuthResponse(String accessToken) {
+public record AuthResponse(String accessToken, String refreshToken) {
 }

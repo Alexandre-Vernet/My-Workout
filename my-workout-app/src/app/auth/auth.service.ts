@@ -1,67 +1,46 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, map, switchMap, tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../../interfaces/User';
+import { AuthResponse } from "../../interfaces/AuthResponse";
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
 
-    private userSubject = new BehaviorSubject<User>(null);
-    user$ = this.userSubject.asObservable();
-
     authUrl = environment.authUrl();
-    error = '';
 
     constructor(
-        private http: HttpClient
+        private readonly http: HttpClient
     ) {
     }
 
     login(user: User) {
-        return this.http.post<{ accessToken: string, refreshToken: string }>(`${this.authUrl}/login`, user)
+        return this.http.post<AuthResponse>(`${ this.authUrl }/login`, user)
             .pipe(
                 tap(({ accessToken, refreshToken }) => {
                     localStorage.setItem('access-token', accessToken);
                     localStorage.setItem('refresh-token', refreshToken);
-                }),
-                switchMap(() => this.getCurrentUser())
+                })
             );
     }
 
     register(user: User) {
-        return this.http.post<{ accessToken: string, user: User }>(`${this.authUrl}/register`, user)
+        return this.http.post<{ accessToken: string, user: User }>(`${ this.authUrl }/register`, user)
             .pipe(switchMap(() => this.login(user)));
     }
 
     getCurrentUser() {
-        if (this.userSubject.value) {
-            return this.user$;
-        }
-
-        return this.http.get<User>(`${this.authUrl}/me`)
-            .pipe(
-                tap((user) => this.userSubject.next(user)),
-                catchError(() => this.refresh()
-                    .pipe(
-                        map((e) => e.user)
-                    )
-                )
-            );
+        return this.http.get<User>(`${ this.authUrl }/me`);
     }
 
     refresh() {
         const refreshToken = localStorage.getItem('refresh-token');
-        return this.http.post<{
-            user: User,
-            accessToken: string,
-            refreshToken: string
-        }>(`${this.authUrl}/refresh`, { refreshToken })
+        return this.http.post<AuthResponse>(`${ this.authUrl }/refresh`, refreshToken)
             .pipe(
-                tap(({ user, accessToken, refreshToken }) => {
-                    this.userSubject.next(user);
+                tap(({ accessToken, refreshToken }) => {
                     localStorage.setItem('access-token', accessToken);
                     localStorage.setItem('refresh-token', refreshToken);
                 })
@@ -69,36 +48,34 @@ export class AuthService {
     }
 
     updateUser(user: User) {
-        return this.http.put<User>(`${this.authUrl}`, { user });
+        return this.http.put<User>(`${ this.authUrl }`, { user });
     }
 
     sendEmailForgotPassword(email: string) {
-        return this.http.post<{ linkResetPassword: string }>(`${this.authUrl}/send-email-reset-password`, { email });
+        return this.http.post<{ linkResetPassword: string }>(`${ this.authUrl }/send-email-reset-password`, { email });
     }
 
     updatePassword(userId: number, password: string) {
         return this.http.put<{
             user: User,
             accessToken: string
-        }>(`${this.authUrl}/reset-password/${userId}`, { password })
+        }>(`${ this.authUrl }/reset-password/${ userId }`, { password })
             .pipe(
-                tap(({ user, accessToken }) => {
-                    this.userSubject.next(user);
+                tap(({ accessToken }) => {
                     localStorage.setItem('access-token', accessToken);
                 })
             );
     }
 
     verifyToken(token: string) {
-        return this.http.post<User>(`${this.authUrl}/verify-token`, { token });
+        return this.http.post<User>(`${ this.authUrl }/verify-token`, { token });
     }
 
     deleteAccount() {
-        return this.http.delete<void>(`${this.authUrl}`);
+        return this.http.delete<void>(`${ this.authUrl }`);
     }
 
     signOut() {
-        this.userSubject.next(null);
         localStorage.removeItem('access-token');
         localStorage.removeItem('refresh-token');
     }

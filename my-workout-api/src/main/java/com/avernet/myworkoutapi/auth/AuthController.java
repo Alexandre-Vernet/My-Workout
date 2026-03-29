@@ -18,17 +18,22 @@ public class AuthController {
     AuthService authService;
 
     @GetMapping("me")
-    public User me(@AuthenticationPrincipal UserEntity userEntity) {
+    User me(@AuthenticationPrincipal UserEntity userEntity) {
         return authService.getCurrentUserDto(userEntity);
     }
 
-    @PostMapping("/login")
-    public AuthResponse authenticateUser(@RequestBody LoginRequest request) {
+    @PostMapping("login")
+    AuthResponse authenticateUser(@RequestBody LoginRequest request) {
         return authService.loginUser(request);
     }
 
-    @PostMapping("/register")
-    public User registerUser(@RequestBody User user) {
+    @PostMapping("register")
+    User registerUser(@RequestBody User user) {
         return authService.registerUser(user);
+    }
+
+    @PostMapping("refresh")
+    AuthResponse refresh(@RequestBody String refreshToken) {
+        return authService.refreshToken(refreshToken);
     }
 }
