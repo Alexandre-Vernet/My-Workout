@@ -14,11 +14,12 @@ import { HistoryService } from '../../services/history.service';
 import { HistoryDetailComponent } from './history-detail/history-detail.component';
 import { Tag } from 'primeng/tag';
 import { MuscleGroup } from '../../../interfaces/MuscleGroup';
-import { DatePipe, NgClass, TitleCasePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
+import { FirstLetterUppercasePipe } from "../../shared/pipes/first-letter-uppercase.pipe";
 
 @Component({
     selector: 'app-history',
-    imports: [Skeleton, ConfirmDialog, Button, Ripple, HistoryDetailComponent, Tag, NgClass, TitleCasePipe, DatePipe],
+    imports: [Skeleton, ConfirmDialog, Button, Ripple, HistoryDetailComponent, Tag, NgClass, DatePipe, FirstLetterUppercasePipe],
     templateUrl: './history.component.html',
     styleUrl: './history.component.scss',
     standalone: true,

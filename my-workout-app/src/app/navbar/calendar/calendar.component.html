@@ -4,7 +4,7 @@
                [ngClass]="{
                 'border border-blue-500 bg-blue-100 text-blue-700': activeFilter?.name === muscleGroup.name,
             }"
-        >{{ muscleGroup.name | titlecase }}
+        >{{ muscleGroup.name | firstLetterUppercase }}
         </p-tag>
     }
 </div>
@@ -26,7 +26,7 @@
 ></app-dialog-select-cardio-exercise>
 
 
-<p-dialog [header]="showWorkout?.workout.date | date:'fullDate' | titlecase" [modal]="true" [(visible)]="showModalViewWorkout"
+<p-dialog [header]="showWorkout?.workout.date | date:'fullDate' | firstLetterUppercase" [modal]="true" [(visible)]="showModalViewWorkout"
           dismissableMask="true"
           [style]="{ width: '25rem',  background: isDarkMode ? '#1f2a36' : '#ffff' }">
     @if (showWorkout) {
@@ -37,7 +37,7 @@
                     'shadow-light': !isDarkMode
                     }">
 
-                <h2 class="mb-3">{{ showWorkout.muscleGroup.name | titlecase }}</h2>
+                <h2 class="mb-3">{{ showWorkout.muscleGroup.name | firstLetterUppercase }}</h2>
 
                 <!-- List exercises -->
                 @for (history of showWorkout.historyGroups; track i; let i = $index) {

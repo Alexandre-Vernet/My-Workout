@@ -22,12 +22,13 @@ import { Tag } from 'primeng/tag';
 import { ExerciseService } from '../../services/exercise.service';
 import { HistoryDetailComponent } from '../history/history-detail/history-detail.component';
 import { Exercise } from '../../../interfaces/Exercise';
-import { DatePipe, NgClass, TitleCasePipe } from '@angular/common';
-import {WorkoutGroupedHistories} from "../../../interfaces/WorkoutGroupedHistories";
+import { DatePipe, NgClass } from '@angular/common';
+import { WorkoutGroupedHistories } from "../../../interfaces/WorkoutGroupedHistories";
+import { FirstLetterUppercasePipe } from "../../shared/pipes/first-letter-uppercase.pipe";
 
 @Component({
     selector: 'app-calendar',
-    imports: [FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, Tag, HistoryDetailComponent, NgClass, DatePipe, TitleCasePipe],
+    imports: [FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, Tag, HistoryDetailComponent, NgClass, DatePipe, FirstLetterUppercasePipe],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
