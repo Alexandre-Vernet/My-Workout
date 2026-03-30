@@ -19,8 +19,8 @@
         @if (!history.weight && history.reps > 1) {
             <span>répétitions</span>
         }
-        @if (!history.weight && !history.reps && history.workout?.duration) {
-            <span>{{ history.workout.duration }}</span>
+        @if (!history.weight && !history.reps && duration) {
+            <span>{{ duration | convertTime }}</span>
         }
     </div>
 }

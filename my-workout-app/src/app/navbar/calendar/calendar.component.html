@@ -40,13 +40,14 @@
                 <h2 class="mb-3">{{ showWorkout.muscleGroup.name | firstLetterUppercase }}</h2>
 
                 <!-- List exercises -->
-                @for (history of showWorkout.historyGroups; track i; let i = $index) {
+                @for (historyGroup of showWorkout.historyGroups; track i; let i = $index) {
                     @if (i > 0) {
                         <hr class="mt-3 mb-3"/>
                     }
 
-                    <app-history-detail [exercise]="history.exercise"
-                                        [histories]="history.histories"></app-history-detail>
+                    <app-history-detail [exercise]="historyGroup.exercise"
+                                        [histories]="historyGroup.histories"
+                                        [duration]="showWorkout.workout.duration"></app-history-detail>
                 }
 
             </div>

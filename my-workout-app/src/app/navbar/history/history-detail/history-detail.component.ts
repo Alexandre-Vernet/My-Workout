@@ -1,45 +1,19 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { History } from '../../../../interfaces/History';
 import { Exercise } from '../../../../interfaces/Exercise';
 import { RouterLink } from '@angular/router';
+import { ConvertTimePipe } from "../../../shared/pipes/convert-time.pipe";
 
 @Component({
     selector: 'app-history-detail',
-    imports: [RouterLink],
+    imports: [RouterLink, ConvertTimePipe],
     templateUrl: './history-detail.component.html',
     styleUrl: './history-detail.component.scss',
     standalone: true
 })
-export class HistoryDetailComponent implements OnInit {
+export class HistoryDetailComponent {
 
     @Input() exercise: Exercise;
     @Input() histories: History[];
-
-    ngOnInit() {
-        this.histories = this.histories.map(gp => {
-            let durationConvert = '';
-            if (typeof gp?.workout?.duration === 'number') {
-
-                if (gp.workout.duration < 60) {
-                    durationConvert = `${ gp.workout.duration } mn`;
-                } else {
-                    const hours = Math.floor(gp.workout.duration / 60);
-                    const remainingMinutes = gp.workout.duration % 60;
-
-                    if (remainingMinutes === 0) {
-                        durationConvert = `${ hours } h`;
-                    } else {
-                        durationConvert = `${ hours }h${ remainingMinutes }`;
-                    }
-                }
-
-                return {
-                    ...gp,
-                    duration: durationConvert
-                };
-            }
-
-            return gp;
-        });
-    }
+    @Input() duration: number;
 }

@@ -237,7 +237,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     private customizeCalendar(info: EventMountArg) {
         const eventNameFormated = removeAccents(info.event.title);
         const label: string = muscleGroupMap[eventNameFormated]?.label ?? info.event.title;
-        const color: string = muscleGroupMap[eventNameFormated]?.color || '#e67c73';
+        const color: string = muscleGroupMap[eventNameFormated]?.color || '#d77c05';
 
         const spanEventName = info.el.querySelector('span.text-sm') as HTMLElement;
         if (spanEventName) {
