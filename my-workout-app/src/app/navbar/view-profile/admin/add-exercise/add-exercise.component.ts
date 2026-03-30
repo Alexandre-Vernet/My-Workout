@@ -46,7 +46,7 @@ export class AddExerciseComponent implements OnInit {
         muscles: new FormControl<Muscle[]>(null, Validators.required)
     });
 
-    muscles: MuscleDropdown[] = [];
+    musclesDropdown: Muscle[] = [];
 
     constructor(
         private readonly exerciseService: ExerciseService,
@@ -79,7 +79,7 @@ export class AddExerciseComponent implements OnInit {
             });
         this.muscleService.findAllMuscles()
             .subscribe({
-                next: (muscles) => this.muscles = muscles,
+                next: (musclesDropdown) => this.musclesDropdown = musclesDropdown,
                 error: () => {
                     this.alertService.alert$.next({
                         severity: 'error',

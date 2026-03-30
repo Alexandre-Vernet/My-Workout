@@ -15,7 +15,7 @@ public class MuscleController {
     MuscleService muscleService;
 
     @GetMapping
-    List<Muscle> findAllMuscle() {
+    List<MuscleDropdown> findAllMuscle() {
         return muscleService.findAllMuscle();
     }
 }

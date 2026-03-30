@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { MuscleDropdown } from '../../interfaces/MuscleDropdown';
+import { Muscle } from "../../interfaces/Muscle";
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class MuscleService {
     }
 
     findAllMuscles() {
-        return this.http.get<MuscleDropdown[]>(this.muscleUrl);
+        return this.http.get<Muscle[]>(this.muscleUrl);
     }
 
 }
