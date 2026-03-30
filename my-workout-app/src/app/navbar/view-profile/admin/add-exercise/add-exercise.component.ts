@@ -8,7 +8,6 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Textarea } from 'primeng/textarea';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { MuscleService } from '../../../../services/muscle.service';
-import { MuscleDropdown } from '../../../../../interfaces/MuscleDropdown';
 import { MultiSelect } from 'primeng/multiselect';
 import { Muscle } from '../../../../../interfaces/Muscle';
 import { AlertService } from '../../../../services/alert.service';
@@ -18,6 +17,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ActivatedRoute } from '@angular/router';
 import { filter, switchMap } from 'rxjs';
 import { Message } from 'primeng/message';
+import { ExerciseMuscle } from "../../../../../interfaces/ExerciseMuscle";
 
 @Component({
     selector: 'app-add-exercise',
@@ -73,7 +73,7 @@ export class AddExerciseComponent implements OnInit {
                         name: exercise.name,
                         description: exercise.description,
                         isSmartWorkout: exercise.smartWorkout,
-                        muscles: exercise.muscles
+                        muscles: exerciseMuscle.muscles
                     });
                 }
             });
@@ -95,50 +95,32 @@ export class AddExerciseComponent implements OnInit {
             name: name.trim(),
             description: description.trim(),
             smartWorkout: isSmartWorkout,
-            exerciseMuscles: muscles.map(m => ({
-                muscle: {
-                    id: m.id,
-                }
-            }))
         };
-
-        if (!id) {
-            this.exerciseService.createExercise(exercise)
-                .subscribe({
-                    next: (exerciseCreated) => {
-                        this.alertService.alert$.next({
-                            severity: 'success',
-                            message: 'L\'exercice a bien été ajouté'
-                        });
-
-                        this.formAddExercise.reset();
-                        this.showDialogAddExerciseToWorkout(exerciseCreated);
-                    },
-                    error: (err) => {
-                        this.alertService.alert$.next({
-                            severity: 'error',
-                            message: err?.error?.message ?? 'Une erreur s\'est produite lors de l\'ajout de l\'exercice'
-                        });
-                    }
-                });
-        } else {
+        if (id) {
             exercise.id = id;
-            this.exerciseService.updateExercise(exercise)
-                .subscribe({
-                    next: () => {
-                        this.alertService.alert$.next({
-                            severity: 'success',
-                            message: 'L\'exercice a bien été mis à jour'
-                        });
-                    },
-                    error: (err) => {
-                        this.alertService.alert$.next({
-                            severity: 'error',
-                            message: err?.error?.message ?? 'Une erreur s\'est produite lors de la mise à jour de l\'exercice'
-                        });
-                    }
-                });
         }
+
+        const exerciseMuscle: ExerciseMuscle = {
+            exercise,
+            muscles
+        }
+
+        this.exerciseService.createOrUpdateExercise(exerciseMuscle)
+            .subscribe({
+                next: () => {
+                    this.alertService.alert$.next({
+                        severity: 'success',
+                        message: 'L\'exercice a bien été mis à jour'
+                    });
+                    this.showDialogAddExerciseToWorkout(exerciseMuscle.exercise);
+                },
+                error: (err) => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Une erreur s\'est produite lors de la mise à jour de l\'exercice'
+                    });
+                }
+            });
     }
 
 
@@ -158,9 +140,7 @@ export class AddExerciseComponent implements OnInit {
             acceptButtonProps: {
                 label: 'Oui',
             },
-            accept: () => {
-                this.addExerciseToWorkout(exercise);
-            },
+            accept: () => this.addExerciseToWorkout(exercise),
             reject: () => {
                 this.messageService.add({
                     severity: 'error',

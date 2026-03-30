@@ -3,6 +3,7 @@ package com.avernet.myworkoutapi.exercise;
 import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscle;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleMapper;
@@ -117,11 +118,21 @@ public class ExerciseService {
     }
 
     @Transactional
-    Exercise createExercise(Exercise exercise) {
-        ExerciseEntity exerciseEntity = exerciseMapper.toEntity(exercise);
-        ExerciseEntity finalExerciseEntity = exerciseEntity;
-        exerciseEntity.exerciseMuscles.forEach(em -> em.setExercise(finalExerciseEntity));
-        exerciseEntity = exerciseRepository.save(exerciseEntity);
+    Exercise createOrUpdateExercise(ExerciseMuscle exerciseMuscle) {
+        ExerciseEntity exerciseEntity = exerciseMapper.toEntity(exerciseMuscle.exercise());
+
+        List<ExerciseMuscleEntity> exerciseMuscleEntityList = exerciseMuscle.muscles().stream()
+                .map(muscle -> {
+                    ExerciseMuscleEntity exerciseMuscleEntity = new ExerciseMuscleEntity();
+                    exerciseMuscleEntity.setExercise(exerciseEntity);
+                    exerciseMuscleEntity.setMuscle(muscleMapper.toEntity(muscle));
+                    return exerciseMuscleEntity;
+                })
+            .toList();
+
+        exerciseEntity.setExerciseMuscles(exerciseMuscleEntityList);
+        exerciseRepository.save(exerciseEntity);
+
         return exerciseMapper.toDto(exerciseEntity);
     }
 }

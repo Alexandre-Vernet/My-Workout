@@ -1,5 +1,6 @@
 package com.avernet.myworkoutapi.exercise;
 
+import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscle;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,7 +36,7 @@ public class ExerciseController {
     }
 
     @PostMapping
-    Exercise createExercise(@RequestBody Exercise exercise) {
-        return exerciseService.createExercise(exercise);
+    Exercise createOrUpdateExercise(@RequestBody ExerciseMuscle exerciseMuscle) {
+        return exerciseService.createOrUpdateExercise(exerciseMuscle);
     }
 }

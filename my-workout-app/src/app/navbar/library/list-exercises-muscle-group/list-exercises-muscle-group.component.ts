@@ -105,8 +105,8 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             return;
         }
 
-        this.filterMuscleGroupExercises.exerciseAddedToWorkouts = this.muscleGroupExercises.exerciseAddedToWorkouts
-            .filter(e => e.exercise.exerciseMuscles.some(m => m.muscle.id === muscle.id));
+        // this.filterMuscleGroupExercises.exerciseAddedToWorkouts = this.muscleGroupExercises.exerciseAddedToWorkouts
+        //     .filter(e => e.exercise.exerciseMuscles.some(m => m.muscles.id === muscle.id));
         this.activeFilter = muscle.id;
     }
 

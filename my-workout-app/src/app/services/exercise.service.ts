@@ -27,11 +27,7 @@ export class ExerciseService {
         return this.http.get<ExerciseMuscle>(`${ this.exerciseUrl }/${ exerciseId }`);
     }
 
-    createExercise(exercise: Exercise) {
-        return this.http.post<Exercise>(`${ this.exerciseUrl }`, exercise);
-    }
-
-    updateExercise(exercise: Exercise) {
-        return this.http.patch<Exercise>(`${ this.exerciseUrl }/${ exercise.id }`, exercise);
+    createOrUpdateExercise(exerciseMuscle: ExerciseMuscle) {
+        return this.http.post<Exercise>(`${ this.exerciseUrl }`, exerciseMuscle);
     }
 }

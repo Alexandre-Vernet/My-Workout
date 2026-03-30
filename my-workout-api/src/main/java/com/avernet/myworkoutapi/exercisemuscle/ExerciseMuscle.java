@@ -1,11 +1,9 @@
 package com.avernet.myworkoutapi.exercisemuscle;
 
-import com.avernet.myworkoutapi.muscle.Muscle;
 import com.avernet.myworkoutapi.exercise.Exercise;
+import com.avernet.myworkoutapi.muscle.Muscle;
 
-public record ExerciseMuscle(
-    Long id,
-    Exercise exercise,
-    Muscle muscle
-) {
+import java.util.List;
+
+public record ExerciseMuscle(Exercise exercise, List<Muscle> muscles) {
 }
