@@ -36,7 +36,7 @@ public class WorkoutEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column()
+    @Column(nullable = false)
     LocalDate date;
 
     @Column()

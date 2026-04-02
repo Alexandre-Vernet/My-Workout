@@ -27,8 +27,8 @@ public class WorkoutController {
     }
 
     @GetMapping("{id}")
-    WorkoutGroupedHistories find(@PathVariable Long id) {
-        return workoutService.find(id);
+    WorkoutGroupedHistories find(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long id) {
+        return workoutService.find(userEntity, id);
     }
 
     @GetMapping("find-by-date")

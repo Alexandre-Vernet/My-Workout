@@ -12,6 +12,14 @@ VALUES ('PECTORAUX'),
        ('CARDIO');
 
 
+INSERT INTO public.users
+    (email, "password", created_at, updated_at, is_admin)
+VALUES ('test@gmail.com', 'test',
+        '2025-04-14 00:00:00.000', '2025-04-14 00:00:00.000', false),
+       ('test2@gmail.com', 'test2',
+        '2025-04-14 00:00:00.000', '2025-04-14 00:00:00.000', false);
+
+
 INSERT INTO public.muscles (muscle_group_id, "name")
 VALUES (3, 'Quadriceps'),
        (4, 'Deltoïdes antérieurs'),

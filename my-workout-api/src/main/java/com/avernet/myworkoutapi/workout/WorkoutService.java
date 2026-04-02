@@ -1,13 +1,16 @@
 package com.avernet.myworkoutapi.workout;
 
+import com.avernet.myworkoutapi.exception.ApiException;
+import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
 import com.avernet.myworkoutapi.history.HistoryEntity;
 import com.avernet.myworkoutapi.history.HistoryGroup;
 import com.avernet.myworkoutapi.history.HistoryMapper;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,15 +31,15 @@ public class WorkoutService {
 
 
     @Transactional
-    Workout createWorkout(UserEntity userEntity, WorkoutRequest workoutRequest) {
-        WorkoutEntity workoutEntity = workoutMapper.toEntity(workoutRequest.getWorkout());
+    public Workout createWorkout(UserEntity userEntity, WorkoutRequest workoutRequest) {
+        WorkoutEntity workoutEntity = workoutMapper.toEntity(workoutRequest.workout());
 
-        if (workoutRequest.getWorkout().getMuscleGroup().name() != MuscleGroupType.CARDIO) {
+        if (workoutRequest.workout().getMuscleGroup().name() != MuscleGroupType.CARDIO) {
             // Do not create a workout if it already exists for the same user and muscle group on the same day
             // Except cardio workout because it can be done multiple times a day with different exercises (e.g. running, cycling)
             Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDate(userEntity.getId(),
-                workoutRequest.getWorkout().getMuscleGroup().id(),
-                workoutRequest.getWorkout().getDate());
+                workoutRequest.workout().getMuscleGroup().id(),
+                workoutRequest.workout().getDate());
             if (existingWorkout.isPresent()) {
                 workoutEntity = existingWorkout.get();
             }
@@ -44,7 +47,7 @@ public class WorkoutService {
 
         workoutEntity.setUser(userEntity);
 
-        HistoryEntity historyEntity = historyMapper.toEntity(workoutRequest.getHistory());
+        HistoryEntity historyEntity = historyMapper.toEntity(workoutRequest.history());
         historyEntity.setWorkout(workoutEntity);
 
         workoutEntity.getHistories().add(historyEntity);
@@ -53,8 +56,13 @@ public class WorkoutService {
         return workoutMapper.toDto(workoutEntity);
     }
 
-    WorkoutGroupedHistories find(Long id) {
-        Workout workout = workoutMapper.toDto(workoutRepository.findById(id).orElse(null));
+    @Transactional(readOnly = true)
+    public WorkoutGroupedHistories find(UserEntity userEntity, Long id) {
+        Optional<WorkoutEntity> workoutEntity = workoutRepository.findByIdAndUser(id, userEntity);
+        if (workoutEntity.isEmpty()) {
+            throw new ApiException(ErrorCodeEnum.WORKOUT_NOT_FOUND, "Cette séance n'existe pas", HttpStatus.NOT_FOUND);
+        }
+        Workout workout = workoutMapper.toDto(workoutEntity.get());
 
         List<HistoryGroup> historyGroupList = workout.getHistories().stream()
             .collect(Collectors.groupingBy(h -> h.getExercise().getId()))
@@ -73,13 +81,14 @@ public class WorkoutService {
             .build();
     }
 
-    List<Workout> findByDate(UserEntity userEntity, String start, String end) {
+    @Transactional(readOnly = true)
+    public List<Workout> findByDate(UserEntity userEntity, String start, String end) {
         List<WorkoutEntity> workoutEntityList = workoutRepository.findByUserIdAndDateBetween(userEntity.getId(), LocalDate.parse(start), LocalDate.parse(end));
         return workoutMapper.toDtoList(workoutEntityList);
     }
 
     @Transactional
-    void delete(UserEntity userEntity, Long id) {
+    public void delete(UserEntity userEntity, Long id) {
         workoutRepository.deleteByIdAndUserId(id, userEntity.getId());
     }
 }

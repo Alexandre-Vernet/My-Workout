@@ -1,5 +1,6 @@
 package com.avernet.myworkoutapi.workout;
 
+import com.avernet.myworkoutapi.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +26,6 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
     Long countByUserId(Long userId);
 
     void deleteByIdAndUserId(Long id, Long userId);
+
+    Optional<WorkoutEntity> findByIdAndUser(Long id, UserEntity user);
 }
