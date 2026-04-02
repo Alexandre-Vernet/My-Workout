@@ -21,16 +21,16 @@ public class MuscleGroupService {
     MuscleGroupExerciseCountMapper muscleGroupExerciseCountMapper;
 
 
-    List<MuscleGroup> findAll() {
+    public List<MuscleGroup> findAll() {
         List<MuscleGroupEntity> muscleGroupEntityList = muscleGroupRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
         return muscleGroupMapper.toDtoList(muscleGroupEntityList);
     }
 
-    List<MuscleGroupExerciseCount> findAllMuscleGroupAndRecommendedMuscleGroup(UserEntity userEntity) {
+    public List<MuscleGroupExerciseCount> findAllMuscleGroupAndRecommendedMuscleGroup(UserEntity userEntity) {
         List<MuscleGroupExerciseCountEntity> muscleGroupEntityList = muscleGroupRepository.findAllMuscleGroupAndCountAddedExercises(userEntity.getId());
 
         List<MuscleGroupExerciseCountEntity> muscleGroupEntityListSorted = muscleGroupEntityList.stream()
-            .sorted(Comparator.comparing(MuscleGroupExerciseCountEntity::lastWorkout)
+            .sorted(Comparator.comparing(MuscleGroupExerciseCountEntity::lastWorkout, Comparator.nullsLast(Comparator.naturalOrder()))
                 .thenComparing(muscleGroupExerciseCountEntity -> muscleGroupExerciseCountEntity.muscleGroup().getName()))
             .toList();
 
