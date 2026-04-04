@@ -19,7 +19,7 @@ public class AuthController {
 
     @GetMapping("me")
     User me(@AuthenticationPrincipal UserEntity userEntity) {
-        return authService.getCurrentUserDto(userEntity);
+        return authService.getCurrentUser(userEntity);
     }
 
     @PostMapping("login")

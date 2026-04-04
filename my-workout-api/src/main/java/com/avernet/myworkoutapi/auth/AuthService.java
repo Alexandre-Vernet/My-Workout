@@ -42,26 +42,25 @@ public class AuthService {
 
     private final UserDetailsService userDetailsService;
 
-    public UserEntity getCurrentUserEntity() {
+
+    public Optional<UserEntity> optionalUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() != null && authentication.getPrincipal().equals("anonymousUser")) {
+        if (authentication == null || !authentication.isAuthenticated() ||
+            authentication.getPrincipal() != null &&
+                authentication.getPrincipal().equals("anonymousUser")) {
             throw new ApiException(ErrorCodeEnum.INVALID_USER, "Utilisateur non authentifié", HttpStatus.FORBIDDEN);
         }
 
-        return (UserEntity) authentication.getPrincipal();
-    }
-
-    public Optional<UserEntity> optionalUser() {
         try {
-            return Optional.ofNullable(getCurrentUserEntity());
+            return Optional.ofNullable((UserEntity) authentication.getPrincipal());
         } catch (Exception exception) {
             return Optional.empty();
         }
     }
 
-    public User getCurrentUserDto(UserEntity userEntity) {
-      return userMapper.toDto(userEntity);
+    public User getCurrentUser(UserEntity userEntity) {
+        return userMapper.toDto(userEntity);
     }
 
     public AuthResponse loginUser(LoginRequest loginRequest) {
@@ -91,7 +90,7 @@ public class AuthService {
         return userMapper.toDto(userEntity);
     }
 
-    AuthResponse refreshToken(String refreshToken) {
+    public AuthResponse refreshToken(String refreshToken) {
         String email = jwtService.extractUsername(refreshToken);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);

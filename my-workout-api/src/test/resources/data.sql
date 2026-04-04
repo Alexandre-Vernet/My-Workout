@@ -1,7 +1,7 @@
 TRUNCATE TABLE exercise_muscle, history, workout, user_exercise, muscles, exercises, muscle_group, users RESTART IDENTITY CASCADE;
 
-INSERT INTO public.users VALUES (1, 'user@gmail.com', 'user123', '2025-04-14 00:00:00', '2025-04-14 00:00:00', false);
-INSERT INTO public.users VALUES (2, 'user2@gmail.com', 'user456', '2025-04-14 00:00:00', '2025-04-14 00:00:00', false);
+INSERT INTO public.users VALUES (1, 'user1@gmail.com', '$2a$10$7Rx02KaSETCRAFZet.ZsbufTUWdJauq5GeVb.TN.aoONQUUsSlCSa', '2025-04-14 00:00:00', '2025-04-14 00:00:00', false);
+INSERT INTO public.users VALUES (2, 'user2@gmail.com', '$2a$10$7Rx02KaSETCRAFZet.ZsbufTUWdJauq5GeVb.TN.aoONQUUsSlCSa', '2025-04-14 00:00:00', '2025-04-14 00:00:00', false);
 
 INSERT INTO public.exercises VALUES (1, 'Développé couché haltères', 'Allongé sur un banc plat, les pieds bien ancrés au sol, les omoplates sont resserrées et collées contre le banc pour stabiliser le haut du dos. Une légère cambrure naturelle du bas du dos est conservée. Les haltères sont tenus en pronation, bras tendus au-dessus de la poitrine.
 En gardant les poignets solides et les coudes légèrement fléchis, les haltères sont descendus de manière contrôlée jusqu’à ce que les bras soient parallèles au sol ou légèrement en dessous. Les coudes s’écartent à environ 45° par rapport au buste, en restant alignés sous les poignets.
