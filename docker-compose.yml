@@ -36,7 +36,7 @@ services:
       - "4009:443"
 
   my-workout-db:
-    image: postgres
+    image: postgres:17
     restart: always
     networks:
       - my-workout-network

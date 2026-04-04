@@ -1,0 +1,111 @@
+package com.avernet.myworkoutapi;
+
+import com.avernet.myworkoutapi.exercise.ExerciseEntity;
+import com.avernet.myworkoutapi.exercise.ExerciseMapper;
+import com.avernet.myworkoutapi.exercise.ExerciseRepository;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
+import com.avernet.myworkoutapi.user.UserEntity;
+import com.avernet.myworkoutapi.user.UserMapper;
+import com.avernet.myworkoutapi.user.UserRepository;
+import com.avernet.myworkoutapi.userexercise.UserExercise;
+import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
+import com.avernet.myworkoutapi.userexercise.UserExerciseMapper;
+import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
+import com.avernet.myworkoutapi.userexercise.UserExerciseService;
+import jakarta.annotation.Resource;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+
+@SpringBootTest
+@Import(TestcontainersConfiguration.class)
+@Sql(scripts = "/data.sql")
+public class UserExerciseTest {
+
+    @Resource
+    UserExerciseService service;
+
+    @Resource
+    UserExerciseRepository userExerciseRepository;
+
+    @Resource
+    UserRepository userRepository;
+
+    @Resource
+    MuscleGroupRepository muscleGroupRepository;
+
+    @Resource
+    ExerciseRepository exerciseRepository;
+
+    @Resource
+    UserMapper userMapper;
+
+    @Resource
+    ExerciseMapper exerciseMapper;
+    @Autowired
+    private UserExerciseMapper userExerciseMapper;
+
+    @Test
+    void shouldFindAddedExercisesExceptExerciseNotLinkedToMuscleGroupSelected() {
+        UserEntity userEntity = userRepository.findById(1L).orElse(null);
+        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElse(null);
+
+        ExerciseEntity exerciseEntity1 = exerciseRepository.findById(1L).orElse(null);
+        ExerciseEntity exerciseEntity2 = exerciseRepository.findById(2L).orElse(null);
+        ExerciseEntity exerciseEntity3 = exerciseRepository.findById(3L).orElse(null);
+        ExerciseEntity exerciseEntity4 = exerciseRepository.findById(20L).orElse(null); /*Exercise is not linked to the muscle group 1*/
+
+        UserExerciseEntity userExerciseEntity1 = UserExerciseEntity.builder().order(1).user(userEntity).exercise(exerciseEntity1).build();
+        UserExerciseEntity userExerciseEntity2 = UserExerciseEntity.builder().order(2).user(userEntity).exercise(exerciseEntity2).build();
+        UserExerciseEntity userExerciseEntity3 = UserExerciseEntity.builder().order(3).user(userEntity).exercise(exerciseEntity3).build();
+        UserExerciseEntity userExerciseEntity4 = UserExerciseEntity.builder().order(4).user(userEntity).exercise(exerciseEntity4).build();
+        userExerciseRepository.save(userExerciseEntity1);
+        userExerciseRepository.save(userExerciseEntity2);
+        userExerciseRepository.save(userExerciseEntity3);
+        userExerciseRepository.save(userExerciseEntity4);
+
+        List<UserExercise> userExerciseList = service.findAddedExercisesByMuscleGroupId(userEntity, muscleGroupEntity.getId());
+        assertEquals(3, userExerciseList.size());
+    }
+
+    @Test
+    void shouldCreateUserExercise() {
+        UserEntity userEntity = userRepository.findById(1L).orElse(null);
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElse(null);
+
+        UserExercise userExercise = UserExercise.builder()
+            .user(userMapper.toDto(userEntity))
+            .exercise(exerciseMapper.toDto(exerciseEntity))
+            .build();
+
+        UserExercise userExerciseCreated = service.create(userEntity, userExercise);
+        assertNotNull(userExerciseCreated);
+    }
+
+    @Test
+    void shouldDeleteUserExercise() {
+        UserEntity userEntity = userRepository.findById(1L).orElse(null);
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElse(null);
+
+        UserExercise userExercise = UserExercise.builder()
+            .user(userMapper.toDto(userEntity))
+            .exercise(exerciseMapper.toDto(exerciseEntity))
+            .build();
+
+        UserExerciseEntity userExerciseCreated = userExerciseRepository.save(userExerciseMapper.toEntity(userExercise));
+
+        service.create(userEntity, userExercise);
+        UserExerciseEntity userExerciseEntity = userExerciseRepository.findById(userExerciseCreated.getId()).orElse(null);
+        assertNull(userExerciseEntity);
+    }
+}

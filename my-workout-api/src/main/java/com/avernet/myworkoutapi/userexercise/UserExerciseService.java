@@ -2,8 +2,8 @@ package com.avernet.myworkoutapi.userexercise;
 
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,13 +17,14 @@ public class UserExerciseService {
     UserExerciseMapper userExerciseMapper;
 
 
-    List<UserExercise> findAddedExercisesByMuscleGroupId(UserEntity userEntity, Integer muscleGroupId) {
+    @Transactional(readOnly = true)
+    public List<UserExercise> findAddedExercisesByMuscleGroupId(UserEntity userEntity, Integer muscleGroupId) {
         List<UserExerciseEntity> exerciseEntityList = userExerciseRepository.findAddedExercisesByMuscleGroupId(userEntity.getId(), muscleGroupId);
         return userExerciseMapper.toDtoList(exerciseEntityList);
     }
 
     @Transactional
-    UserExercise create(UserEntity userEntity, UserExercise userExercise) {
+    public UserExercise create(UserEntity userEntity, UserExercise userExercise) {
         UserExerciseEntity userExerciseEntity = userExerciseRepository.findByUserIdAndExerciseId(userEntity.getId(), userExercise.getExercise().getId());
         if (userExerciseEntity != null) {
             userExerciseRepository.delete(userExerciseEntity);
@@ -37,7 +38,7 @@ public class UserExerciseService {
     }
 
     @Transactional
-    void updateOrderExercises(UserEntity userEntity, List<UserExercise> userExerciseList) {
+    public void updateOrderExercises(UserEntity userEntity, List<UserExercise> userExerciseList) {
         userExerciseList.forEach(ue -> {
             UserExerciseEntity entity = userExerciseRepository.findByUserIdAndExerciseId(userEntity.getId(), ue.getExercise().getId());
             if (entity != null) {

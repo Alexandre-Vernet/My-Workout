@@ -17,6 +17,7 @@ import com.avernet.myworkoutapi.workout.WorkoutRepository;
 import com.avernet.myworkoutapi.workout.WorkoutRequest;
 import com.avernet.myworkoutapi.workout.WorkoutService;
 import jakarta.annotation.Resource;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -58,12 +59,19 @@ public class WorkoutServiceTest {
     HistoryMapper historyMapper;
 
 
+
+    UserEntity userEntity;
+    MuscleGroupEntity muscleGroupEntity;
+
+    @BeforeEach
+    void setup() {
+        userEntity = userRepository.findById(1L).orElse(null);
+        muscleGroupEntity = muscleGroupRepository.findById(1L).orElse(null);
+    }
+
+
     @Test
     void shouldCreateWorkout() {
-        UserEntity userEntity = userRepository.findById(1L).orElse(null);
-
-        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElse(null);
-
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
@@ -96,11 +104,6 @@ public class WorkoutServiceTest {
 
     @Test
     void shouldFindExistingWorkoutIfAlreadyExist() {
-        UserEntity userEntity = userRepository.findById(1L).orElse(null);
-
-        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElse(null);
-
-        // Existing workout
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
@@ -118,11 +121,6 @@ public class WorkoutServiceTest {
 
     @Test
     void shouldNotFindExistingWorkoutIfAlreadyExist() {
-        UserEntity userEntity = userRepository.findById(1L).orElse(null);
-
-        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElse(null);
-
-        // Existing workout
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
@@ -138,9 +136,6 @@ public class WorkoutServiceTest {
 
     @Test
     void shouldFindWorkoutByDate() {
-        UserEntity userEntity = userRepository.findById(1L).orElse(null);
-        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElse(null);
-
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
@@ -157,9 +152,7 @@ public class WorkoutServiceTest {
 
     @Test
     void shouldNotFindOthersWorkoutUserByDate() {
-        UserEntity userEntity = userRepository.findById(1L).orElse(null);
         UserEntity otherUser = userRepository.findById(2L).orElse(null);
-        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElse(null);
 
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(otherUser)
@@ -176,8 +169,6 @@ public class WorkoutServiceTest {
 
     @Test
     void shouldFindWorkout() {
-        UserEntity userEntity = userRepository.findById(1L).orElse(null);
-        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElse(null);
         ExerciseEntity exerciseEntity1 = exerciseRepository.findById(1L).orElse(null);
         ExerciseEntity exerciseEntity2 = exerciseRepository.findById(2L).orElse(null);
         ExerciseEntity exerciseEntity3 = exerciseRepository.findById(3L).orElse(null);
@@ -220,9 +211,7 @@ public class WorkoutServiceTest {
 
     @Test
     void shouldDeleteWorkout() {
-        UserEntity userEntity = userRepository.findById(1L).orElse(null);
         Long workoutId = 1L;
-        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElse(null);
 
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
