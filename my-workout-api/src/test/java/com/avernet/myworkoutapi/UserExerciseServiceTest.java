@@ -25,6 +25,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 @Sql(scripts = "/data.sql")
-public class UserExerciseTest {
+public class UserExerciseServiceTest {
 
     @Resource
     UserExerciseService service;
@@ -85,6 +86,7 @@ public class UserExerciseTest {
         userExerciseRepository.save(userExerciseEntity4);
 
         List<UserExercise> userExerciseList = service.findAddedExercisesByMuscleGroupId(userEntity, muscleGroupEntity.getId());
+        assertFalse(userExerciseList.isEmpty());
         assertEquals(3, userExerciseList.size());
     }
 

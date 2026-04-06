@@ -151,6 +151,7 @@ public class WorkoutServiceTest {
         String end = LocalDate.now().plusMonths(1).toString();
         List<Workout> workoutList = service.findByDate(userEntity, start, end);
         assertNotNull(workoutList);
+        assertFalse(workoutList.isEmpty());
         assertEquals(1, workoutList.size());
     }
 
@@ -169,6 +170,7 @@ public class WorkoutServiceTest {
         String end = LocalDate.now().plusMonths(1).toString();
         List<Workout> workoutList = service.findByDate(userEntity, start, end);
         assertEquals(0, workoutList.size());
+        assertTrue(workoutList.isEmpty());
     }
 
     @Test
@@ -211,6 +213,7 @@ public class WorkoutServiceTest {
         assertNotNull(workoutGroupedHistories);
         assertEquals(muscleGroupEntity.getName(), workoutGroupedHistories.getMuscleGroup().name());
         assertEquals(3, workoutGroupedHistories.getHistoryGroups().size());
+        assertFalse(workoutGroupedHistories.getHistoryGroups().isEmpty());
     }
 
     @Test

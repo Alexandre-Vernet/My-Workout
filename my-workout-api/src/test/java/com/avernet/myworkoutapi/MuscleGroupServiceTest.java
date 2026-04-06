@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
@@ -50,6 +51,7 @@ public class MuscleGroupServiceTest {
     @Test()
     void shouldGetMuscleGroup() {
         assertEquals(8, service.findAll().size());
+        assertFalse(service.findAll().isEmpty());
     }
 
     @Test()
@@ -76,6 +78,7 @@ public class MuscleGroupServiceTest {
         workoutRepository.save(workoutEntity);
 
         List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
+        assertFalse(muscleGroupExerciseCountList.isEmpty());
         assertEquals(8, muscleGroupExerciseCountList.size());
     }
 
@@ -108,6 +111,7 @@ public class MuscleGroupServiceTest {
 
         List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
         assertEquals(8, muscleGroupExerciseCountList.size());
+        assertFalse(muscleGroupExerciseCountList.isEmpty());
         assertEquals(1, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
     }
 
@@ -140,6 +144,7 @@ public class MuscleGroupServiceTest {
 
         List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
         assertEquals(8, muscleGroupExerciseCountList.size());
+        assertFalse(muscleGroupExerciseCountList.isEmpty());
         assertEquals(1, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
     }
 }

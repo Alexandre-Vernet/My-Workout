@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 @Sql(scripts = "/data.sql")
-public class AuthTest {
+public class AuthServiceTest {
 
     @Resource
     AuthService service;

@@ -31,13 +31,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 @Sql(scripts = "/data.sql")
-public class HistoryTest {
+public class HistoryServiceTest {
 
     @Resource
     HistoryService service;
@@ -124,6 +126,7 @@ public class HistoryTest {
 
         List<History> history = service.findTodayHistories(userEntity, muscleGroupEntity.getId().longValue(), exerciseEntity.getId());
         assertNotNull(history);
+        assertFalse(history.isEmpty());
         assertEquals(1, history.size());
     }
 
@@ -145,7 +148,7 @@ public class HistoryTest {
         historyRepository.save(historyEntity);
 
         List<History> history = service.findTodayHistories(userEntity, muscleGroupEntity.getId().longValue(), exerciseEntity.getId());
-        assertEquals(0, history.size());
+        assertTrue(history.isEmpty());
     }
 
     @Test
@@ -173,6 +176,7 @@ public class HistoryTest {
         UserExercisesCountTotalWorkout userExercisesCountTotalWorkout = service.getGlobalStatsWithListExercises(userEntity);
         assertNotNull(userExercisesCountTotalWorkout);
         assertEquals(10, userExercisesCountTotalWorkout.exercises().size());
+        assertFalse(userExercisesCountTotalWorkout.exercises().isEmpty());
         assertEquals(5, userExercisesCountTotalWorkout.countTotalDaysWorkout());
     }
 

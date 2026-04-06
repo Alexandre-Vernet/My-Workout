@@ -14,9 +14,9 @@ import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -49,7 +49,8 @@ public class ExerciseService {
     MuscleMapper muscleMapper;
 
 
-    MuscleGroupExercises findAllExercisesByMuscleGroupId(Long muscleGroupId) {
+    @Transactional(readOnly = true)
+    public MuscleGroupExercises findAllExercisesByMuscleGroupId(Long muscleGroupId) {
         MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(muscleGroupId)
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.UNKNOWN_MUSCLE, "Ce muscle n'existe pas", HttpStatus.NOT_FOUND));
 
@@ -98,7 +99,8 @@ public class ExerciseService {
         );
     }
 
-    List<Exercise> findCardioExercises(UserEntity userEntity) {
+    @Transactional(readOnly = true)
+    public List<Exercise> findCardioExercises(UserEntity userEntity) {
         List<ExerciseEntity> exerciseEntityList = exerciseRepository.findCardioExercises(userEntity.getId(), MuscleGroupType.CARDIO);
         return exerciseMapper.toDtoList(exerciseEntityList);
     }
@@ -118,7 +120,7 @@ public class ExerciseService {
     }
 
     @Transactional
-    Exercise createOrUpdateExercise(ExerciseMuscle exerciseMuscle) {
+    public Exercise createOrUpdateExercise(ExerciseMuscle exerciseMuscle) {
         ExerciseEntity exerciseEntity = exerciseMapper.toEntity(exerciseMuscle.exercise());
 
         List<ExerciseMuscleEntity> exerciseMuscleEntityList = exerciseMuscle.muscles().stream()
