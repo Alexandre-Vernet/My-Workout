@@ -105,6 +105,7 @@ public class ExerciseService {
         return exerciseMapper.toDtoList(exerciseEntityList);
     }
 
+    @Transactional(readOnly = true)
     public ExerciseMuscle findExerciseMuscle(Long exerciseId) {
         ExerciseEntity exerciseEntity = exerciseRepository.findExercise(exerciseId);
 

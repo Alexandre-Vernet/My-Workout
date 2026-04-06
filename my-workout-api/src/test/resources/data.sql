@@ -406,3 +406,4 @@ SELECT setval('exercise_muscle_id_seq', (SELECT MAX(id) FROM exercise_muscle));
 SELECT setval('history_id_seq', (SELECT MAX(id) FROM history));
 SELECT setval('user_exercise_id_seq', (SELECT MAX(id) FROM user_exercise));
 SELECT setval('workout_id_seq', (SELECT MAX(id) FROM workout));
+SELECT setval('exercises_id_seq', (SELECT MAX(id) FROM exercises));
