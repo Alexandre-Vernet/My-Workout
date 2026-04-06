@@ -1,5 +1,7 @@
 package com.avernet.myworkoutapi;
 
+import com.avernet.myworkoutapi.exception.ApiException;
+import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
 import com.avernet.myworkoutapi.history.History;
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDate;
@@ -59,14 +62,15 @@ public class WorkoutServiceTest {
     HistoryMapper historyMapper;
 
 
-
     UserEntity userEntity;
     MuscleGroupEntity muscleGroupEntity;
 
     @BeforeEach
     void setup() {
-        userEntity = userRepository.findById(1L).orElse(null);
-        muscleGroupEntity = muscleGroupRepository.findById(1L).orElse(null);
+        userEntity = userRepository.findById(1L)
+            .orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Cet utilisateur n'existe pas", HttpStatus.NOT_FOUND));
+        muscleGroupEntity = muscleGroupRepository.findById(1L)
+            .orElseThrow(() -> new ApiException(ErrorCodeEnum.MUSCLE_GROUP_NOT_FOUND, "Ce groupe musculaire n'existe pas", HttpStatus.NOT_FOUND));
     }
 
 
@@ -198,7 +202,7 @@ public class WorkoutServiceTest {
             historyEntity1Exercise1, historyEntity2Exercise1, historyEntity3Exercise1,
             historyEntity1Exercise2, historyEntity2Exercise2, historyEntity3Exercise2,
             historyEntity1Exercise3, historyEntity2Exercise3, historyEntity3Exercise3
-            );
+        );
         workoutEntity.setHistories(historyEntityList);
 
         workoutRepository.save(workoutEntity);
@@ -206,7 +210,7 @@ public class WorkoutServiceTest {
         WorkoutGroupedHistories workoutGroupedHistories = service.find(userEntity, workoutEntity.getId());
         assertNotNull(workoutGroupedHistories);
         assertEquals(muscleGroupEntity.getName(), workoutGroupedHistories.getMuscleGroup().name());
-        assertEquals(workoutGroupedHistories.getHistoryGroups().size(), 3);
+        assertEquals(3, workoutGroupedHistories.getHistoryGroups().size());
     }
 
     @Test

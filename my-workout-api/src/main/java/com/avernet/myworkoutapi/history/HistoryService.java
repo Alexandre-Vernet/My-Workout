@@ -13,9 +13,9 @@ import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.workout.WorkoutEntity;
 import com.avernet.myworkoutapi.workout.WorkoutRepository;
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -41,26 +41,22 @@ public class HistoryService {
     private ExerciseMapper exerciseMapper;
 
 
-    History findLastHistoryWeightByExerciseId(UserEntity userEntity, Long exerciseId) {
+    @Transactional(readOnly = true)
+    public History findLastHistoryWeightByExerciseId(UserEntity userEntity, Long exerciseId) {
         HistoryEntity historyEntity = historyRepository.findFirstByExerciseIdAndWorkoutUserIdOrderByWorkoutDate(userEntity.getId(), exerciseId);
         return historyMapper.toDto(historyEntity);
     }
 
-    List<History> findTodayExercices(UserEntity userEntity, Long muscleGroupId, Long exerciseId) {
+    @Transactional(readOnly = true)
+    public List<History> findTodayHistories(UserEntity userEntity, Long muscleGroupId, Long exerciseId) {
         LocalDate now = LocalDate.now();
 
-        List<HistoryEntity> historyEntity = historyRepository.findTodayExercices(userEntity.getId(), muscleGroupId, exerciseId, now);
+        List<HistoryEntity> historyEntity = historyRepository.findTodayHistories(userEntity.getId(), muscleGroupId, exerciseId, now);
         return historyMapper.toDtoList(historyEntity);
     }
 
-    @Transactional
-    History create(History history) {
-        HistoryEntity historyEntity = historyMapper.toEntity(history);
-        historyEntity = historyRepository.save(historyEntity);
-        return historyMapper.toDto(historyEntity);
-    }
-
-    UserExercisesCountTotalWorkout getGlobalStatsWithListExercises(UserEntity userEntity) {
+    @Transactional(readOnly = true)
+    public UserExercisesCountTotalWorkout getGlobalStatsWithListExercises(UserEntity userEntity) {
         Long countTotalDaysWorkout = workoutRepository.countByUserId(userEntity.getId());
         List<ExerciseEntity> exerciseEntityList = exerciseRepository.findExercisesByUser(userEntity.getId());
         return new UserExercisesCountTotalWorkout(
@@ -69,7 +65,8 @@ public class HistoryService {
         );
     }
 
-    ExerciseGraphs getExerciseGraphs(UserEntity userEntity, Long exerciseId) {
+    @Transactional(readOnly = true)
+    public ExerciseGraphs getExerciseGraphs(UserEntity userEntity, Long exerciseId) {
         ExerciseGraphsEntity exerciseGraphsEntity = historyRepository.getExerciseGraphs(userEntity.getId(), exerciseId);
         List<HistoryEntity> historyEntityList = historyRepository.findHistoriesByUserAndExercise(userEntity.getId(), exerciseId);
 
@@ -96,7 +93,7 @@ public class HistoryService {
     }
 
     @Transactional
-    History update(Long historyId, History history) {
+    public History update(Long historyId, History history) {
         HistoryEntity historyEntity = historyRepository.findById(historyId)
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.HISTORY_NOT_FOUND, "Cet historique n'existe pas", HttpStatus.NOT_FOUND));
 
@@ -116,7 +113,7 @@ public class HistoryService {
     }
 
     @Transactional
-    void delete(Long historyId) {
+    public void delete(Long historyId) {
         HistoryEntity historyEntity = historyRepository.findById(historyId)
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.HISTORY_NOT_FOUND, "Cet historique n'existe pas", HttpStatus.NOT_FOUND));
 

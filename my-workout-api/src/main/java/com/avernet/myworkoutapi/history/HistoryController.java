@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,8 +28,8 @@ public class HistoryController {
     }
 
     @GetMapping("today/{muscleGroupId}/{exerciseId}")
-    List<History> findTodayExercices(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long muscleGroupId, @PathVariable Long exerciseId) {
-        return historyService.findTodayExercices(userEntity, muscleGroupId, exerciseId);
+    List<History> findTodayHistories(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long muscleGroupId, @PathVariable Long exerciseId) {
+        return historyService.findTodayHistories(userEntity, muscleGroupId, exerciseId);
     }
 
     @GetMapping("get-global-stats")
@@ -41,11 +40,6 @@ public class HistoryController {
     @GetMapping("exercise-graph/{exerciseId}")
     ExerciseGraphs getExerciseGraphs(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long exerciseId) {
         return historyService.getExerciseGraphs(userEntity, exerciseId);
-    }
-
-    @PostMapping
-    History create(@RequestBody History history) {
-        return historyService.create(history);
     }
 
     @PatchMapping("{historyId}")

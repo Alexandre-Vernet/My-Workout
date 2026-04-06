@@ -33,7 +33,7 @@ public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
             AND w.date = :today
             ORDER BY h.id ASC
         """)
-    List<HistoryEntity> findTodayExercices(
+    List<HistoryEntity> findTodayHistories(
         @Param("userId") Long userId, @Param("muscleGroupId") Long muscleGroupId,
         @Param("exerciseId") Long exerciseId,
         @Param("today") LocalDate today);
