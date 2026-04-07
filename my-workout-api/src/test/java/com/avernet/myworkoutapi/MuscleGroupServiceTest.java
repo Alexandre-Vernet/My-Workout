@@ -115,6 +115,12 @@ public class MuscleGroupServiceTest {
         assertEquals(8, muscleGroupExerciseCountList.size());
         assertFalse(muscleGroupExerciseCountList.isEmpty());
         assertEquals(1, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
+        assertEquals(2, muscleGroupExerciseCountList.get(1).getMuscleGroup().id());
+        assertEquals(3, muscleGroupExerciseCountList.get(2).getMuscleGroup().id());
+        assertEquals(4, muscleGroupExerciseCountList.get(3).getMuscleGroup().id());
+        assertEquals(5, muscleGroupExerciseCountList.get(4).getMuscleGroup().id());
+        assertEquals(6, muscleGroupExerciseCountList.get(5).getMuscleGroup().id());
+        assertEquals(7, muscleGroupExerciseCountList.get(6).getMuscleGroup().id());
     }
 
     @Test()
