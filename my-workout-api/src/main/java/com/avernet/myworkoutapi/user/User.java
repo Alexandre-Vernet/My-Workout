@@ -21,5 +21,5 @@ public class User {
     String password;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-    boolean isAdmin;
+    boolean admin;
 }

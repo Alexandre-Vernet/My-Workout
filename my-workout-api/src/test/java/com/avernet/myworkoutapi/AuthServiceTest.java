@@ -6,6 +6,9 @@ import com.avernet.myworkoutapi.auth.LoginRequest;
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
 import com.avernet.myworkoutapi.user.User;
+import com.avernet.myworkoutapi.user.UserEntity;
+import com.avernet.myworkoutapi.user.UserNotFoundException;
+import com.avernet.myworkoutapi.user.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
@@ -15,8 +18,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
@@ -26,6 +31,8 @@ public class AuthServiceTest {
     @Resource
     AuthService service;
 
+    @Resource
+    UserRepository userRepository;
 
     @Test
     void shouldLoginUser() {
@@ -49,6 +56,7 @@ public class AuthServiceTest {
         User user = User.builder().email("user3@gmail.com").password("123").build();
         User userCreated = service.registerUser(user);
         assertNotNull(userCreated);
+        assertFalse(userCreated.isAdmin());
     }
 
     @Test
@@ -72,5 +80,25 @@ public class AuthServiceTest {
     void shouldThrowExpiredJwtExceptionRefreshToken() {
         String expiredRefreshToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMTBAZ21haWwuY29tIiwiaWF0IjoxNzc1MzAyMjM5LCJleHAiOjF9.ccyVZ5s01zEZcLnhh4s6kgHOCAT7IJm7G7aSwtRHySY";
         assertThrows(ExpiredJwtException.class, () -> service.refreshToken(expiredRefreshToken));
+    }
+
+    @Test
+    void shouldGetUser() {
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        User user = service.getCurrentUser(userEntity);
+        assertNotNull(user);
+        assertNotNull(user.getId());
+        assertNotNull(user.getEmail());
+        assertFalse(user.isAdmin());
+    }
+
+    @Test
+    void shouldGetUserAdmin() {
+        UserEntity userEntity = userRepository.findById(3L).orElseThrow(UserNotFoundException::new);
+        User user = service.getCurrentUser(userEntity);
+        assertNotNull(user);
+        assertNotNull(user.getId());
+        assertNotNull(user.getEmail());
+        assertTrue(user.isAdmin());
     }
 }

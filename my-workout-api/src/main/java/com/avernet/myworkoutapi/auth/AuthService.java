@@ -61,6 +61,7 @@ public class AuthService {
     }
 
     public User getCurrentUser(UserEntity userEntity) {
+        userEntity = userRepository.findById(userEntity.getId()).orElseThrow(UserNotFoundException::new);
         return userMapper.toDto(userEntity);
     }
 
@@ -86,6 +87,7 @@ public class AuthService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setAdmin(false);
         UserEntity userEntity = userRepository.save(userMapper.toEntity(user));
 
         return userMapper.toDto(userEntity);
