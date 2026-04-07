@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertService } from "../services/alert.service";
-import { AuthService } from "./auth.service";
-import { catchError, map, of } from "rxjs";
+import { AlertService } from '../services/alert.service';
+import { AuthService } from './auth.service';
+import { catchError, map, of } from 'rxjs';
 
 export const authGuard = () => {
     const router = inject(Router);

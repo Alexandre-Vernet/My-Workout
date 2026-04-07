@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { MuscleDropdown } from '../../interfaces/MuscleDropdown';
-import { Muscle } from "../../interfaces/Muscle";
+import { Muscle } from '../../interfaces/Muscle';
 
 @Injectable({
   providedIn: 'root',

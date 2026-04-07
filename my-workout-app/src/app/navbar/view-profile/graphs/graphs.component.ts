@@ -4,9 +4,9 @@ import { AlertService } from '../../../services/alert.service';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { NgClass } from '@angular/common';
-import { ExerciseGraphs } from "../../../../interfaces/ExerciseGraphs";
+import { ExerciseGraphs } from '../../../../interfaces/ExerciseGraphs';
 import Chart, { ChartItem } from 'chart.js/auto';
-import { Skeleton } from "primeng/skeleton";
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
     selector: 'app-graphs',

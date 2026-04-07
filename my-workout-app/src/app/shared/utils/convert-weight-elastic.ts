@@ -67,7 +67,7 @@ export const convertWeightElastic = (weight: number) => {
     // Start recursive search
     backtrack(weight, 0, [], available, best);
 
-    // Remove duplicate color and add "2x" to the name
+    // Remove duplicate color and add '2x' to the name
     const bestCombinaison = best.result;
     bestCombinaison.forEach((elastic, index) => {
         const duplicateIndex = bestCombinaison.findIndex((e, i) => e.name === elastic.name && i !== index);

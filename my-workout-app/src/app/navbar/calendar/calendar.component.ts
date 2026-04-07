@@ -23,8 +23,8 @@ import { ExerciseService } from '../../services/exercise.service';
 import { HistoryDetailComponent } from './history-detail/history-detail.component';
 import { Exercise } from '../../../interfaces/Exercise';
 import { DatePipe, NgClass } from '@angular/common';
-import { WorkoutGroupedHistories } from "../../../interfaces/WorkoutGroupedHistories";
-import { FirstLetterUppercasePipe } from "../../shared/pipes/first-letter-uppercase.pipe";
+import { WorkoutGroupedHistories } from '../../../interfaces/WorkoutGroupedHistories';
+import { FirstLetterUppercasePipe } from '../../shared/pipes/first-letter-uppercase.pipe';
 
 @Component({
     selector: 'app-calendar',

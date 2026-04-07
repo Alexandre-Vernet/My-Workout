@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { History } from '../../interfaces/History';
 import { HttpClient } from '@angular/common/http';
-import { ExerciseGraphs } from "../../interfaces/ExerciseGraphs";
-import { UserExercisesCountTotalWorkout } from "../../interfaces/UserExercisesCountTotalWorkout";
+import { ExerciseGraphs } from '../../interfaces/ExerciseGraphs';
+import { UserExercisesCountTotalWorkout } from '../../interfaces/UserExercisesCountTotalWorkout';
 
 @Injectable({
     providedIn: 'root'

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../../interfaces/User';
-import { AuthResponse } from "../../interfaces/AuthResponse";
+import { AuthResponse } from '../../interfaces/AuthResponse';
 
 @Injectable({
     providedIn: 'root'

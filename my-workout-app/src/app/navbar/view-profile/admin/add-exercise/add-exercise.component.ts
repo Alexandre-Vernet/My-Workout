@@ -17,7 +17,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ActivatedRoute } from '@angular/router';
 import { filter, switchMap } from 'rxjs';
 import { Message } from 'primeng/message';
-import { ExerciseMuscle } from "../../../../../interfaces/ExerciseMuscle";
+import { ExerciseMuscle } from '../../../../../interfaces/ExerciseMuscle';
 
 @Component({
     selector: 'app-add-exercise',

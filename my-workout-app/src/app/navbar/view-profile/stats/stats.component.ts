@@ -4,8 +4,8 @@ import { AlertService } from '../../../services/alert.service';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { Skeleton } from 'primeng/skeleton';
 import { NgClass } from '@angular/common';
-import { UserExercisesCountTotalWorkout } from "../../../../interfaces/UserExercisesCountTotalWorkout";
-import { HistoryService } from "../../../services/history.service";
+import { UserExercisesCountTotalWorkout } from '../../../../interfaces/UserExercisesCountTotalWorkout';
+import { HistoryService } from '../../../services/history.service';
 
 @Component({
     selector: 'app-stats',

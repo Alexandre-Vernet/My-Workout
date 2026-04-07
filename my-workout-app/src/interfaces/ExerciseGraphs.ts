@@ -1,5 +1,5 @@
-import { Exercise } from "./Exercise";
-import { HistoryPoint } from "./HistoryPoint";
+import { Exercise } from './Exercise';
+import { HistoryPoint } from './HistoryPoint';
 
 export class ExerciseGraphs {
     exercise: Exercise;

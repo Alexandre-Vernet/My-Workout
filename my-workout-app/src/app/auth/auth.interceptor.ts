@@ -1,13 +1,11 @@
 import { HttpHandlerFn, HttpRequest } from '@angular/common/http';
-import { catchError, EMPTY, switchMap, throwError } from 'rxjs';
-import { inject } from "@angular/core";
-import { AuthService } from "./auth.service";
-import { Router } from "@angular/router";
-import { AlertService } from "../services/alert.service";
+import { catchError, switchMap, throwError } from 'rxjs';
+import { inject } from '@angular/core';
+import { AuthService } from './auth.service';
+import { AlertService } from '../services/alert.service';
 
 export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const authService = inject(AuthService);
-    const router = inject(Router);
     const alertService = inject(AlertService);
 
     const token = localStorage.getItem('access-token');
@@ -32,7 +30,7 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
                                 });
                                 return next(newRequest);
                             }),
-                            catchError(() => handleErrorAuth(router, alertService))
+                            catchError(() => handleErrorAuth(alertService))
                         );
                 }
 
@@ -42,11 +40,10 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
         );
 };
 
-const handleErrorAuth = (router: Router, alertService: AlertService) => {
+const handleErrorAuth = (alertService: AlertService) => {
     alertService.alert$.next({
         severity: 'error',
         message: 'Vous devez être connecté pour accéder à cette page'
     });
-    router.navigate(['/auth/login']);
-    return EMPTY;
+    return throwError(() => new Error('Unauthorized'));
 }

@@ -7,6 +7,7 @@ import { AuthService } from '../../../auth/auth.service';
 import { Router } from '@angular/router';
 import { Alert } from '../../../../interfaces/alert';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { MenuUrls } from '../../../shared/menu-urls';
 
 @Component({
     selector: 'app-account-actions',
@@ -23,13 +24,13 @@ export class AccountActionsComponent {
     constructor(
         private readonly authService: AuthService,
         private readonly router: Router,
-        private readonly confirmationService: ConfirmationService
+        private readonly confirmationService: ConfirmationService,
     ) {
     }
 
     signOut() {
         this.authService.signOut();
-        this.router.navigate(['/auth']);
+        this.router.navigate([MenuUrls.library]);
     }
 
     openDialogConfirmDeleteAccount() {
