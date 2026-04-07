@@ -10,7 +10,7 @@ import { User } from '../../../interfaces/User';
 import { ErrorCodeEnum } from '../../../error-code/error-code-enum';
 
 @Component({
-    selector: 'app-sign-in',
+    selector: 'app-login',
     templateUrl: './login.component.html',
     styleUrls: ['../auth.component.scss'],
     imports: [

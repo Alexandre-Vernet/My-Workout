@@ -20,7 +20,7 @@ import { Alert } from '../../../interfaces/alert';
 import { AlertService } from '../../services/alert.service';
 import { Tag } from 'primeng/tag';
 import { ExerciseService } from '../../services/exercise.service';
-import { HistoryDetailComponent } from '../history/history-detail/history-detail.component';
+import { HistoryDetailComponent } from './history-detail/history-detail.component';
 import { Exercise } from '../../../interfaces/Exercise';
 import { DatePipe, NgClass } from '@angular/common';
 import { WorkoutGroupedHistories } from "../../../interfaces/WorkoutGroupedHistories";

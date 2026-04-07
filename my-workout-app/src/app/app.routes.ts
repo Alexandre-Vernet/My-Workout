@@ -1,4 +1,4 @@
-import { Route } from '@angular/router';
+import { Route, RouterOutlet } from '@angular/router';
 import {
     ListExercisesMuscleGroupComponent
 } from './navbar/library/list-exercises-muscle-group/list-exercises-muscle-group.component';
@@ -11,11 +11,9 @@ import {
 } from './navbar/workout/select-muscle-group-workout/select-muscle-group-workout.component';
 import { MenuUrls } from './shared/menu-urls';
 import { WorkoutSessionComponent } from './navbar/workout/workout-session/workout-session.component';
-import { Component } from '@angular/core';
 import { ViewProfileComponent } from './navbar/view-profile/view-profile.component';
 import { CalendarComponent } from './navbar/calendar/calendar.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
-import { HistoryComponent } from './navbar/history/history.component';
 import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exercise.component';
 import { GraphsComponent } from './navbar/view-profile/graphs/graphs.component';
 import { StatsComponent } from './navbar/view-profile/stats/stats.component';
@@ -29,13 +27,6 @@ import { DosComponent } from './muscle-structure/dos/dos.component';
 import { PrivacyComponent } from "./shared/privacy/privacy.component";
 import { AddExerciseComponent } from './navbar/view-profile/admin/add-exercise/add-exercise.component';
 
-
-@Component({
-    selector: 'app-empty',
-    template: ''
-})
-export class EmptyComponent {
-}
 
 export const appRoutes: Route[] = [
     {
@@ -83,9 +74,22 @@ export const appRoutes: Route[] = [
         canActivate: [authGuard]
     },
     {
-        path: MenuUrls.history,
-        component: HistoryComponent,
-        canActivate: [authGuard]
+        path: MenuUrls.stats,
+        canActivate: [authGuard],
+        children: [
+            {
+                path: '',
+                component: StatsComponent
+            },
+            {
+                path: 'graphs/:exerciseId',
+                component: GraphsComponent
+            },
+            {
+                path: '**',
+                redirectTo: ''
+            }
+        ]
     },
     {
         path: MenuUrls.user,
@@ -93,14 +97,6 @@ export const appRoutes: Route[] = [
             {
                 path: 'view-profile',
                 component: ViewProfileComponent
-            },
-            {
-                path: 'stats',
-                component: StatsComponent
-            },
-            {
-                path: 'graphs/:exerciseId',
-                component: GraphsComponent
             },
             {
                 path: '**',
@@ -164,11 +160,11 @@ export const appRoutes: Route[] = [
         path: 'auth',
         children: [
             {
-                path: 'sign-in',
+                path: 'login',
                 component: LoginComponent
             },
             {
-                path: 'sign-up',
+                path: 'register',
                 component: RegisterComponent
             },
             {
@@ -177,7 +173,7 @@ export const appRoutes: Route[] = [
             },
             {
                 path: '**',
-                redirectTo: 'sign-in'
+                redirectTo: 'login'
             }
         ]
     },

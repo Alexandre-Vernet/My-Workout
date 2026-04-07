@@ -59,7 +59,7 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     redirectToSignIn() {
-        this.router.navigate(['/auth/sign-in']);
+        this.router.navigate(['/auth/login']);
     }
 
     submitForm() {

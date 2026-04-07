@@ -2,7 +2,7 @@ export enum MenuUrls {
     library = 'library',
     calendar = 'calendar',
     workout = 'workout',
-    history = 'history',
+    stats = 'stats',
     user = 'user',
     admin = 'admin',
     muscleStructure = 'muscle-structure',

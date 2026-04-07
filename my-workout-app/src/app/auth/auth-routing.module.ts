@@ -9,11 +9,11 @@ const routes: Routes = [
         path: 'auth',
         children: [
             {
-                path: 'sign-in',
+                path: 'login',
                 component: LoginComponent
             },
             {
-                path: 'sign-up',
+                path: 'register',
                 component: RegisterComponent
             },
             {
@@ -22,7 +22,7 @@ const routes: Routes = [
             },
             {
                 path: '**',
-                redirectTo: 'sign-in'
+                redirectTo: 'login'
             }
         ]
     }

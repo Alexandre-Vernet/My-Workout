@@ -47,6 +47,6 @@ const handleErrorAuth = (router: Router, alertService: AlertService) => {
         severity: 'error',
         message: 'Vous devez être connecté pour accéder à cette page'
     });
-    router.navigate(['/auth/sign-in']);
+    router.navigate(['/auth/login']);
     return EMPTY;
 }

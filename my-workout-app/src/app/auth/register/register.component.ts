@@ -8,7 +8,7 @@ import { User } from '../../../interfaces/User';
 import { ErrorCodeEnum } from '../../../error-code/error-code-enum';
 
 @Component({
-    selector: 'app-sign-up',
+    selector: 'app-register',
     templateUrl: './register.component.html',
     styleUrls: ['../auth.component.scss'],
     imports: [

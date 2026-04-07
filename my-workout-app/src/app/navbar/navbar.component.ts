@@ -12,9 +12,8 @@ import { delay, filter } from 'rxjs';
 })
 export class NavbarComponent implements AfterViewInit {
 
-
     constructor(
-        private router: Router,
+        private readonly router: Router,
     ) {
     }
 
@@ -42,7 +41,7 @@ export class NavbarComponent implements AfterViewInit {
                     activeIndex = 1;
                 } else if (url.includes(MenuUrls.workout)) {
                     activeIndex = 2;
-                } else if (url.includes(MenuUrls.history)) {
+                } else if (url.includes(MenuUrls.stats)) {
                     activeIndex = 3;
                 } else if (url.includes(MenuUrls.user) || url.includes(MenuUrls.admin)) {
                     activeIndex = 4;

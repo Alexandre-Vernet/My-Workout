@@ -13,7 +13,7 @@ export const authGuard = () => {
         .pipe(
             map(() => true),
             catchError(() => {
-                router.navigate(['/auth/sign-in']);
+                router.navigate(['/auth/login']);
                 alertService.alert$.next({
                     severity: 'error',
                     message: 'Vous devez être connecté pour accéder à cette page'
