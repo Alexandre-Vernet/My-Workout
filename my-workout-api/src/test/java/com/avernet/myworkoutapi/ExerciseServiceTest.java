@@ -2,6 +2,8 @@ package com.avernet.myworkoutapi;
 
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
+import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.exercise.Exercise;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
@@ -57,10 +59,8 @@ public class ExerciseServiceTest {
 
     @Test
     void shouldReturnCardioExercises() {
-        UserEntity userEntity = userRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Utilisateur introuvable", HttpStatus.NOT_FOUND));
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(28L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.EXERCISE_NOT_FOUND, "Exercice introuvable", HttpStatus.NOT_FOUND));
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(28L).orElseThrow(ExerciseNotFoundException::new);
 
         UserExerciseEntity userExerciseEntity = UserExerciseEntity.builder()
             .user(userEntity)
@@ -76,8 +76,7 @@ public class ExerciseServiceTest {
 
     @Test
     void shouldFindExerciseMuscle() {
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.EXERCISE_NOT_FOUND, "Exercice introuvable", HttpStatus.NOT_FOUND));
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
 
         ExerciseMuscle exerciseMuscle = service.findExerciseMuscle(exerciseEntity.getId());
         assertNotNull(exerciseMuscle);
@@ -108,8 +107,7 @@ public class ExerciseServiceTest {
         ExerciseMuscle exerciseMuscle = new ExerciseMuscle(exercise, muscleList);
 
         Exercise exerciseCreated = service.createOrUpdateExercise(exerciseMuscle);
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(exerciseCreated.getId())
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.EXERCISE_NOT_FOUND, "Exercice introuvable", HttpStatus.NOT_FOUND));
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(exerciseCreated.getId()).orElseThrow(ExerciseNotFoundException::new);
         assertNotNull(exerciseCreated);
         assertNotNull(exerciseEntity);
         assertEquals("My custom exercise", exerciseEntity.getName());
@@ -141,7 +139,7 @@ public class ExerciseServiceTest {
         ExerciseMuscle exerciseMuscle = new ExerciseMuscle(exercise, muscleList);
 
         Exercise exerciseCreated = service.createOrUpdateExercise(exerciseMuscle);
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(exerciseCreated.getId()).orElse(null);
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(exerciseCreated.getId()).orElseThrow(ExerciseNotFoundException::new);
         assertNotNull(exerciseCreated);
         assertNotNull(exerciseEntity);
         assertEquals(exercise.getId(), exerciseEntity.getId());

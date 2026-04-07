@@ -1,7 +1,8 @@
 package com.avernet.myworkoutapi;
 
-import com.avernet.myworkoutapi.exception.ApiException;
-import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
+import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
 import com.avernet.myworkoutapi.history.History;
@@ -23,7 +24,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDate;
@@ -67,10 +67,8 @@ public class WorkoutServiceTest {
 
     @BeforeEach
     void setup() {
-        userEntity = userRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Cet utilisateur n'existe pas", HttpStatus.NOT_FOUND));
-        muscleGroupEntity = muscleGroupRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.MUSCLE_GROUP_NOT_FOUND, "Ce groupe musculaire n'existe pas", HttpStatus.NOT_FOUND));
+        userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        muscleGroupEntity = muscleGroupRepository.findById(1L).orElseThrow(MuscleGroupNotFoundException::new);
     }
 
 
@@ -83,7 +81,7 @@ public class WorkoutServiceTest {
             .histories(List.of())
             .build();
 
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElse(null);
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
 
         HistoryEntity historyEntity = HistoryEntity.builder()
             .exercise(exerciseEntity)
@@ -157,7 +155,7 @@ public class WorkoutServiceTest {
 
     @Test
     void shouldNotFindOthersWorkoutUserByDate() {
-        UserEntity otherUser = userRepository.findById(2L).orElse(null);
+        UserEntity otherUser = userRepository.findById(2L).orElseThrow(UserNotFoundException::new);
 
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(otherUser)
@@ -175,9 +173,9 @@ public class WorkoutServiceTest {
 
     @Test
     void shouldFindWorkout() {
-        ExerciseEntity exerciseEntity1 = exerciseRepository.findById(1L).orElse(null);
-        ExerciseEntity exerciseEntity2 = exerciseRepository.findById(2L).orElse(null);
-        ExerciseEntity exerciseEntity3 = exerciseRepository.findById(3L).orElse(null);
+        ExerciseEntity exerciseEntity1 = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
+        ExerciseEntity exerciseEntity2 = exerciseRepository.findById(2L).orElseThrow(ExerciseNotFoundException::new);
+        ExerciseEntity exerciseEntity3 = exerciseRepository.findById(3L).orElseThrow(ExerciseNotFoundException::new);
 
 
         WorkoutEntity workoutEntity = WorkoutEntity.builder()

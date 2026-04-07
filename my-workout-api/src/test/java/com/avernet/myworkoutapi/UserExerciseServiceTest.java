@@ -1,7 +1,8 @@
 package com.avernet.myworkoutapi;
 
-import com.avernet.myworkoutapi.exception.ApiException;
-import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
+import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseMapper;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
@@ -19,7 +20,6 @@ import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
@@ -62,19 +62,13 @@ public class UserExerciseServiceTest {
 
     @Test
     void shouldFindAddedExercisesExceptExerciseNotLinkedToMuscleGroupSelected() {
-        UserEntity userEntity = userRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Cet utilisateur n'existe pas", HttpStatus.NOT_FOUND));
-        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.MUSCLE_GROUP_NOT_FOUND, "Ce groupe musculaire n'existe pas", HttpStatus.NOT_FOUND));
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElseThrow(MuscleGroupNotFoundException::new);
 
-        ExerciseEntity exerciseEntity1 = exerciseRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.EXERCISE_NOT_FOUND, "Cet exercice n'existe pas", HttpStatus.NOT_FOUND));
-        ExerciseEntity exerciseEntity2 = exerciseRepository.findById(2L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Cet exercice n'existe pas", HttpStatus.NOT_FOUND));
-        ExerciseEntity exerciseEntity3 = exerciseRepository.findById(3L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Cet exercice n'existe pas", HttpStatus.NOT_FOUND));
-        ExerciseEntity exerciseEntity4 = exerciseRepository.findById(20L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Cet exercice n'existe pas", HttpStatus.NOT_FOUND));/*Exercise is not linked to the muscle group 1*/
+        ExerciseEntity exerciseEntity1 = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
+        ExerciseEntity exerciseEntity2 = exerciseRepository.findById(2L).orElseThrow(ExerciseNotFoundException::new);
+        ExerciseEntity exerciseEntity3 = exerciseRepository.findById(3L).orElseThrow(ExerciseNotFoundException::new);
+        ExerciseEntity exerciseEntity4 = exerciseRepository.findById(20L).orElseThrow(ExerciseNotFoundException::new); /*Exercise is not linked to the muscle group 1*/
 
         UserExerciseEntity userExerciseEntity1 = UserExerciseEntity.builder().order(1).user(userEntity).exercise(exerciseEntity1).build();
         UserExerciseEntity userExerciseEntity2 = UserExerciseEntity.builder().order(2).user(userEntity).exercise(exerciseEntity2).build();
@@ -92,9 +86,8 @@ public class UserExerciseServiceTest {
 
     @Test
     void shouldCreateUserExercise() {
-        UserEntity userEntity = userRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Cet utilisateur n'existe pas", HttpStatus.NOT_FOUND));
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElse(null);
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
 
         UserExercise userExercise = UserExercise.builder()
             .user(userMapper.toDto(userEntity))
@@ -107,9 +100,8 @@ public class UserExerciseServiceTest {
 
     @Test
     void shouldDeleteUserExercise() {
-        UserEntity userEntity = userRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Cet utilisateur n'existe pas", HttpStatus.NOT_FOUND));
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElse(null);
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
 
         UserExercise userExercise = UserExercise.builder()
             .user(userMapper.toDto(userEntity))

@@ -2,6 +2,7 @@ package com.avernet.myworkoutapi.auth;
 
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.User;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserMapper;
@@ -119,7 +120,7 @@ public class AuthService {
 
 
     public void updatePassword(Long id, String newPassword) {
-        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Utilisateur introuvable", HttpStatus.BAD_REQUEST));
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         userEntity.setPassword(passwordEncoder.encode(newPassword));
     }
 }

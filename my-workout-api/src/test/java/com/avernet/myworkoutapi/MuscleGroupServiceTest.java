@@ -1,5 +1,7 @@
 package com.avernet.myworkoutapi;
 
+import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
@@ -59,7 +61,7 @@ public class MuscleGroupServiceTest {
         UserEntity userEntity = UserEntity.builder().email("blabla@gmail.com").password("bla bla").build();
         userRepository.save(userEntity);
 
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElse(null);
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
 
         UserExerciseEntity userExerciseEntity = UserExerciseEntity.builder()
             .user(userEntity)
@@ -67,7 +69,7 @@ public class MuscleGroupServiceTest {
             .build();
         userExerciseRepository.save(userExerciseEntity);
 
-        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElse(null);
+        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElseThrow(MuscleGroupNotFoundException::new);
 
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
@@ -88,7 +90,7 @@ public class MuscleGroupServiceTest {
         userRepository.save(userEntity);
 
         for (int i = 1; i < 10; i++) {
-            ExerciseEntity exerciseEntity = exerciseRepository.findById((long) i).orElse(null);
+            ExerciseEntity exerciseEntity = exerciseRepository.findById((long) i).orElseThrow(ExerciseNotFoundException::new);
             UserExerciseEntity userExerciseEntity = UserExerciseEntity.builder()
                 .user(userEntity)
                 .exercise(exerciseEntity)
@@ -98,7 +100,7 @@ public class MuscleGroupServiceTest {
 
 
         for (int i = 1; i < 7; i++) {
-            MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById((long) i).orElse(null);
+            MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById((long) i).orElseThrow(MuscleGroupNotFoundException::new);
 
             WorkoutEntity workoutEntity = WorkoutEntity.builder()
                 .user(userEntity)
@@ -121,7 +123,7 @@ public class MuscleGroupServiceTest {
         userRepository.save(userEntity);
 
         for (int i = 1; i < 10; i++) {
-            ExerciseEntity exerciseEntity = exerciseRepository.findById((long) i).orElse(null);
+            ExerciseEntity exerciseEntity = exerciseRepository.findById((long) i).orElseThrow(ExerciseNotFoundException::new);
             UserExerciseEntity userExerciseEntity = UserExerciseEntity.builder()
                 .user(userEntity)
                 .exercise(exerciseEntity)
@@ -131,7 +133,7 @@ public class MuscleGroupServiceTest {
 
 
         for (int i = 1; i < 7; i++) {
-            MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById((long) i).orElse(null);
+            MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById((long) i).orElseThrow(MuscleGroupNotFoundException::new);
 
             WorkoutEntity workoutEntity = WorkoutEntity.builder()
                 .user(userEntity)

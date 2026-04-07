@@ -2,6 +2,9 @@ package com.avernet.myworkoutapi;
 
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
+import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
 import com.avernet.myworkoutapi.history.History;
@@ -72,12 +75,9 @@ public class HistoryServiceTest {
 
     @BeforeEach
     void setup() {
-        userEntity = userRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Cet utilisateur n'existe pas", HttpStatus.NOT_FOUND));
-        exerciseEntity = exerciseRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.EXERCISE_NOT_FOUND, "Cet exercice n'existe pas", HttpStatus.NOT_FOUND));
-        muscleGroupEntity = muscleGroupRepository.findById(1L)
-            .orElseThrow(() -> new ApiException(ErrorCodeEnum.MUSCLE_GROUP_NOT_FOUND, "Ce groupe musculaire n'existe pas", HttpStatus.NOT_FOUND));
+        userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
+        muscleGroupEntity = muscleGroupRepository.findById(1L).orElseThrow(MuscleGroupNotFoundException::new);
     }
 
 
@@ -154,8 +154,7 @@ public class HistoryServiceTest {
     @Test
     void shouldFindStats() {
         for (int i = 1; i <= 10; i++) {
-            ExerciseEntity exercise = exerciseRepository.findById((long) i)
-                .orElseThrow(() -> new ApiException(ErrorCodeEnum.EXERCISE_NOT_FOUND, "Cet exercice n'existe pas", HttpStatus.NOT_FOUND));
+            ExerciseEntity exercise = exerciseRepository.findById((long) i).orElseThrow(ExerciseNotFoundException::new);
             UserExerciseEntity userExerciseEntity = UserExerciseEntity.builder()
                 .exercise(exercise)
                 .user(userEntity)
