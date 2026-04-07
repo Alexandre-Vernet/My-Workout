@@ -20,7 +20,22 @@ env:
     KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
 jobs:
+    tests:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Java
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: 17
+
+            - name: Run tests
+              run: mvn clean test
     build-push-images:
+        needs: tests
         runs-on: ubuntu-latest
         environment: production
         steps:
