@@ -10,13 +10,4 @@ export interface History {
     weight?: number;
     reps?: number;
     restTime?: string;
-    groupedHistory?: GroupedHistory[];
-}
-
-
-export interface GroupedHistory {
-    id: number;
-    weight: number;
-    reps: number;
-    duration: number | string;
 }
