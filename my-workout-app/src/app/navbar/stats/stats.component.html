@@ -28,7 +28,7 @@
     <h2 class="mt-6 mb-2 p-1 text-lg">Statistiques par exercices</h2>
     <div class="flex flex-wrap justify-center align-content-start gap-3">
         @for (exercise of userExercisesCountTotalWorkout.exercises; track exercise.id) {
-            <div [routerLink]="['/', 'user', 'graphs', exercise?.id]"
+            <div [routerLink]="['/', 'stats', 'graphs', exercise?.id]"
                  class="flex align-items-center justify-content-center border-round border-1 surface-border w-full p-4">
             <span class="text-lg font-bold text-primary hover:underline">
                 {{ exercise?.name }}

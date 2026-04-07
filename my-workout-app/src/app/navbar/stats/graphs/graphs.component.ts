@@ -43,9 +43,10 @@ export class GraphsComponent implements OnInit {
                     const ctx = document.getElementById('bar');
 
                     new Chart(ctx as ChartItem, {
-                        type: 'bar',
+                        type: 'line',
+
                         data: {
-                            labels: this.exerciseGraphs.historyPoints.map(h => h.date),
+                            labels: this.exerciseGraphs.historyPoints.map(h => new Date(h.date).toLocaleDateString()),
                             datasets: [{
                                 label: 'Charge utilisée',
                                 data: this.exerciseGraphs.historyPoints.map(h => h.weight),
@@ -53,6 +54,7 @@ export class GraphsComponent implements OnInit {
                             }]
                         },
                         options: {
+                            responsive: true,
                             scales: {
                                 y: {
                                     beginAtZero: true,

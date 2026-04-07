@@ -15,8 +15,8 @@ import { ViewProfileComponent } from './navbar/view-profile/view-profile.compone
 import { CalendarComponent } from './navbar/calendar/calendar.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exercise.component';
-import { GraphsComponent } from './navbar/view-profile/graphs/graphs.component';
-import { StatsComponent } from './navbar/view-profile/stats/stats.component';
+import { GraphsComponent } from './navbar/stats/graphs/graphs.component';
+import { StatsComponent } from './navbar/stats/stats.component';
 import { TricepsComponent } from './muscle-structure/triceps/triceps.component';
 import { JambesComponent } from './muscle-structure/jambes/jambes.component';
 import { PectorauxComponent } from './muscle-structure/pectoraux/pectoraux.component';
