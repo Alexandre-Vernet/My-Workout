@@ -259,7 +259,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     private startTimer() {
         const history: History = {
-            workout: this.workout,
             exercise: this.currentExercise,
             weight: this.weight,
             reps: this.reps

@@ -17,5 +17,5 @@ public class Exercise {
     Long id;
     String name;
     String description;
-    boolean isSmartWorkout;
+    Boolean smartWorkout;
 }

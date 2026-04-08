@@ -90,7 +90,7 @@ public class ExerciseServiceTest {
         Exercise exercise = Exercise.builder()
             .name("My custom exercise")
             .description("My custom desc")
-            .isSmartWorkout(false)
+            .smartWorkout(false)
             .build();
 
         List<Muscle> muscleList = new ArrayList<>();
@@ -112,7 +112,7 @@ public class ExerciseServiceTest {
         assertNotNull(exerciseEntity);
         assertEquals("My custom exercise", exerciseEntity.getName());
         assertEquals("My custom desc", exerciseEntity.getDescription());
-        assertFalse(exerciseEntity.isSmartWorkout());
+        assertFalse(exerciseEntity.getSmartWorkout());
     }
 
     @Test
@@ -122,7 +122,7 @@ public class ExerciseServiceTest {
             .id(1L)
             .name("Updated exercise name")
             .description("Updated exercise desc")
-            .isSmartWorkout(true)
+            .smartWorkout(true)
             .build();
 
         List<Muscle> muscleList = new ArrayList<>();
@@ -145,6 +145,6 @@ public class ExerciseServiceTest {
         assertEquals(exercise.getId(), exerciseEntity.getId());
         assertEquals("Updated exercise name", exerciseEntity.getName());
         assertEquals("Updated exercise desc", exerciseEntity.getDescription());
-        assertTrue(exerciseEntity.isSmartWorkout());
+        assertTrue(exerciseEntity.getSmartWorkout());
     }
 }
