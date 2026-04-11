@@ -1,7 +1,8 @@
 package com.avernet.myworkoutapi.auth;
 
 import com.avernet.myworkoutapi.exception.ApiException;
-import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.error.ErrorCodeEnum;
+import com.avernet.myworkoutapi.user.UpdateUser;
 import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.User;
 import com.avernet.myworkoutapi.user.UserEntity;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Optional;
@@ -60,11 +62,13 @@ public class AuthService {
         }
     }
 
+    @Transactional(readOnly = true)
     public User getCurrentUser(UserEntity userEntity) {
         userEntity = userRepository.findById(userEntity.getId()).orElseThrow(UserNotFoundException::new);
         return userMapper.toDto(userEntity);
     }
 
+    @Transactional(readOnly = true)
     public AuthResponse loginUser(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
@@ -80,10 +84,11 @@ public class AuthService {
         return new AuthResponse(jwtToken, refreshToken);
     }
 
+    @Transactional
     public User registerUser(User user) {
         boolean userExist = userRepository.existsByEmail(user.getEmail());
         if (userExist) {
-            throw new ApiException(ErrorCodeEnum.EMAIL_ALREADY_IN_USE, "Cet email est déjà utilisé", HttpStatus.BAD_REQUEST);
+            throw new ApiException(ErrorCodeEnum.EMAIL_ALREADY_IN_USE, "Cet email est déjà utilisé", HttpStatus.CONFLICT);
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -93,6 +98,7 @@ public class AuthService {
         return userMapper.toDto(userEntity);
     }
 
+    @Transactional(readOnly = true)
     public AuthResponse refreshToken(String refreshToken) {
         String email = jwtService.extractUsername(refreshToken);
 
@@ -108,6 +114,24 @@ public class AuthService {
         throw new ApiException(ErrorCodeEnum.INVALID_TOKEN, "Token invalide", HttpStatus.FORBIDDEN);
     }
 
+    @Transactional
+    public User update(UserEntity userEntity, UpdateUser user) {
+        userEntity = userRepository.findById(userEntity.getId()).orElseThrow(UserNotFoundException::new);
+        if (user.getEmail() != null && !userEntity.getEmail().equals(user.getEmail())) {
+            boolean userExist = userRepository.existsByEmail(user.getEmail());
+            if (userExist) {
+                throw new ApiException(ErrorCodeEnum.EMAIL_ALREADY_IN_USE, "Cet email est déjà utilisé", HttpStatus.CONFLICT);
+            }
+            userEntity.setEmail(user.getEmail());
+        }
+
+        if (user.getPassword() != null) {
+            userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        return userMapper.toDto(userEntity);
+    }
+
     public Map<String, String> sendEmailForgotPassword(String email) {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Utilisateur introuvable", HttpStatus.BAD_REQUEST));
 
@@ -118,11 +142,5 @@ public class AuthService {
 
         String token = jwtService.generateToken(userDetails);
         return Map.of("token", token);
-    }
-
-
-    public void updatePassword(Long id, String newPassword) {
-        UserEntity userEntity = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        userEntity.setPassword(passwordEncoder.encode(newPassword));
     }
 }

@@ -52,8 +52,9 @@ public class UserEntity implements UserDetails {
     @Column(name = "updated_at")
     LocalDateTime updatedAt = LocalDateTime.now();
 
+    @Builder.Default
     @Column(name = "is_admin")
-    boolean admin;
+    Boolean admin = false;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<WorkoutEntity> workouts = new ArrayList<>();

@@ -1,7 +1,7 @@
 package com.avernet.myworkoutapi.user;
 
 import com.avernet.myworkoutapi.exception.ApiException;
-import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import org.springframework.http.HttpStatus;
 
 public class UserNotFoundException extends ApiException {

@@ -1,7 +1,7 @@
 package com.avernet.myworkoutapi;
 
 import com.avernet.myworkoutapi.exception.ApiException;
-import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
 import com.avernet.myworkoutapi.user.UserNotFoundException;

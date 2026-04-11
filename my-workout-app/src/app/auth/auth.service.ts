@@ -48,7 +48,13 @@ export class AuthService {
     }
 
     updateUser(user: User) {
-        return this.http.put<User>(`${ this.authUrl }`, { user });
+        return this.getCurrentUser()
+            .pipe(
+                switchMap((u) => this.http.patch<User>(`${ this.authUrl }/${ u.id }`, user)
+                    .pipe(
+                        tap(() => this.signOut())
+                    )),
+            );
     }
 
     sendEmailForgotPassword(email: string) {

@@ -1,5 +1,6 @@
 package com.avernet.myworkoutapi.exception;
 
+import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;

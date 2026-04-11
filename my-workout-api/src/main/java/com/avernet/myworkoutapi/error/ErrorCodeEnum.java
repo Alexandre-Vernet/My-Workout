@@ -1,4 +1,4 @@
-package com.avernet.myworkoutapi.exception;
+package com.avernet.myworkoutapi.error;
 
 public enum ErrorCodeEnum {
     UNKNOWN_MUSCLE,
@@ -10,5 +10,6 @@ public enum ErrorCodeEnum {
     INVALID_TOKEN,
     INVALID_USER,
     MUSCLE_GROUP_NOT_FOUND,
-    MUSCLE_NOT_FOUND
+    MUSCLE_NOT_FOUND,
+    INVALID_DATA
 }

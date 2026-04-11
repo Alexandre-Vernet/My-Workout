@@ -1,7 +1,7 @@
 package com.avernet.myworkoutapi.history;
 
 import com.avernet.myworkoutapi.exception.ApiException;
-import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseMapper;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;

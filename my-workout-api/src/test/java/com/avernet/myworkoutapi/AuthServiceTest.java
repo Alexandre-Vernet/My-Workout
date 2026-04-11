@@ -4,9 +4,11 @@ import com.avernet.myworkoutapi.auth.AuthResponse;
 import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.auth.LoginRequest;
 import com.avernet.myworkoutapi.exception.ApiException;
-import com.avernet.myworkoutapi.exception.ErrorCodeEnum;
+import com.avernet.myworkoutapi.error.ErrorCodeEnum;
+import com.avernet.myworkoutapi.user.UpdateUser;
 import com.avernet.myworkoutapi.user.User;
 import com.avernet.myworkoutapi.user.UserEntity;
+import com.avernet.myworkoutapi.user.UserMapper;
 import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -14,11 +16,13 @@ import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,6 +37,9 @@ public class AuthServiceTest {
 
     @Resource
     UserRepository userRepository;
+
+    @Resource
+    private UserMapper userMapper;
 
     @Test
     void shouldLoginUser() {
@@ -56,7 +63,7 @@ public class AuthServiceTest {
         User user = User.builder().email("user3@gmail.com").password("123").build();
         User userCreated = service.registerUser(user);
         assertNotNull(userCreated);
-        assertFalse(userCreated.isAdmin());
+        assertFalse(userCreated.getAdmin());
     }
 
     @Test
@@ -65,6 +72,7 @@ public class AuthServiceTest {
         ApiException apiException = assertThrows(ApiException.class, () -> service.registerUser(user));
         assertEquals(ErrorCodeEnum.EMAIL_ALREADY_IN_USE, apiException.getErrorCode());
         assertEquals("Cet email est déjà utilisé", apiException.getMessage());
+        assertEquals(HttpStatus.CONFLICT, apiException.getHttpStatus());
     }
 
     @Test
@@ -89,7 +97,7 @@ public class AuthServiceTest {
         assertNotNull(user);
         assertNotNull(user.getId());
         assertNotNull(user.getEmail());
-        assertFalse(user.isAdmin());
+        assertFalse(user.getAdmin());
     }
 
     @Test
@@ -99,6 +107,43 @@ public class AuthServiceTest {
         assertNotNull(user);
         assertNotNull(user.getId());
         assertNotNull(user.getEmail());
-        assertTrue(user.isAdmin());
+        assertTrue(user.getAdmin());
+    }
+
+    @Test
+    void shouldUpdateUserEmail() {
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        UpdateUser updateUser = UpdateUser.builder().email("updatedEmail@gmail.com").build();
+
+        User updatedUser = service.update(userEntity, updateUser);
+        UserEntity updatedUserEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        assertNotNull(updatedUser);
+        assertEquals("updatedEmail@gmail.com", updatedUser.getEmail());
+        assertEquals("updatedEmail@gmail.com", updatedUserEntity.getEmail());
+        assertNotEquals(userEntity.getUpdatedAt(), updatedUserEntity.getUpdatedAt());
+    }
+
+    @Test
+    void shouldNotUpdateUserEmailIfEmailAlreadyInUse() {
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        UpdateUser updateUser = new UpdateUser();
+        updateUser.setEmail("user2@gmail.com");   /*This email is already in use*/
+
+        ApiException apiException = assertThrows(ApiException.class, () -> service.update(userEntity, updateUser));
+        assertEquals(ErrorCodeEnum.EMAIL_ALREADY_IN_USE, apiException.getErrorCode());
+        assertEquals("Cet email est déjà utilisé", apiException.getMessage());
+        assertEquals(HttpStatus.CONFLICT, apiException.getHttpStatus());
+    }
+
+    @Test
+    void shouldUpdateUserPassword() {
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        UpdateUser updateUser = UpdateUser.builder().email(userEntity.getEmail()).password("updatedPassword").confirmPassword("updatedPassword").build();
+
+        User updatedUser = service.update(userEntity, updateUser);
+        UserEntity updatedUserEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        assertNotNull(updatedUser);
+        assertNotEquals(userEntity.getPassword(), updatedUserEntity.getEmail());
+        assertNotEquals(userEntity.getUpdatedAt(), updatedUserEntity.getUpdatedAt());
     }
 }

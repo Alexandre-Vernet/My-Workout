@@ -1,60 +1,90 @@
 <div class="flex-1 flex flex-column gap-2">
-    <span class="text-lg text-color-secondary mb-2">Gérer mon compte</span>
-    <p-floatlabel variant="on">
-        <input class="w-full" [formControl]="formControlEmail" pInputText id="email" autocomplete="off"/>
-        <label for="email">Email</label>
-        @if (formControlEmail.touched && formControlEmail.errors?.['email']) {
-            <p-message severity="error" variant="simple" size="small">
-                L'email n'est pas valide
-            </p-message>
-
-        }
-    </p-floatlabel>
-
-    <div class="mt-2 flex-1 flex justify-content-around align-items-center">
-        <label for="change-password" class="text-lg text-color-secondary">Changer le mot de passe</label>
-        <p-toggleswitch inputId="change-password" (click)="toggleChangePassword()"/>
-    </div>
-
-    @if (isCheckedChangePassword) {
+    <form [formGroup]="formGroup">
+        <span class="text-lg text-color-secondary mb-2">Gérer mon compte</span>
         <p-floatlabel variant="on">
-            <p-password [formControl]="formControlPassword" autocomplete="off" [feedback]="false">
-            </p-password>
-            <label for="password">Nouveau mot de passe</label>
+            <input class="w-full" formControlName="email" pInputText id="email"/>
+            <label for="email">Email</label>
+            @if (formGroup.controls.email.touched && formGroup.controls.email.hasError('email')) {
+                <p-message severity="error" variant="simple" size="small">
+                    L'email n'est pas valide
+                </p-message>
+            }
+            @if (formGroup.controls.email.touched && formGroup.controls.email.hasError('emailAlreadyInUse')) {
+                <p-message severity="error" variant="simple" size="small">
+                    Cet email est déjà utilisé
+                </p-message>
+            }
+            @if (formGroup.controls.email.hasError('validation')) {
+                <p-message severity="error" variant="simple" size="small">
+                    {{ formGroup.controls.email.getError('validation') }}
+                </p-message>
+            }
+
+            @if (formGroup.controls.email.touched && formGroup.controls.email.hasError('unknownError')) {
+                <p-message severity="error" variant="simple" size="small">
+                    Une erreur s'est produite
+                </p-message>
+            }
         </p-floatlabel>
 
-        <p-floatlabel variant="on">
-            <p-password [formControl]="formControlConfirmPassword" autocomplete="off" [feedback]="false">
-            </p-password>
-            <label for="confirmPassword">Confirmer le mot de passe</label>
-        </p-floatlabel>
+        <div class="mt-2 mb-3 flex-1 flex justify-content-around align-items-center">
+            <label for="change-password" class="text-lg text-color-secondary">Changer le mot de passe</label>
+            <p-toggleswitch inputId="change-password" (click)="toggleChangePassword()"/>
+        </div>
 
-        @if (formControlPassword.value !== formControlConfirmPassword.value) {
-            <p-message
-                severity="error" variant="simple" size="small">
-                Les mot de passe ne correspondent pas
-            </p-message>
+        @if (isCheckedChangePassword) {
+            <div class="flex flex-column gap-3 w-full">
+                <!--Password-->
+                <p-floatlabel variant="on">
+                    <input type="password" class="w-full" pInputText formControlName="password">
+                    <label for="password">Nouveau mot de passe</label>
+
+                    @if (formGroup.controls.password.touched && formGroup.controls.password.hasError('minlength')) {
+                        <p-message severity="error" variant="simple" size="small">
+                            Le mot de passe doit contenir au minimum 6 caractères
+                        </p-message>
+                    }
+                    @if (formGroup.controls.password.hasError('validation')) {
+                        <p-message severity="error" variant="simple" size="small">
+                            {{ formGroup.controls.password.getError('validation') }}
+                        </p-message>
+                    }
+                </p-floatlabel>
+
+                <!--Confirm password-->
+                <p-floatlabel variant="on">
+                    <input type="password" class="w-full" pInputText formControlName="confirmPassword">
+                    <label for="confirmPassword">Confirmer le mot de passe</label>
+
+                    @if (formGroup.controls.confirmPassword.touched && formGroup.controls.confirmPassword.hasError('minlength')) {
+                        <p-message severity="error" variant="simple" size="small">
+                            Le mot de passe doit contenir au minimum 6 caractères
+                        </p-message>
+                    }
+
+                    @if (formGroup.controls.confirmPassword.touched && formGroup.controls.password.value !== formGroup.controls.confirmPassword.value) {
+                        <p-message
+                            severity="error" variant="simple" size="small">
+                            Les mot de passe ne correspondent pas
+                        </p-message>
+                    }
+                </p-floatlabel>
+            </div>
         }
-    }
 
-    <p-button
-        [disabled]="
+        <p-button
+            [disabled]="
           (
             isCheckedChangePassword &&
             (
-              formControlEmail.invalid ||
-              formControlPassword.invalid ||
-              formControlConfirmPassword.invalid ||
-              formControlPassword.value !== formControlConfirmPassword.value
+              formGroup.invalid ||
+              formGroup.controls.password.value !== formGroup.controls.confirmPassword.value
             )
           ) ||
           (
             !isCheckedChangePassword &&
-            (formControlEmail.invalid || currentEmail === formControlEmail.value)
-          )
-"
-
-        pRipple
-        class="mt-2"
-        label="Mettre à jour" [loading]="isLoading" (onClick)="updateUser()"/>
+            currentEmail === formGroup.controls.email.value
+          )"
+            pRipple class="mt-2" label="Mettre à jour" (onClick)="updateUser()"/>
+    </form>
 </div>
