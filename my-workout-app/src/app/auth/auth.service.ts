@@ -4,6 +4,8 @@ import { switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../../interfaces/User';
 import { AuthResponse } from '../../interfaces/AuthResponse';
+import { LoginRequest } from "../../interfaces/LoginRequest";
+import { RegisterRequest } from "../../interfaces/RegisterRequest";
 
 @Injectable({
     providedIn: 'root'
@@ -17,8 +19,8 @@ export class AuthService {
     ) {
     }
 
-    login(user: User) {
-        return this.http.post<AuthResponse>(`${ this.authUrl }/login`, user)
+    login(loginRequest: LoginRequest) {
+        return this.http.post<AuthResponse>(`${ this.authUrl }/login`, loginRequest)
             .pipe(
                 tap(({ accessToken, refreshToken }) => {
                     localStorage.setItem('access-token', accessToken);
@@ -27,9 +29,9 @@ export class AuthService {
             );
     }
 
-    register(user: User) {
-        return this.http.post<{ accessToken: string, user: User }>(`${ this.authUrl }/register`, user)
-            .pipe(switchMap(() => this.login(user)));
+    register(registerRequest: RegisterRequest) {
+        return this.http.post<{ accessToken: string, user: User }>(`${ this.authUrl }/register`, registerRequest)
+            .pipe(switchMap(() => this.login(registerRequest)));
     }
 
     getCurrentUser() {

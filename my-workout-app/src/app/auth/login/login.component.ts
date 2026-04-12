@@ -5,9 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { Message } from 'primeng/message';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
-import { Alert } from '../../../interfaces/alert';
-import { User } from '../../../interfaces/User';
-import { ErrorCodeEnum } from '../../../error-code/error-code-enum';
+import { LoginRequest } from "../../../interfaces/LoginRequest";
 
 @Component({
     selector: 'app-login',
@@ -23,21 +21,16 @@ import { ErrorCodeEnum } from '../../../error-code/error-code-enum';
 })
 export class LoginComponent {
 
-    formSignIn = new FormGroup({
+    formLogin = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email]),
         password: new FormControl('', [Validators.required])
     });
 
-    ErrorCodeEnum = ErrorCodeEnum;
-
-
     showDialogForgotPassword: boolean;
-
-    alert: Alert;
 
     constructor(
         private readonly authService: AuthService,
-        private router: Router
+        private readonly router: Router
     ) {
     }
 
@@ -45,17 +38,14 @@ export class LoginComponent {
         const {
             email,
             password
-        } = this.formSignIn.value;
+        } = this.formLogin.value;
 
-        const user: User = {
-            email: email.toLowerCase(),
-            password
-        };
+        const loginRequest = new LoginRequest(email?.trim(), password);
 
-        this.authService.login(user)
+        this.authService.login(loginRequest)
             .subscribe({
                 next: () => this.router.navigateByUrl('/'),
-                error: () => this.formSignIn.setErrors({ [ErrorCodeEnum.BAD_CREDENTIAL]: 'Email ou mot de passe invalide' })
+                error: () => this.formLogin.setErrors({ badCredential: true })
             });
     }
 }

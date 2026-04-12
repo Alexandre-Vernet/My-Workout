@@ -1,6 +1,8 @@
 package com.avernet.myworkoutapi.exercise;
 
 import com.avernet.myworkoutapi.auth.AuthService;
+import com.avernet.myworkoutapi.error.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscle;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleEntity;
@@ -13,6 +15,7 @@ import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import jakarta.annotation.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,6 +122,11 @@ public class ExerciseService {
 
     @Transactional
     public Exercise createOrUpdateExercise(ExerciseMuscle exerciseMuscle) {
+        boolean exerciseNameExist = exerciseRepository.existsByName(exerciseMuscle.exercise().getName());
+        if (exerciseNameExist) {
+            throw new ApiException(ErrorCodeEnum.EXERCISE_NAME_ALREADY_EXIST, "Cet exercice existe déjà", HttpStatus.CONFLICT);
+        }
+
         ExerciseEntity exerciseEntity = exerciseMapper.toEntity(exerciseMuscle.exercise());
 
         List<ExerciseMuscleEntity> exerciseMuscleEntityList = exerciseMuscle.muscles().stream()

@@ -3,12 +3,12 @@ package com.avernet.myworkoutapi;
 import com.avernet.myworkoutapi.auth.AuthResponse;
 import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.auth.LoginRequest;
-import com.avernet.myworkoutapi.exception.ApiException;
+import com.avernet.myworkoutapi.auth.RegisterRequest;
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.user.UpdateUser;
 import com.avernet.myworkoutapi.user.User;
 import com.avernet.myworkoutapi.user.UserEntity;
-import com.avernet.myworkoutapi.user.UserMapper;
 import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -38,9 +38,6 @@ public class AuthServiceTest {
     @Resource
     UserRepository userRepository;
 
-    @Resource
-    private UserMapper userMapper;
-
     @Test
     void shouldLoginUser() {
         LoginRequest loginRequest = new LoginRequest("user1@gmail.com", "user123");
@@ -60,16 +57,16 @@ public class AuthServiceTest {
 
     @Test
     void shouldRegisterUser() {
-        User user = User.builder().email("user3@gmail.com").password("123").build();
-        User userCreated = service.registerUser(user);
+        RegisterRequest registerRequest = new RegisterRequest("user3@gmail.com", "123", "123");
+        User userCreated = service.registerUser(registerRequest);
         assertNotNull(userCreated);
         assertFalse(userCreated.getAdmin());
     }
 
     @Test
     void shouldThrowExceptionExistingUserRegister() {
-        User user = User.builder().email("user1@gmail.com").password("123").build();
-        ApiException apiException = assertThrows(ApiException.class, () -> service.registerUser(user));
+        RegisterRequest registerRequest = new RegisterRequest("user1@gmail.com", "123", "123");
+        ApiException apiException = assertThrows(ApiException.class, () -> service.registerUser(registerRequest));
         assertEquals(ErrorCodeEnum.EMAIL_ALREADY_IN_USE, apiException.getErrorCode());
         assertEquals("Cet email est déjà utilisé", apiException.getMessage());
         assertEquals(HttpStatus.CONFLICT, apiException.getHttpStatus());

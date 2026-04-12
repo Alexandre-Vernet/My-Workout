@@ -18,6 +18,7 @@ import { ActivatedRoute } from '@angular/router';
 import { filter, switchMap } from 'rxjs';
 import { Message } from 'primeng/message';
 import { ExerciseMuscle } from '../../../../../interfaces/ExerciseMuscle';
+import { CustomError } from "../../../../../interfaces/CustomError";
 
 @Component({
     selector: 'app-add-exercise',
@@ -114,11 +115,16 @@ export class AddExerciseComponent implements OnInit {
                     });
                     this.showDialogAddExerciseToWorkout(exerciseMuscle.exercise);
                 },
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Une erreur s\'est produite lors de la mise à jour de l\'exercice'
-                    });
+                error: (err: CustomError) => {
+                    if (err.error.errorCode === 'EXERCISE_NAME_ALREADY_EXIST') {
+                        this.formAddExercise.controls.name.setErrors({
+                            exerciseNameAlreadyExist: true
+                        })
+                    } else {
+                        this.formAddExercise.controls.name.setErrors({
+                            unknownError: true
+                        })
+                    }
                 }
             });
     }

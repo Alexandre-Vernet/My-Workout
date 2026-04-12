@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class LoginRequest {
+public class RegisterRequest {
 
     @Email(message = "Ce champ doit être au format email")
     @NotBlank(message = "Champ requis")
@@ -21,4 +21,9 @@ public class LoginRequest {
     @Size(min = 6, max = 255, message = "Le mot de passe doit être compris entre 6 et 255 caractères")
     @NotBlank(message = "Champ requis")
     String password;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Size(min = 6, max = 255, message = "Le mot de passe doit être compris entre 6 et 255 caractères")
+    @NotBlank(message = "Champ requis")
+    String confirmPassword;
 }

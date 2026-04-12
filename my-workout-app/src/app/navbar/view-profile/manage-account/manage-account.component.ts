@@ -11,7 +11,7 @@ import { AuthService } from '../../../auth/auth.service';
 import { Alert } from '../../../../interfaces/alert';
 import { Ripple } from 'primeng/ripple';
 import { Router } from "@angular/router";
-import { Error } from "../../../../interfaces/Error";
+import { CustomError } from "../../../../interfaces/CustomError";
 
 @Component({
     selector: 'app-manage-account',
@@ -78,7 +78,7 @@ export class ManageAccountComponent implements OnInit {
                         severity: 'success'
                     });
                 },
-                error: (err: Error) => {
+                error: (err: CustomError) => {
                     if (err.error.type === 'VALIDATION') {
                         err.error.errors.forEach(error => {
                             this.formGroup.get(error.field).setErrors({

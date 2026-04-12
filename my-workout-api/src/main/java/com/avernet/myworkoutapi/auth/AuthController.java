@@ -26,13 +26,13 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    AuthResponse authenticateUser(@RequestBody LoginRequest request) {
-        return authService.loginUser(request);
+    AuthResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        return authService.loginUser(loginRequest);
     }
 
     @PostMapping("register")
-    User registerUser(@Valid @RequestBody User user) {
-        return authService.registerUser(user);
+    User registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+        return authService.registerUser(registerRequest);
     }
 
     @PostMapping("refresh")

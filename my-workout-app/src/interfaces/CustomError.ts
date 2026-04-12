@@ -1,11 +1,11 @@
 import { HttpStatusCode } from "@angular/common/http";
 
-export class Error {
+export class CustomError {
     error: {
-        /*Error business*/
+        /*CustomError business*/
         message: string;
 
-        /*Error validation*/
+        /*CustomError validation*/
         errors: {
             field: string;
             message: string;

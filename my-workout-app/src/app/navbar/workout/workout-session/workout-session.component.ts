@@ -17,7 +17,6 @@ import { Popover } from 'primeng/popover';
 import { WorkoutService } from '../../../services/workout.service';
 import { Workout } from '../../../../interfaces/Workout';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
-import { ErrorCodeEnum } from '../../../../error-code/error-code-enum';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../shared/utils/convert-weight-elastic';
@@ -25,6 +24,7 @@ import { PreventFocusOnButtonClickDirective } from '../../../shared/directives/p
 import { NgClass, UpperCasePipe } from '@angular/common';
 import { UserExerciseService } from '../../../services/user-exercise.service';
 import { UserExercise } from '../../../../interfaces/User-exercise';
+import { CustomError } from "../../../../interfaces/CustomError";
 
 @Component({
     selector: 'app-workout-session',
@@ -182,8 +182,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     this.fillInputWeightRepsLastSavedValue();
                     this.alertService.alert$.next(null);
                 },
-                error: (err) => {
-                    if (err?.error?.errorCode === ErrorCodeEnum.muscleGroupDoesntExist) {
+                error: (err: CustomError) => {
+                    if (err?.error?.errorCode === 'muscleGroupDoesntExist') {
                         this.redirectWorkoutHome();
                     }
                     this.alertService.alert$.next({
@@ -192,7 +192,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     });
                 }
             });
-
     }
 
 

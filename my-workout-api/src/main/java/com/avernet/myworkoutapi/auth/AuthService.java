@@ -72,8 +72,8 @@ public class AuthService {
     public AuthResponse loginUser(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
-                loginRequest.email(),
-                loginRequest.password()
+                loginRequest.getEmail(),
+                loginRequest.getPassword()
             )
         );
 
@@ -85,17 +85,21 @@ public class AuthService {
     }
 
     @Transactional
-    public User registerUser(User user) {
-        boolean userExist = userRepository.existsByEmail(user.getEmail());
+    public User registerUser(RegisterRequest registerRequest) {
+        boolean userExist = userRepository.existsByEmail(registerRequest.getEmail());
         if (userExist) {
             throw new ApiException(ErrorCodeEnum.EMAIL_ALREADY_IN_USE, "Cet email est déjà utilisé", HttpStatus.CONFLICT);
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setAdmin(false);
-        UserEntity userEntity = userRepository.save(userMapper.toEntity(user));
+        registerRequest.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        UserEntity userEntity = UserEntity.builder()
+            .email(registerRequest.getEmail())
+            .password(registerRequest.getPassword())
+            .build();
 
-        return userMapper.toDto(userEntity);
+        UserEntity userCreated = userRepository.save(userEntity);
+
+        return userMapper.toDto(userCreated);
     }
 
     @Transactional(readOnly = true)

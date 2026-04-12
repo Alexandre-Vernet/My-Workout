@@ -4,8 +4,8 @@ import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { Message } from 'primeng/message';
-import { User } from '../../../interfaces/User';
-import { ErrorCodeEnum } from '../../../error-code/error-code-enum';
+import { CustomError } from "../../../interfaces/CustomError";
+import { RegisterRequest } from "../../../interfaces/RegisterRequest";
 
 @Component({
     selector: 'app-register',
@@ -20,13 +20,11 @@ import { ErrorCodeEnum } from '../../../error-code/error-code-enum';
 })
 export class RegisterComponent {
 
-    formSignUp = new FormGroup({
+    formRegister = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email]),
         password: new FormControl('', [Validators.required, Validators.minLength(6)]),
         confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     });
-
-    ErrorCodeEnum = ErrorCodeEnum;
 
     constructor(
         private readonly authService: AuthService,
@@ -39,26 +37,35 @@ export class RegisterComponent {
             email,
             password,
             confirmPassword
-        } = this.formSignUp.value;
+        } = this.formRegister.value;
 
         if (password !== confirmPassword) {
-            this.formSignUp.setErrors({ passwordNotMatch: 'Passwords does not match' });
+            this.formRegister.setErrors({ passwordNotMatch: true });
             return;
         }
 
-        const user: User = {
-            email: email.toLowerCase(),
-            password,
-            confirmPassword
-        };
-        this.authService.register(user)
+        const registerRequest = new RegisterRequest(email?.trim(), password, confirmPassword);
+
+        this.authService.register(registerRequest)
             .subscribe({
                 next: () => this.router.navigateByUrl('/'),
-                error: (err) => {
-                    if (err?.error?.errorCode) {
-                        this.formSignUp.setErrors({ [err.error.errorCode]: err?.error?.message });
+                error: (err: CustomError) => {
+                    if (err.error.type === 'VALIDATION') {
+                        err.error.errors.forEach(error => {
+                            this.formRegister.get(error.field).setErrors({
+                                validation: error.message
+                            })
+                        });
                     } else {
-                        this.formSignUp.setErrors({ [ErrorCodeEnum.UNKNOWN_ERROR]: 'Une erreur s\'est produite' });
+                        if (err.error.errorCode === 'EMAIL_ALREADY_IN_USE') {
+                            this.formRegister.controls.email.setErrors({
+                                emailAlreadyInUse: true
+                            });
+                        } else {
+                            this.formRegister.controls.email.setErrors({
+                                unknownError: true
+                            });
+                        }
                     }
                 }
             });

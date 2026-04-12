@@ -68,4 +68,6 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> 
             WHERE e.id = :exerciseId
     """)
     ExerciseEntity findExercise(@Param("exerciseId") Long exerciseId);
+
+    boolean existsByName(String name);
 }

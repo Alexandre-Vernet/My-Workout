@@ -29,6 +29,20 @@
                     50 caractères max.
                 </p-message>
             }
+            @if (formAddExercise.controls.name.hasError('exerciseNameAlreadyExist')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    Cet exercice existe déjà
+                </p-message>
+            }
+            @if (formAddExercise.controls.name.hasError('unknownError')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    Une erreur s'est produite
+                </p-message>
+            }
         </div>
 
         <!--Description-->

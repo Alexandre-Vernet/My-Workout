@@ -1,26 +1,22 @@
 <div class="auth-container">
     <div class="screen">
         <div class="screen__content">
-            @if (alert?.message) {
-                <p-message [severity]="alert?.severity">{{ alert?.message }}</p-message>
-            }
-
-            <form [formGroup]="formSignIn" (ngSubmit)="signIn()" class="login">
+            <form [formGroup]="formLogin" (ngSubmit)="signIn()" class="login">
                 <div>
                     <div class="login__field">
                         <i class="pi pi-user login__icon"></i>
                         <input formControlName="email" type="text" class="login__input" placeholder="Email">
                     </div>
-                    @if (formSignIn.controls.email.touched && formSignIn.controls.email.errors?.['email']) {
+                    @if (formLogin.controls.email.touched && formLogin.controls.email.hasError('email')) {
                         <p-message
                             severity="error" variant="simple" size="small">
                             L'email n'est pas valide
                         </p-message>
                     }
-                    @if (formSignIn.hasError(ErrorCodeEnum.BAD_CREDENTIAL)) {
+                    @if (formLogin.hasError('badCredential')) {
                         <p-message severity="error" variant="simple"
                                    size="small">
-                            {{ formSignIn.getError(ErrorCodeEnum.BAD_CREDENTIAL) }}
+                            Email ou mot de passe invalide
                         </p-message>
                     }
                 </div>
@@ -29,9 +25,9 @@
                     <input formControlName="password" type="password" class="login__input" placeholder="Mot de passe">
                 </div>
                 <button class="button login__submit" [ngClass]="{
-                    'disabled': formSignIn.invalid
+                    'disabled': formLogin.invalid
                     }"
-                        [disabled]="formSignIn.invalid">
+                        [disabled]="formLogin.invalid">
                     <span class="button__text">Connexion</span>
                     <i class="button__icon pi pi-chevron-right" style="font-size: 2rem"></i>
                 </button>
