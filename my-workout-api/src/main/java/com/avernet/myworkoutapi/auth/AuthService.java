@@ -86,6 +86,10 @@ public class AuthService {
 
     @Transactional
     public User registerUser(RegisterRequest registerRequest) {
+        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+            throw new ApiException(ErrorCodeEnum.PASSWORD_NOT_MATCH, "Les mots de passes ne correspondent pas", HttpStatus.BAD_REQUEST);
+        }
+
         boolean userExist = userRepository.existsByEmail(registerRequest.getEmail());
         if (userExist) {
             throw new ApiException(ErrorCodeEnum.EMAIL_ALREADY_IN_USE, "Cet email est déjà utilisé", HttpStatus.CONFLICT);

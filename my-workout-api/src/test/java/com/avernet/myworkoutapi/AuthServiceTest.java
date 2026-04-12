@@ -40,7 +40,7 @@ public class AuthServiceTest {
 
     @Test
     void shouldLoginUser() {
-        LoginRequest loginRequest = new LoginRequest("user1@gmail.com", "user123");
+        LoginRequest loginRequest = new LoginRequest("user1@gmail.com", "password123");
 
         AuthResponse authResponse = service.loginUser(loginRequest);
         assertNotNull(authResponse);
@@ -50,22 +50,32 @@ public class AuthServiceTest {
 
     @Test
     void shouldThrowBadCredentialExceptionIncorrectLogin() {
-        LoginRequest loginRequest = new LoginRequest("user1@gmail.com", "user1234");
+        LoginRequest loginRequest = new LoginRequest("user1@gmail.com", "password1234");
 
         assertThrows(BadCredentialsException.class, () -> service.loginUser(loginRequest));
     }
 
     @Test
     void shouldRegisterUser() {
-        RegisterRequest registerRequest = new RegisterRequest("user3@gmail.com", "123", "123");
+        RegisterRequest registerRequest = new RegisterRequest("user3@gmail.com", "password123", "password123");
         User userCreated = service.registerUser(registerRequest);
         assertNotNull(userCreated);
         assertFalse(userCreated.getAdmin());
     }
 
     @Test
+    void shouldThrowExceptionRegisterWithDifferentPasswords() {
+        RegisterRequest registerRequest = new RegisterRequest("user3@gmail.com", "password123", "password1234");
+        ApiException apiException = assertThrows(ApiException.class, () -> service.registerUser(registerRequest));
+        assertNotNull(apiException);
+        assertEquals(ErrorCodeEnum.PASSWORD_NOT_MATCH ,apiException.getErrorCode());
+        assertEquals("Les mots de passes ne correspondent pas" ,apiException.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST ,apiException.getHttpStatus());
+    }
+
+    @Test
     void shouldThrowExceptionExistingUserRegister() {
-        RegisterRequest registerRequest = new RegisterRequest("user1@gmail.com", "123", "123");
+        RegisterRequest registerRequest = new RegisterRequest("user1@gmail.com", "password123", "password123");
         ApiException apiException = assertThrows(ApiException.class, () -> service.registerUser(registerRequest));
         assertEquals(ErrorCodeEnum.EMAIL_ALREADY_IN_USE, apiException.getErrorCode());
         assertEquals("Cet email est déjà utilisé", apiException.getMessage());
@@ -74,7 +84,7 @@ public class AuthServiceTest {
 
     @Test
     void shouldGetRefreshToken() {
-        LoginRequest loginRequest = new LoginRequest("user1@gmail.com", "user123");
+        LoginRequest loginRequest = new LoginRequest("user1@gmail.com", "password123");
 
         String refreshToken = service.loginUser(loginRequest).refreshToken();
         AuthResponse authResponse = service.refreshToken(refreshToken);

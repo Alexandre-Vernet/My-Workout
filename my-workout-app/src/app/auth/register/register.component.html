@@ -41,7 +41,7 @@
                             Le mot de passe doit contenir au moins 6 caractères
                         </p-message>
                     }
-                    @if (formRegister.hasError('passwordNotMatch') ||
+                    @if (formRegister.controls.password.hasError('passwordNotMatch') ||
                         formRegister.controls.password.value.trim() !== formRegister.controls.confirmPassword.value.trim()) {
                         <p-message
                             severity="error" variant="simple" size="small">
@@ -61,7 +61,7 @@
                         <input formControlName="confirmPassword" type="password" class="login__input"
                                placeholder="Confirmer le mot de passe">
                     </div>
-                    @if (formRegister.hasError('passwordNotMatch')) {
+                    @if (formRegister.controls.password.hasError('passwordNotMatch')) {
                         <p-message severity="error" variant="simple"
                                    size="small">
                             Les mots de passe ne correspondent pas

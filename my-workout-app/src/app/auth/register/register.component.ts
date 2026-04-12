@@ -40,7 +40,7 @@ export class RegisterComponent {
         } = this.formRegister.value;
 
         if (password !== confirmPassword) {
-            this.formRegister.setErrors({ passwordNotMatch: true });
+            this.formRegister.controls.password.setErrors({ passwordNotMatch: true });
             return;
         }
 
@@ -60,6 +60,11 @@ export class RegisterComponent {
                         if (err.error.errorCode === 'EMAIL_ALREADY_IN_USE') {
                             this.formRegister.controls.email.setErrors({
                                 emailAlreadyInUse: true
+                            });
+                        }
+                        if (err.error.errorCode === 'PASSWORD_NOT_MATCH') {
+                            this.formRegister.controls.password.setErrors({
+                                passwordNotMatch: true
                             });
                         } else {
                             this.formRegister.controls.email.setErrors({

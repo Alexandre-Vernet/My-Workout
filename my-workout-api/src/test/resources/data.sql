@@ -1,6 +1,6 @@
 TRUNCATE TABLE exercise_muscle, history, workout, user_exercise, muscles, exercises, muscle_group, users RESTART IDENTITY CASCADE;
 
-INSERT INTO public.users VALUES (1, 'user1@gmail.com', '$2a$10$7Rx02KaSETCRAFZet.ZsbufTUWdJauq5GeVb.TN.aoONQUUsSlCSa', '2025-04-14 00:00:00', '2025-04-14 00:00:00', false);
+INSERT INTO public.users VALUES (1, 'user1@gmail.com', '$2a$10$Z8K1uTlewFkZj6ZJ35Fn9uk1BvvL8VT4GKSbvyvOFPp89SJD3A/bq', '2025-04-14 00:00:00', '2025-04-14 00:00:00', false);
 INSERT INTO public.users VALUES (2, 'user2@gmail.com', '$2a$10$7Rx02KaSETCRAFZet.ZsbufTUWdJauq5GeVb.TN.aoONQUUsSlCSa', '2025-04-14 00:00:00', '2025-04-14 00:00:00', false);
 INSERT INTO public.users VALUES (3, 'admin@gmail.com', '$2a$10$7Rx02KaSETCRAFZet.ZsbufTUWdJauq5GeVb.TN.aoONQUUsSlCSa', '2025-04-14 00:00:00', '2025-04-14 00:00:00', true);
 
