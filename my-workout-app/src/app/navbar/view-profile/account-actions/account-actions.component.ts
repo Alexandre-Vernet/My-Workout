@@ -35,7 +35,7 @@ export class AccountActionsComponent {
 
     openDialogConfirmDeleteAccount() {
         this.confirmationService.confirm({
-            message: 'Voulez-vous vraiment supprimer votre compte ?',
+            message: 'Voulez-vous vraiment supprimer votre compte ainsi que toutes vos données ?',
             header: 'Confirmation',
             icon: 'pi pi-info-circle',
             dismissableMask: true,

@@ -140,6 +140,11 @@ public class AuthService {
         return userMapper.toDto(userEntity);
     }
 
+    @Transactional
+    void deleteUser(UserEntity userEntity) {
+        userRepository.delete(userEntity);
+    }
+
     public Map<String, String> sendEmailForgotPassword(String email) {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Utilisateur introuvable", HttpStatus.BAD_REQUEST));
 
