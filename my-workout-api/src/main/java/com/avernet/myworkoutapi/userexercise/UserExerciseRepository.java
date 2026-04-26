@@ -1,5 +1,7 @@
 package com.avernet.myworkoutapi.userexercise;
 
+import com.avernet.myworkoutapi.exercise.ExerciseEntity;
+import com.avernet.myworkoutapi.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +27,6 @@ public interface UserExerciseRepository extends JpaRepository<UserExerciseEntity
                 ORDER BY ue.order ASC, e.id ASC
         """)
     List<UserExerciseEntity> findAddedExercisesByMuscleGroupId(@Param("userId") Long userId, @Param("muscleGroupId") Integer muscleGroupId);
+
+    Boolean existsByExerciseAndUser(ExerciseEntity exercise, UserEntity user);
 }

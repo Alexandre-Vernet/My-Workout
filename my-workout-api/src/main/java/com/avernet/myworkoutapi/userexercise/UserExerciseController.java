@@ -1,5 +1,6 @@
 package com.avernet.myworkoutapi.userexercise;
 
+import com.avernet.myworkoutapi.exercise.Exercise;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,8 +28,8 @@ public class UserExerciseController {
     }
 
     @PostMapping
-    UserExercise create(@AuthenticationPrincipal UserEntity userEntity,  @RequestBody UserExercise userExercise) {
-        return userExerciseService.create(userEntity, userExercise);
+    void createOrDelete(@AuthenticationPrincipal UserEntity userEntity,  @RequestBody Exercise exercise) {
+        userExerciseService.createOrDelete(userEntity, exercise);
     }
 
     @PatchMapping()

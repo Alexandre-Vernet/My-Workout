@@ -60,8 +60,8 @@
         @if (user) {
             <div class="m-2 mt-5 flex gap-2">
                 <p-button (click)="toggleExerciseWorkout()"
-                          [label]="exercise.addedToWorkout ? 'Supprimer de l\'entraînement' : 'Ajouter à l\'entraînement'"
-                          [severity]="exercise.addedToWorkout ? 'danger' : 'primary'"/>
+                          [label]="exerciseMuscle.addedToWorkout ? 'Supprimer de l\'entraînement' : 'Ajouter à l\'entraînement'"
+                          [severity]="exerciseMuscle.addedToWorkout ? 'danger' : 'primary'"/>
                 @if (user.admin) {
                     <p-button (click)="updateExercise()"
                               label="Modifier"

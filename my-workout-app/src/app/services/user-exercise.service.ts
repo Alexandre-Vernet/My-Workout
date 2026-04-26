@@ -21,11 +21,7 @@ export class UserExerciseService {
     }
 
     toggleExerciseWorkout(exercise: Exercise) {
-        const userExercise: UserExercise = {
-            exercise
-        };
-
-        return this.http.post<UserExercise>(this.userExerciseUrl, userExercise);
+        return this.http.post<UserExercise>(this.userExerciseUrl, exercise);
     }
 
     updateOrderExercises(userExercises: UserExercise[]) {

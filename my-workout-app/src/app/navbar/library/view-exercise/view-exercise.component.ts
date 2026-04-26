@@ -68,10 +68,10 @@ export class ViewExerciseComponent implements OnInit {
     }
 
     toggleExerciseWorkout() {
-        this.userExerciseService.toggleExerciseWorkout(this.exerciseMuscle)
+        this.userExerciseService.toggleExerciseWorkout(this.exerciseMuscle.exercise)
             .subscribe({
                 next: () => {
-                    this.exerciseMuscle.exercise.addedToWorkout = !this.exerciseMuscle.exercise.addedToWorkout;
+                    this.exerciseMuscle.addedToWorkout = !this.exerciseMuscle.addedToWorkout;
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {

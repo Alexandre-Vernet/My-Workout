@@ -1,15 +1,15 @@
 package com.avernet.myworkoutapi;
 
-import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
-import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
-import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseMapper;
+import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserMapper;
+import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.UserRepository;
 import com.avernet.myworkoutapi.userexercise.UserExercise;
 import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
@@ -27,8 +27,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @SpringBootTest
@@ -87,17 +86,13 @@ public class UserExerciseServiceTest {
     }
 
     @Test
-    void shouldCreateUserExercise() {
+    void shouldCreateOrDeleteUserExercise() {
         UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
         ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
 
-        UserExercise userExercise = UserExercise.builder()
-            .user(userMapper.toDto(userEntity))
-            .exercise(exerciseMapper.toDto(exerciseEntity))
-            .build();
-
-        UserExercise userExerciseCreated = service.create(userEntity, userExercise);
-        assertNotNull(userExerciseCreated);
+        service.createOrDelete(userEntity, exerciseMapper.toDto(exerciseEntity));
+        Boolean userExerciseEntity = userExerciseRepository.existsByExerciseAndUser(exerciseEntity, userEntity);
+        assertTrue(userExerciseEntity);
     }
 
     @Test
@@ -110,10 +105,10 @@ public class UserExerciseServiceTest {
             .exercise(exerciseMapper.toDto(exerciseEntity))
             .build();
 
-        UserExerciseEntity userExerciseCreated = userExerciseRepository.save(userExerciseMapper.toEntity(userExercise));
+        userExerciseRepository.save(userExerciseMapper.toEntity(userExercise));
 
-        service.create(userEntity, userExercise);
-        UserExerciseEntity userExerciseEntity = userExerciseRepository.findById(userExerciseCreated.getId()).orElse(null);
-        assertNull(userExerciseEntity);
+        service.createOrDelete(userEntity, exerciseMapper.toDto(exerciseEntity));
+        Boolean userExerciseEntity = userExerciseRepository.existsByExerciseAndUser(exerciseEntity, userEntity);
+        assertFalse(userExerciseEntity);
     }
 }

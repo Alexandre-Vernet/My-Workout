@@ -3,17 +3,19 @@ package com.avernet.myworkoutapi.exercise;
 import com.avernet.myworkoutapi.auth.AuthService;
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exception.ApiException;
-import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscle;
+import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleAddedToWorkout;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleMapper;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupMapper;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
+import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
 import jakarta.annotation.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,9 @@ public class ExerciseService {
 
     @Resource
     MuscleGroupRepository muscleGroupRepository;
+
+    @Resource
+    private UserExerciseRepository userExerciseRepository;
 
     @Resource
     ExerciseMapper exerciseMapper;
@@ -106,7 +111,7 @@ public class ExerciseService {
     }
 
     @Transactional(readOnly = true)
-    public ExerciseMuscle findExerciseMuscle(Long exerciseId) {
+    public ExerciseMuscleAddedToWorkout findExerciseMuscle(Long exerciseId) {
         ExerciseEntity exerciseEntity = exerciseRepository.findExercise(exerciseId);
 
         List<MuscleEntity> muscleEntityList = exerciseEntity.exerciseMuscles.stream()
@@ -114,9 +119,16 @@ public class ExerciseService {
             .sorted(Comparator.comparing(MuscleEntity::getName))
             .toList();
 
-        return new ExerciseMuscle(
+        Boolean addedToWorkout = Boolean.FALSE;
+        Optional<UserEntity> userEntity = authService.optionalUser();
+        if (userEntity.isPresent()) {
+            addedToWorkout = userExerciseRepository.existsByExerciseAndUser(exerciseEntity, userEntity.get());
+        }
+
+        return new ExerciseMuscleAddedToWorkout(
             exerciseMapper.toDto(exerciseEntity),
-            muscleMapper.toDtoList(muscleEntityList)
+            muscleMapper.toDtoList(muscleEntityList),
+            addedToWorkout
         );
     }
 

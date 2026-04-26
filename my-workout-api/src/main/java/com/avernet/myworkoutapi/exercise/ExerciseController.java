@@ -1,6 +1,7 @@
 package com.avernet.myworkoutapi.exercise;
 
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscle;
+import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleAddedToWorkout;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,7 +32,7 @@ public class ExerciseController {
     }
 
     @GetMapping("{exerciseId}")
-    ExerciseMuscle findExerciseMuscle(@PathVariable Long exerciseId) {
+    ExerciseMuscleAddedToWorkout findExerciseMuscle(@PathVariable Long exerciseId) {
         return exerciseService.findExerciseMuscle(exerciseId);
     }
 

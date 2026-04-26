@@ -3,6 +3,7 @@ package com.avernet.myworkoutapi;
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
+import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleAddedToWorkout;
 import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.exercise.Exercise;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
@@ -80,7 +81,7 @@ public class ExerciseServiceTest {
     void shouldFindExerciseMuscle() {
         ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
 
-        ExerciseMuscle exerciseMuscle = service.findExerciseMuscle(exerciseEntity.getId());
+        ExerciseMuscleAddedToWorkout exerciseMuscle = service.findExerciseMuscle(exerciseEntity.getId());
         assertNotNull(exerciseMuscle);
         assertNotNull(exerciseMuscle.exercise());
         assertFalse(exerciseMuscle.muscles().isEmpty());

@@ -1,5 +1,7 @@
 package com.avernet.myworkoutapi.userexercise;
 
+import com.avernet.myworkoutapi.exercise.Exercise;
+import com.avernet.myworkoutapi.exercise.ExerciseMapper;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,9 @@ public class UserExerciseService {
     @Resource
     UserExerciseMapper userExerciseMapper;
 
+    @Resource
+    private ExerciseMapper exerciseMapper;
+
 
     @Transactional(readOnly = true)
     public List<UserExercise> findAddedExercisesByMuscleGroupId(UserEntity userEntity, Integer muscleGroupId) {
@@ -24,17 +29,17 @@ public class UserExerciseService {
     }
 
     @Transactional
-    public UserExercise create(UserEntity userEntity, UserExercise userExercise) {
-        UserExerciseEntity userExerciseEntity = userExerciseRepository.findByUserIdAndExerciseId(userEntity.getId(), userExercise.getExercise().getId());
+    public void createOrDelete(UserEntity userEntity, Exercise exercise) {
+        UserExerciseEntity userExerciseEntity = userExerciseRepository.findByUserIdAndExerciseId(userEntity.getId(), exercise.getId());
         if (userExerciseEntity != null) {
             userExerciseRepository.delete(userExerciseEntity);
         } else {
-            UserExerciseEntity userExerciseEntityToSave = userExerciseMapper.toEntity(userExercise);
-            userExerciseEntityToSave.setUser(userEntity);
+            UserExerciseEntity userExerciseEntityToSave = UserExerciseEntity.builder()
+                .user(userEntity)
+                .exercise(exerciseMapper.toEntity(exercise))
+                .build();
             userExerciseRepository.save(userExerciseEntityToSave);
         }
-
-        return userExercise;
     }
 
     @Transactional
