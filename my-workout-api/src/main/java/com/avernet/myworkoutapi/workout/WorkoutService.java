@@ -38,9 +38,11 @@ public class WorkoutService {
         if (workoutRequest.workout().getMuscleGroup().name() != MuscleGroupType.CARDIO) {
             // Do not create a workout if it already exists for the same user and muscle group on the same day
             // Except cardio workout because it can be done multiple times a day with different exercises (e.g. running, cycling)
-            Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDate(userEntity.getId(),
+            Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDate(
+                userEntity.getId(),
                 workoutRequest.workout().getMuscleGroup().id(),
-                workoutRequest.workout().getDate());
+                workoutRequest.workout().getDate()
+            );
             if (existingWorkout.isPresent()) {
                 workoutEntity = existingWorkout.get();
             }

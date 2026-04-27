@@ -11,6 +11,7 @@ import com.avernet.myworkoutapi.user.UserRepository;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -49,17 +50,14 @@ public class AuthService {
     public Optional<UserEntity> optionalUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated() ||
-            authentication.getPrincipal() != null &&
-                authentication.getPrincipal().equals("anonymousUser")) {
-            throw new ApiException(ErrorCodeEnum.INVALID_USER, "Utilisateur non authentifié", HttpStatus.FORBIDDEN);
+        if (authentication != null && authentication.isAuthenticated()
+            && !(authentication instanceof AnonymousAuthenticationToken)) {
+
+            UserEntity user = (UserEntity) authentication.getPrincipal();
+            return Optional.ofNullable(user);
         }
 
-        try {
-            return Optional.ofNullable((UserEntity) authentication.getPrincipal());
-        } catch (Exception exception) {
-            return Optional.empty();
-        }
+        return Optional.empty();
     }
 
     @Transactional(readOnly = true)

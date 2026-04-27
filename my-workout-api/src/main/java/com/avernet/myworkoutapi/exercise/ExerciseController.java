@@ -32,8 +32,8 @@ public class ExerciseController {
     }
 
     @GetMapping("{exerciseId}")
-    ExerciseMuscleAddedToWorkout findExerciseMuscle(@PathVariable Long exerciseId) {
-        return exerciseService.findExerciseMuscle(exerciseId);
+    ExerciseMuscleAddedToWorkout findExercisesMuscle(@PathVariable Long exerciseId) {
+        return exerciseService.findExercisesMuscle(exerciseId);
     }
 
     @PostMapping

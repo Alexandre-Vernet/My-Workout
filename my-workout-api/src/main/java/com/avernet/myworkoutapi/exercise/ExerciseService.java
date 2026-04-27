@@ -111,7 +111,7 @@ public class ExerciseService {
     }
 
     @Transactional(readOnly = true)
-    public ExerciseMuscleAddedToWorkout findExerciseMuscle(Long exerciseId) {
+    public ExerciseMuscleAddedToWorkout findExercisesMuscle(Long exerciseId) {
         ExerciseEntity exerciseEntity = exerciseRepository.findExercise(exerciseId);
 
         List<MuscleEntity> muscleEntityList = exerciseEntity.exerciseMuscles.stream()

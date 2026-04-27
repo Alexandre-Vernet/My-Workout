@@ -1,20 +1,22 @@
 package com.avernet.myworkoutapi;
 
-import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
-import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
-import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleAddedToWorkout;
-import com.avernet.myworkoutapi.user.UserNotFoundException;
+import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exercise.Exercise;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
+import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
 import com.avernet.myworkoutapi.exercise.ExerciseService;
+import com.avernet.myworkoutapi.exercise.MuscleGroupExercises;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscle;
+import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleAddedToWorkout;
 import com.avernet.myworkoutapi.muscle.Muscle;
 import com.avernet.myworkoutapi.muscle.MuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleMapper;
 import com.avernet.myworkoutapi.muscle.MuscleRepository;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
+import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.UserRepository;
 import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
@@ -61,6 +63,15 @@ public class ExerciseServiceTest {
 
 
     @Test
+    void shouldFindAllExercisesByMuscleGroupId() {
+        MuscleGroupExercises muscleGroupExercises = service.findAllExercisesByMuscleGroupId(1L);
+        assertNotNull(muscleGroupExercises);
+        assertEquals(MuscleGroupType.PECTORAUX, muscleGroupExercises.muscleGroup().name());
+        assertNotNull(muscleGroupExercises.muscles());
+        assertEquals(3, muscleGroupExercises.muscles().size());
+    }
+
+    @Test
     void shouldReturnCardioExercises() {
         UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
         ExerciseEntity exerciseEntity = exerciseRepository.findById(28L).orElseThrow(ExerciseNotFoundException::new);
@@ -78,10 +89,10 @@ public class ExerciseServiceTest {
     }
 
     @Test
-    void shouldFindExerciseMuscle() {
+    void shouldFindExercisesMuscle() {
         ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
 
-        ExerciseMuscleAddedToWorkout exerciseMuscle = service.findExerciseMuscle(exerciseEntity.getId());
+        ExerciseMuscleAddedToWorkout exerciseMuscle = service.findExercisesMuscle(exerciseEntity.getId());
         assertNotNull(exerciseMuscle);
         assertNotNull(exerciseMuscle.exercise());
         assertFalse(exerciseMuscle.muscles().isEmpty());

@@ -21,6 +21,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -154,5 +156,11 @@ public class AuthServiceTest {
         assertNotNull(updatedUser);
         assertNotEquals(userEntity.getPassword(), updatedUserEntity.getEmail());
         assertNotEquals(userEntity.getUpdatedAt(), updatedUserEntity.getUpdatedAt());
+    }
+
+    @Test
+    void shouldNotReturnOptionalUser() {
+        Optional<UserEntity> optionalUser = service.optionalUser();
+        assertFalse(optionalUser.isPresent());
     }
 }
