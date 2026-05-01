@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { switchMap, tap } from 'rxjs';
+import { of, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../../interfaces/User';
 import { AuthResponse } from '../../interfaces/AuthResponse';
@@ -40,6 +40,9 @@ export class AuthService {
 
     refresh() {
         const refreshToken = localStorage.getItem('refresh-token');
+        if (!refreshToken) {
+            return of(null);
+        }
         return this.http.post<AuthResponse>(`${ this.authUrl }/refresh`, refreshToken)
             .pipe(
                 tap(({ accessToken, refreshToken }) => {

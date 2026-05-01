@@ -53,7 +53,7 @@ public class WorkoutService {
         HistoryEntity historyEntity = historyMapper.toEntity(workoutRequest.history());
         historyEntity.setWorkout(workoutEntity);
 
-        if(workoutEntity.getHistories() == null) {
+        if (workoutEntity.getHistories() == null) {
             workoutEntity.setHistories(new ArrayList<>());
         }
         workoutEntity.getHistories().add(historyEntity);
