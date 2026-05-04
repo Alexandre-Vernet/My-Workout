@@ -113,7 +113,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             .pipe(
                 switchMap((params: {
                     muscleGroupId: number
-                }) => this.exerciseService.findAllExercisesByMuscleGroupId(Number(params.muscleGroupId)))
+                }) => this.exerciseService.findAllExercises(Number(params.muscleGroupId)))
             )
             .subscribe({
                 next: (muscleGroupExercises) => {

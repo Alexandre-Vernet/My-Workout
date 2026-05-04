@@ -21,6 +21,12 @@ public class ExerciseController {
     @Resource
     ExerciseService exerciseService;
 
+
+    @GetMapping("find-all-exercises-by-user-muscle-group-id/{muscleGroupId}")
+    MuscleGroupExercises findAllExercisesByUserAndMuscleGroupId(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long muscleGroupId) {
+        return exerciseService.findAllExercisesByUserAndMuscleGroupId(userEntity, muscleGroupId);
+    }
+
     @GetMapping("find-all-exercises-by-muscle-group-id/{muscleGroupId}")
     MuscleGroupExercises findAllExercisesByMuscleGroupId(@PathVariable Long muscleGroupId) {
         return exerciseService.findAllExercisesByMuscleGroupId(muscleGroupId);

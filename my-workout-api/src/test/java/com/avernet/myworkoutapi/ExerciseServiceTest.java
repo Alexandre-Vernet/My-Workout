@@ -3,6 +3,7 @@ package com.avernet.myworkoutapi;
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exercise.Exercise;
+import com.avernet.myworkoutapi.exercise.ExerciseAddedToWorkout;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
@@ -63,16 +64,59 @@ public class ExerciseServiceTest {
 
 
     @Test
-    void shouldFindAllExercisesByMuscleGroupId() {
-        MuscleGroupExercises muscleGroupExercises = service.findAllExercisesByMuscleGroupId(1L);
+    void findAllExercisesByUserAndMuscleGroupId_shouldFindExercises() {
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
+        ExerciseEntity exerciseEntity2 = exerciseRepository.findById(2L).orElseThrow(ExerciseNotFoundException::new);
+        ExerciseEntity exerciseEntity3 = exerciseRepository.findById(3L).orElseThrow(ExerciseNotFoundException::new);
+
+        UserExerciseEntity userExerciseEntity = UserExerciseEntity.builder()
+            .user(userEntity)
+            .exercise(exerciseEntity)
+            .build();
+
+        UserExerciseEntity userExerciseEntity2 = UserExerciseEntity.builder()
+            .user(userEntity)
+            .exercise(exerciseEntity2)
+            .build();
+
+        UserExerciseEntity userExerciseEntity3 = UserExerciseEntity.builder()
+            .user(userEntity)
+            .exercise(exerciseEntity3)
+            .build();
+
+        userExerciseRepository.saveAll(List.of(userExerciseEntity, userExerciseEntity2, userExerciseEntity3));
+
+
+        MuscleGroupExercises muscleGroupExercises = service.findAllExercisesByUserAndMuscleGroupId(userEntity, 1L);
+
+
         assertNotNull(muscleGroupExercises);
         assertEquals(MuscleGroupType.PECTORAUX, muscleGroupExercises.muscleGroup().name());
         assertNotNull(muscleGroupExercises.muscles());
         assertEquals(3, muscleGroupExercises.muscles().size());
+        assertEquals(3, muscleGroupExercises.exerciseAddedToWorkouts().stream()
+            .filter(ExerciseAddedToWorkout::addedToWorkout)
+            .toList()
+            .size()
+        );
     }
 
     @Test
-    void shouldReturnCardioExercises() {
+    void findAllExercisesByMuscleGroupId_shouldReturnAllExercices() {
+        MuscleGroupExercises muscleGroupExercises = service.findAllExercisesByMuscleGroupId(1L);
+
+
+        assertNotNull(muscleGroupExercises);
+        assertEquals(MuscleGroupType.PECTORAUX, muscleGroupExercises.muscleGroup().name());
+        assertNotNull(muscleGroupExercises.muscles());
+        assertEquals(3, muscleGroupExercises.muscles().size());
+        muscleGroupExercises.exerciseAddedToWorkouts()
+            .forEach(exerciseAddedToWorkout -> assertFalse(exerciseAddedToWorkout.addedToWorkout()));
+    }
+
+    @Test
+    void findCardioExercises_shouldReturnCardioExercises() {
         UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
         ExerciseEntity exerciseEntity = exerciseRepository.findById(28L).orElseThrow(ExerciseNotFoundException::new);
 
@@ -85,11 +129,12 @@ public class ExerciseServiceTest {
 
         List<Exercise> exerciseList = service.findCardioExercises(userEntity);
         assertNotNull(exerciseList);
+        assertEquals(1, exerciseList.size());
         assertFalse(exerciseList.isEmpty());
     }
 
     @Test
-    void shouldFindExercisesMuscle() {
+    void findExercisesMuscle_shouldFindExercisesMuscle() {
         ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
 
         ExerciseMuscleAddedToWorkout exerciseMuscle = service.findExercisesMuscle(exerciseEntity.getId());
@@ -100,7 +145,7 @@ public class ExerciseServiceTest {
 
     @Test
     @Transactional
-    void shouldCreateExercise() {
+    void createOrUpdateExercise_shouldCreateExercise() {
         Exercise exercise = Exercise.builder()
             .name("My custom exercise")
             .description("My custom desc")
@@ -131,7 +176,7 @@ public class ExerciseServiceTest {
 
     @Test
     @Transactional
-    void shouldUpdateExercise() {
+    void createOrUpdateExercise_shouldUpdateExercise() {
         Exercise exercise = Exercise.builder()
             .id(1L)
             .name("Updated exercise name")

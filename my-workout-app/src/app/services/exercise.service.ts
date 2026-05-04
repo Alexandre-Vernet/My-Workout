@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { Exercise } from '../../interfaces/Exercise';
 import { MuscleGroupExercises } from '../../interfaces/MuscleGroupExercises';
 import { ExerciseMuscle } from '../../interfaces/ExerciseMuscle';
+import { AuthService } from "../auth/auth.service";
+import { catchError, switchMap } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -12,11 +14,18 @@ export class ExerciseService {
 
     exerciseUrl = environment.exerciseUrl();
 
-    constructor(private readonly http: HttpClient) {
+    constructor(
+        private readonly http: HttpClient,
+        private readonly authService: AuthService,
+    ) {
     }
 
-    findAllExercisesByMuscleGroupId(muscleGroupId: number) {
-        return this.http.get<MuscleGroupExercises>(`${ this.exerciseUrl }/find-all-exercises-by-muscle-group-id/${ muscleGroupId }`);
+    findAllExercises(muscleGroupId: number) {
+        return this.authService.getCurrentUser()
+            .pipe(
+                switchMap(() => this.findAllExercisesByUserAndMuscleGroupId(muscleGroupId)),
+                catchError(() => this.findAllExercisesByMuscleGroupId(muscleGroupId))
+            )
     }
 
     findCardioExercises() {
@@ -29,5 +38,14 @@ export class ExerciseService {
 
     createOrUpdateExercise(exerciseMuscle: ExerciseMuscle) {
         return this.http.post<Exercise>(`${ this.exerciseUrl }`, exerciseMuscle);
+    }
+
+
+    private findAllExercisesByUserAndMuscleGroupId(muscleGroupId: number) {
+        return this.http.get<MuscleGroupExercises>(`${ this.exerciseUrl }/find-all-exercises-by-user-muscle-group-id/${ muscleGroupId }`);
+    }
+
+    private findAllExercisesByMuscleGroupId(muscleGroupId: number) {
+        return this.http.get<MuscleGroupExercises>(`${ this.exerciseUrl }/find-all-exercises-by-muscle-group-id/${ muscleGroupId }`);
     }
 }
