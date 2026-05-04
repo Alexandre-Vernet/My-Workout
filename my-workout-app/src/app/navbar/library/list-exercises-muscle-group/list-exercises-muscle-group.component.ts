@@ -93,13 +93,18 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
     filterByMuscle(muscle: Muscle) {
         // Reset filter
         if (muscle.id === this.activeFilter) {
-            this.filterMuscleGroupExercises = this.muscleGroupExercises;
+            this.filterMuscleGroupExercises.exerciseAddedToWorkouts = [
+                ...this.muscleGroupExercises.exerciseAddedToWorkouts
+            ];
             this.activeFilter = null;
             return;
         }
 
-        // this.filterMuscleGroupExercises.exerciseAddedToWorkouts = this.muscleGroupExercises.exerciseAddedToWorkouts
-        //     .filter(e => e.exercise.exerciseMuscles.some(m => m.muscles.id === muscle.id));
+        this.filterMuscleGroupExercises.exerciseAddedToWorkouts =
+            this.muscleGroupExercises.exerciseAddedToWorkouts.filter(exercise =>
+                exercise.muscles.some(m => m.id === muscle.id)
+            );
+
         this.activeFilter = muscle.id;
     }
 
@@ -113,7 +118,10 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             .subscribe({
                 next: (muscleGroupExercises) => {
                     this.muscleGroupExercises = muscleGroupExercises;
-                    this.filterMuscleGroupExercises = muscleGroupExercises;
+                    this.filterMuscleGroupExercises = {
+                        ...muscleGroupExercises,
+                        exerciseAddedToWorkouts: [...muscleGroupExercises.exerciseAddedToWorkouts]
+                    };
                     this.alertService.alert$.next(null);
                 },
                 error: (err) => {
