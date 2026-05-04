@@ -29,4 +29,16 @@ public interface UserExerciseRepository extends JpaRepository<UserExerciseEntity
     List<UserExerciseEntity> findAddedExercisesByMuscleGroupId(@Param("userId") Long userId, @Param("muscleGroupId") Integer muscleGroupId);
 
     Boolean existsByExerciseAndUser(ExerciseEntity exercise, UserEntity user);
+
+    @Query("""
+        SELECT COALESCE(MAX(ue.order), 0) + 1 FROM UserExerciseEntity ue
+                JOIN ue.exercise e
+                JOIN ue.user u
+                JOIN e.exerciseMuscles em
+                JOIN em.muscle m
+                JOIN m.muscleGroup mg
+            WHERE ue.user.id = :userId
+            AND mg.id = :muscleGroupId
+    """)
+    Integer getOrder(@Param("userId") Long userId, @Param("muscleGroupId") Integer muscleGroupId);
 }

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ExerciseService } from '../../../services/exercise.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Exercise } from '../../../../interfaces/Exercise';
 import { switchMap } from 'rxjs';
 import { DataView } from 'primeng/dataview';
 import { UserExerciseService } from '../../../services/user-exercise.service';
@@ -10,12 +9,12 @@ import { Badge } from 'primeng/badge';
 import { Skeleton } from 'primeng/skeleton';
 import { AlertService } from '../../../services/alert.service';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { UserExercise } from '../../../../interfaces/User-exercise';
 import { Tag } from 'primeng/tag';
 import { Muscle } from '../../../../interfaces/Muscle';
 import { removeAccents, replaceSpaces } from '../../../shared/utils/remove-accents';
 import { NgClass, UpperCasePipe } from '@angular/common';
 import { MuscleGroupExercises } from '../../../../interfaces/MuscleGroupExercises';
+import { ExerciseAddedToWorkout } from "../../../../interfaces/ExerciseAddedToWorkout";
 
 @Component({
     selector: 'app-list-exercises',
@@ -45,8 +44,8 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
         this.findAllExercisesByMuscleGroupId();
     }
 
-    toggleExerciseWorkout(exercise: Exercise) {
-        return this.userExerciseService.toggleExerciseWorkout(exercise)
+    toggleExerciseWorkout(exerciseAddedToWorkout: ExerciseAddedToWorkout) {
+        this.userExerciseService.toggleExerciseWorkout(exerciseAddedToWorkout.exercise)
             .subscribe({
                 next: () => {
                     this.findAllExercisesByMuscleGroupId();
@@ -72,21 +71,15 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
 
         moveItemInArray(this.muscleGroupExercises.exerciseAddedToWorkouts, event.previousIndex, event.currentIndex);
 
-        const userExercises: UserExercise[] = [];
-
-        this.muscleGroupExercises.exerciseAddedToWorkouts.forEach((e, index) => {
-            const userExercise: UserExercise = {
-                // id: e.userExerciseId,
-                exercise: e,
+        const userExercises = this.muscleGroupExercises.exerciseAddedToWorkouts
+            .filter(e => e.addedToWorkout)
+            .map((exerciseAddedWorkout, index) => ({
+                exercise: { id: exerciseAddedWorkout.exercise.id },
                 order: index
-            };
+            }));
 
-            userExercises.push(userExercise);
-        });
 
-        const userExercisesFilter = userExercises.filter(ue => ue.id !== null);
-
-        this.userExerciseService.updateOrderExercises(userExercisesFilter)
+        this.userExerciseService.updateOrderExercises(userExercises)
             .subscribe({
                 error: (err) => {
                     this.alertService.alert$.next({

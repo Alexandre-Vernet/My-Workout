@@ -17,16 +17,19 @@ import com.avernet.myworkoutapi.userexercise.UserExerciseMapper;
 import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
 import com.avernet.myworkoutapi.userexercise.UserExerciseService;
 import jakarta.annotation.Resource;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -58,20 +61,31 @@ public class UserExerciseServiceTest {
     ExerciseMapper exerciseMapper;
 
     @Resource
-    private UserExerciseMapper userExerciseMapper;
+    UserExerciseMapper userExerciseMapper;
+
+
+    UserEntity userEntity;
+    ExerciseEntity exerciseEntity;
+    ExerciseEntity exerciseEntity2;
+    ExerciseEntity exerciseEntity3;
+
+
+    @BeforeEach
+    void setup() {
+        userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
+        exerciseEntity2 = exerciseRepository.findById(2L).orElseThrow(ExerciseNotFoundException::new);
+        exerciseEntity3 = exerciseRepository.findById(3L).orElseThrow(ExerciseNotFoundException::new);
+    }
 
 
     @Test
-    void shouldFindAddedExercisesExceptExerciseNotLinkedToMuscleGroupSelected() {
-        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+    void findAddedExercisesByMuscleGroupId_shouldFindExercisesExceptExercisesNotLinkedToMuscleGroupSelected() {
         MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElseThrow(MuscleGroupNotFoundException::new);
 
-        ExerciseEntity exerciseEntity1 = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
-        ExerciseEntity exerciseEntity2 = exerciseRepository.findById(2L).orElseThrow(ExerciseNotFoundException::new);
-        ExerciseEntity exerciseEntity3 = exerciseRepository.findById(3L).orElseThrow(ExerciseNotFoundException::new);
         ExerciseEntity exerciseEntity4 = exerciseRepository.findById(20L).orElseThrow(ExerciseNotFoundException::new); /*Exercise is not linked to the muscle group 1*/
 
-        UserExerciseEntity userExerciseEntity1 = UserExerciseEntity.builder().order(1).user(userEntity).exercise(exerciseEntity1).build();
+        UserExerciseEntity userExerciseEntity1 = UserExerciseEntity.builder().order(1).user(userEntity).exercise(exerciseEntity).build();
         UserExerciseEntity userExerciseEntity2 = UserExerciseEntity.builder().order(2).user(userEntity).exercise(exerciseEntity2).build();
         UserExerciseEntity userExerciseEntity3 = UserExerciseEntity.builder().order(3).user(userEntity).exercise(exerciseEntity3).build();
         UserExerciseEntity userExerciseEntity4 = UserExerciseEntity.builder().order(4).user(userEntity).exercise(exerciseEntity4).build();
@@ -86,18 +100,28 @@ public class UserExerciseServiceTest {
     }
 
     @Test
-    void shouldCreateOrDeleteUserExercise() {
-        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
-
-        service.createOrDelete(userEntity, exerciseMapper.toDto(exerciseEntity));
+    void createOrDelete_shouldCreateUserExercise() {
+        UserExercise userExercise1 = service.createOrDelete(userEntity, exerciseMapper.toDto(exerciseEntity));
+        assertNotNull(userExercise1);
+        assertEquals(1, userExercise1.getOrder());
         Boolean userExerciseEntity = userExerciseRepository.existsByExerciseAndUser(exerciseEntity, userEntity);
         assertTrue(userExerciseEntity);
+
+        UserExercise userExercise2 = service.createOrDelete(userEntity, exerciseMapper.toDto(exerciseEntity2));
+        assertNotNull(userExercise2);
+        assertEquals(2, userExercise2.getOrder());
+        Boolean userExerciseEntity2 = userExerciseRepository.existsByExerciseAndUser(exerciseEntity, userEntity);
+        assertTrue(userExerciseEntity2);
+
+        UserExercise userExercise3 = service.createOrDelete(userEntity, exerciseMapper.toDto(exerciseEntity3));
+        assertNotNull(userExercise3);
+        assertEquals(3, userExercise3.getOrder());
+        Boolean userExerciseEntity3 = userExerciseRepository.existsByExerciseAndUser(exerciseEntity, userEntity);
+        assertTrue(userExerciseEntity3);
     }
 
     @Test
-    void shouldDeleteUserExercise() {
-        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+    void createOrDelete_shouldDeleteUserExercise() {
         ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
 
         UserExercise userExercise = UserExercise.builder()
@@ -110,5 +134,26 @@ public class UserExerciseServiceTest {
         service.createOrDelete(userEntity, exerciseMapper.toDto(exerciseEntity));
         Boolean userExerciseEntity = userExerciseRepository.existsByExerciseAndUser(exerciseEntity, userEntity);
         assertFalse(userExerciseEntity);
+    }
+
+    @Test
+    void updateOrderExercises_shouldReorganiseOrderExercise() {
+        UserExercise userExercise = UserExercise.builder()
+            .exercise(exerciseMapper.toDto(exerciseEntity))
+            .order(1)
+            .build();
+        UserExercise userExercise2 = UserExercise.builder()
+            .exercise(exerciseMapper.toDto(exerciseEntity2))
+            .order(2)
+            .build();
+
+        UserExercise userExercise3 = UserExercise.builder()
+            .exercise(exerciseMapper.toDto(exerciseEntity3))
+            .order(3)
+            .build();
+
+        List<UserExercise> userExerciseList = new ArrayList<>(List.of(userExercise, userExercise2, userExercise3));
+
+        service.updateOrderExercises(userEntity, userExerciseList);
     }
 }

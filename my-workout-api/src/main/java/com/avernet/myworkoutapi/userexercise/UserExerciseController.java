@@ -28,8 +28,8 @@ public class UserExerciseController {
     }
 
     @PostMapping
-    void createOrDelete(@AuthenticationPrincipal UserEntity userEntity,  @RequestBody Exercise exercise) {
-        userExerciseService.createOrDelete(userEntity, exercise);
+    UserExercise createOrDelete(@AuthenticationPrincipal UserEntity userEntity,  @RequestBody Exercise exercise) {
+        return userExerciseService.createOrDelete(userEntity, exercise);
     }
 
     @PatchMapping()

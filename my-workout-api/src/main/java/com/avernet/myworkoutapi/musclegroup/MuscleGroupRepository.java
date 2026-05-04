@@ -23,4 +23,13 @@ public interface MuscleGroupRepository extends JpaRepository<MuscleGroupEntity, 
             GROUP BY muscleGroup.id
     """)
     List<MuscleGroupExerciseCountEntity> findAllMuscleGroupAndCountAddedExercises(@Param("userId") Long userId);
+
+    @Query("""
+    SELECT mg FROM ExerciseEntity e
+        LEFT JOIN e.exerciseMuscles em
+        LEFT JOIN em.muscle m
+        LEFT JOIN m.muscleGroup mg
+        WHERE e.id = :exerciseId
+    """)
+    MuscleGroupEntity findByExercise(@Param("exerciseId") Long exerciseId);
 }
