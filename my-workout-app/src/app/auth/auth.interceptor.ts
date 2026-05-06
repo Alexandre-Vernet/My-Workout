@@ -2,11 +2,10 @@ import { HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { AuthService } from './auth.service';
-import { AlertService } from '../services/alert.service';
+
 
 export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const authService = inject(AuthService);
-    const alertService = inject(AlertService);
 
     const token = localStorage.getItem('access-token');
     if (token) {
@@ -30,7 +29,7 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
                                 });
                                 return next(newRequest);
                             }),
-                            catchError(() => handleErrorAuth(alertService))
+                            catchError(() => throwError(() => new Error('Unauthorized')))
                         );
                 }
 
@@ -39,11 +38,3 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
             })
         );
 };
-
-const handleErrorAuth = (alertService: AlertService) => {
-    alertService.alert$.next({
-        severity: 'error',
-        message: 'Vous devez être connecté pour accéder à cette page'
-    });
-    return throwError(() => new Error('Unauthorized'));
-}
