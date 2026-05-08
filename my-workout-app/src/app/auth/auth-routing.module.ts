@@ -1,20 +1,20 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SignInComponent } from "./sign-in/sign-in.component";
-import { SignUpComponent } from "./sign-up/sign-up.component";
-import { ResetPasswordComponent } from "./reset-password/reset-password.component";
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 const routes: Routes = [
     {
         path: 'auth',
         children: [
             {
-                path: 'sign-in',
-                component: SignInComponent
+                path: 'login',
+                component: LoginComponent
             },
             {
-                path: 'sign-up',
-                component: SignUpComponent
+                path: 'register',
+                component: RegisterComponent
             },
             {
                 path: 'reset-password',
@@ -22,7 +22,7 @@ const routes: Routes = [
             },
             {
                 path: '**',
-                redirectTo: 'sign-in'
+                redirectTo: 'login'
             }
         ]
     }

@@ -1,67 +1,51 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, map, switchMap, tap } from 'rxjs';
+import { of, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { User } from '../../interfaces/user';
+import { User } from '../../interfaces/User';
+import { AuthResponse } from '../../interfaces/AuthResponse';
+import { LoginRequest } from "../../interfaces/LoginRequest";
+import { RegisterRequest } from "../../interfaces/RegisterRequest";
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
 
-    private userSubject = new BehaviorSubject<User>(null);
-    user$ = this.userSubject.asObservable();
-
     authUrl = environment.authUrl();
-    error = '';
 
     constructor(
-        private http: HttpClient
+        private readonly http: HttpClient
     ) {
     }
 
-    signIn(user: User) {
-        return this.http.post<{ accessToken: string, refreshToken: string }>(`${this.authUrl}/sign-in`, user)
+    login(loginRequest: LoginRequest) {
+        return this.http.post<AuthResponse>(`${ this.authUrl }/login`, loginRequest)
             .pipe(
                 tap(({ accessToken, refreshToken }) => {
-                    this.userSubject.next(user);
                     localStorage.setItem('access-token', accessToken);
                     localStorage.setItem('refresh-token', refreshToken);
-                }),
+                })
             );
     }
 
-    signUp(user: User) {
-        return this.http.post<{ accessToken: string, user: User }>(`${this.authUrl}/sign-up`, user)
-            .pipe(switchMap(() => this.signIn(user)));
+    register(registerRequest: RegisterRequest) {
+        return this.http.post<{ accessToken: string, user: User }>(`${ this.authUrl }/register`, registerRequest)
+            .pipe(switchMap(() => this.login(registerRequest)));
     }
 
     getCurrentUser() {
-        if (this.userSubject.value) {
-            return this.user$;
-        }
-
-        return this.http.get<User>(`${this.authUrl}/me`)
-            .pipe(
-                tap((user) => this.userSubject.next(user)),
-                catchError(() => this.refresh()
-                    .pipe(
-                        map((e) => e.user)
-                    )
-                )
-            );
+        return this.http.get<User>(`${ this.authUrl }/me`);
     }
 
     refresh() {
         const refreshToken = localStorage.getItem('refresh-token');
-        return this.http.post<{
-            user: User,
-            accessToken: string,
-            refreshToken: string
-        }>(`${this.authUrl}/refresh`, { refreshToken })
+        if (!refreshToken) {
+            return of(null);
+        }
+        return this.http.post<AuthResponse>(`${ this.authUrl }/refresh`, refreshToken)
             .pipe(
-                tap(({ user, accessToken, refreshToken }) => {
-                    this.userSubject.next(user);
+                tap(({ accessToken, refreshToken }) => {
                     localStorage.setItem('access-token', accessToken);
                     localStorage.setItem('refresh-token', refreshToken);
                 })
@@ -69,36 +53,40 @@ export class AuthService {
     }
 
     updateUser(user: User) {
-        return this.http.put<User>(`${this.authUrl}`, { user });
+        return this.getCurrentUser()
+            .pipe(
+                switchMap((u) => this.http.patch<User>(`${ this.authUrl }/${ u.id }`, user)
+                    .pipe(
+                        tap(() => this.signOut())
+                    )),
+            );
     }
 
     sendEmailForgotPassword(email: string) {
-        return this.http.post<{ linkResetPassword: string }>(`${this.authUrl}/send-email-reset-password`, { email });
+        return this.http.post<{ linkResetPassword: string }>(`${ this.authUrl }/send-email-reset-password`, { email });
     }
 
     updatePassword(userId: number, password: string) {
         return this.http.put<{
             user: User,
             accessToken: string
-        }>(`${this.authUrl}/reset-password/${userId}`, { password })
+        }>(`${ this.authUrl }/reset-password/${ userId }`, { password })
             .pipe(
-                tap(({ user, accessToken }) => {
-                    this.userSubject.next(user);
+                tap(({ accessToken }) => {
                     localStorage.setItem('access-token', accessToken);
                 })
             );
     }
 
     verifyToken(token: string) {
-        return this.http.post<User>(`${this.authUrl}/verify-token`, { token });
+        return this.http.post<User>(`${ this.authUrl }/verify-token`, { token });
     }
 
     deleteAccount() {
-        return this.http.delete<void>(`${this.authUrl}`);
+        return this.http.delete<void>(`${ this.authUrl }`);
     }
 
     signOut() {
-        this.userSubject.next(null);
         localStorage.removeItem('access-token');
         localStorage.removeItem('refresh-token');
     }

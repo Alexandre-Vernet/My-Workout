@@ -1,30 +1,30 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { BehaviorSubject, filter, map } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ExerciseService } from '../../../services/exercise.service';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
 import { FormsModule } from '@angular/forms';
-import { Exercise } from '../../../../interfaces/exercise';
+import { Exercise } from '../../../../interfaces/Exercise';
 import { InputNumber } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { HistoryService } from '../../../services/history.service';
-import { History } from '../../../../interfaces/history';
+import { History } from '../../../../interfaces/History';
 import { Skeleton } from 'primeng/skeleton';
 import { ExercisesTableComponent } from './exercises-table/exercises-table.component';
 import { Elastic } from '../../../../interfaces/elastic';
 import { Popover } from 'primeng/popover';
 import { WorkoutService } from '../../../services/workout.service';
-import { Workout } from '../../../../interfaces/workout';
+import { Workout } from '../../../../interfaces/Workout';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
-import { ErrorCode } from '../../../../error-code/error-code';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../shared/utils/convert-weight-elastic';
-import { animate, group, query, style, transition, trigger } from '@angular/animations';
 import { PreventFocusOnButtonClickDirective } from '../../../shared/directives/prevent-focus-on-button-click.directive';
 import { NgClass, UpperCasePipe } from '@angular/common';
+import { UserExerciseService } from '../../../services/user-exercise.service';
+import { UserExercise } from '../../../../interfaces/User-exercise';
+import { CustomError } from "../../../../interfaces/CustomError";
 
 @Component({
     selector: 'app-workout-session',
@@ -34,49 +34,11 @@ import { NgClass, UpperCasePipe } from '@angular/common';
     standalone: true,
     providers: [ConfirmationService],
     encapsulation: ViewEncapsulation.None,
-    animations: [
-        trigger('slidePanel', [
-            transition('void => right', [
-                style({ transform: 'translateX(100%)', opacity: 0 }),
-                animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-            ]),
-            transition('void => left', [
-                style({ transform: 'translateX(-100%)', opacity: 0 }),
-                animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-            ]),
-            transition('left => right', [
-                query(':enter, :leave', style({ position: 'absolute', width: '100%' }), { optional: true }),
-                group([
-                    query(':leave', [
-                        style({ transform: 'translateX(0)', opacity: 1 }),
-                        animate('300ms ease-out', style({ transform: 'translateX(-100%)', opacity: 0 }))
-                    ], { optional: true }),
-                    query(':enter', [
-                        style({ transform: 'translateX(100%)', opacity: 0 }),
-                        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-                    ], { optional: true })
-                ])
-            ]),
-            transition('right => left', [
-                query(':enter, :leave', style({ position: 'absolute', width: '100%' }), { optional: true }),
-                group([
-                    query(':leave', [
-                        style({ transform: 'translateX(0)', opacity: 1 }),
-                        animate('300ms ease-out', style({ transform: 'translateX(100%)', opacity: 0 }))
-                    ], { optional: true }),
-                    query(':enter', [
-                        style({ transform: 'translateX(-100%)', opacity: 0 }),
-                        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-                    ], { optional: true })
-                ])
-            ])
-        ])
-    ]
 })
 export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     workout: Workout;
-    exercises: Exercise[] = [];
+    userExercises: UserExercise[] = [];
     exercisesMade = new BehaviorSubject<History[]>([]);
     currentExercise: Exercise;
     muscleGroupId: number;
@@ -95,7 +57,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         interval: null
     };
 
-    isLoading = true;
 
     isDarkMode = false;
 
@@ -113,7 +74,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     constructor(
         private readonly activatedRoute: ActivatedRoute,
         private readonly workoutService: WorkoutService,
-        private readonly exerciseService: ExerciseService,
+        private readonly userExerciseService: UserExerciseService,
         private readonly historyService: HistoryService,
         private readonly alertService: AlertService,
         private readonly themeService: ThemeService,
@@ -163,40 +124,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         }
     }
 
-    saveExercise() {
-        const history: History = {
-            workout: this.workout,
-            exercise: this.currentExercise,
-            weight: this.weight,
-            reps: this.reps
-        };
-
-        this.historyService.create(history)
-            .subscribe({
-                next: (h) => {
-                    const exerciseMade: History = {
-                        id: h.id,
-                        weight: this.weight,
-                        reps: this.reps,
-                        restTime: '/'
-                    };
-
-                    this.exercisesMade.next([
-                        ...this.exercisesMade.value,
-                        exerciseMade
-                    ]);
-
-                    this.alertService.alert$.next(null);
-                },
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'enregister l\'historique'
-                    });
-                }
-            });
-    }
-
     toggleTimer() {
         if (this.weight < 0 || this.weight >= 500) {
             return;
@@ -227,8 +154,12 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.weightToElastics = convertWeightElastic(this.weight);
     }
 
+    resetWorkout() {
+        this.workout = null;
+    }
+
     private findExercises() {
-        this.exerciseService.findAddedExercisesByMuscleGroupId(this.muscleGroupId)
+        this.userExerciseService.findAddedExercisesByMuscleGroupId(this.muscleGroupId)
             .pipe(
                 map(exercises => {
                     if (!exercises || exercises.length === 0) {
@@ -242,20 +173,17 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             )
             .subscribe({
                 next: (exercises) => {
-                    this.isLoading = false;
-                    this.exercises = exercises;
-                    this.currentExercise = this.exercises[this.activeStep - 1];
+                    this.userExercises = exercises;
+                    this.currentExercise = exercises[this.activeStep - 1].exercise;
                     if (!this.currentExercise) {
-                        this.currentExercise = this.exercises[0];
+                        this.currentExercise = this.userExercises[0].exercise;
                         this.switchPanel(this.currentExercise);
                     }
                     this.fillInputWeightRepsLastSavedValue();
                     this.alertService.alert$.next(null);
                 },
-                error: (err) => {
-                    this.isLoading = false;
-
-                    if (err?.error?.errorCode === ErrorCode.muscleGroupDoesntExist) {
+                error: (err: CustomError) => {
+                    if (err?.error?.errorCode === 'muscleGroupDoesntExist') {
                         this.redirectWorkoutHome();
                     }
                     this.alertService.alert$.next({
@@ -264,18 +192,17 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     });
                 }
             });
-
     }
 
 
     private nextStep() {
-        if (this.activeStep < this.exercises.length) {
+        if (this.activeStep < this.userExercises.length) {
             const oldStep = this.activeStep;
             this.activeStep++;
             this.animationDirection = this.activeStep > oldStep ? 'right' : 'left';
 
-            const nextExercise = this.exercises[this.activeStep - 1];
-            this.switchPanel(nextExercise, this.activeStep);
+            const nextExercise = this.userExercises[this.activeStep - 1];
+            this.switchPanel(nextExercise.exercise, this.activeStep);
             this.animationDirection = 'right';
         }
     }
@@ -286,8 +213,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             this.activeStep--;
             this.animationDirection = this.activeStep < oldStep ? 'left' : 'right';
 
-            const previousExercise = this.exercises[this.activeStep - 1];
-            this.switchPanel(previousExercise, this.activeStep);
+            const previousExercise = this.userExercises[this.activeStep - 1];
+            this.switchPanel(previousExercise.exercise, this.activeStep);
             this.animationDirection = 'left';
         }
     }
@@ -330,15 +257,38 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     private startTimer() {
-        if (!this.workout) {
-            this.createWorkout(this.muscleGroupId)
-                .subscribe(workout => {
+        const history: History = {
+            exercise: this.currentExercise,
+            weight: this.weight,
+            reps: this.reps
+        };
+
+        this.createWorkout(this.muscleGroupId, history)
+            .subscribe({
+                next: (workout) => {
+                    this.alertService.alert$.next(null);
+
                     this.workout = workout;
-                    this.saveExercise();
-                });
-        } else {
-            this.saveExercise();
-        }
+                    const lastHistoryId = workout.histories[workout.histories.length - 1].id;
+                    const exerciseMade: History = {
+                        id: lastHistoryId,
+                        weight: this.weight,
+                        reps: this.reps,
+                        restTime: '/'
+                    };
+
+                    this.exercisesMade.next([
+                        ...this.exercisesMade.value,
+                        exerciseMade
+                    ]);
+                },
+                error: () => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: 'Erreur lors de l\'enregistrement'
+                    });
+                }
+            });
 
         this.timer.startTime = performance.now();
         this.timer.interval = setInterval(() => {
@@ -378,7 +328,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         Exemple : 02:05:72
      */
     private formatTimer(minutes: number, seconds: number, centiseconds: number) {
-        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${centiseconds.toString().padStart(2, '0')}`;
+        return `${ minutes.toString().padStart(2, '0') }:${ seconds.toString().padStart(2, '0') }:${ centiseconds.toString().padStart(2, '0') }`;
     }
 
 
@@ -399,13 +349,13 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                 outlined: true
             },
             accept: () => {
-                this.router.navigate(['/', 'library', 'muscle-group', muscleGroupId]);
+                this.router.navigate(['/', 'library', 'list-exercises-muscle-group', muscleGroupId]);
             },
             reject: () => this.redirectWorkoutHome()
         });
     }
 
-    private createWorkout(muscleGroupId: number) {
+    private createWorkout(muscleGroupId: number, history: History) {
         const muscleGroup: MuscleGroup = {
             id: muscleGroupId
         };
@@ -414,15 +364,11 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             muscleGroup,
             date: new Date()
         };
-        return this.workoutService.create(workout);
+        return this.workoutService.create(workout, history);
     }
 
 
     private redirectWorkoutHome() {
         this.router.navigate(['/', 'workout']);
-    }
-
-    resetWorkout() {
-        this.workout = null;
     }
 }

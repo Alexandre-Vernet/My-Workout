@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ExerciseService } from '../../../../services/exercise.service';
-import { Exercise } from '../../../../../interfaces/exercise';
+import { Exercise } from '../../../../../interfaces/Exercise';
 import { Button } from 'primeng/button';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
@@ -8,16 +8,18 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Textarea } from 'primeng/textarea';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { MuscleService } from '../../../../services/muscle.service';
-import { MuscleDropdown } from '../../../../../interfaces/MuscleDropdown';
 import { MultiSelect } from 'primeng/multiselect';
-import { Muscle } from '../../../../../interfaces/muscle';
+import { Muscle } from '../../../../../interfaces/Muscle';
 import { AlertService } from '../../../../services/alert.service';
 import { UserExerciseService } from '../../../../services/user-exercise.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ActivatedRoute } from '@angular/router';
-import { filter, switchMap } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 import { Message } from 'primeng/message';
+import { ExerciseMuscle } from '../../../../../interfaces/ExerciseMuscle';
+import { CustomError } from "../../../../../interfaces/CustomError";
+import { MuscleDropdown } from "../../../../../interfaces/MuscleDropdown";
 
 @Component({
     selector: 'app-add-exercise',
@@ -41,12 +43,12 @@ export class AddExerciseComponent implements OnInit {
     formAddExercise = new FormGroup({
         id: new FormControl(null),
         name: new FormControl(null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
-        description: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(500)]),
+        description: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]),
         isSmartWorkout: new FormControl(false, Validators.required),
         muscles: new FormControl<Muscle[]>(null, Validators.required)
     });
 
-    muscles: MuscleDropdown[] = [];
+    musclesDropdown: MuscleDropdown[] = [];
 
     constructor(
         private readonly exerciseService: ExerciseService,
@@ -60,29 +62,40 @@ export class AddExerciseComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.activatedRoute.params
+        this.muscleService.findAllMuscles()
             .pipe(
-                filter((params: { exerciseId: number }) => !!params.exerciseId),
-                switchMap(params => this.exerciseService.getExercise(Number(params.exerciseId)))
+                tap(musclesDropdown => this.musclesDropdown = musclesDropdown),
+                switchMap(() =>
+                    this.activatedRoute.params.pipe(
+                        filter((params: { exerciseId: number }) => !!params.exerciseId),
+                        switchMap(params =>
+                            this.exerciseService.findExerciseMuscle(Number(params.exerciseId))
+                        )
+                    )
+                )
             )
             .subscribe({
-                next: (exercise) => {
+                next: (exerciseMuscle) => {
+                    const allMuscles = this.musclesDropdown.flatMap(group => group.items);
+
+                    const selectedMuscles = allMuscles.filter(dropdownMuscle =>
+                        exerciseMuscle.muscles.some(muscle => muscle.id === dropdownMuscle.id)
+                    );
+
+                    const exercise = exerciseMuscle.exercise;
+
                     this.formAddExercise.patchValue({
                         id: exercise.id,
                         name: exercise.name,
                         description: exercise.description,
-                        isSmartWorkout: exercise.isSmartWorkout,
-                        muscles: exercise.muscles
+                        isSmartWorkout: exercise.smartWorkout,
+                        muscles: selectedMuscles
                     });
-                }
-            });
-        this.muscleService.findAllMuscles()
-            .subscribe({
-                next: (muscles) => this.muscles = muscles,
+                },
                 error: () => {
                     this.alertService.alert$.next({
                         severity: 'error',
-                        message: 'Impossible de récupérer la liste des muscles'
+                        message: 'Impossible de récupérer les données'
                     });
                 }
             });
@@ -91,53 +104,38 @@ export class AddExerciseComponent implements OnInit {
     createExercise() {
         const { id, name, description, isSmartWorkout, muscles } = this.formAddExercise.getRawValue();
         const exercise: Exercise = {
+            id,
             name: name.trim(),
             description: description.trim(),
-            isSmartWorkout,
-            exerciseMuscle: muscles.map(m => ({
-                muscle: {
-                    id: m.id,
-                }
-            }))
+            smartWorkout: isSmartWorkout,
         };
 
-        if (!id) {
-            this.exerciseService.createExercise(exercise)
-                .subscribe({
-                    next: (exerciseCreated) => {
-                        this.alertService.alert$.next({
-                            severity: 'success',
-                            message: 'L\'exercice a bien été ajouté'
-                        });
-
-                        this.formAddExercise.reset();
-                        this.showDialogAddExerciseToWorkout(exerciseCreated);
-                    },
-                    error: (err) => {
-                        this.alertService.alert$.next({
-                            severity: 'error',
-                            message: err?.error?.message ?? 'Une erreur s\'est produite lors de l\'ajout de l\'exercice'
-                        });
-                    }
-                });
-        } else {
-            exercise.id = id;
-            this.exerciseService.updateExercise(exercise)
-                .subscribe({
-                    next: () => {
-                        this.alertService.alert$.next({
-                            severity: 'success',
-                            message: 'L\'exercice a bien été mis à jour'
-                        });
-                    },
-                    error: (err) => {
-                        this.alertService.alert$.next({
-                            severity: 'error',
-                            message: err?.error?.message ?? 'Une erreur s\'est produite lors de la mise à jour de l\'exercice'
-                        });
-                    }
-                });
+        const exerciseMuscle: ExerciseMuscle = {
+            exercise,
+            muscles
         }
+
+        this.exerciseService.createOrUpdateExercise(exerciseMuscle)
+            .subscribe({
+                next: () => {
+                    this.alertService.alert$.next({
+                        severity: 'success',
+                        message: 'L\'exercice a bien été mis à jour'
+                    });
+                    this.showDialogAddExerciseToWorkout(exerciseMuscle.exercise);
+                },
+                error: (err: CustomError) => {
+                    if (err.error.errorCode === 'EXERCISE_NAME_ALREADY_EXIST') {
+                        this.formAddExercise.controls.name.setErrors({
+                            exerciseNameAlreadyExist: true
+                        })
+                    } else {
+                        this.formAddExercise.controls.name.setErrors({
+                            unknownError: true
+                        })
+                    }
+                }
+            });
     }
 
 
@@ -157,9 +155,7 @@ export class AddExerciseComponent implements OnInit {
             acceptButtonProps: {
                 label: 'Oui',
             },
-            accept: () => {
-                this.addExerciseToWorkout(exercise);
-            },
+            accept: () => this.addExerciseToWorkout(exercise),
             reject: () => {
                 this.messageService.add({
                     severity: 'error',

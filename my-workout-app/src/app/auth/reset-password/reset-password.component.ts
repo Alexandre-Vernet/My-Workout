@@ -8,7 +8,7 @@ import { Dialog } from 'primeng/dialog';
 import { FloatLabel } from 'primeng/floatlabel';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
-import { User } from '../../../interfaces/user';
+import { User } from '../../../interfaces/User';
 
 @Component({
     selector: 'app-reset-password',
@@ -59,7 +59,7 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     redirectToSignIn() {
-        this.router.navigate(['/auth/sign-in']);
+        this.router.navigate(['/auth/login']);
     }
 
     submitForm() {

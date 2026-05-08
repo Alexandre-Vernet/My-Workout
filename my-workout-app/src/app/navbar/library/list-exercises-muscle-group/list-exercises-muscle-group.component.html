@@ -1,8 +1,8 @@
 <div class="text-center mt-4 mb-4 text-xl font-semibold">
-    <h3>{{ muscleGroup?.name | uppercase }}</h3>
+    <h3>{{ muscleGroupExercises?.muscleGroup?.name | uppercase }}</h3>
 </div>
 
-@if (isLoading) {
+@if (!muscleGroupExercises) {
     @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
         <div class="col-span-12">
             <div class="flex flex-col align-items-center p-6 gap-4">
@@ -28,7 +28,7 @@
     }
 } @else {
     <div class="ml-2 flex flex-row gap-2 flex-wrap">
-        @for (muscle of muscles; track muscle.id) {
+        @for (muscle of muscleGroupExercises.muscles; track muscle.id) {
             <span class="flex flex-row-reverse">
             <p-tag severity="info" [value]="muscle.name"
                    role="button"
@@ -42,38 +42,38 @@
     </div>
 
 
-    <p-dataview #dv [value]="filteredExercises">
+    <p-dataview #dv [value]="filterMuscleGroupExercises?.exerciseAddedToWorkouts">
         <ng-template #list let-items>
             <div cdkDropList (cdkDropListDropped)="drop($event)" class="flex flex-column">
-                @for (item of items; track item.id) {
+                @for (item of items; track item.exercise.id) {
                     <div cdkDrag [cdkDragDisabled]="!item.addedToWorkout"
                          class="col-span-12">
                         <div class="flex flex-col align-items-center p-6 gap-4">
                             <div class="md:w-40">
-                                <p-badge [value]="item?.id"/>
+                                <p-badge [value]="item.exercise.id"/>
                             </div>
 
                             <div class="flex-1 flex flex-row justify-content-between align-items-center gap-6">
 
                                 <div class="flex-1">
                                     <div class="text-sm text-secondary">
-                                        @for (muscle of item.muscles; track muscle.id; let last = $last) {
+                                        @for (exerciseMuscle of item.muscles; track exerciseMuscle.id; let last = $last) {
                                             <span>
-                                            <a class="text-sm text-secondary"
-                                               [routerLink]=" muscleGroup?.id !== 8 ? ['/', 'muscle-structure', removeAccents(muscleGroup?.name.toLowerCase())] :
-                                               ['/', 'library', 'muscle-group', muscleGroup.id]"
-                                               [fragment]="replaceSpaces(muscle.name)">
-                                                {{ muscle.name }}
-                                            </a>
+                                                <a class="text-sm text-secondary"
+                                                   [routerLink]=" muscleGroupExercises.muscleGroup?.id !== 8 ? ['/', 'muscle-structure', removeAccents(exerciseMuscle.name)] :
+                                                   ['/', 'library', 'list-exercises-muscle-group', muscleGroupExercises.muscleGroup.id]"
+                                                   [fragment]="replaceSpaces(exerciseMuscle.name)">
+                                                    {{ exerciseMuscle.name }}
+                                                </a>
                                                 @if (!last) {
                                                     <span>,</span>
                                                 }
-                                    </span>
+                                            </span>
                                         }
                                     </div>
-                                    <div [routerLink]="['/', 'library', 'exercises', item?.id]"
+                                    <div [routerLink]="['/', 'library', 'exercises', item.exercise.id]"
                                          class="text-xl text-surface-900 dark:text-surface-0 mt-2">
-                                        {{ item?.name }}
+                                        {{ item?.exercise.name }}
                                     </div>
                                 </div>
 
@@ -91,7 +91,6 @@
                             </div>
                         </div>
                     </div>
-
                 }
             </div>
         </ng-template>

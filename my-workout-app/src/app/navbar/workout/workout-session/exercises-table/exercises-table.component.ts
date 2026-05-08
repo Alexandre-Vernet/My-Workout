@@ -12,7 +12,7 @@ import {
 import { TableModule } from 'primeng/table';
 import { HistoryService } from '../../../../services/history.service';
 import { InputNumber } from 'primeng/inputnumber';
-import { History } from '../../../../../interfaces/history';
+import { History } from '../../../../../interfaces/History';
 import { AlertService } from '../../../../services/alert.service';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -30,7 +30,6 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
     @Input() muscleGroupId: number;
     @Input() exerciseId: number;
     @Input() exercisesMade = new BehaviorSubject<History[]>([]);
-    @Output() exercisesMadeChange = new Subject<History[]>();
     @Output() resetWorkout = new Subject<void>();
 
     @ViewChild('exerciseTable', { read: ElementRef }) exerciseTable!: ElementRef;
@@ -55,13 +54,13 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['exerciseId']) {
+        if (changes['exerciseId'].currentValue !== changes['exerciseId'].previousValue) {
             this.findTodayExercicesHistory();
         }
     }
 
     scrollBottomTable() {
-        const tableBody = this.exerciseTable?.nativeElement.querySelector('.p-datatable-table-container');
+        const tableBody: HTMLElement = this.exerciseTable?.nativeElement.querySelector('.p-datatable-table-container');
         if (tableBody) {
             tableBody.scrollTop = tableBody.scrollHeight;
         }

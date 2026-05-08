@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { WorkoutService } from '../../services/workout.service';
-import { Workout } from '../../../interfaces/workout';
+import { Workout } from '../../../interfaces/Workout';
 import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
 import { ThemeService } from '../../shared/theme/theme.service';
@@ -20,13 +20,15 @@ import { Alert } from '../../../interfaces/alert';
 import { AlertService } from '../../services/alert.service';
 import { Tag } from 'primeng/tag';
 import { ExerciseService } from '../../services/exercise.service';
-import { HistoryDetailComponent } from '../history/history-detail/history-detail.component';
-import { Exercise } from '../../../interfaces/exercise';
-import { DatePipe, NgClass, TitleCasePipe } from '@angular/common';
+import { HistoryDetailComponent } from './history-detail/history-detail.component';
+import { Exercise } from '../../../interfaces/Exercise';
+import { DatePipe, NgClass } from '@angular/common';
+import { WorkoutGroupedHistories } from '../../../interfaces/WorkoutGroupedHistories';
+import { FirstLetterUppercasePipe } from '../../shared/pipes/first-letter-uppercase.pipe';
 
 @Component({
     selector: 'app-calendar',
-    imports: [FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, Tag, HistoryDetailComponent, NgClass, DatePipe, TitleCasePipe],
+    imports: [FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, Tag, HistoryDetailComponent, NgClass, DatePipe, FirstLetterUppercasePipe],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
@@ -52,7 +54,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             center: '',
             right: 'today'
         },
-        eventClick: this.viewHistory.bind(this),
+        eventClick: this.eventClick.bind(this),
         eventDidMount: this.customizeCalendar.bind(this),
         dateClick: this.dateClick.bind(this),
         events: ((info, success, failure) => {
@@ -93,7 +95,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     filterWorkouts: Workout[] = [];
     activeFilter: MuscleGroup;
 
-    showWorkout: Workout;
+    showWorkout: WorkoutGroupedHistories;
     showModalViewWorkout = false;
 
     muscleGroups: MuscleGroup[] = [];
@@ -121,13 +123,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         setTimeout(() => this.calendarComponent.getApi().refetchEvents(), 0);
-        this.exerciseService.findCardioExercises()
-            .subscribe({
-                next: (exercises) => this.cardioExercises = exercises
-            });
         this.isDarkMode = this.themeService.isDarkMode();
     }
-
 
     ngAfterViewInit() {
         const el = this.swipeZone.nativeElement;
@@ -158,7 +155,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         const formattedDate = new Date(date);
         this.confirmationService.confirm({
             header: 'Attention',
-            message: `Voulez-vous vraiment supprimer l'entraînement ${muscleGroupName} du ${formattedDate.toLocaleDateString()} ?`,
+            message: `Voulez-vous vraiment supprimer l'entraînement ${ muscleGroupName } du ${ formattedDate.toLocaleDateString() } ?`,
             closable: true,
             closeOnEscape: true,
             dismissableMask: true,
@@ -202,7 +199,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
         this.alertService.alert$.next({
             severity: 'success',
-            message: `${workout.history[0].exercise.name} a été ajouté au calendrier`
+            message: `${ workout.histories[0].exercise.name } a été ajouté au calendrier`
         });
     }
 
@@ -224,15 +221,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         this.muscleGroups.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    private viewHistory(info: EventClickArg) {
-        const workoutId = Number(info.event.id);
-        this.workoutService.findById(workoutId)
-            .subscribe(workout => {
-                this.showModalViewWorkout = true;
-                this.showWorkout = workout;
-            });
-    }
-
     filterByMuscleGroup(muscleGroup: MuscleGroup) {
         if (muscleGroup.name === this.activeFilter?.name) {
             this.filterWorkouts = this.workouts;
@@ -249,7 +237,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     private customizeCalendar(info: EventMountArg) {
         const eventNameFormated = removeAccents(info.event.title);
         const label: string = muscleGroupMap[eventNameFormated]?.label ?? info.event.title;
-        const color: string = muscleGroupMap[eventNameFormated]?.color || '#e67c73';
+        const color: string = muscleGroupMap[eventNameFormated]?.color || '#d77c05';
 
         const spanEventName = info.el.querySelector('span.text-sm') as HTMLElement;
         if (spanEventName) {
@@ -261,18 +249,32 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     }
 
-    private dateClick(info: DateClickArg) {
-        if (this.cardioExercises.length > 0) {
-            this.isOpenModalExerciseCardio = true;
-            // Set day to info.date but hour to current time
-            this.setWorkoutDate = new Date(info.date);
-            this.setWorkoutDate.setHours(new Date().getHours(), new Date().getMinutes(), 0, 0);
-        } else {
-            this.alertService.alert$.next({
-                severity: 'error',
-                message: 'Aucun exercice cardio n\'a été ajouté, ajoutez en un depuis la bibliothèque'
+    private eventClick(info: EventClickArg) {
+        const workoutId = Number(info.event.id);
+        this.workoutService.findById(workoutId)
+            .subscribe(workout => {
+                this.showModalViewWorkout = true;
+                this.showWorkout = workout;
             });
-        }
+    }
+
+    private dateClick(info: DateClickArg) {
+        this.exerciseService.findCardioExercises()
+            .subscribe({
+                next: (cardioExercises) => {
+                    if (cardioExercises.length > 0) {
+                        this.cardioExercises = cardioExercises;
+                        this.isOpenModalExerciseCardio = true;
+                        this.setWorkoutDate = info.date;
+                        this.setWorkoutDate.setHours(new Date().getHours(), new Date().getMinutes(), 0, 0);
+                    } else {
+                        this.alertService.alert$.next({
+                            severity: 'error',
+                            message: 'Aucun exercice cardio n\'a été ajouté, ajoutez en un depuis la bibliothèque'
+                        });
+                    }
+                }
+            });
     }
 
     private previousMonth() {

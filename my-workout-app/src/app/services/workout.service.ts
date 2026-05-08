@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Workout } from '../../interfaces/workout';
+import { Workout } from '../../interfaces/Workout';
+import { DateUtils } from '../shared/utils/date-utils';
+import { WorkoutGroupedHistories } from '../../interfaces/WorkoutGroupedHistories';
+import { History } from '../../interfaces/History';
 
 @Injectable({
     providedIn: 'root'
@@ -15,12 +18,12 @@ export class WorkoutService {
     ) {
     }
 
-    create(workout: Workout) {
-        return this.http.post<Workout>(this.workoutUrl, workout);
+    create(workout: Workout, history: History) {
+        return this.http.post<Workout>(this.workoutUrl, { workout, history });
     }
 
     findById(id: number) {
-        return this.http.get<Workout>(`${ this.workoutUrl }/${ id }`);
+        return this.http.get<WorkoutGroupedHistories>(`${ this.workoutUrl }/${ id }`);
     }
 
     find() {
@@ -30,21 +33,13 @@ export class WorkoutService {
     findByDate(start: Date, end: Date) {
         return this.http.get<Workout[]>(`${ this.workoutUrl }/find-by-date`, {
             params: {
-                start: start.toISOString(),
-                end: end.toISOString()
+                start: DateUtils.toLocalDate(start),
+                end: DateUtils.toLocalDate(end)
             }
         });
-    }
-
-    countTotalDaysWorkout() {
-        return this.http.get<number>(`${ this.workoutUrl }/count-total-days-workout`);
     }
 
     delete(id: number) {
-        return this.http.delete<void>(`${ this.workoutUrl }`, {
-            params: {
-                id
-            }
-        });
+        return this.http.delete<void>(`${ this.workoutUrl }/${ id }`);
     }
 }

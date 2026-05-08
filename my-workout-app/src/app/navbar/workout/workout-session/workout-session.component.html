@@ -1,7 +1,7 @@
 <p-confirmdialog></p-confirmdialog>
 
 <div #swipeZone class="workout-session">
-    @if (isLoading) {
+    @if (!userExercises || userExercises.length === 0) {
         <div class="mt-2">
             <div class="flex-1 flex justify-content-around align-items-center">
                 <p-skeleton shape="circle" size="3rem" class="mr-2"/>
@@ -15,10 +15,16 @@
                 <p-skeleton width="15rem" height="4rem"/>
             </div>
 
-            <div class="bottom-page">
+            @for (skeleton of [0, 1, 2, 3]; track skeleton) {
+                <div class="m-2 mb-2">
+                    <p-skeleton width="100%" height="4rem"/>
+                </div>
+            }
+
+            <div class="bottom-page mt-8">
                 <div class="stopwatch text-primary mb-3">
                 <span>
-                    <p-skeleton width="8rem" height="3rem"/>
+                    <p-skeleton width="10rem" height="3rem"/>
                 </span>
                 </div>
                 <p-skeleton shape="circle" size="4rem" class="mr-2"/>
@@ -31,7 +37,7 @@
         <p-stepper [(value)]="activeStep" class="basis-[40rem]">
             <div #stepper>
                 <p-step-list class="flex justify-center w-full">
-                    @for (exercise of exercises; track exercise.id; let index = $index) {
+                    @for (exerciseOrder of userExercises; track index; let index = $index) {
                         <p-step [value]="index + 1">
                             <ng-template #content let-activateCallback="activateCallback" let-value="value">
                                 <button class="step-button"
@@ -39,7 +45,7 @@
                                             'bg-primary text-primary-contrast border-primary': value === activeStep,
                                             'border-surface': value > activeStep
                                         }"
-                                        (click)="switchPanel(exercise, index + 1)">
+                                        (click)="switchPanel(exerciseOrder.exercise, index + 1)">
                                     <span class="step-button-span">{{ index + 1 }}</span>
                                 </button>
                             </ng-template>
@@ -50,16 +56,17 @@
 
 
             <p-step-panels>
-                @for (exercise of exercises; track exercise.id; let index = $index) {
+                @for (userExercise of userExercises; track index; let index = $index) {
+                    @let exercise = userExercise?.exercise;
                     <p-step-panel [value]="index + 1">
                         <ng-template #content let-activateCallback="activateCallback">
                             <div class="panel-container">
                                 <!--The for force Angular to refresh the DOM and animate on swipe-->
-                                @for (_ of [exercises[0]]; track animationId) {
+                                @for (_ of [userExercises[0]]; track animationId) {
                                     <div class="flex-1 flex flex-column justify-content-center panel"
                                          [class.slide-from-right]="animationDirection === 'right'"
                                          [class.slide-from-left]="animationDirection === 'left'">
-                                        <h3 [routerLink]="['/', 'library', 'exercises', exercise?.id]"
+                                        <h3 [routerLink]="['/', 'library', 'exercises', exercise.id]"
                                             class="text-center text-2xl font-bold mb-4">{{ exercise.name | uppercase }}</h3>
 
                                         <div
@@ -82,7 +89,7 @@
 
                                                 <i class="ml-2 pi pi-info-circle cursor-pointer"
                                                    (click)="dialogConvertWeightToElastics.toggle($event)"
-                                                   [style.visibility]="exercise.isSmartWorkout && this.weight % 5 === 0 && this.weight > 0 ? 'visible' : 'hidden'">
+                                                   [style.visibility]="exercise.smartWorkout && this.weight % 5 === 0 && this.weight > 0 ? 'visible' : 'hidden'">
                                                 </i>
                                             </div>
 
@@ -105,18 +112,18 @@
                                                 </p-inputnumber>
                                             </div>
                                         </div>
-
-                                        <app-exercises-table [muscleGroupId]="muscleGroupId"
-                                                             [(exercisesMade)]="exercisesMade"
-                                                             [exerciseId]="currentExercise.id"
-                                                             (resetWorkout)="resetWorkout()">
-                                        </app-exercises-table>
                                     </div>
                                 }
                             </div>
                         </ng-template>
                     </p-step-panel>
                 }
+
+                <app-exercises-table [muscleGroupId]="muscleGroupId"
+                                     [exercisesMade]="exercisesMade"
+                                     [exerciseId]="currentExercise.id"
+                                     (resetWorkout)="resetWorkout()">
+                </app-exercises-table>
             </p-step-panels>
         </p-stepper>
 
@@ -144,7 +151,7 @@
         <div class="p-3">
             <h4 class="mb-2 font-semibold text-lg">Élastiques utilisés</h4>
             <ul>
-                @for (elastic of weightToElastics; track elastic.name) {
+                @for (elastic of weightToElastics; track index; let index = $index) {
                     <li
                         class="flex items-center justify-between p-2 gap-1 rounded">
                         <span class="font-medium text-primary">{{ elastic.name }}</span>

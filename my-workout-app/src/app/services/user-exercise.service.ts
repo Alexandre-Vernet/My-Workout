@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Exercise } from '../../interfaces/exercise';
+import { Exercise } from '../../interfaces/Exercise';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { UserExercise } from '../../interfaces/user-exercise';
+import { UserExercise } from '../../interfaces/User-exercise';
 
 @Injectable({
     providedIn: 'root'
@@ -16,15 +16,17 @@ export class UserExerciseService {
     ) {
     }
 
-    toggleExerciseWorkout(exercise: Exercise) {
-        const userExercise: UserExercise = {
-            exercise
-        };
+    findAddedExercisesByMuscleGroupId(muscleGroupId: number) {
+        return this.http.get<UserExercise[]>(`${ this.userExerciseUrl }/find-added-exercises-by-muscle-group-id/${ muscleGroupId }`);
+    }
 
-        return this.http.post<UserExercise>(this.userExerciseUrl, userExercise);
+    toggleExerciseWorkout(exercise: Exercise) {
+        return this.http.post<UserExercise>(this.userExerciseUrl, exercise);
     }
 
     updateOrderExercises(userExercises: UserExercise[]) {
-        return this.http.put<UserExercise>(this.userExerciseUrl, userExercises);
+        return this.http.patch<void>(this.userExerciseUrl, userExercises);
     }
+
+
 }

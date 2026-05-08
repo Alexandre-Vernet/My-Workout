@@ -1,13 +1,19 @@
-FROM node:alpine
+FROM maven:3.8.3-openjdk-17 AS build
 
 WORKDIR /app
 
-COPY my-workout-api/package*.json ./
+COPY my-workout-api/pom.xml .
+COPY my-workout-api/. .
 
-RUN npm install --include=optional
+RUN mvn dependency:go-offline
 
-COPY my-workout-api/ .
+RUN mvn clean package -DskipTests
 
-RUN npm run build
+FROM eclipse-temurin:17-jre-jammy
 
-CMD ["node", "dist/main.js"]
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

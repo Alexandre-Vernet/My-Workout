@@ -4,10 +4,11 @@ import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { RouterLink } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
 import { AlertService } from '../../../services/alert.service';
+import { FirstLetterUppercasePipe } from '../../../shared/pipes/first-letter-uppercase.pipe';
 
 @Component({
-    selector: 'app-list-muscle-group',
-    imports: [RouterLink, Skeleton],
+    selector: 'app-list-list-exercises-muscle-group',
+    imports: [RouterLink, Skeleton, FirstLetterUppercasePipe],
     templateUrl: './list-muscles-groups.component.html',
     styleUrl: './list-muscles-groups.component.scss',
     standalone: true
@@ -15,9 +16,6 @@ import { AlertService } from '../../../services/alert.service';
 export class ListMusclesGroupsComponent implements OnInit {
 
     muscleGroups: MuscleGroup[];
-
-    isLoading = true;
-
 
     constructor(
         private readonly muscleGroupService: MuscleGroupService,
@@ -29,7 +27,6 @@ export class ListMusclesGroupsComponent implements OnInit {
         this.muscleGroupService.findAllMuscleGroup()
             .subscribe({
                 next: (muscleGroups) => {
-                    this.isLoading = false;
                     this.muscleGroups = muscleGroups;
                     this.alertService.alert$.next(null);
                 },

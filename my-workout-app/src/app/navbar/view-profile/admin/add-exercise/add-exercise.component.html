@@ -29,6 +29,20 @@
                     50 caractères max.
                 </p-message>
             }
+            @if (formAddExercise.controls.name.hasError('exerciseNameAlreadyExist')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    Cet exercice existe déjà
+                </p-message>
+            }
+            @if (formAddExercise.controls.name.hasError('unknownError')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    Une erreur s'est produite
+                </p-message>
+            }
         </div>
 
         <!--Description-->
@@ -72,8 +86,8 @@
         <!--Muscles-->
         <div class="card flex justify-center mt-3">
             <div>
-                <p-multiselect [options]="muscles" [group]="true" formControlName="muscles" placeholder="Muscles ciblés"
-                               optionLabel="name"
+                <p-multiselect [options]="musclesDropdown" [group]="true" formControlName="muscles" placeholder="Muscles ciblés"
+                                optionLabel="name"
                                scrollHeight="250px" display="chip" styleClass="w-full md:w-80">
                 </p-multiselect>
                 @if (formAddExercise.controls.muscles.touched && formAddExercise.controls.muscles.hasError('required')) {

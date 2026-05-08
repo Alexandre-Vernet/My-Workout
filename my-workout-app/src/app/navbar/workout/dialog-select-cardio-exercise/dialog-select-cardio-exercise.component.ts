@@ -1,12 +1,11 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { Dialog } from 'primeng/dialog';
-import { map, Subject, switchMap } from 'rxjs';
-import { Exercise } from '../../../../interfaces/exercise';
+import { Subject } from 'rxjs';
+import { Exercise } from '../../../../interfaces/Exercise';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
-import { Workout } from '../../../../interfaces/workout';
+import { Workout } from '../../../../interfaces/Workout';
 import { WorkoutService } from '../../../services/workout.service';
-import { HistoryService } from '../../../services/history.service';
-import { History } from '../../../../interfaces/history';
+import { History } from '../../../../interfaces/History';
 import { Alert } from '../../../../interfaces/alert';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { ConfirmationService } from 'primeng/api';
@@ -15,8 +14,8 @@ import { InputNumber } from 'primeng/inputnumber';
 import { Button } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { FloatLabel } from 'primeng/floatlabel';
-import { ExerciseService } from "../../../services/exercise.service";
 import { NgClass } from '@angular/common';
+import { MuscleGroupEnum } from '../../../../interfaces/MuscleGroupEnum';
 
 @Component({
     selector: 'app-dialog-select-cardio-exercise',
@@ -31,10 +30,9 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
     @Input() openModal: boolean;
     @Output() openModalChange = new Subject<void>();
     @Input() workoutDate: Date;
+    @Input() cardioExercises: Exercise[] = [];
     @Output() createdWorkout = new Subject<Workout>();
     @Output() showAlert = new Subject<Alert>();
-
-    cardioExercises: Exercise[];
 
     selectedExercise: Exercise;
     inputDuration: number;
@@ -44,25 +42,12 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
 
     constructor(
         private readonly workoutService: WorkoutService,
-        private readonly historyService: HistoryService,
-        private readonly exerciseService: ExerciseService,
         private readonly themeService: ThemeService,
     ) {
     }
 
     ngOnInit() {
         this.isDarkMode = this.themeService.isDarkMode();
-        this.exerciseService.findCardioExercises()
-            .subscribe({
-                next: (exercises) => this.cardioExercises = exercises,
-                error: (err) => {
-                    this.showAlert.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible de charger les exercices cardio'
-                    });
-                    this.openModalChange.next();
-                }
-            });
     }
 
     onHideModal() {
@@ -76,7 +61,7 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
 
     createCardioWorkout() {
         const muscleGroup: MuscleGroup = {
-            id: 8
+            id: MuscleGroupEnum.CARDIO
         };
 
         const workout: Workout = {
@@ -85,29 +70,19 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
             duration: Number(this.inputDuration)
         };
 
-        this.workoutService.create(workout)
-            .pipe(
-                switchMap(createdWorkout => {
-                    const exercise: Exercise = {
-                        id: this.selectedExercise.id
-                    };
+        const history: History = {
+            exercise: {
+                id: this.selectedExercise.id
+            }
+        };
 
-                    const history: History = {
-                        workout: createdWorkout,
-                        exercise: exercise
-                    };
-
-                    return this.historyService.create(history)
-                        .pipe(map(() => createdWorkout));
-                })
-            )
+        this.workoutService.create(workout, history)
             .subscribe({
                 next: (workout) => {
                     const h: History = {
                         exercise: this.selectedExercise
                     };
-                    workout.history = [];
-                    workout.history.push(h);
+                    workout.histories.push(h);
                     this.createdWorkout.next(workout);
 
                     this.showAlert.next({

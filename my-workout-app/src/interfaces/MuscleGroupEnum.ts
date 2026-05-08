@@ -1,0 +1,3 @@
+export enum MuscleGroupEnum {
+    PECTORAUX = 1, TRICEPS, JAMBES, EPAULES, DOS, BICEPS, ABDOMINAUX, CARDIO
+}

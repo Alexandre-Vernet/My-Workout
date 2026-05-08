@@ -9,7 +9,7 @@ import { ThemeService } from '../../shared/theme/theme.service';
 import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
-import { User } from '../../../interfaces/user';
+import { User } from '../../../interfaces/User';
 import { NgClass } from '@angular/common';
 
 @Component({

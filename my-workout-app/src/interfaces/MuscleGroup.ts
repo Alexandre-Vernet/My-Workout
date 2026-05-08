@@ -1,9 +1,6 @@
 export interface MuscleGroup {
     id: number;
     name?: string;
-    exerciseCount?: number;
-    isRecommended?: boolean;
-    date?: Date;
 }
 
 interface MuscleGroupInfo {
@@ -14,7 +11,7 @@ interface MuscleGroupInfo {
 type MuscleGroupKey =
     | 'pectoraux'
     | 'abdominaux'
-    | 'course a pied'
+    | 'cardio'
     | 'triceps'
     | 'jambes'
     | 'epaules'
@@ -50,8 +47,8 @@ export const muscleGroupMap: Record<MuscleGroupKey, MuscleGroupInfo> = {
         label: 'Abdos',
         color: '#0b8043'
     },
-    'course a pied': {
-        label: 'Course',
+    cardio: {
+        label: 'Cardio',
         color: '#e67c73'
     },
 };

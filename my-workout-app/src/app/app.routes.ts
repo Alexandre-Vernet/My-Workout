@@ -1,24 +1,22 @@
-import { Route } from '@angular/router';
+import { Route, RouterOutlet } from '@angular/router';
 import {
     ListExercisesMuscleGroupComponent
 } from './navbar/library/list-exercises-muscle-group/list-exercises-muscle-group.component';
 import { ListMusclesGroupsComponent } from './navbar/library/list-muscles-groups/list-muscles-groups.component';
-import { SignInComponent } from './auth/sign-in/sign-in.component';
-import { SignUpComponent } from './auth/sign-up/sign-up.component';
+import { LoginComponent } from './auth/login/login.component';
+import { RegisterComponent } from './auth/register/register.component';
 import { authGuard } from './auth/auth.guard';
 import {
     SelectMuscleGroupWorkoutComponent
 } from './navbar/workout/select-muscle-group-workout/select-muscle-group-workout.component';
 import { MenuUrls } from './shared/menu-urls';
 import { WorkoutSessionComponent } from './navbar/workout/workout-session/workout-session.component';
-import { Component } from '@angular/core';
 import { ViewProfileComponent } from './navbar/view-profile/view-profile.component';
 import { CalendarComponent } from './navbar/calendar/calendar.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
-import { HistoryComponent } from './navbar/history/history.component';
 import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exercise.component';
-import { GraphsComponent } from './navbar/view-profile/graphs/graphs.component';
-import { StatsComponent } from './navbar/view-profile/stats/stats.component';
+import { GraphsComponent } from './navbar/stats/graphs/graphs.component';
+import { StatsComponent } from './navbar/stats/stats.component';
 import { TricepsComponent } from './muscle-structure/triceps/triceps.component';
 import { JambesComponent } from './muscle-structure/jambes/jambes.component';
 import { PectorauxComponent } from './muscle-structure/pectoraux/pectoraux.component';
@@ -26,27 +24,21 @@ import { EpaulesComponent } from './muscle-structure/epaules/epaules.component';
 import { BicepsComponent } from './muscle-structure/biceps/biceps.component';
 import { AbdominauxComponent } from './muscle-structure/abdominaux/abdominaux.component';
 import { DosComponent } from './muscle-structure/dos/dos.component';
-import { PrivacyComponent } from "./shared/privacy/privacy.component";
+import { PrivacyComponent } from './shared/privacy/privacy.component';
 import { AddExerciseComponent } from './navbar/view-profile/admin/add-exercise/add-exercise.component';
+import { defaultHomePageGuard } from './auth/default-home-page.guard';
 
-
-@Component({
-    selector: 'app-empty',
-    template: ''
-})
-export class EmptyComponent {
-}
 
 export const appRoutes: Route[] = [
     {
         path: MenuUrls.library,
         children: [
             {
-                path: 'list-muscles-group',
+                path: 'list-muscles-groups',
                 component: ListMusclesGroupsComponent
             },
             {
-                path: 'muscle-group/:muscleGroupId',
+                path: 'list-exercises-muscle-group/:muscleGroupId',
                 component: ListExercisesMuscleGroupComponent
             },
             {
@@ -55,7 +47,7 @@ export const appRoutes: Route[] = [
             },
             {
                 path: '**',
-                redirectTo: 'list-muscles-group'
+                redirectTo: 'list-muscles-groups'
             }
         ]
     },
@@ -83,9 +75,22 @@ export const appRoutes: Route[] = [
         canActivate: [authGuard]
     },
     {
-        path: MenuUrls.history,
-        component: HistoryComponent,
-        canActivate: [authGuard]
+        path: MenuUrls.stats,
+        canActivate: [authGuard],
+        children: [
+            {
+                path: '',
+                component: StatsComponent
+            },
+            {
+                path: 'graphs/:exerciseId',
+                component: GraphsComponent
+            },
+            {
+                path: '**',
+                redirectTo: ''
+            }
+        ]
     },
     {
         path: MenuUrls.user,
@@ -93,14 +98,6 @@ export const appRoutes: Route[] = [
             {
                 path: 'view-profile',
                 component: ViewProfileComponent
-            },
-            {
-                path: 'stats',
-                component: StatsComponent
-            },
-            {
-                path: 'graphs/:exerciseId',
-                component: GraphsComponent
             },
             {
                 path: '**',
@@ -164,12 +161,12 @@ export const appRoutes: Route[] = [
         path: 'auth',
         children: [
             {
-                path: 'sign-in',
-                component: SignInComponent
+                path: 'login',
+                component: LoginComponent
             },
             {
-                path: 'sign-up',
-                component: SignUpComponent
+                path: 'register',
+                component: RegisterComponent
             },
             {
                 path: 'reset-password',
@@ -177,7 +174,7 @@ export const appRoutes: Route[] = [
             },
             {
                 path: '**',
-                redirectTo: 'sign-in'
+                redirectTo: 'login'
             }
         ]
     },
@@ -187,6 +184,7 @@ export const appRoutes: Route[] = [
     },
     {
         path: '**',
-        redirectTo: MenuUrls.library
+        canActivate: [defaultHomePageGuard],
+        component: RouterOutlet
     }
 ];
