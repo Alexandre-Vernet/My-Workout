@@ -87,7 +87,7 @@
         <div class="card flex justify-center mt-3">
             <div>
                 <p-multiselect [options]="musclesDropdown" [group]="true" formControlName="muscles" placeholder="Muscles ciblés"
-                               optionLabel="name"
+                                optionLabel="name"
                                scrollHeight="250px" display="chip" styleClass="w-full md:w-80">
                 </p-multiselect>
                 @if (formAddExercise.controls.muscles.touched && formAddExercise.controls.muscles.hasError('required')) {

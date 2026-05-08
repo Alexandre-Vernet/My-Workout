@@ -134,9 +134,11 @@ public class ExerciseService {
 
     @Transactional
     public Exercise createOrUpdateExercise(ExerciseMuscle exerciseMuscle) {
-        boolean exerciseNameExist = exerciseRepository.existsByName(exerciseMuscle.exercise().getName());
-        if (exerciseNameExist) {
-            throw new ApiException(ErrorCodeEnum.EXERCISE_NAME_ALREADY_EXIST, "Cet exercice existe déjà", HttpStatus.CONFLICT);
+        if (exerciseMuscle.exercise().getId() == null) {
+            boolean exerciseNameExist = exerciseRepository.existsByName(exerciseMuscle.exercise().getName());
+            if (exerciseNameExist) {
+                throw new ApiException(ErrorCodeEnum.EXERCISE_NAME_ALREADY_EXIST, "Cet exercice existe déjà", HttpStatus.CONFLICT);
+            }
         }
 
         ExerciseEntity exerciseEntity = exerciseMapper.toEntity(exerciseMuscle.exercise());

@@ -15,10 +15,11 @@ import { UserExerciseService } from '../../../../services/user-exercise.service'
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ActivatedRoute } from '@angular/router';
-import { filter, switchMap } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 import { Message } from 'primeng/message';
 import { ExerciseMuscle } from '../../../../../interfaces/ExerciseMuscle';
 import { CustomError } from "../../../../../interfaces/CustomError";
+import { MuscleDropdown } from "../../../../../interfaces/MuscleDropdown";
 
 @Component({
     selector: 'app-add-exercise',
@@ -42,12 +43,12 @@ export class AddExerciseComponent implements OnInit {
     formAddExercise = new FormGroup({
         id: new FormControl(null),
         name: new FormControl(null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
-        description: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(500)]),
+        description: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]),
         isSmartWorkout: new FormControl(false, Validators.required),
         muscles: new FormControl<Muscle[]>(null, Validators.required)
     });
 
-    musclesDropdown: Muscle[] = [];
+    musclesDropdown: MuscleDropdown[] = [];
 
     constructor(
         private readonly exerciseService: ExerciseService,
@@ -61,30 +62,40 @@ export class AddExerciseComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.activatedRoute.params
+        this.muscleService.findAllMuscles()
             .pipe(
-                filter((params: { exerciseId: number }) => !!params.exerciseId),
-                switchMap(params => this.exerciseService.findExerciseMuscle(Number(params.exerciseId)))
+                tap(musclesDropdown => this.musclesDropdown = musclesDropdown),
+                switchMap(() =>
+                    this.activatedRoute.params.pipe(
+                        filter((params: { exerciseId: number }) => !!params.exerciseId),
+                        switchMap(params =>
+                            this.exerciseService.findExerciseMuscle(Number(params.exerciseId))
+                        )
+                    )
+                )
             )
             .subscribe({
                 next: (exerciseMuscle) => {
+                    const allMuscles = this.musclesDropdown.flatMap(group => group.items);
+
+                    const selectedMuscles = allMuscles.filter(dropdownMuscle =>
+                        exerciseMuscle.muscles.some(muscle => muscle.id === dropdownMuscle.id)
+                    );
+
                     const exercise = exerciseMuscle.exercise;
+
                     this.formAddExercise.patchValue({
                         id: exercise.id,
                         name: exercise.name,
                         description: exercise.description,
                         isSmartWorkout: exercise.smartWorkout,
-                        muscles: exerciseMuscle.muscles
+                        muscles: selectedMuscles
                     });
-                }
-            });
-        this.muscleService.findAllMuscles()
-            .subscribe({
-                next: (musclesDropdown) => this.musclesDropdown = musclesDropdown,
+                },
                 error: () => {
                     this.alertService.alert$.next({
                         severity: 'error',
-                        message: 'Impossible de récupérer la liste des muscles'
+                        message: 'Impossible de récupérer les données'
                     });
                 }
             });
@@ -93,13 +104,11 @@ export class AddExerciseComponent implements OnInit {
     createExercise() {
         const { id, name, description, isSmartWorkout, muscles } = this.formAddExercise.getRawValue();
         const exercise: Exercise = {
+            id,
             name: name.trim(),
             description: description.trim(),
             smartWorkout: isSmartWorkout,
         };
-        if (id) {
-            exercise.id = id;
-        }
 
         const exerciseMuscle: ExerciseMuscle = {
             exercise,

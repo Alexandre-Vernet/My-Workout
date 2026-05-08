@@ -5,6 +5,7 @@ import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exercise.Exercise;
 import com.avernet.myworkoutapi.exercise.ExerciseAddedToWorkout;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
+import com.avernet.myworkoutapi.exercise.ExerciseMapper;
 import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
 import com.avernet.myworkoutapi.exercise.ExerciseService;
@@ -23,6 +24,7 @@ import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -61,6 +64,8 @@ public class ExerciseServiceTest {
 
     @Resource
     MuscleMapper muscleMapper;
+    @Autowired
+    private ExerciseMapper exerciseMapper;
 
 
     @Test
@@ -205,5 +210,19 @@ public class ExerciseServiceTest {
         assertEquals("Updated exercise name", exerciseEntity.getName());
         assertEquals("Updated exercise desc", exerciseEntity.getDescription());
         assertTrue(exerciseEntity.getSmartWorkout());
+    }
+
+    @Test
+    @Transactional
+    void createOrUpdateExercise_shouldThrowException() {
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
+        Exercise exercise = exerciseMapper.toDto(exerciseEntity);
+        exercise.setId(null);
+        ExerciseMuscle exerciseMuscle = new ExerciseMuscle(exercise, null);
+
+        ApiException apiException = assertThrows(ApiException.class, () -> service.createOrUpdateExercise(exerciseMuscle));
+        assertEquals(ErrorCodeEnum.EXERCISE_NAME_ALREADY_EXIST, apiException.getErrorCode());
+        assertEquals("Cet exercice existe déjà", apiException.getMessage());
+        assertEquals(HttpStatus.CONFLICT, apiException.getHttpStatus());
     }
 }
