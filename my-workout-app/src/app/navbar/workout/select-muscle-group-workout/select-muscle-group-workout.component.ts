@@ -61,6 +61,12 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
         this.isDarkMode = this.themeService.isDarkMode();
     }
 
+    openModalCardioExerciseChange() {
+        this.isOpenModalExerciseCardio = false;
+        this.muscleGroupService.findAllRecommendedMuscleGroup()
+            .subscribe(muscleGroupExerciseCount => this.muscleGroupExerciseCount = muscleGroupExerciseCount);
+    }
+
     protected clickMuscleGroup(muscleGroup: MuscleGroup) {
         if (muscleGroup.id === MuscleGroupEnum.CARDIO) {
             this.openModalExerciseCardio(muscleGroup);
