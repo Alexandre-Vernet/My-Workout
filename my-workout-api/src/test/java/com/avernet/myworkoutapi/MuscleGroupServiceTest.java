@@ -1,6 +1,7 @@
 package com.avernet.myworkoutapi;
 
 import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
@@ -8,7 +9,6 @@ import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupExerciseCount;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupService;
-import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserRepository;
 import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
@@ -162,27 +162,27 @@ public class MuscleGroupServiceTest {
     @Test
     void shouldFinExerciseByMuscleGroup() {
         MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findByExercise(1L);
-        assertEquals(MuscleGroupType.PECTORAUX, muscleGroupEntity.getName());
+        assertEquals(MuscleGroupEnum.PECTORAUX, muscleGroupEntity.getName());
 
         MuscleGroupEntity muscleGroupEntity2 = muscleGroupRepository.findByExercise(9L);
-        assertEquals(MuscleGroupType.JAMBES, muscleGroupEntity2.getName());
+        assertEquals(MuscleGroupEnum.JAMBES, muscleGroupEntity2.getName());
 
         MuscleGroupEntity muscleGroupEntity3 = muscleGroupRepository.findByExercise(14L);
-        assertEquals(MuscleGroupType.EPAULES, muscleGroupEntity3.getName());
+        assertEquals(MuscleGroupEnum.EPAULES, muscleGroupEntity3.getName());
 
         MuscleGroupEntity muscleGroupEntity4 = muscleGroupRepository.findByExercise(19L);
-        assertEquals(MuscleGroupType.BICEPS, muscleGroupEntity4.getName());
+        assertEquals(MuscleGroupEnum.BICEPS, muscleGroupEntity4.getName());
 
         MuscleGroupEntity muscleGroupEntity5 = muscleGroupRepository.findByExercise(25L);
-        assertEquals(MuscleGroupType.ABDOMINAUX, muscleGroupEntity5.getName());
+        assertEquals(MuscleGroupEnum.ABDOMINAUX, muscleGroupEntity5.getName());
 
         MuscleGroupEntity muscleGroupEntity6 = muscleGroupRepository.findByExercise(28L);
-        assertEquals(MuscleGroupType.CARDIO, muscleGroupEntity6.getName());
+        assertEquals(MuscleGroupEnum.CARDIO, muscleGroupEntity6.getName());
 
         MuscleGroupEntity muscleGroupEntity7 = muscleGroupRepository.findByExercise(6L);
-        assertEquals(MuscleGroupType.TRICEPS, muscleGroupEntity7.getName());
+        assertEquals(MuscleGroupEnum.TRICEPS, muscleGroupEntity7.getName());
 
         MuscleGroupEntity muscleGroupEntity8 = muscleGroupRepository.findByExercise(16L);
-        assertEquals(MuscleGroupType.DOS, muscleGroupEntity8.getName());
+        assertEquals(MuscleGroupEnum.DOS, muscleGroupEntity8.getName());
     }
 }

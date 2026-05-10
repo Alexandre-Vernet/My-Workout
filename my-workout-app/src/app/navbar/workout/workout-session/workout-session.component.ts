@@ -25,6 +25,7 @@ import { NgClass, UpperCasePipe } from '@angular/common';
 import { UserExerciseService } from '../../../services/user-exercise.service';
 import { UserExercise } from '../../../../interfaces/User-exercise';
 import { CustomError } from "../../../../interfaces/CustomError";
+import { MuscleGroupEnum } from "../../../../interfaces/MuscleGroupEnum";
 
 @Component({
     selector: 'app-workout-session',
@@ -41,7 +42,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     userExercises: UserExercise[] = [];
     exercisesMade = new BehaviorSubject<History[]>([]);
     currentExercise: Exercise;
-    muscleGroupId: number;
+    muscleGroupEnum: MuscleGroupEnum;
 
     activeStep: number = 1;
 
@@ -84,7 +85,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        this.muscleGroupId = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
+        this.muscleGroupEnum = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
         this.workout = null;
         this.getCurrentTabFromUrl();
         this.findExercises();
@@ -159,11 +160,11 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     private findExercises() {
-        this.userExerciseService.findAddedExercisesByMuscleGroupId(this.muscleGroupId)
+        this.userExerciseService.findAddedExercisesByMuscleGroupId(this.muscleGroupEnum)
             .pipe(
                 map(exercises => {
                     if (!exercises || exercises.length === 0) {
-                        this.showDialogNoExercisesAdded(this.muscleGroupId);
+                        this.showDialogNoExercisesAdded(this.muscleGroupEnum);
                         return null;
                     }
 
@@ -263,7 +264,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             reps: this.reps
         };
 
-        this.createWorkout(this.muscleGroupId, history)
+        this.createWorkout(this.muscleGroupEnum, history)
             .subscribe({
                 next: (workout) => {
                     this.alertService.alert$.next(null);
@@ -355,9 +356,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         });
     }
 
-    private createWorkout(muscleGroupId: number, history: History) {
+    private createWorkout(muscleGroupEnum: MuscleGroupEnum, history: History) {
         const muscleGroup: MuscleGroup = {
-            id: muscleGroupId
+            id: muscleGroupEnum
         };
 
         const workout: Workout = {
