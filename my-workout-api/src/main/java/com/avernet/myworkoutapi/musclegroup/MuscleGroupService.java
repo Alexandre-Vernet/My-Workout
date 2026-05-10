@@ -29,7 +29,7 @@ public class MuscleGroupService {
     }
 
     @Transactional(readOnly = true)
-    public List<MuscleGroupExerciseCount> findAllMuscleGroupAndRecommendedMuscleGroup(UserEntity userEntity) {
+    public List<MuscleGroupExerciseCount> findAllRecommendedMuscleGroup(UserEntity userEntity) {
         List<MuscleGroupExerciseCountEntity> muscleGroupEntityList = muscleGroupRepository.findAllMuscleGroupAndCountAddedExercises(userEntity.getId());
 
         List<MuscleGroupExerciseCountEntity> muscleGroupEntityListSorted = muscleGroupEntityList.stream()

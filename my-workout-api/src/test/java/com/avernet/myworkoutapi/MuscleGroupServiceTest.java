@@ -82,7 +82,7 @@ public class MuscleGroupServiceTest {
 
         workoutRepository.save(workoutEntity);
 
-        List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
+        List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllRecommendedMuscleGroup(userEntity);
         assertFalse(muscleGroupExerciseCountList.isEmpty());
         assertEquals(8, muscleGroupExerciseCountList.size());
     }
@@ -114,7 +114,7 @@ public class MuscleGroupServiceTest {
             workoutRepository.save(workoutEntity);
         }
 
-        List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
+        List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllRecommendedMuscleGroup(userEntity);
         assertEquals(8, muscleGroupExerciseCountList.size());
         assertFalse(muscleGroupExerciseCountList.isEmpty());
         assertEquals(1, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
@@ -153,7 +153,7 @@ public class MuscleGroupServiceTest {
             workoutRepository.save(workoutEntity);
         }
 
-        List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
+        List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllRecommendedMuscleGroup(userEntity);
         assertEquals(8, muscleGroupExerciseCountList.size());
         assertFalse(muscleGroupExerciseCountList.isEmpty());
         assertEquals(1, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
