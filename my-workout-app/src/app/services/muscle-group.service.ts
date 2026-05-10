@@ -20,7 +20,7 @@ export class MuscleGroupService {
         return this.http.get<MuscleGroup[]>(this.muscleGroupUrl);
     }
 
-    findAllMuscleGroupAndRecommendedMuscleGroup() {
+    findAllRecommendedMuscleGroup() {
         return this.http.get<MuscleGroupExerciseCount[]>(`${ this.muscleGroupUrl }/find-muscle-group-recommended`);
     }
 }

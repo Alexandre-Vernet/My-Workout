@@ -17,6 +17,9 @@ import { MuscleGroupExerciseCount } from '../../../../interfaces/MuscleGroupExer
 import { FirstLetterUppercasePipe } from '../../../shared/pipes/first-letter-uppercase.pipe';
 import { MuscleGroupEnum } from '../../../../interfaces/MuscleGroupEnum';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
+import { ExerciseService } from "../../../services/exercise.service";
+import { Exercise } from "../../../../interfaces/Exercise";
+import { forkJoin } from "rxjs";
 
 @Component({
     selector: 'select-muscle-group-workout',
@@ -29,6 +32,7 @@ import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     muscleGroupExerciseCount: MuscleGroupExerciseCount[] = [];
+    cardioExercises: Exercise[];
 
     isOpenModalExerciseCardio = false;
 
@@ -36,6 +40,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     constructor(
         private readonly muscleGroupService: MuscleGroupService,
+        private readonly exerciseService: ExerciseService,
         private readonly alertService: AlertService,
         private readonly themeService: ThemeService,
         private readonly confirmationService: ConfirmationService,
@@ -44,20 +49,22 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.muscleGroupService.findAllMuscleGroupAndRecommendedMuscleGroup()
-            .subscribe({
-                next: (muscleGroupExerciseCount) => {
-                    this.muscleGroupExerciseCount = muscleGroupExerciseCount;
-                    this.alertService.alert$.next(null);
-                },
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'afficher les entraînements'
-                    });
-                }
+        forkJoin([
+            this.muscleGroupService.findAllRecommendedMuscleGroup(),
+            this.exerciseService.findCardioExercises()
+        ])
+            .subscribe(([muscleGroupExerciseCount, cardioExercises]) => {
+                this.muscleGroupExerciseCount = muscleGroupExerciseCount;
+                this.alertService.alert$.next(null);
+                this.cardioExercises = cardioExercises;
             });
         this.isDarkMode = this.themeService.isDarkMode();
+    }
+
+    openModalCardioExerciseChange() {
+        this.isOpenModalExerciseCardio = false;
+        this.muscleGroupService.findAllRecommendedMuscleGroup()
+            .subscribe(muscleGroupExerciseCount => this.muscleGroupExerciseCount = muscleGroupExerciseCount);
     }
 
     protected clickMuscleGroup(muscleGroup: MuscleGroup) {

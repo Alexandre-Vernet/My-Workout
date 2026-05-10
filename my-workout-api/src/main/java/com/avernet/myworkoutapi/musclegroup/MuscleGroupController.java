@@ -22,7 +22,7 @@ public class MuscleGroupController {
     }
 
     @GetMapping("find-muscle-group-recommended")
-    List<MuscleGroupExerciseCount>findAllMuscleGroupAndRecommendedMuscleGroup(@AuthenticationPrincipal UserEntity userEntity) {
-        return muscleGroupService.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
+    List<MuscleGroupExerciseCount>findAllRecommendedMuscleGroup(@AuthenticationPrincipal UserEntity userEntity) {
+        return muscleGroupService.findAllRecommendedMuscleGroup(userEntity);
     }
 }

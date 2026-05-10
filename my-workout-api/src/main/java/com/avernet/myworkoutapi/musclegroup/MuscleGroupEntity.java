@@ -30,7 +30,7 @@ public class MuscleGroupEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "name")
-    MuscleGroupType name;
+    MuscleGroupEnum name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "muscleGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     List<WorkoutEntity> workouts = new ArrayList<>();

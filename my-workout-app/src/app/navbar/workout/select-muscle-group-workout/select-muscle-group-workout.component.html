@@ -42,6 +42,8 @@
 
 
 <app-dialog-select-cardio-exercise
-    [(openModal)]="isOpenModalExerciseCardio"
+    [cardioExercises]="cardioExercises"
+    [openModal]="isOpenModalExerciseCardio"
+    (openModalChange)="openModalCardioExerciseChange()"
     (showAlert)="showAlert($event)"
 ></app-dialog-select-cardio-exercise>

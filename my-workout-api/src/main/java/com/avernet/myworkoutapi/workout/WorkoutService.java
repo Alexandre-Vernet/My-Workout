@@ -5,7 +5,7 @@ import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import com.avernet.myworkoutapi.history.HistoryEntity;
 import com.avernet.myworkoutapi.history.HistoryGroup;
 import com.avernet.myworkoutapi.history.HistoryMapper;
-import com.avernet.myworkoutapi.musclegroup.MuscleGroupType;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class WorkoutService {
     public Workout createWorkout(UserEntity userEntity, WorkoutRequest workoutRequest) {
         WorkoutEntity workoutEntity = workoutMapper.toEntity(workoutRequest.workout());
 
-        if (workoutRequest.workout().getMuscleGroup().name() != MuscleGroupType.CARDIO) {
+        if (workoutRequest.workout().getMuscleGroup().id() != MuscleGroupEnum.CARDIO.getId()) {
             // Do not create a workout if it already exists for the same user and muscle group on the same day
             // Except cardio workout because it can be done multiple times a day with different exercises (e.g. running, cycling)
             Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDate(
