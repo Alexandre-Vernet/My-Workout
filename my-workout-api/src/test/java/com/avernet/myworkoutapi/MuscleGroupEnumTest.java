@@ -2,14 +2,11 @@ package com.avernet.myworkoutapi;
 
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-@SpringBootTest
-@Import(TestcontainersConfiguration.class)
+@ActiveProfiles("test")
 public class MuscleGroupEnumTest {
 
     @Test
