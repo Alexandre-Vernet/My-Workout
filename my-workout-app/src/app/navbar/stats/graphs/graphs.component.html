@@ -27,10 +27,7 @@
 
 @if (exerciseGraphs) {
     <div class="flex align-items-stretch justify-center m-3 gap-2">
-        <div class="p-4 border-round-2xl text-primary flex-1" [ngClass]="{
-            'shadow-dark': isDarkMode,
-            'shadow-light': !isDarkMode,
-        }">
+        <div class="card p-4 border-round-2xl text-primary flex-1">
             <div
                 class="p-1 flex-1 flex flex-column justify-center align-items-center flex-grow-1 flex-shrink-0 gap-4 text-center">
                 <i class="pi pi-chart-bar" style="font-size: 1.2rem"></i>
@@ -43,10 +40,7 @@
             </div>
         </div>
 
-        <div class="p-4 border-round-2xl text-primary flex-1" [ngClass]="{
-            'shadow-dark': isDarkMode,
-            'shadow-light': !isDarkMode,
-        }">
+        <div class="card p-4 border-round-2xl text-primary flex-1">
             <div
                 class="p-1 flex-1 flex flex-column justify-center align-items-center flex-grow-1 flex-shrink-0 gap-4 text-center">
                 <i class="pi pi-gauge" style="font-size: 1.2rem"></i>
@@ -61,10 +55,7 @@
     </div>
 
 
-    <div class="m-3 p-4 border-round-2xl text-primary" [ngClass]="{
-            'shadow-dark': isDarkMode,
-            'shadow-light': !isDarkMode,
-        }">
+    <div class="card m-3 p-4 border-round-2xl text-primary">
 
         <div
             class="p-1 flex-1 flex flex-column justify-center align-items-center flex-grow-1 flex-shrink-0 gap-4 text-center">

@@ -1,9 +1,8 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { presets } from '../../../shared/theme/presets';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-change-theme',
@@ -13,8 +12,6 @@ import { Subject } from 'rxjs';
     standalone: true
 })
 export class ChangeThemeComponent implements OnInit {
-
-    @Output() isDarkMode = new Subject<boolean>();
 
     presets = presets;
     presetsArray = Object.entries(this.presets).map(([key, value]) => ({
@@ -43,6 +40,5 @@ export class ChangeThemeComponent implements OnInit {
 
     toggleDarkMode() {
         this.themeService.toggleDarkMode(this.isCheckedDarkMode);
-        this.isDarkMode.next(this.isCheckedDarkMode);
     }
 }

@@ -27,7 +27,7 @@
         </div>
     }
 } @else {
-    <div class="ml-2 flex flex-row gap-2 flex-wrap">
+    <div class="ml-2 flex flex-row gap-2 flex-wrap ">
         @for (muscle of muscleGroupExercises.muscles; track muscle.id) {
             <span class="flex flex-row-reverse">
             <p-tag severity="info" [value]="muscle.name"
@@ -42,58 +42,52 @@
     </div>
 
 
-    <p-dataview #dv [value]="filterMuscleGroupExercises?.exerciseAddedToWorkouts">
-        <ng-template #list let-items>
-            <div cdkDropList (cdkDropListDropped)="drop($event)" class="flex flex-column">
-                @for (item of items; track item.exercise.id) {
-                    <div cdkDrag [cdkDragDisabled]="!item.addedToWorkout"
-                         class="col-span-12">
-                        <div class="flex flex-col align-items-center p-6 gap-4">
-                            <div class="md:w-40">
-                                <p-badge [value]="item.exercise.id"/>
-                            </div>
+    <div cdkDropList (cdkDropListDropped)="drop($event)" class="flex flex-column">
+        @for (item of filterMuscleGroupExercises.exerciseAddedToWorkouts; track item.exercise.id) {
+            <div cdkDrag [cdkDragDisabled]="!item.addedToWorkout">
+                <div class="card flex flex-col align-items-center p-6 gap-4 mb-1">
+                    <div class="md:w-40">
+                        <p-badge [value]="item.exercise.id"/>
+                    </div>
 
-                            <div class="flex-1 flex flex-row justify-content-between align-items-center gap-6">
-
-                                <div class="flex-1">
-                                    <div class="text-sm text-secondary">
-                                        @for (exerciseMuscle of item.muscles; track exerciseMuscle.id; let last = $last) {
-                                            <span>
+                    <div class="flex-1 flex flex-row justify-content-between align-items-center gap-6">
+                        <div class="flex-1">
+                            <div class="text-sm text-secondary">
+                                @for (exerciseMuscle of item.muscles; track exerciseMuscle.id; let last = $last) {
+                                    <span>
                                                 <a class="text-sm text-secondary"
                                                    [routerLink]=" muscleGroupExercises.muscleGroup?.id !== 8 ? ['/', 'muscle-structure', removeAccents(exerciseMuscle.name)] :
                                                    ['/', 'library', 'list-exercises-muscle-group', muscleGroupExercises.muscleGroup.id]"
                                                    [fragment]="replaceSpaces(exerciseMuscle.name)">
                                                     {{ exerciseMuscle.name }}
                                                 </a>
-                                                @if (!last) {
-                                                    <span>,</span>
-                                                }
-                                            </span>
+                                        @if (!last) {
+                                            <span>,</span>
                                         }
-                                    </div>
-                                    <div [routerLink]="['/', 'library', 'exercises', item.exercise.id]"
-                                         class="text-xl text-surface-900 dark:text-surface-0 mt-2">
-                                        {{ item?.exercise.name }}
-                                    </div>
-                                </div>
-
-                                <div class="flex flex-row gap-2">
-                                    <p-button (click)="toggleExerciseWorkout(item)"
-                                              [icon]="item.addedToWorkout ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"
-                                              [outlined]="true"/>
-
-                                    @if (item.addedToWorkout) {
-                                        <p-button cdkDragHandle icon="pi pi-arrows-alt"
-                                                  severity="secondary"
-                                                  [outlined]="true"/>
-                                    }
-                                </div>
+                                            </span>
+                                }
+                            </div>
+                            <div [routerLink]="['/', 'library', 'exercises', item.exercise.id]"
+                                 class="text-xl text-surface-900 dark:text-surface-0 mt-2">
+                                {{ item?.exercise.name }}
                             </div>
                         </div>
+
+                        <div class="flex flex-row gap-2">
+                            <p-button (click)="toggleExerciseWorkout(item)"
+                                      [icon]="item.addedToWorkout ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"
+                                      [outlined]="true"/>
+
+                            @if (item.addedToWorkout) {
+                                <p-button cdkDragHandle icon="pi pi-arrows-alt"
+                                          severity="secondary"
+                                          [outlined]="true"/>
+                            }
+                        </div>
                     </div>
-                }
+                </div>
             </div>
-        </ng-template>
-    </p-dataview>
+        }
+    </div>
 }
 

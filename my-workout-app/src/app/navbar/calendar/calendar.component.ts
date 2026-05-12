@@ -9,7 +9,6 @@ import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../../interfaces/Workout';
 import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
-import { ThemeService } from '../../shared/theme/theme.service';
 import { removeAccents } from '../../shared/utils/remove-accents';
 import { MuscleGroup, muscleGroupMap } from '../../../interfaces/MuscleGroup';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
@@ -109,21 +108,17 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     setWorkoutDate: Date;
     isOpenModalExerciseCardio = false;
 
-    isDarkMode = false;
-
     constructor(
         private readonly workoutService: WorkoutService,
         private readonly exerciseService: ExerciseService,
         private readonly confirmationService: ConfirmationService,
         private readonly alertService: AlertService,
-        private readonly themeService: ThemeService
     ) {
 
     }
 
     ngOnInit() {
         setTimeout(() => this.calendarComponent.getApi().refetchEvents(), 0);
-        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     ngAfterViewInit() {

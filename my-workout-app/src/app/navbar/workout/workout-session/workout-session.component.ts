@@ -17,7 +17,6 @@ import { Popover } from 'primeng/popover';
 import { WorkoutService } from '../../../services/workout.service';
 import { Workout } from '../../../../interfaces/Workout';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
-import { ThemeService } from '../../../shared/theme/theme.service';
 import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../shared/utils/convert-weight-elastic';
 import { PreventFocusOnButtonClickDirective } from '../../../shared/directives/prevent-focus-on-button-click.directive';
@@ -58,9 +57,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         interval: null
     };
 
-
-    isDarkMode = false;
-
     weightToElastics: Elastic[] = [];
 
     @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
@@ -78,7 +74,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         private readonly userExerciseService: UserExerciseService,
         private readonly historyService: HistoryService,
         private readonly alertService: AlertService,
-        private readonly themeService: ThemeService,
         private readonly confirmationService: ConfirmationService,
         private readonly router: Router,
     ) {
@@ -89,7 +84,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.workout = null;
         this.getCurrentTabFromUrl();
         this.findExercises();
-        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     ngAfterViewInit() {

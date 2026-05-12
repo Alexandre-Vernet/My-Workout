@@ -9,10 +9,8 @@
     .muscle-groups {
         width: 100%;
 
-        .muscle-group-card {
-            padding: 1.2em 2em;
-            border-radius: 8px;
+        .selected {
+            background: var(--selected-background);
         }
     }
-
 }

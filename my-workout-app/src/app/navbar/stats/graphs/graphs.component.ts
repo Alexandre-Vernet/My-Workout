@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { HistoryService } from '../../../services/history.service';
 import { AlertService } from '../../../services/alert.service';
 import { ActivatedRoute } from '@angular/router';
-import { ThemeService } from '../../../shared/theme/theme.service';
-import { NgClass } from '@angular/common';
 import { ExerciseGraphs } from '../../../../interfaces/ExerciseGraphs';
 import Chart, { ChartItem } from 'chart.js/auto';
 import { Skeleton } from 'primeng/skeleton';
@@ -13,7 +11,6 @@ import { Skeleton } from 'primeng/skeleton';
     templateUrl: './graphs.component.html',
     styleUrl: './graphs.component.scss',
     imports: [
-        NgClass,
         Skeleton
     ],
     standalone: true
@@ -22,13 +19,10 @@ export class GraphsComponent implements OnInit {
 
     exerciseGraphs: ExerciseGraphs;
 
-    isDarkMode = false;
-
     constructor(
         private readonly historyService: HistoryService,
         private readonly activatedRoute: ActivatedRoute,
         private readonly alertService: AlertService,
-        private readonly themeService: ThemeService
     ) {
     }
 
@@ -76,7 +70,5 @@ export class GraphsComponent implements OnInit {
                     });
                 }
             });
-
-        this.isDarkMode = this.themeService.isDarkMode();
     }
 }
