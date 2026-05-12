@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, Output } from '@angular/core';
 import { Dialog } from 'primeng/dialog';
 import { Subject } from 'rxjs';
 import { Exercise } from '../../../../interfaces/Exercise';
@@ -7,25 +7,23 @@ import { Workout } from '../../../../interfaces/Workout';
 import { WorkoutService } from '../../../services/workout.service';
 import { History } from '../../../../interfaces/History';
 import { Alert } from '../../../../interfaces/alert';
-import { ThemeService } from '../../../shared/theme/theme.service';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputNumber } from 'primeng/inputnumber';
 import { Button } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { FloatLabel } from 'primeng/floatlabel';
-import { NgClass } from '@angular/common';
 import { MuscleGroupEnum } from '../../../../interfaces/MuscleGroupEnum';
 
 @Component({
     selector: 'app-dialog-select-cardio-exercise',
-    imports: [Dialog, ConfirmDialog, InputNumber, Button, FormsModule, FloatLabel, NgClass],
+    imports: [Dialog, ConfirmDialog, InputNumber, Button, FormsModule, FloatLabel],
     templateUrl: './dialog-select-cardio-exercise.component.html',
     styleUrl: './dialog-select-cardio-exercise.component.scss',
     standalone: true,
     providers: [ConfirmationService]
 })
-export class DialogSelectCardioExerciseComponent implements OnInit {
+export class DialogSelectCardioExerciseComponent {
 
     @Input() openModal: boolean;
     @Output() openModalChange = new Subject<void>();
@@ -37,17 +35,9 @@ export class DialogSelectCardioExerciseComponent implements OnInit {
     selectedExercise: Exercise;
     inputDuration: number;
 
-    isDarkMode = false;
-
-
     constructor(
         private readonly workoutService: WorkoutService,
-        private readonly themeService: ThemeService,
     ) {
-    }
-
-    ngOnInit() {
-        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     onHideModal() {

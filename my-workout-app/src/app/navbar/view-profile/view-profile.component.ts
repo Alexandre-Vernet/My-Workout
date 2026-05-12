@@ -5,16 +5,14 @@ import { ChangeThemeComponent } from './change-theme/change-theme.component';
 import { ManageAccountComponent } from './manage-account/manage-account.component';
 import { Alert } from '../../../interfaces/alert';
 import { AccountActionsComponent } from './account-actions/account-actions.component';
-import { ThemeService } from '../../shared/theme/theme.service';
 import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { User } from '../../../interfaces/User';
-import { NgClass } from '@angular/common';
 
 @Component({
     selector: 'app-view-profile',
-    imports: [ReactiveFormsModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink, NgClass],
+    imports: [ReactiveFormsModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink],
     templateUrl: './view-profile.component.html',
     styleUrl: './view-profile.component.scss',
     standalone: true,
@@ -22,25 +20,18 @@ import { NgClass } from '@angular/common';
 })
 export class ViewProfileComponent implements OnInit {
 
-    isDarkMode = false;
 
     user: User;
 
     constructor(
         private readonly alertService: AlertService,
-        private readonly themeService: ThemeService,
         private readonly authService: AuthService
     ) {
     }
 
     ngOnInit() {
-        this.isDarkMode = this.themeService.isDarkMode();
         this.authService.getCurrentUser()
             .subscribe((user) => this.user = user);
-    }
-
-    updateDarkMode(value: boolean) {
-        this.isDarkMode = value;
     }
 
     displayAlert(alert: Alert) {

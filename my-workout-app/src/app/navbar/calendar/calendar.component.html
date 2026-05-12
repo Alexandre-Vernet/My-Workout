@@ -28,14 +28,11 @@
 
 <p-dialog [header]="showWorkout?.workout.date | date:'fullDate' | firstLetterUppercase" [modal]="true" [(visible)]="showModalViewWorkout"
           dismissableMask="true"
-          [style]="{ width: '25rem',  background: isDarkMode ? '#1f2a36' : '#ffff' }">
+          [style]="{ width: '25rem' }">
     @if (showWorkout) {
         <div class="p-2">
 
-            <div class="p-3 border-round-lg" [ngClass]="{
-                    'shadow-dark': isDarkMode,
-                    'shadow-light': !isDarkMode
-                    }">
+            <div class="card p-3 border-round-lg">
 
                 <h2 class="mb-3">{{ showWorkout.muscleGroup.name | firstLetterUppercase }}</h2>
 

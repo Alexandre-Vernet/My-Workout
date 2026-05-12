@@ -5,14 +5,7 @@
           [closable]="true" dismissableMask="true" (onHide)="onHideModal()">
     <div class="cardio-flow mb-1">
         @for (cardioExercise of cardioExercises; track cardioExercise.id) {
-            <div
-                [ngClass]="{
-                'shadow-dark': isDarkMode,
-                'shadow-light': !isDarkMode
-            }"
-                [style]="{
-              background: isDarkMode ? '#1f2a36' : '#ffff'
-            }" class="cardio-card">
+            <div class="card p-3 border-round-lg">
                 <div
                     (click)="showInputDuration(cardioExercise)"
                     class="flex-1 flex align-items-center justify-content-between">

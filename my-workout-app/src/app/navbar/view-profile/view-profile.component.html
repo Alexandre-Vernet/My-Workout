@@ -4,11 +4,7 @@
     </div>
 
     @if (user?.admin) {
-        <div class="m-2 p-3 border-round-2xl"
-             [ngClass]="{
-            'shadow-dark': isDarkMode,
-            'shadow-light': !isDarkMode,
-        }">
+        <div class="card m-2 p-3 border-round-2xl">
             <a routerLink="/admin/add-exercise" class="text-primary">
                 <div class="flex-1 flex justify-center align-items-center gap-3">
                     <i class="pi pi-lock" style="font-size: 1.2rem"></i>
@@ -18,29 +14,17 @@
         </div>
     }
 
-    <div class="m-2 p-3 border-round-2xl"
-         [ngClass]="{
-            'shadow-dark': isDarkMode,
-            'shadow-light': !isDarkMode,
-        }">
+    <div class="card m-2 p-3 border-round-2xl">
         <app-manage-account (showAlert)="displayAlert($event)"></app-manage-account>
     </div>
 
 
-    <div class="m-2 p-3 border-round-2xl"
-         [ngClass]="{
-            'shadow-dark': isDarkMode,
-            'shadow-light': !isDarkMode,
-        }">
-        <app-change-theme (isDarkMode)="updateDarkMode($event)"></app-change-theme>
+    <div class="card m-2 p-3 border-round-2xl">
+        <app-change-theme></app-change-theme>
     </div>
 
 
-    <div class="m-2 p-3 border-round-2xl"
-         [ngClass]="{
-            'shadow-dark': isDarkMode,
-            'shadow-light': !isDarkMode,
-        }">
+    <div class="card m-2 p-3 border-round-2xl">
         <app-account-actions (showAlert)="displayAlert($event)"></app-account-actions>
     </div>
 </div>

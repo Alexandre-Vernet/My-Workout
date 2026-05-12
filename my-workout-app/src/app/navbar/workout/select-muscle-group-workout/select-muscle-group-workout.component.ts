@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
 import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
-import { ThemeService } from '../../../shared/theme/theme.service';
 import {
     DialogSelectCardioExerciseComponent
 } from '../dialog-select-cardio-exercise/dialog-select-cardio-exercise.component';
@@ -12,7 +11,6 @@ import { Alert } from '../../../../interfaces/alert';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { AlertService } from '../../../services/alert.service';
-import { NgClass } from '@angular/common';
 import { MuscleGroupExerciseCount } from '../../../../interfaces/MuscleGroupExerciseCount';
 import { FirstLetterUppercasePipe } from '../../../shared/pipes/first-letter-uppercase.pipe';
 import { MuscleGroupEnum } from '../../../../interfaces/MuscleGroupEnum';
@@ -23,7 +21,7 @@ import { forkJoin } from "rxjs";
 
 @Component({
     selector: 'select-muscle-group-workout',
-    imports: [Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog, NgClass, FirstLetterUppercasePipe],
+    imports: [Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog, FirstLetterUppercasePipe],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
     standalone: true,
@@ -36,13 +34,10 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     isOpenModalExerciseCardio = false;
 
-    isDarkMode = false;
-
     constructor(
         private readonly muscleGroupService: MuscleGroupService,
         private readonly exerciseService: ExerciseService,
         private readonly alertService: AlertService,
-        private readonly themeService: ThemeService,
         private readonly confirmationService: ConfirmationService,
         private readonly router: Router
     ) {
@@ -58,7 +53,6 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
                 this.alertService.alert$.next(null);
                 this.cardioExercises = cardioExercises;
             });
-        this.isDarkMode = this.themeService.isDarkMode();
     }
 
     openModalCardioExerciseChange() {
