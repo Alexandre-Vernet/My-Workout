@@ -48,12 +48,16 @@ img {
     --card-background: #ffffff;
     --card-shadow: 1px 4px 12px rgba(0, 0, 0, 0.05);
     --selected-background: #e8f2fd;
+    --not-found-ghost-black: #000000;
+    --not-found-ghost-white: #ffffff;
 }
 
 .dark-mode {
     --card-background: #121212;
     --card-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
     --selected-background: #1f2a36;
+    --not-found-ghost-black: #ffffff;
+    --not-found-ghost-white: #000000;
 }
 
 

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HistoryService } from '../../../services/history.service';
-import { AlertService } from '../../../services/alert.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseGraphs } from '../../../../interfaces/ExerciseGraphs';
 import Chart, { ChartItem } from 'chart.js/auto';
 import { Skeleton } from 'primeng/skeleton';
@@ -22,7 +21,7 @@ export class GraphsComponent implements OnInit {
     constructor(
         private readonly historyService: HistoryService,
         private readonly activatedRoute: ActivatedRoute,
-        private readonly alertService: AlertService,
+        private readonly router: Router
     ) {
     }
 
@@ -63,12 +62,7 @@ export class GraphsComponent implements OnInit {
                     });
 
                 },
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Erreur lors de la récupération des données'
-                    });
-                }
+                error: () => this.router.navigate(['not-found'])
             });
     }
 }
