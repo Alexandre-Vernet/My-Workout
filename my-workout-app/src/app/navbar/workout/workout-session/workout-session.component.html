@@ -74,7 +74,7 @@
                                             <div class="flex align-items-center">
                                                 <p-inputnumber
                                                     preventFocusOnButtonClick
-                                                    [disabled]="timer.interval" [(ngModel)]="weight"
+                                                    [disabled]="restTime !== DEFAULT_VALUE_REST_TIME" [(ngModel)]="weight"
                                                     (ngModelChange)="convertWeightToElastics()" [showButtons]="true"
                                                     buttonLayout="horizontal" inputId="horizontal"
                                                     spinnerMode="horizontal" [step]="2.5"
@@ -97,7 +97,7 @@
                                             <div class="flex align-items-center mr-4">
                                                 <p-inputnumber
                                                     preventFocusOnButtonClick
-                                                    class="mb-6" size="small" [disabled]="timer.interval"
+                                                    class="mb-6" size="small" [disabled]="restTime !== DEFAULT_VALUE_REST_TIME"
                                                     [(ngModel)]="reps"
                                                     [showButtons]="true"
                                                     buttonLayout="horizontal"
@@ -130,13 +130,13 @@
 
         <div class="bottom-page">
             <div class="stopwatch text-primary">
-                <span>{{ timer.text }}</span>
+                <span>{{ restTime }}</span>
             </div>
 
             <div class="timer" (click)="toggleTimer()" [ngClass]="{
                 'disabled': this.weight < 0 || this.weight >= 500,
             }">
-                @if (timer.interval !== null) {
+                @if (restTime !== DEFAULT_VALUE_REST_TIME) {
                     <div class="pause"></div>
                 } @else {
                     <div class="play"></div>
