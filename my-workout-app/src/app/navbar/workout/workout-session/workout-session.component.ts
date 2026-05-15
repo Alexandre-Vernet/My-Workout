@@ -128,6 +128,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             this.stopTimer();
         } else {
             this.startTimer();
+            this.createWorkout();
         }
     }
 
@@ -252,39 +253,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     private startTimer() {
-        const history: History = {
-            exercise: this.currentExercise,
-            weight: this.weight,
-            reps: this.reps
-        };
-
-        this.createWorkout(this.muscleGroupEnum, history)
-            .subscribe({
-                next: (workout) => {
-                    this.alertService.alert$.next(null);
-
-                    this.workout = workout;
-                    const lastHistoryId = workout.histories[workout.histories.length - 1].id;
-                    const exerciseMade: History = {
-                        id: lastHistoryId,
-                        weight: this.weight,
-                        reps: this.reps,
-                        restTime: '/'
-                    };
-
-                    this.exercisesMade.next([
-                        ...this.exercisesMade.value,
-                        exerciseMade
-                    ]);
-                },
-                error: () => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: 'Erreur lors de l\'enregistrement'
-                    });
-                }
-            });
-
         this.timer.startTime = performance.now();
         this.timer.interval = setInterval(() => {
             const elapsed = performance.now() - this.timer.startTime;
@@ -350,18 +318,49 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         });
     }
 
-    private createWorkout(muscleGroupEnum: MuscleGroupEnum, history: History) {
+    private createWorkout() {
+        const history: History = {
+            exercise: this.currentExercise,
+            weight: this.weight,
+            reps: this.reps
+        };
+
         const muscleGroup: MuscleGroup = {
-            id: muscleGroupEnum
+            id: this.muscleGroupEnum
         };
 
         const workout: Workout = {
             muscleGroup,
             date: new Date()
         };
-        return this.workoutService.create(workout, history);
-    }
 
+        this.workoutService.create(workout, history)
+            .subscribe({
+                next: (workout) => {
+                    this.alertService.alert$.next(null);
+
+                    this.workout = workout;
+                    const lastHistoryId = workout.histories[workout.histories.length - 1].id;
+                    const exerciseMade: History = {
+                        id: lastHistoryId,
+                        weight: this.weight,
+                        reps: this.reps,
+                        restTime: '/'
+                    };
+
+                    this.exercisesMade.next([
+                        ...this.exercisesMade.value,
+                        exerciseMade
+                    ]);
+                },
+                error: () => {
+                    this.alertService.alert$.next({
+                        severity: 'error',
+                        message: 'Erreur lors de l\'enregistrement'
+                    });
+                }
+            });
+    }
 
     private redirectWorkoutHome() {
         this.router.navigate(['/', 'workout']);
