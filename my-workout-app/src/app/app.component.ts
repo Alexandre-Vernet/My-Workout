@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
 import { NavbarComponent } from './navbar/navbar.component';
 import { NgClass } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
@@ -10,6 +10,8 @@ import { AlertComponent } from './shared/alert/alert.component';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { environment } from 'src/environments/environment';
 import { RouterOutlet } from '@angular/router';
+import { RestTimeBannerComponent } from "./shared/rest-time-banner/rest-time-banner.component";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: 'app-root',
@@ -18,7 +20,8 @@ import { RouterOutlet } from '@angular/router';
         NavbarComponent,
         NgClass,
         AlertComponent,
-        RouterOutlet
+        RouterOutlet,
+        RestTimeBannerComponent
     ],
     styleUrls: ['app.component.scss']
 
@@ -35,6 +38,7 @@ export class AppComponent implements OnInit {
         private primeng: PrimeNG,
         private readonly themeService: ThemeService,
         private readonly deviceDetection: DeviceDetectionService,
+        private readonly destroyRef: DestroyRef
     ) {
         if (environment.production) {
             // Force refresh PWA
@@ -66,11 +70,12 @@ export class AppComponent implements OnInit {
         this.themeService.loadTheme();
         this.themeService.loadDarkMode();
 
-        this.router.events.pipe(
-            filter(event => event instanceof NavigationEnd)
-        ).subscribe((event: NavigationEnd) => {
-            this.hideNavbar = event.url.includes('auth') || event.url.includes('desktop');
-        });
+        this.router.events
+            .pipe(
+                filter(event => event instanceof NavigationEnd),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe((event: NavigationEnd) => this.hideNavbar = event.url.includes('auth') || event.url.includes('desktop'));
 
 
         if (this.deviceDetection.isDesktop()) {
