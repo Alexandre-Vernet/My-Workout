@@ -5,7 +5,7 @@
     .step-button {
         border-radius: 50%;
         padding: .9em 1.2em;
-        border: #e2e8f0 2.5px solid;
+        border: 2.5px solid var(--step-button-border-color);
         background: transparent;
         text-align: center;
     }
