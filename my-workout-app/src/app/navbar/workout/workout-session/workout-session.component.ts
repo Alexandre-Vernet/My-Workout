@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { BehaviorSubject, filter, map } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
@@ -25,6 +25,8 @@ import { UserExerciseService } from '../../../services/user-exercise.service';
 import { UserExercise } from '../../../../interfaces/User-exercise';
 import { CustomError } from "../../../../interfaces/CustomError";
 import { MuscleGroupEnum } from "../../../../interfaces/MuscleGroupEnum";
+import { DEFAULT_VALUE_REST_TIME, RestTimeService } from "../../../services/rest-time.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: 'app-workout-session',
@@ -37,6 +39,8 @@ import { MuscleGroupEnum } from "../../../../interfaces/MuscleGroupEnum";
 })
 export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
+    protected readonly DEFAULT_VALUE_REST_TIME = DEFAULT_VALUE_REST_TIME;
+
     workout: Workout;
     userExercises: UserExercise[] = [];
     exercisesMade = new BehaviorSubject<History[]>([]);
@@ -48,14 +52,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     weight: number;
     reps: number = 8;
 
-    timer = {
-        startTime: 0,
-        text: '00:00:00',
-        minutes: 0,
-        seconds: 0,
-        centiseconds: 0,
-        interval: null
-    };
+    restTime = DEFAULT_VALUE_REST_TIME;
 
     weightToElastics: Elastic[] = [];
 
@@ -64,9 +61,9 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     swipeStartX = 0;
     swipeEndX = 0;
 
-    private currentTab: number;
     animationDirection: 'left' | 'right' = 'right';
     animationId = 0;
+    private currentTab: number;
 
     constructor(
         private readonly activatedRoute: ActivatedRoute,
@@ -76,6 +73,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         private readonly alertService: AlertService,
         private readonly confirmationService: ConfirmationService,
         private readonly router: Router,
+        private readonly restTimeService: RestTimeService,
+        private readonly destroyRef: DestroyRef
     ) {
     }
 
@@ -84,6 +83,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.workout = null;
         this.getCurrentTabFromUrl();
         this.findExercises();
+
+        this.restTimeService.restTime$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(restTime => this.restTime = restTime);
     }
 
     ngAfterViewInit() {
@@ -124,7 +127,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             return;
         }
 
-        if (this.timer.interval !== null) {
+        if (this.restTime !== DEFAULT_VALUE_REST_TIME) {
             this.stopTimer();
         } else {
             this.startTimer();
@@ -253,45 +256,18 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     private startTimer() {
-        this.timer.startTime = performance.now();
-        this.timer.interval = setInterval(() => {
-            const elapsed = performance.now() - this.timer.startTime;
-
-            const centiseconds = Math.floor(elapsed / 10) % 100;
-            const seconds = Math.floor(elapsed / 1000) % 60;
-            const minutes = Math.floor(elapsed / 60000);
-
-            this.timer.centiseconds = centiseconds;
-            this.timer.seconds = seconds;
-            this.timer.minutes = minutes;
-            this.timer.text = this.formatTimer(this.timer.minutes, this.timer.seconds, this.timer.centiseconds);
-        }, 10);
+        this.restTimeService.startTimer();
     }
 
     private stopTimer() {
         if (this.exercisesMade.getValue().length > 0) {
-            const { minutes, seconds, centiseconds } = this.timer;
-            this.exercisesMade.getValue()[this.exercisesMade.getValue().length - 1].restTime = this.formatTimer(minutes, seconds, centiseconds);
+            const minutes = this.restTime.split(':')[0].trim();
+            const seconds = this.restTime.split(':')[1].trim();
+            const centiseconds = this.restTime.split(':')[2].trim();
+            this.exercisesMade.getValue()[this.exercisesMade.getValue().length - 1].restTime = `${minutes}:${seconds}:${centiseconds}`;
         }
 
-        clearInterval(this.timer.interval);
-        this.timer.interval = null;
-        this.timer = {
-            ...this.timer,
-            minutes: 0,
-            seconds: 0,
-            centiseconds: 0
-        };
-
-        this.timer.text = this.formatTimer(this.timer.minutes, this.timer.seconds, this.timer.centiseconds);
-    }
-
-    /*
-        Format : MM:SS:CS
-        Exemple : 02:05:72
-     */
-    private formatTimer(minutes: number, seconds: number, centiseconds: number) {
-        return `${ minutes.toString().padStart(2, '0') }:${ seconds.toString().padStart(2, '0') }:${ centiseconds.toString().padStart(2, '0') }`;
+        this.restTimeService.stopTimer();
     }
 
 
