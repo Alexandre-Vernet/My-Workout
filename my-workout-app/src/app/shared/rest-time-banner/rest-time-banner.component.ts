@@ -1,5 +1,5 @@
 import { Component, DestroyRef, OnInit } from '@angular/core';
-import { RestTimeService } from "../../services/rest-time.service";
+import { DEFAULT_VALUE_REST_TIME, RestTimeService } from "../../services/rest-time.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Message } from "primeng/message";
 import { NavigationEnd, Router } from "@angular/router";
@@ -14,6 +14,8 @@ import { filter } from "rxjs";
     styleUrl: './rest-time-banner.component.scss',
 })
 export class RestTimeBannerComponent implements OnInit {
+
+    protected readonly DEFAULT_VALUE_REST_TIME = DEFAULT_VALUE_REST_TIME;
 
     showBanner = false;
     restTime = '';

@@ -1,4 +1,4 @@
-@if (showBanner) {
+@if (showBanner && restTime !== DEFAULT_VALUE_REST_TIME) {
     <p-message closable="true"
                (onClose)="stopTimer()"
                severity="info">{{ restTime }}
