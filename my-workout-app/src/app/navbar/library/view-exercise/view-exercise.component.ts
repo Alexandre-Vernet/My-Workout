@@ -57,12 +57,7 @@ export class ViewExerciseComponent implements OnInit {
                     this.imagePath = `/assets/images/${ exercise.exercise.id }.gif`;
                     this.alertService.alert$.next(null);
                 },
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible de récupérer les détails de l\'exercice.'
-                    });
-                }
+                error: () => this.router.navigate(['not-found'])
             });
         this.isIphone = this.deviceDetectionService.isIphone();
     }

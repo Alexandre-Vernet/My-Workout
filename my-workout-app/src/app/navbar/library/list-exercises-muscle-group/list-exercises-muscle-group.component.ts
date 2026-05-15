@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ExerciseService } from '../../../services/exercise.service';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { switchMap } from 'rxjs';
-import { DataView } from 'primeng/dataview';
 import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
 import { Badge } from 'primeng/badge';
@@ -18,7 +17,7 @@ import { ExerciseAddedToWorkout } from "../../../../interfaces/ExerciseAddedToWo
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [DataView, Button, Badge, Skeleton, DragDropModule, RouterLink, Tag, NgClass, UpperCasePipe],
+    imports: [Button, Badge, Skeleton, DragDropModule, RouterLink, Tag, NgClass, UpperCasePipe],
     templateUrl: './list-exercises-muscle-group.component.html',
     styleUrl: './list-exercises-muscle-group.component.scss'
 })
@@ -34,6 +33,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
 
     constructor(
         private readonly route: ActivatedRoute,
+        private readonly router: Router,
         private readonly exerciseService: ExerciseService,
         private readonly userExerciseService: UserExerciseService,
         private readonly alertService: AlertService
@@ -124,12 +124,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
                     };
                     this.alertService.alert$.next(null);
                 },
-                error: (err) => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'afficher la liste des exercises'
-                    });
-                }
+                error: () => this.router.navigate(['not-found'])
             });
     }
 }

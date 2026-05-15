@@ -14,7 +14,7 @@ import { AlertService } from '../../../../services/alert.service';
 import { UserExerciseService } from '../../../../services/user-exercise.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { filter, switchMap, tap } from 'rxjs';
 import { Message } from 'primeng/message';
 import { ExerciseMuscle } from '../../../../../interfaces/ExerciseMuscle';
@@ -58,6 +58,7 @@ export class AddExerciseComponent implements OnInit {
         private readonly confirmationService: ConfirmationService,
         private readonly messageService: MessageService,
         private readonly activatedRoute: ActivatedRoute,
+        private readonly router: Router
     ) {
     }
 
@@ -92,12 +93,7 @@ export class AddExerciseComponent implements OnInit {
                         muscles: selectedMuscles
                     });
                 },
-                error: () => {
-                    this.alertService.alert$.next({
-                        severity: 'error',
-                        message: 'Impossible de récupérer les données'
-                    });
-                }
+                error: () => this.router.navigate(['not-found'])
             });
     }
 
