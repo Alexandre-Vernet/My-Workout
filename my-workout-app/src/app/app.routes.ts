@@ -24,7 +24,6 @@ import { EpaulesComponent } from './muscle-structure/epaules/epaules.component';
 import { BicepsComponent } from './muscle-structure/biceps/biceps.component';
 import { AbdominauxComponent } from './muscle-structure/abdominaux/abdominaux.component';
 import { DosComponent } from './muscle-structure/dos/dos.component';
-import { PrivacyComponent } from './shared/privacy/privacy.component';
 import { AddExerciseComponent } from './navbar/view-profile/admin/add-exercise/add-exercise.component';
 import { defaultHomePageGuard } from './auth/default-home-page.guard';
 import { NotFoundComponent } from "./shared/not-found/not-found.component";
@@ -178,10 +177,6 @@ export const appRoutes: Route[] = [
                 redirectTo: 'login'
             }
         ]
-    },
-    {
-        path: 'privacy',
-        component: PrivacyComponent
     },
     {
         path: 'not-found',
