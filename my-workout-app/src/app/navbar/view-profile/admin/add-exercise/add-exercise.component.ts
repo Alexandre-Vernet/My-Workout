@@ -118,10 +118,12 @@ export class AddExerciseComponent implements OnInit {
                         severity: 'success',
                         message: 'L\'exercice a bien été mis à jour'
                     });
-                    this.showDialogAddExerciseToWorkout(exerciseMuscle.exercise);
+                    if (!exercise.id) {
+                        this.showDialogAddExerciseToWorkout(exerciseMuscle.exercise);
+                    }
                 },
                 error: (err: CustomError) => {
-                    if (err.error.errorCode === 'EXERCISE_NAME_ALREADY_EXIST') {
+                    if (err?.error?.errorCode === 'EXERCISE_NAME_ALREADY_EXIST') {
                         this.formAddExercise.controls.name.setErrors({
                             exerciseNameAlreadyExist: true
                         })

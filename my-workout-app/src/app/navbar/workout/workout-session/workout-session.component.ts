@@ -179,7 +179,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                         this.switchPanel(this.currentExercise);
                     }
                     this.fillInputWeightRepsLastSavedValue();
-                    this.alertService.alert$.next(null);
                 },
                 error: (err: CustomError) => {
                     if (err?.error?.errorCode === 'muscleGroupDoesntExist') {
@@ -313,8 +312,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.workoutService.create(workout, history)
             .subscribe({
                 next: (workout) => {
-                    this.alertService.alert$.next(null);
-
                     this.workout = workout;
                     const lastHistoryId = workout.histories[workout.histories.length - 1].id;
                     const exerciseMade: History = {

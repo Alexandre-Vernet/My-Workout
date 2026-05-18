@@ -24,9 +24,7 @@ export class StatsComponent implements OnInit {
     ngOnInit() {
         this.historyService.getGlobalStatsWithListExercises()
             .subscribe({
-                next: (userExercisesCountTotalWorkout) => {
-                    this.userExercisesCountTotalWorkout = userExercisesCountTotalWorkout;
-                },
+                next: (userExercisesCountTotalWorkout) => this.userExercisesCountTotalWorkout = userExercisesCountTotalWorkout,
                 error: (err) => {
                     this.alertService.alert$.next({
                         severity: 'error',

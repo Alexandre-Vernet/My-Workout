@@ -28,7 +28,6 @@ export class ListMusclesGroupsComponent implements OnInit {
             .subscribe({
                 next: (muscleGroups) => {
                     this.muscleGroups = muscleGroups;
-                    this.alertService.alert$.next(null);
                 },
                 error: (err) => {
                     this.alertService.alert$.next({

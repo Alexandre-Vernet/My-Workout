@@ -55,7 +55,6 @@ export class ViewExerciseComponent implements OnInit {
                 next: (exercise) => {
                     this.exerciseMuscle = exercise;
                     this.imagePath = `/assets/images/${ exercise.exercise.id }.gif`;
-                    this.alertService.alert$.next(null);
                 },
                 error: () => this.router.navigate(['not-found'])
             });
@@ -65,10 +64,7 @@ export class ViewExerciseComponent implements OnInit {
     toggleExerciseWorkout() {
         this.userExerciseService.toggleExerciseWorkout(this.exerciseMuscle.exercise)
             .subscribe({
-                next: () => {
-                    this.exerciseMuscle.addedToWorkout = !this.exerciseMuscle.addedToWorkout;
-                    this.alertService.alert$.next(null);
-                },
+                next: () => this.exerciseMuscle.addedToWorkout = !this.exerciseMuscle.addedToWorkout,
                 error: (err) => {
                     this.alertService.alert$.next({
                         severity: 'error',
