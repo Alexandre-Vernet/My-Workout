@@ -20,7 +20,6 @@ import { User } from '../../../interfaces/User';
 })
 export class ViewProfileComponent implements OnInit {
 
-
     user: User;
 
     constructor(

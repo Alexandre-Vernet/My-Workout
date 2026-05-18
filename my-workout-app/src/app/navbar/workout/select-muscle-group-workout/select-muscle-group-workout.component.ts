@@ -50,7 +50,6 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
         ])
             .subscribe(([muscleGroupExerciseCount, cardioExercises]) => {
                 this.muscleGroupExerciseCount = muscleGroupExerciseCount;
-                this.alertService.alert$.next(null);
                 this.cardioExercises = cardioExercises;
             });
     }

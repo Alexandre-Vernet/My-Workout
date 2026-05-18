@@ -9,9 +9,7 @@ import { Skeleton } from 'primeng/skeleton';
     selector: 'app-graphs',
     templateUrl: './graphs.component.html',
     styleUrl: './graphs.component.scss',
-    imports: [
-        Skeleton
-    ],
+    imports: [Skeleton],
     standalone: true
 })
 export class GraphsComponent implements OnInit {

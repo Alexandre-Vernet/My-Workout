@@ -49,7 +49,6 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             .subscribe({
                 next: () => {
                     this.findAllExercisesByMuscleGroupId();
-                    this.alertService.alert$.next(null);
                 },
                 error: (err) => {
                     this.alertService.alert$.next({
@@ -122,7 +121,6 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
                         ...muscleGroupExercises,
                         exerciseAddedToWorkouts: [...muscleGroupExercises.exerciseAddedToWorkouts]
                     };
-                    this.alertService.alert$.next(null);
                 },
                 error: () => this.router.navigate(['not-found'])
             });

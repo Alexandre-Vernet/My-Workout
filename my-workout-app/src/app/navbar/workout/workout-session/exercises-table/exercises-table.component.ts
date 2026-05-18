@@ -76,19 +76,19 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
 
 
     clickWeight(history: History) {
-        this.editingField = `weight-${history.id}`;
+        this.editingField = `weight-${ history.id }`;
         this.updateWeight = history.weight;
     }
 
     clickReps(history: History) {
-        this.editingField = `reps-${history.id}`;
+        this.editingField = `reps-${ history.id }`;
         this.updateReps = history.reps;
     }
 
     updateHistory(history: History) {
-        if (this.editingField === `weight-${history.id}`) {
+        if (this.editingField === `weight-${ history.id }`) {
             history.weight = this.updateWeight;
-        } else if (this.editingField === `reps-${history.id}`) {
+        } else if (this.editingField === `reps-${ history.id }`) {
             history.reps = this.updateReps;
         }
 

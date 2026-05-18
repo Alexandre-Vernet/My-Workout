@@ -23,7 +23,7 @@ export class NavbarComponent implements AfterViewInit {
         const menuItems = menu.querySelectorAll('.menu__item');
         const menuBorder = menu.querySelector('.menu__border') as HTMLElement;
         const icons = menu.querySelectorAll('.icon') as NodeListOf<HTMLElement>;
-        let activeItem;
+        let activeItem: HTMLElement;
 
         this.router.events
             .pipe(
