@@ -1,6 +1,5 @@
-package com.avernet.myworkoutapi.config;
+package com.avernet.myworkoutapi.auth;
 
-import com.avernet.myworkoutapi.auth.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +34,9 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/exercises/find-all-exercises-by-muscle-group-id/{muscleGroupId}").permitAll()
                     .requestMatchers(HttpMethod.GET, "/exercises/{exerciseId}").permitAll()
                     .requestMatchers(HttpMethod.GET, "/muscle-group").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/password-reset-token/forgot-password").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/password-reset-token/reset-password").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/password-reset-token/is-token-valid").permitAll()
                     .requestMatchers("/error").permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(session -> session

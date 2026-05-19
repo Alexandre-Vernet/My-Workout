@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { Button } from 'primeng/button';
@@ -8,7 +7,7 @@ import { Dialog } from 'primeng/dialog';
 import { FloatLabel } from 'primeng/floatlabel';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
-import { User } from '../../../interfaces/User';
+import { PasswordResetTokenService } from "../password-reset-token.service";
 
 @Component({
     selector: 'app-reset-password',
@@ -31,30 +30,32 @@ export class ResetPasswordComponent implements OnInit {
         confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     });
 
-    user: User;
+    token: string;
 
     isLoading = false;
 
     constructor(
-        private readonly authService: AuthService,
-        private router: Router,
-        private activatedRoute: ActivatedRoute
+        private readonly passwordResetTokenService: PasswordResetTokenService,
+        private readonly router: Router,
+        private readonly activatedRoute: ActivatedRoute
     ) {
     }
 
     ngOnInit() {
         const token = this.activatedRoute.snapshot.queryParamMap.get('token');
-        this.verifyToken(token);
+        this.isTokenValid(token);
+        this.token = token;
     }
 
-    private verifyToken(token: string) {
-        this.authService.verifyToken(token)
+    private isTokenValid(token: string) {
+        this.passwordResetTokenService.isTokenValid(token)
             .subscribe({
-                next: (user) => this.user = user,
-                error: () => {
-                    // TODO Add pop-up : invalid token
-                    this.redirectToSignIn();
-                }
+                next: (isTokenValid) => {
+                    if (!isTokenValid) {
+                        this.redirectToSignIn();
+                    }
+                },
+                error: () => this.redirectToSignIn()
             });
     }
 
@@ -70,21 +71,15 @@ export class ResetPasswordComponent implements OnInit {
                 this.formResetPassword.setErrors({ error: 'Passwords do not match' });
                 return;
             }
-            this.resetPassword();
+            this.resetPassword(newPassword);
         }
         return;
     }
 
-    resetPassword() {
-        const userId = this.user.id;
-        const password = this.formResetPassword.controls.newPassword.value;
-
-        this.authService.updatePassword(userId, password)
+    resetPassword(password: string) {
+        this.passwordResetTokenService.resetPassword(this.token, password)
             .subscribe({
-                next: () => {
-                    this.formResetPassword.reset();
-                    this.router.navigate(['/']);
-                },
+                next: () => this.redirectToSignIn(),
                 error: (err) => {
                     this.formResetPassword.setErrors({ error: err.error.message ?? 'Une erreur s\'est produite' });
                     this.isLoading = false;
