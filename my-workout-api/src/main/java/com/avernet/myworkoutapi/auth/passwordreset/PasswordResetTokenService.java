@@ -30,7 +30,7 @@ public class PasswordResetTokenService {
 
 
     @Transactional
-    Map<String, String> generateLinkResetPassword(String email) {
+    public Map<String, String> generateLinkResetPassword(String email) {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         String token = UUID.randomUUID().toString();
@@ -44,19 +44,17 @@ public class PasswordResetTokenService {
 
         passwordResetTokenRepository.save(passwordResetTokenEntity);
 
-        String linkResetPassword = new StringBuilder()
-            .append(allowedOrigin)
-            .append("/auth/")
-            .append("reset-password")
-            .append("?token=")
-            .append(token)
-            .toString();
+        String linkResetPassword = allowedOrigin +
+            "/auth/" +
+            "reset-password" +
+            "?token=" +
+            token;
 
         return Map.of("linkResetPassword", linkResetPassword);
     }
 
     @Transactional
-    void resetPassword(ResetPasswordTokenPassword resetPasswordTokenPassword) {
+    public void resetPassword(ResetPasswordTokenPassword resetPasswordTokenPassword) {
         PasswordResetTokenEntity passwordResetTokenEntity = passwordResetTokenRepository.findByToken(resetPasswordTokenPassword.token());
         passwordResetTokenEntity.setUsed(true);
 
@@ -66,8 +64,8 @@ public class PasswordResetTokenService {
     }
 
     @Transactional(readOnly = true)
-    boolean isTokenValid(String token) {
+    public boolean isTokenValid(String token) {
         PasswordResetTokenEntity passwordResetToken = passwordResetTokenRepository.findByToken(token);
-        return passwordResetToken != null && passwordResetToken.getUsed() == false && passwordResetToken.getExpirationDate().isAfter(LocalDateTime.now());
+        return passwordResetToken != null && passwordResetToken.getUsed() == false && LocalDateTime.now().isBefore(passwordResetToken.getExpirationDate());
     }
 }
