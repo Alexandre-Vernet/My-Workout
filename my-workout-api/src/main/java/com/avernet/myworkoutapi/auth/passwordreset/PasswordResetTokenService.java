@@ -68,4 +68,9 @@ public class PasswordResetTokenService {
         PasswordResetTokenEntity passwordResetToken = passwordResetTokenRepository.findByToken(token);
         return passwordResetToken != null && passwordResetToken.getUsed() == false && LocalDateTime.now().isBefore(passwordResetToken.getExpirationDate());
     }
+
+    @Transactional
+    public void deleteExpiredToken() {
+        passwordResetTokenRepository.deleteByExpirationDateBefore(LocalDateTime.now());
+    }
 }

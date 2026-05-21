@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -154,5 +155,43 @@ public class PasswordResetTokenServiceTest {
         repository.save(passwordResetTokenEntity);
 
         assertFalse(service.isTokenValid(token));
+    }
+
+    @Test
+    void deleteExpiredToken_shouldDeleteExpiredToken() {
+        String token = "token";
+
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        PasswordResetTokenEntity passwordResetTokenEntity = PasswordResetTokenEntity.builder()
+            .token(token)
+            .user(userEntity)
+            .used(true)
+            .expirationDate(LocalDateTime.now())
+            .build();
+        repository.save(passwordResetTokenEntity);
+
+        service.deleteExpiredToken();
+
+        PasswordResetTokenEntity passwordResetToken = repository.findByToken(token);
+        assertNull(passwordResetToken);
+    }
+
+    @Test
+    void deleteExpiredToken_shouldNotDeleteExpiredToken() {
+        String token = "token";
+
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        PasswordResetTokenEntity passwordResetTokenEntity = PasswordResetTokenEntity.builder()
+            .token(token)
+            .user(userEntity)
+            .used(true)
+            .expirationDate(LocalDateTime.now().plusMinutes(30L))
+            .build();
+        repository.save(passwordResetTokenEntity);
+
+        service.deleteExpiredToken();
+
+        PasswordResetTokenEntity passwordResetToken = repository.findByToken(token);
+        assertNotNull(passwordResetToken);
     }
 }
