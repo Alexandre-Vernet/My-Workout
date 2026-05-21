@@ -18,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -48,9 +47,8 @@ public class PasswordResetTokenServiceTest {
     void generateLinkResetPassword_shouldReturnLinkReset() {
         String email = "user1@gmail.com";
 
-        Map<String, String> stringStringMap = service.generateLinkResetPassword(email);
+       String stringStringMap = service.generateLinkResetPassword(email);
         assertNotNull(stringStringMap);
-        assertNotNull(stringStringMap.get("linkResetPassword"));
     }
 
     @Test
