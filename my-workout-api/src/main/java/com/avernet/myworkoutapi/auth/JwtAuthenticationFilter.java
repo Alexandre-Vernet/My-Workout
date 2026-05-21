@@ -28,7 +28,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         if (path.startsWith("/auth/refresh") ||
             path.startsWith("/auth/login") ||
-            path.startsWith("/auth/register")) {
+            path.startsWith("/auth/register") ||
+            path.startsWith("/password-reset-token")) {
             filterChain.doFilter(request, response);
             return;
         }

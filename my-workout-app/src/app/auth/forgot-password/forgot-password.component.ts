@@ -7,10 +7,10 @@ import { Message } from 'primeng/message';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import emailjs from '@emailjs/browser';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../auth.service';
 import { AlertService } from '../../services/alert.service';
 import { Subject } from 'rxjs';
 import { NgClass } from '@angular/common';
+import { PasswordResetTokenService } from "../password-reset-token.service";
 
 @Component({
     selector: 'app-forgot-password',
@@ -29,22 +29,25 @@ export class ForgotPasswordComponent {
     isLoading = false;
 
     constructor(
-        private readonly authService: AuthService,
+        private readonly passwordResetTokenService: PasswordResetTokenService,
         private readonly alertService: AlertService
     ) {
     }
 
-    resetPassword() {
+    forgotPassword() {
         this.isLoading = true;
 
         const email = this.email.value;
+        const { appName, logoUrl } = environment;
 
-        this.authService.sendEmailForgotPassword(email)
+        this.passwordResetTokenService.forgotPassword(email)
             .subscribe({
                 next: ({ linkResetPassword }) => {
                     emailjs.send(environment.EMAIL_JS.SERVICE_ID, environment.EMAIL_JS.TEMPLATE_ID, {
                             linkResetPassword,
-                            email
+                            email,
+                            appName,
+                            logoUrl
                         },
                         environment.EMAIL_JS.PUBLIC_KEY
                     ).then(

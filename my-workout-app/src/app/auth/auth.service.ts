@@ -62,26 +62,6 @@ export class AuthService {
             );
     }
 
-    sendEmailForgotPassword(email: string) {
-        return this.http.post<{ linkResetPassword: string }>(`${ this.authUrl }/send-email-reset-password`, { email });
-    }
-
-    updatePassword(userId: number, password: string) {
-        return this.http.put<{
-            user: User,
-            accessToken: string
-        }>(`${ this.authUrl }/reset-password/${ userId }`, { password })
-            .pipe(
-                tap(({ accessToken }) => {
-                    localStorage.setItem('access-token', accessToken);
-                })
-            );
-    }
-
-    verifyToken(token: string) {
-        return this.http.post<User>(`${ this.authUrl }/verify-token`, { token });
-    }
-
     deleteAccount() {
         return this.http.delete<void>(`${ this.authUrl }`);
     }
