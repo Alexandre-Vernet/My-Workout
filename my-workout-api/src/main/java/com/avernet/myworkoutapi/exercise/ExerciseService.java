@@ -6,6 +6,7 @@ import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscle;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleAddedToWorkout;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleEntity;
+import com.avernet.myworkoutapi.gemini.GeminiService;
 import com.avernet.myworkoutapi.muscle.MuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleMapper;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
@@ -16,6 +17,7 @@ import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
+import com.google.genai.errors.ClientException;
 import jakarta.annotation.Resource;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class ExerciseService {
+
+    @Resource
+    GeminiService geminiService;
 
     @Resource
     AuthService authService;
@@ -132,6 +137,20 @@ public class ExerciseService {
         );
     }
 
+    public String generateExerciseDescription(String exerciseName) {
+        String prompt = getExerciseDescriptionTemplate(exerciseName);
+        String response;
+        try {
+            response = geminiService.generatePrompt(prompt);
+            if (ErrorCodeEnum.EXERCISE_NOT_FOUND.toString().equals(response)) {
+                throw new ExerciseNotFoundException();
+            }
+        } catch (ClientException e) {
+            throw new ApiException(ErrorCodeEnum.QUOTA_EXCEEDED, "Limite de requêtes atteinte", HttpStatus.TOO_MANY_REQUESTS);
+        }
+        return response;
+    }
+
     @Transactional
     public Exercise createOrUpdateExercise(ExerciseMuscle exerciseMuscle) {
         if (exerciseMuscle.exercise().getId() == null) {
@@ -172,5 +191,43 @@ public class ExerciseService {
             exerciseAddedToWorkoutMapper.toDtoList(exerciseAddedToWorkoutEntityList),
             muscleMapper.toDtoList(muscleList.stream().sorted(Comparator.comparing(MuscleEntity::getName)).toList())
         );
+    }
+
+    private String getExerciseDescriptionTemplate(String exerciseName) {
+        String prompt = """
+            Tu es un expert fitness.
+
+            Génère une description concise pour l'exercice suivant :
+            "%s"
+
+            Si cet exercice n'existe pas dans le domaine du fitness/musculation,
+            réponds UNIQUEMENT :
+            EXERCISE_NOT_FOUND
+
+            Inspire-toi du style des descriptions suivantes :
+            """
+            .formatted(exerciseName)
+            .replace("\n", " ");
+
+        String endPrompt = """
+            Contraintes :
+            - sois concis
+            - aucune mise en forme
+            - aucun retour à la ligne
+            - aucun texte en gras
+            - aucun tiret
+            - réponse directe uniquement
+            """;
+
+        List<String> descriptionList = exerciseRepository.findAllById(List.of(1L, 6L, 19L))
+            .stream()
+            .map(ExerciseEntity::getDescription)
+            .toList();
+
+        StringBuilder stringBuilder = new StringBuilder(prompt);
+        descriptionList.forEach(stringBuilder::append);
+        stringBuilder.append(endPrompt);
+
+        return stringBuilder.toString();
     }
 }

@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("password-reset-token")
 public class PasswordResetTokenController {
@@ -18,7 +16,7 @@ public class PasswordResetTokenController {
     PasswordResetTokenService passwordResetTokenService;
 
     @GetMapping("forgot-password")
-    Map<String, String> generateLinkResetPassword(@RequestParam("email") String email) {
+    String generateLinkResetPassword(@RequestParam("email") String email) {
         return passwordResetTokenService.generateLinkResetPassword(email);
     }
 

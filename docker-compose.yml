@@ -29,6 +29,7 @@ services:
       - logging.level.org.springframework.security=
       - server.port=80
       - server.address=
+      - gemini.api.key=
     networks:
       - my-workout-network
     ports:

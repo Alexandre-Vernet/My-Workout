@@ -15,7 +15,8 @@ export class PasswordResetTokenService {
     }
 
     forgotPassword(email: string) {
-        return this.http.get<{ linkResetPassword: string }>(`${ this.passwordResetTokenUrl }/forgot-password`, {
+        return this.http.get(`${ this.passwordResetTokenUrl }/forgot-password`, {
+            responseType: 'text',
             params: { email }
         });
     }

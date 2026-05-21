@@ -130,6 +130,11 @@
             <version>4.1.0-RC1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.genai</groupId>
+            <artifactId>google-genai</artifactId>
+            <version>0.7.0</version>
+        </dependency>
     </dependencies>
 
 	<build>
