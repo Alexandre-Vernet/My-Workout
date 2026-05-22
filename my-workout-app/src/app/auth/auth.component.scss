@@ -107,6 +107,7 @@ $input-border: #D4D3E8;
 }
 
 .login__input {
+    color: var(--login-text-color);
     border: none;
     border-bottom: 2px solid $border-color;
     background: none;
