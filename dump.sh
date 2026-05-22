@@ -50,85 +50,45 @@ PASSWORD=
 # File config
 DUMP_TIMESTAMP=$(date +"%Y%m%d%H%M")
 FILENAME="dump-$DATABASE-$DUMP_TIMESTAMP.sql"
-FILEPATH_HOST="/tmp/$FILENAME"
-FILEPATH_CONTAINER="/tmp/$FILENAME"
+FILEPATH="/tmp/$FILENAME"
 
-# Google OAuth & Drive
-CLIENT_ID=
-CLIENT_SECRET=
-REFRESH_TOKEN=
-FOLDER_ID=
+# RClone
+RCLONE_REMOTE=
 
 # Email
 EMAIL=
-EMAIL_SUCCESS="La base $DATABASE a été sauvegardée sur Google Drive
-https://drive.google.com/drive/folders/$FOLDER_ID"
-
-EMAIL_FAIL="Une erreur s'est produite lors du backup de la base $DATABASE"
+EMAIL_SUCCESS="La base $DATABASE a été sauvegardée sur Google Drive"
+EMAIL_DUMP_FAIL_SUBJECT="Erreur sauvegarde base de données $DATABASE"
 
 
-# === STEP 1: Dump database inside the container ===
-echo "🔄 Dump database ..."
-docker exec -e PGPASSWORD="$PASSWORD" "$CONTAINER_NAME" pg_dump \
-  -U "$USERNAME" -F c -f "$FILEPATH_CONTAINER" -n public "$DATABASE"
+echo "🔄 Dump database..."
 
-if [ $? -ne 0 ]; then
-  echo "❌ Dump failed"
-  echo "$EMAIL_FAIL" | mailx -s "Erreur lors du dump de la base de données"
+docker exec -e PGPASSWORD="$PASSWORD" "$CONTAINER_NAME" \
+  pg_dump -U "$USERNAME" -n public "$DATABASE" > "$FILEPATH"
+
+if [ ! -s "$FILEPATH" ]; then
+  echo "❌ Dump failed (file missing or empty)"
+  echo "Impossible de dump la base de données" | mailx -s "$EMAIL_DUMP_FAIL_SUBJECT" "$EMAIL"
   exit 1
 fi
 
-# === STEP 2: Copy file to host ===
-echo "📁 Copy dump on host"
-docker cp "$CONTAINER_NAME:$FILEPATH_CONTAINER" "$FILEPATH_HOST"
 
-if [ $? -ne 0 ]; then
-  echo "❌ Copy failed"
-  echo "$EMAIL_FAIL" | mailx -s "Erreur copie du dump vers l'hote"
+echo "📤 Upload to Google Drive..."
+
+if ! rclone copy "$FILEPATH" "$RCLONE_REMOTE"; then
+  echo "❌ Upload failed"
+  echo "Erreur lors de l'upload sur Google Drive" | mailx -s "$EMAIL_DUMP_FAIL_SUBJECT" "$EMAIL"
   exit 1
 fi
 
-docker exec "$CONTAINER_NAME" rm "$FILEPATH_CONTAINER"
+
+echo "🧹 Cleaning local file..."
+rm -f "$FILEPATH"
 
 
-# === STEP 3: Get Google access token ===
-echo "🔑 Retrieving OAuth token ..."
-TOKEN_RESPONSE=$(curl -s --request POST \
-  --url https://oauth2.googleapis.com/token \
-  --header "Content-Type: application/x-www-form-urlencoded" \
-  --data "client_id=$CLIENT_ID" \
-  --data "client_secret=$CLIENT_SECRET" \
-  --data "refresh_token=$REFRESH_TOKEN" \
-  --data "grant_type=refresh_token")
-
-ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
-if [ "$ACCESS_TOKEN" == "null" ] || [ -z "$ACCESS_TOKEN" ]; then
-  echo "❌ Fail get token"
-  echo "$EMAIL_FAIL" | mailx -s "Erreur récupération google access token"
-  exit 1
-fi
-
-# === STEP 4: Upload to Google Drive ===
-echo "📤 Uploading dump to Google Drive..."
-
-UPLOAD_RESPONSE=$(curl -s -X POST \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
-  -F "metadata={\"name\": \"$FILENAME\", \"parents\": [\"$FOLDER_ID\"]};type=application/json;charset=UTF-8" \
-  -F "file=@$FILEPATH_HOST;type=application/octet-stream" \
-  "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart")
+echo "🧹 Cleaning old backups..."
+rclone delete "$RCLONE_REMOTE" --min-age 7d
 
 
-FILE_ID=$(echo "$UPLOAD_RESPONSE" | jq -r '.id')
-if [ "$FILE_ID" == "null" ] || [ -z "$FILE_ID" ]; then
-  echo "❌ Fail upload"
-  echo "$EMAIL_FAIL" | mailx -s "Erreur upload Google Drive"
-  exit 1
-fi
-echo "✅ Upload success, ID : $FILE_ID"
-
-
-# === STEP 5: Send confirmation email ===
 echo "📧 Sending email confirmation..."
-
-
 echo "$EMAIL_SUCCESS" | mailx -s "Sauvegarde effectuée" "$EMAIL"
