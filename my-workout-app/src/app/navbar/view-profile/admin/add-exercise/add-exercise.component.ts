@@ -41,12 +41,14 @@ import { MuscleDropdown } from "../../../../../interfaces/MuscleDropdown";
 export class AddExerciseComponent implements OnInit {
 
     formAddExercise = new FormGroup({
-        id: new FormControl(null),
-        name: new FormControl(null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
-        description: new FormControl(null, [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]),
-        isSmartWorkout: new FormControl(false, Validators.required),
+        id: new FormControl<number>(null),
+        name: new FormControl<string>(null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
+        description: new FormControl<string>(null, [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]),
+        isSmartWorkout: new FormControl<boolean>(false, Validators.required),
         muscles: new FormControl<Muscle[]>(null, Validators.required)
     });
+
+    loadingDescription = false;
 
     musclesDropdown: MuscleDropdown[] = [];
 
@@ -95,6 +97,34 @@ export class AddExerciseComponent implements OnInit {
                 },
                 error: () => this.router.navigate(['not-found'])
             });
+    }
+
+    generateExerciseDescription() {
+        this.loadingDescription = true;
+        const exerciseName = this.formAddExercise.controls.name.value;
+        this.exerciseService.generateExerciseDescription(exerciseName)
+            .subscribe({
+                next: ({ description }) => {
+                    this.loadingDescription = false;
+                    this.formAddExercise.controls.description.setValue(description);
+                },
+                error: (err: CustomError) => {
+                    this.loadingDescription = false;
+                    if (err.error.errorCode === 'QUOTA_EXCEEDED') {
+                        this.formAddExercise.controls.description.setErrors({
+                            quotaExceeded: true
+                        });
+                    } else if (err.error.errorCode === 'EXERCISE_NOT_FOUND') {
+                        this.formAddExercise.controls.description.setErrors({
+                            exerciseNotFound: true
+                        });
+                    } else {
+                        this.formAddExercise.controls.description.setErrors({
+                            unknownError: true
+                        });
+                    }
+                }
+            })
     }
 
     createExercise() {

@@ -40,6 +40,14 @@ export class ExerciseService {
         return this.http.post<Exercise>(`${ this.exerciseUrl }`, exerciseMuscle);
     }
 
+    generateExerciseDescription(exerciseName: string) {
+        return this.http.get<{ description: string }>(`${ this.exerciseUrl }/generate-description`, {
+            params: {
+                exerciseName
+            }
+        });
+    }
+
 
     private findAllExercisesByUserAndMuscleGroupId(muscleGroupId: number) {
         return this.http.get<MuscleGroupExercises>(`${ this.exerciseUrl }/find-all-exercises-by-user-muscle-group-id/${ muscleGroupId }`);

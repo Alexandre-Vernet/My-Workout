@@ -15,13 +15,13 @@ export class PasswordResetTokenService {
     }
 
     forgotPassword(email: string) {
-        return this.http.get<{ linkResetPassword: string }>(`${ this.passwordResetTokenUrl }/forgot-password`, {
+        return this.http.get<{ link: string }>(`${ this.passwordResetTokenUrl }/forgot-password`, {
             params: { email }
         });
     }
 
     isTokenValid(token: string) {
-        return this.http.get<boolean>(`${ this.passwordResetTokenUrl }/is-token-valid`, {
+        return this.http.get<boolean>(`${ this.passwordResetTokenUrl }/valid`, {
             params: {
                 token
             }

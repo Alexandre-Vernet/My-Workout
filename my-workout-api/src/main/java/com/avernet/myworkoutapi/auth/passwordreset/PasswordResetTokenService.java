@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -30,7 +29,7 @@ public class PasswordResetTokenService {
 
 
     @Transactional
-    public Map<String, String> generateLinkResetPassword(String email) {
+    public LinkResetPasswordResponse generateLinkResetPassword(String email) {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         String token = UUID.randomUUID().toString();
@@ -44,13 +43,13 @@ public class PasswordResetTokenService {
 
         passwordResetTokenRepository.save(passwordResetTokenEntity);
 
-        String linkResetPassword = allowedOrigin +
+        String link = allowedOrigin +
             "/auth/" +
             "reset-password" +
             "?token=" +
             token;
 
-        return Map.of("linkResetPassword", linkResetPassword);
+        return new LinkResetPasswordResponse(link);
     }
 
     @Transactional

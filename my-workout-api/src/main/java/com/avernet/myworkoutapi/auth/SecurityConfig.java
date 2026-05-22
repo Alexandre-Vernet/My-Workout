@@ -36,7 +36,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/muscle-group").permitAll()
                     .requestMatchers(HttpMethod.GET, "/password-reset-token/forgot-password").permitAll()
                     .requestMatchers(HttpMethod.POST, "/password-reset-token/reset-password").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/password-reset-token/is-token-valid").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/password-reset-token/valid").permitAll()
                     .requestMatchers("/error").permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(session -> session

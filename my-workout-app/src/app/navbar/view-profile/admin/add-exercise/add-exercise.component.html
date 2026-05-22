@@ -46,9 +46,9 @@
         </div>
 
         <!--Description-->
-        <div>
+        <div class="field-container">
             <p-floatlabel variant="on">
-                <textarea pTextarea id="over_label" formControlName="description" rows="10" cols="40"
+                <textarea pTextarea id="over_label" formControlName="description" rows="20" cols="40"
                           style="resize: none" class="h-full"></textarea>
                 <label for="on_label">Description</label>
             </p-floatlabel>
@@ -73,6 +73,35 @@
                     500 caractères max.
                 </p-message>
             }
+            @if (formAddExercise.controls.description.hasError('quotaExceeded')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    Limite de requêtes atteinte
+                </p-message>
+            }
+            @if (formAddExercise.controls.description.hasError('exerciseNotFound')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    Veuillez ajuster le nom de l'exercice
+                </p-message>
+            }
+            @if (formAddExercise.controls.description.hasError('unknownError')) {
+                <p-message
+                    severity="error"
+                    variant="simple" size="small">
+                    Une erreur s'est produite
+                </p-message>
+            }
+
+            <div class="mt-2">
+                <p-button
+                    [disabled]="formAddExercise.controls.name.invalid || formAddExercise.controls.name.value.trim() === ''"
+                    [loading]="loadingDescription"
+                    size="small"
+                    severity="primary" label="Générer par IA" (click)="generateExerciseDescription()"></p-button>
+            </div>
         </div>
 
         <!--Smart workout-->
@@ -86,8 +115,9 @@
         <!--Muscles-->
         <div class="card flex justify-center mt-3">
             <div>
-                <p-multiselect [options]="musclesDropdown" [group]="true" formControlName="muscles" placeholder="Muscles ciblés"
-                                optionLabel="name"
+                <p-multiselect [options]="musclesDropdown" [group]="true" formControlName="muscles"
+                               placeholder="Muscles ciblés"
+                               optionLabel="name"
                                scrollHeight="250px" display="chip" styleClass="w-full md:w-80">
                 </p-multiselect>
                 @if (formAddExercise.controls.muscles.touched && formAddExercise.controls.muscles.hasError('required')) {

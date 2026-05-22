@@ -1,5 +1,6 @@
 package com.avernet.myworkoutapi;
 
+import com.avernet.myworkoutapi.auth.passwordreset.LinkResetPasswordResponse;
 import com.avernet.myworkoutapi.auth.passwordreset.PasswordResetTokenEntity;
 import com.avernet.myworkoutapi.auth.passwordreset.PasswordResetTokenRepository;
 import com.avernet.myworkoutapi.auth.passwordreset.PasswordResetTokenService;
@@ -18,7 +19,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -48,9 +48,9 @@ public class PasswordResetTokenServiceTest {
     void generateLinkResetPassword_shouldReturnLinkReset() {
         String email = "user1@gmail.com";
 
-        Map<String, String> stringStringMap = service.generateLinkResetPassword(email);
-        assertNotNull(stringStringMap);
-        assertNotNull(stringStringMap.get("linkResetPassword"));
+        LinkResetPasswordResponse linkResetPasswordResponse = service.generateLinkResetPassword(email);
+        assertNotNull(linkResetPasswordResponse);
+        assertNotNull(linkResetPasswordResponse.link());
     }
 
     @Test
