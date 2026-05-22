@@ -104,7 +104,7 @@ export class AddExerciseComponent implements OnInit {
         const exerciseName = this.formAddExercise.controls.name.value;
         this.exerciseService.generateExerciseDescription(exerciseName)
             .subscribe({
-                next: (description: string) => {
+                next: ({ description }) => {
                     this.loadingDescription = false;
                     this.formAddExercise.controls.description.setValue(description);
                 },

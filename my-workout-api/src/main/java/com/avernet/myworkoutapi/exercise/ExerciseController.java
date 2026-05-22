@@ -44,7 +44,7 @@ public class ExerciseController {
     }
 
     @GetMapping("/generate-description")
-    String generateExerciseDescription(@RequestParam("exerciseName") String exerciseName) {
+    ExerciseDescriptionResponse generateExerciseDescription(@RequestParam("exerciseName") String exerciseName) {
         return exerciseService.generateExerciseDescription(exerciseName);
     }
 

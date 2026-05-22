@@ -41,9 +41,9 @@ export class ExerciseService {
     }
 
     generateExerciseDescription(exerciseName: string) {
-        return this.http.get(`${ this.exerciseUrl }/generate-description`, {
+        return this.http.get<{ description: string }>(`${ this.exerciseUrl }/generate-description`, {
             params: {
-                exerciseName: exerciseName
+                exerciseName
             }
         });
     }

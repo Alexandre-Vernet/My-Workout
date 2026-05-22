@@ -137,7 +137,7 @@ public class ExerciseService {
         );
     }
 
-    public String generateExerciseDescription(String exerciseName) {
+    public ExerciseDescriptionResponse generateExerciseDescription(String exerciseName) {
         String prompt = getExerciseDescriptionTemplate(exerciseName);
         String response;
         try {
@@ -148,7 +148,7 @@ public class ExerciseService {
         } catch (ClientException e) {
             throw new ApiException(ErrorCodeEnum.QUOTA_EXCEEDED, "Limite de requêtes atteinte", HttpStatus.TOO_MANY_REQUESTS);
         }
-        return response;
+        return new ExerciseDescriptionResponse(response);
     }
 
     @Transactional
