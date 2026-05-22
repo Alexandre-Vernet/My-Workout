@@ -24,7 +24,7 @@ export class RestTimeBannerComponent implements OnInit {
     constructor(
         private readonly router: Router,
         private readonly restTimeService: RestTimeService,
-        private readonly destroyRef: DestroyRef
+        private readonly destroyRef: DestroyRef,
     ) {
     }
 
@@ -43,5 +43,16 @@ export class RestTimeBannerComponent implements OnInit {
 
     protected stopTimer() {
         this.restTimeService.stopTimer();
+    }
+
+    protected redirectToWorkout() {
+        const info = this.restTimeService.getRestTimeInfo();
+        if (info) {
+            this.router.navigate(['workout', 'workout-session', info.muscleGroup], {
+                queryParams: {
+                    tab: info.tab
+                }
+            })
+        }
     }
 }

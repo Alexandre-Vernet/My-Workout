@@ -130,6 +130,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         if (this.restTime !== DEFAULT_VALUE_REST_TIME) {
             this.stopTimer();
         } else {
+            this.restTimeService.saveRestTimeInfo({
+                muscleGroup: this.muscleGroupEnum,
+                tab: this.currentTab
+            });
             this.startTimer();
             this.createWorkout();
         }
@@ -263,7 +267,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             const minutes = this.restTime.split(':')[0].trim();
             const seconds = this.restTime.split(':')[1].trim();
             const centiseconds = this.restTime.split(':')[2].trim();
-            this.exercisesMade.getValue()[this.exercisesMade.getValue().length - 1].restTime = `${minutes}:${seconds}:${centiseconds}`;
+            this.exercisesMade.getValue()[this.exercisesMade.getValue().length - 1].restTime = `${ minutes }:${ seconds }:${ centiseconds }`;
         }
 
         this.restTimeService.stopTimer();
