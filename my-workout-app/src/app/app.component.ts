@@ -1,15 +1,12 @@
 import { Component, DestroyRef, OnInit } from '@angular/core';
 import { NavbarComponent } from './navbar/navbar.component';
-import { NgClass } from '@angular/common';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { PrimeNG } from 'primeng/config';
 import { ThemeService } from './shared/theme/theme.service';
-import { DeviceDetectionService } from './services/device-detection.service';
 import { filter } from 'rxjs';
 import { AlertComponent } from './shared/alert/alert.component';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { environment } from 'src/environments/environment';
-import { RouterOutlet } from '@angular/router';
 import { RestTimeBannerComponent } from "./shared/rest-time-banner/rest-time-banner.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
@@ -18,7 +15,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     templateUrl: 'app.component.html',
     imports: [
         NavbarComponent,
-        NgClass,
         AlertComponent,
         RouterOutlet,
         RestTimeBannerComponent
@@ -29,7 +25,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 export class AppComponent implements OnInit {
 
     hideNavbar = false;
-    isDesktop: boolean = false;
 
     constructor(
         private readonly sw: SwPush,
@@ -37,7 +32,6 @@ export class AppComponent implements OnInit {
         private router: Router,
         private primeng: PrimeNG,
         private readonly themeService: ThemeService,
-        private readonly deviceDetection: DeviceDetectionService,
         private readonly destroyRef: DestroyRef
     ) {
         if (environment.production) {
@@ -76,11 +70,5 @@ export class AppComponent implements OnInit {
                 takeUntilDestroyed(this.destroyRef)
             )
             .subscribe((event: NavigationEnd) => this.hideNavbar = event.url.includes('auth') || event.url.includes('desktop'));
-
-
-        if (this.deviceDetection.isDesktop()) {
-            this.isDesktop = true;
-            this.router.navigate(['desktop']);
-        }
     }
 }
