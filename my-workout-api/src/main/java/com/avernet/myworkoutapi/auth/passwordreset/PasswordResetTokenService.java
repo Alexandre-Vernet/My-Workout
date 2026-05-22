@@ -29,7 +29,7 @@ public class PasswordResetTokenService {
 
 
     @Transactional
-    public String generateLinkResetPassword(String email) {
+    public LinkResetPasswordResponse generateLinkResetPassword(String email) {
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         String token = UUID.randomUUID().toString();
@@ -43,11 +43,13 @@ public class PasswordResetTokenService {
 
         passwordResetTokenRepository.save(passwordResetTokenEntity);
 
-        return allowedOrigin +
+        String link = allowedOrigin +
             "/auth/" +
             "reset-password" +
             "?token=" +
             token;
+
+        return new LinkResetPasswordResponse(link);
     }
 
     @Transactional

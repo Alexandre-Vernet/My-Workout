@@ -16,11 +16,11 @@ public class PasswordResetTokenController {
     PasswordResetTokenService passwordResetTokenService;
 
     @GetMapping("forgot-password")
-    String generateLinkResetPassword(@RequestParam("email") String email) {
+    LinkResetPasswordResponse generateLinkResetPassword(@RequestParam("email") String email) {
         return passwordResetTokenService.generateLinkResetPassword(email);
     }
 
-    @GetMapping("is-token-valid")
+    @GetMapping("valid")
     boolean isTokenValid(@RequestParam("token") String token) {
         return passwordResetTokenService.isTokenValid(token);
     }

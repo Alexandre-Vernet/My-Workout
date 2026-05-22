@@ -1,5 +1,6 @@
 package com.avernet.myworkoutapi;
 
+import com.avernet.myworkoutapi.auth.passwordreset.LinkResetPasswordResponse;
 import com.avernet.myworkoutapi.auth.passwordreset.PasswordResetTokenEntity;
 import com.avernet.myworkoutapi.auth.passwordreset.PasswordResetTokenRepository;
 import com.avernet.myworkoutapi.auth.passwordreset.PasswordResetTokenService;
@@ -47,8 +48,9 @@ public class PasswordResetTokenServiceTest {
     void generateLinkResetPassword_shouldReturnLinkReset() {
         String email = "user1@gmail.com";
 
-       String stringStringMap = service.generateLinkResetPassword(email);
-        assertNotNull(stringStringMap);
+        LinkResetPasswordResponse linkResetPasswordResponse = service.generateLinkResetPassword(email);
+        assertNotNull(linkResetPasswordResponse);
+        assertNotNull(linkResetPasswordResponse.link());
     }
 
     @Test

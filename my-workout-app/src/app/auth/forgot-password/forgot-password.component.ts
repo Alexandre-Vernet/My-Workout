@@ -42,9 +42,9 @@ export class ForgotPasswordComponent {
 
         this.passwordResetTokenService.forgotPassword(email)
             .subscribe({
-                next: (linkResetPassword) => {
+                next: ({ link }) => {
                     emailjs.send(environment.EMAIL_JS.SERVICE_ID, environment.EMAIL_JS.TEMPLATE_ID, {
-                            linkResetPassword,
+                            linkResetPassword: link,
                             email,
                             appName,
                             logoUrl
