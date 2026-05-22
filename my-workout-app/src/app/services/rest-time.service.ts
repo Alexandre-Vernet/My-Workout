@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from "rxjs";
+import { RestTimeInfo } from "../../interfaces/RestTimeInfo";
 
 export const DEFAULT_VALUE_REST_TIME = '00:00:00';
 
@@ -19,6 +20,16 @@ export class RestTimeService {
         centiseconds: 0,
         interval: null
     };
+
+    private restTimeInfo: RestTimeInfo;
+
+    saveRestTimeInfo(restTimeInfo: RestTimeInfo) {
+        this.restTimeInfo = restTimeInfo;
+    }
+
+    getRestTimeInfo() {
+        return this.restTimeInfo;
+    }
 
     startTimer() {
         this.timer.startTime = performance.now();

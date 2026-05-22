@@ -1,7 +1,7 @@
 @if (showBanner && restTime !== DEFAULT_VALUE_REST_TIME) {
     <p-message closable="true"
+               (click)="redirectToWorkout()"
                (onClose)="stopTimer()"
                severity="info">{{ restTime }}
     </p-message>
-
 }
