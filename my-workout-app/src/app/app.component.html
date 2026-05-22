@@ -4,7 +4,5 @@
     <div class="padding-bottom-95">
         <router-outlet></router-outlet>
     </div>
-    <app-navbar [ngClass]="{
-            'display-none': hideNavbar || isDesktop
-        }"></app-navbar>
+    <app-navbar [class.display-none]="hideNavbar"></app-navbar>
 </div>

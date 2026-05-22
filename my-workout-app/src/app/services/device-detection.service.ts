@@ -11,12 +11,4 @@ export class DeviceDetectionService {
             typeof window !== 'undefined' &&
             !window.matchMedia('(pointer: fine)').matches;
     }
-
-    isDesktop() {
-        return !this.isIphone() &&
-            /Windows|Macintosh|Linux/.test(navigator.userAgent) &&
-            navigator.maxTouchPoints === 0 &&
-            typeof window !== 'undefined' &&
-            window.matchMedia('(pointer: fine)').matches;
-    }
 }
