@@ -98,6 +98,7 @@ public class HistoryServiceTest {
                     .exercise(exerciseEntity)
                     .reps((short) 10)
                     .weight(50F + i + j)
+                    .unilateral(true)
                     .workout(workoutEntity)
                     .build();
                 historyRepository.save(historyEntity);
@@ -122,6 +123,7 @@ public class HistoryServiceTest {
             .exercise(exerciseEntity)
             .reps((short) 10)
             .weight(50F)
+            .unilateral(true)
             .workout(workoutEntity)
             .build();
         historyRepository.save(historyEntity);
@@ -145,6 +147,7 @@ public class HistoryServiceTest {
             .exercise(exerciseEntity)
             .reps((short) 10)
             .weight(50F)
+            .unilateral(true)
             .workout(workoutEntity)
             .build();
         historyRepository.save(historyEntity);
@@ -196,6 +199,7 @@ public class HistoryServiceTest {
                     .exercise(exerciseEntity)
                     .reps((short) 10)
                     .weight(50F + j)
+                    .unilateral(true)
                     .workout(workoutEntity)
                     .build();
                 historyRepository.save(historyEntity);
@@ -222,6 +226,7 @@ public class HistoryServiceTest {
             .exercise(exerciseEntity)
             .reps((short) 10)
             .weight(50F)
+            .unilateral(true)
             .workout(workoutEntity)
             .build();
         historyRepository.save(historyEntity);
@@ -257,6 +262,7 @@ public class HistoryServiceTest {
             .exercise(exerciseEntity)
             .reps((short) 10)
             .weight(50F)
+            .unilateral(true)
             .workout(workoutEntity)
             .build();
         historyRepository.save(historyEntity);
@@ -286,6 +292,7 @@ public class HistoryServiceTest {
             .exercise(exerciseEntity)
             .reps((short) 10)
             .weight(50F)
+            .unilateral(true)
             .workout(workoutEntity)
             .build();
         historyRepository.save(historyEntity);
@@ -317,6 +324,7 @@ public class HistoryServiceTest {
             .exercise(exerciseEntity)
             .reps((short) 10)
             .weight(50F)
+            .unilateral(true)
             .workout(workoutEntity)
             .build();
         historyRepository.save(historyEntity);
@@ -325,6 +333,7 @@ public class HistoryServiceTest {
             .exercise(exerciseEntity)
             .reps((short) 10)
             .weight(50F)
+            .unilateral(true)
             .workout(workoutEntity)
             .build();
         historyRepository.save(historyEntity2);
@@ -355,6 +364,7 @@ public class HistoryServiceTest {
             .exercise(exerciseEntity)
             .reps((short) 10)
             .weight(50F)
+            .unilateral(true)
             .workout(workoutEntity)
             .build();
         historyRepository.save(historyEntity);
