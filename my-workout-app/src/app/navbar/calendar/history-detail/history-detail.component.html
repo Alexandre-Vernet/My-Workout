@@ -4,16 +4,14 @@
 
 @for (history of histories; track history.id) {
     <div class="flex flex-row text-sm text-color-secondary gap-1">
-        @if (history.reps) {
-            <span>{{ history.reps }}</span>
-        }
+        <span>{{ history?.reps }}</span>
         @if (history.reps && history.weight) {
             <span>x</span>
         }
         @if (history.weight) {
             <span>{{ history.weight }} kg</span>
         }
-        @if (!history.weight && history.reps <= 1 && history.reps > 0) {
+        @if (!history.weight && (history.reps === 0 || history.reps === 1)) {
             <span>répétition</span>
         }
         @if (!history.weight && history.reps > 1) {
