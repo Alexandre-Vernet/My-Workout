@@ -97,9 +97,7 @@ public class HistoryService {
         HistoryEntity historyEntity = historyRepository.findById(historyId)
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.HISTORY_NOT_FOUND, "Cet historique n'existe pas", HttpStatus.NOT_FOUND));
 
-        if (history.weight == null || history.weight == 0) {
-            historyEntity.weight = null;
-        } else {
+        if (!history.weight.equals(historyEntity.weight)) {
             historyEntity.weight = history.weight;
         }
 
@@ -107,6 +105,9 @@ public class HistoryService {
             historyEntity.reps = history.reps;
         }
 
+        if (history.weight == 0) {
+            historyEntity.weight = null;
+        }
 
         return historyMapper.toDto(historyEntity);
     }

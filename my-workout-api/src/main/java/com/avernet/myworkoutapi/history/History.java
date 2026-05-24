@@ -17,7 +17,6 @@ public class History {
     Long id;
     Float weight;
     Short reps;
-    Boolean unilateral;
     Workout workout;
     Exercise exercise;
 }

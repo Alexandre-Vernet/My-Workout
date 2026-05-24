@@ -2,7 +2,7 @@ import { AfterViewInit, Component, DestroyRef, ElementRef, OnInit, ViewChild, Vi
 import { BehaviorSubject, filter, map } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Exercise } from '../../../../interfaces/Exercise';
 import { InputNumber } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
@@ -27,11 +27,10 @@ import { CustomError } from "../../../../interfaces/CustomError";
 import { MuscleGroupEnum } from "../../../../interfaces/MuscleGroupEnum";
 import { DEFAULT_VALUE_REST_TIME, RestTimeService } from "../../../services/rest-time.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ToggleSwitch } from "primeng/toggleswitch";
 
 @Component({
     selector: 'app-workout-session',
-    imports: [Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective, NgClass, UpperCasePipe, ReactiveFormsModule, ToggleSwitch],
+    imports: [Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective, NgClass, UpperCasePipe],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -49,24 +48,11 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     muscleGroupEnum: MuscleGroupEnum;
 
     activeStep: number = 1;
+
+    weight: number;
+    reps: number = 8;
+
     restTime = DEFAULT_VALUE_REST_TIME;
-
-    formWorkout = new FormGroup({
-        weight: new FormControl<number>({
-                value: null,
-                disabled: this.restTime !== DEFAULT_VALUE_REST_TIME
-            },
-            [Validators.min(0), Validators.max(1000)]
-        ),
-        reps: new FormControl<number>({
-                value: 8,
-                disabled: this.restTime !== DEFAULT_VALUE_REST_TIME
-            },
-            [Validators.required, Validators.min(1), Validators.max(100)]
-        ),
-        unilateral: new FormControl<boolean>(false, [Validators.required])
-    });
-
 
     weightToElastics: Elastic[] = [];
 
@@ -137,6 +123,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     toggleTimer() {
+        if (this.weight < 0 || this.weight >= 500) {
+            return;
+        }
+
         if (this.restTime !== DEFAULT_VALUE_REST_TIME) {
             this.stopTimer();
         } else {
@@ -159,11 +149,12 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.exercisesMade.next([]);
         this.stopTimer();
         this.setTabUrl(index);
+        this.reps = 8;
     }
 
 
     convertWeightToElastics() {
-        this.weightToElastics = convertWeightElastic(this.formWorkout.controls.weight.value);
+        this.weightToElastics = convertWeightElastic(this.weight);
     }
 
     resetWorkout() {
@@ -252,22 +243,23 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         }
     }
 
+
     private fillInputWeightRepsLastSavedValue() {
         this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise.id)
             .subscribe(history => {
-                this.formWorkout.patchValue({
-                    weight: history?.weight,
-                    reps: history?.reps ?? 8,
-                    unilateral: history?.unilateral ?? false
-                });
-
+                this.weight = history?.weight;
                 this.convertWeightToElastics();
+
+                if (history?.reps) {
+                    this.reps = history?.reps;
+                } else {
+                    this.reps = 8;
+                }
             });
     }
 
     private startTimer() {
         this.restTimeService.startTimer();
-        this.formWorkout.controls.reps.disable();
     }
 
     private stopTimer() {
@@ -279,7 +271,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         }
 
         this.restTimeService.stopTimer();
-        this.formWorkout.controls.reps.enable();
     }
 
 
@@ -307,12 +298,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     private createWorkout() {
-        const { weight, reps, unilateral } = this.formWorkout.getRawValue();
         const history: History = {
             exercise: this.currentExercise,
-            weight,
-            reps,
-            unilateral
+            weight: this.weight,
+            reps: this.reps
         };
 
         const muscleGroup: MuscleGroup = {
@@ -331,8 +320,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     const lastHistoryId = workout.histories[workout.histories.length - 1].id;
                     const exerciseMade: History = {
                         id: lastHistoryId,
-                        weight,
-                        reps,
+                        weight: this.weight,
+                        reps: this.reps,
                         restTime: '/'
                     };
 

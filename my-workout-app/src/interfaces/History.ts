@@ -10,5 +10,4 @@ export interface History {
     weight?: number;
     reps?: number;
     restTime?: string;
-    unilateral?: boolean;
 }
