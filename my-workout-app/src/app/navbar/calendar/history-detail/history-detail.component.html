@@ -17,6 +17,9 @@
         @if (!history.weight && history.reps > 1) {
             <span>répétitions</span>
         }
+        @if (history.unilateral) {
+            (unilatéral)
+        }
         @if (!history.weight && !history.reps && duration) {
             <span>{{ duration | convertTime }}</span>
         }
