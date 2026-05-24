@@ -26,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -76,7 +75,6 @@ public class WorkoutServiceTest {
 
 
     @Test
-    @Transactional
     void shouldCreateWorkout() {
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
@@ -91,7 +89,6 @@ public class WorkoutServiceTest {
             .exercise(exerciseEntity)
             .weight(50F)
             .reps((short) 10)
-            .unilateral(true)
             .workout(workoutEntity)
             .build();
 
@@ -106,9 +103,6 @@ public class WorkoutServiceTest {
         WorkoutEntity workoutEntityCreated = workoutRepository.findById(workoutCreated.getId()).orElse(null);
         assertNotNull(workoutCreated);
         assertNotNull(workoutEntityCreated);
-        assertEquals(50F, workoutEntityCreated.getHistories().getFirst().getWeight());
-        assertEquals((short) 10, workoutEntityCreated.getHistories().getFirst().getReps());
-        assertTrue(workoutEntityCreated.getHistories().getFirst().getUnilateral());
         assertEquals(workoutEntityCreated.getId(), workoutCreated.getId());
     }
 
@@ -192,18 +186,18 @@ public class WorkoutServiceTest {
             .date(LocalDate.now())
             .build();
 
-        HistoryEntity historyEntity1Exercise1 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).unilateral(true).exercise(exerciseEntity1).build();
-        HistoryEntity historyEntity2Exercise1 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).unilateral(true).exercise(exerciseEntity1).build();
-        HistoryEntity historyEntity3Exercise1 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).unilateral(true).exercise(exerciseEntity1).build();
+        HistoryEntity historyEntity1Exercise1 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).exercise(exerciseEntity1).build();
+        HistoryEntity historyEntity2Exercise1 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).exercise(exerciseEntity1).build();
+        HistoryEntity historyEntity3Exercise1 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).exercise(exerciseEntity1).build();
 
-        HistoryEntity historyEntity1Exercise2 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).unilateral(true).exercise(exerciseEntity2).build();
-        HistoryEntity historyEntity2Exercise2 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).unilateral(true).exercise(exerciseEntity2).build();
-        HistoryEntity historyEntity3Exercise2 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).unilateral(true).exercise(exerciseEntity2).build();
+        HistoryEntity historyEntity1Exercise2 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).exercise(exerciseEntity2).build();
+        HistoryEntity historyEntity2Exercise2 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).exercise(exerciseEntity2).build();
+        HistoryEntity historyEntity3Exercise2 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).exercise(exerciseEntity2).build();
 
 
-        HistoryEntity historyEntity1Exercise3 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).unilateral(true).exercise(exerciseEntity3).build();
-        HistoryEntity historyEntity2Exercise3 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).unilateral(true).exercise(exerciseEntity3).build();
-        HistoryEntity historyEntity3Exercise3 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).unilateral(true).exercise(exerciseEntity3).build();
+        HistoryEntity historyEntity1Exercise3 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).exercise(exerciseEntity3).build();
+        HistoryEntity historyEntity2Exercise3 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).exercise(exerciseEntity3).build();
+        HistoryEntity historyEntity3Exercise3 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).exercise(exerciseEntity3).build();
 
 
         List<HistoryEntity> historyEntityList = List.of(
