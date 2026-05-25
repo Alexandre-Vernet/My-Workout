@@ -97,17 +97,20 @@ public class HistoryService {
         HistoryEntity historyEntity = historyRepository.findById(historyId)
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.HISTORY_NOT_FOUND, "Cet historique n'existe pas", HttpStatus.NOT_FOUND));
 
-        if (!history.weight.equals(historyEntity.weight)) {
-            historyEntity.weight = history.weight;
+        if (history.getWeight() == null || history.getWeight() == 0) {
+            historyEntity.setWeight(null);
+        } else {
+            historyEntity.setWeight(history.weight);
         }
 
-        if (!history.reps.equals(historyEntity.reps)) {
-            historyEntity.reps = history.reps;
+        if (history.getReps() != null) {
+            historyEntity.setReps(history.reps);
         }
 
-        if (history.weight == 0) {
-            historyEntity.weight = null;
+        if (history.getUnilateral() != null) {
+            historyEntity.setUnilateral(history.getUnilateral());
         }
+
 
         return historyMapper.toDto(historyEntity);
     }

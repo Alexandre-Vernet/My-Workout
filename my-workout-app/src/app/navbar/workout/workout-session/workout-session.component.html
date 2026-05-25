@@ -60,61 +60,70 @@
                     @let exercise = userExercise?.exercise;
                     <p-step-panel [value]="index + 1">
                         <ng-template #content let-activateCallback="activateCallback">
-                            <div class="panel-container">
-                                <!--The for force Angular to refresh the DOM and animate on swipe-->
-                                @for (_ of [userExercises[0]]; track animationId) {
-                                    <div class="flex-1 flex flex-column justify-content-center panel"
-                                         [class.slide-from-right]="animationDirection === 'right'"
-                                         [class.slide-from-left]="animationDirection === 'left'">
-                                        <h3 [routerLink]="['/', 'library', 'exercises', exercise.id]"
-                                            class="text-center text-2xl font-bold mb-4">{{ exercise.name | uppercase }}</h3>
+                            <form [formGroup]="formWorkout">
+                                <div class="panel-container">
+                                    <!--The for force Angular to refresh the DOM and animate on swipe-->
+                                    @for (_ of [userExercises[0]]; track animationId) {
+                                        <div class="flex-1 flex flex-column justify-content-center panel"
+                                             [class.slide-from-right]="animationDirection === 'right'"
+                                             [class.slide-from-left]="animationDirection === 'left'">
+                                            <h3 [routerLink]="['/', 'library', 'exercises', exercise.id]"
+                                                class="text-center text-2xl font-bold mb-4">{{ exercise.name | uppercase }}</h3>
 
-                                        <div
-                                            class="flex-1 flex flex-column justify-center align-items-center w-full gap-3">
-                                            <div class="flex align-items-center">
-                                                <p-inputnumber
-                                                    preventFocusOnButtonClick
-                                                    [disabled]="restTime !== DEFAULT_VALUE_REST_TIME" [(ngModel)]="weight"
-                                                    (ngModelChange)="convertWeightToElastics()" [showButtons]="true"
-                                                    buttonLayout="horizontal" inputId="horizontal"
-                                                    spinnerMode="horizontal" [step]="2.5"
-                                                    suffix=" kg" [min]="0" [max]="500">
-                                                    <ng-template #incrementbuttonicon>
-                                                        <span class="pi pi-plus"></span>
-                                                    </ng-template>
-                                                    <ng-template #decrementbuttonicon>
-                                                        <span class="pi pi-minus"></span>
-                                                    </ng-template>
-                                                </p-inputnumber>
+                                            <div
+                                                class="flex-1 flex flex-column justify-center align-items-center w-full gap-3">
+                                                <div class="flex align-items-center">
+                                                    <p-inputnumber
+                                                        preventFocusOnButtonClick
+                                                        formControlName="weight"
+                                                        (ngModelChange)="convertWeightToElastics()"
+                                                        [showButtons]="true"
+                                                        buttonLayout="horizontal" inputId="horizontal"
+                                                        spinnerMode="horizontal" [step]="2.5"
+                                                        suffix=" kg" [min]="0" [max]="500">
+                                                        <ng-template #incrementbuttonicon>
+                                                            <span class="pi pi-plus"></span>
+                                                        </ng-template>
+                                                        <ng-template #decrementbuttonicon>
+                                                            <span class="pi pi-minus"></span>
+                                                        </ng-template>
+                                                    </p-inputnumber>
 
-                                                <i class="ml-2 pi pi-info-circle cursor-pointer"
-                                                   (click)="dialogConvertWeightToElastics.toggle($event)"
-                                                   [style.visibility]="exercise.smartWorkout && this.weight % 5 === 0 && this.weight > 0 ? 'visible' : 'hidden'">
-                                                </i>
+                                                    <i class="ml-2 pi pi-info-circle cursor-pointer"
+                                                       (click)="dialogConvertWeightToElastics.toggle($event)"
+                                                       [style.visibility]="exercise.smartWorkout && formWorkout.controls.weight.value % 5 === 0 && formWorkout.controls.weight.value > 0 ? 'visible' : 'hidden'">
+                                                    </i>
+                                                </div>
+
+
+                                                <div class="flex align-items-center mr-4">
+                                                    <p-inputnumber
+                                                        preventFocusOnButtonClick
+                                                        class="mb-6" size="small"
+                                                        formControlName="reps"
+                                                        [showButtons]="true"
+                                                        buttonLayout="horizontal"
+                                                        inputId="horizontal" spinnerMode="horizontal" [step]="1"
+                                                        [suffix]=" formWorkout.controls.reps.value <= 1 ? ' rep' : ' reps'" [min]="0" [max]="100">
+                                                        <ng-template #incrementbuttonicon>
+                                                            <span class="pi pi-plus"></span>
+                                                        </ng-template>
+                                                        <ng-template #decrementbuttonicon>
+                                                            <span class="pi pi-minus"></span>
+                                                        </ng-template>
+                                                    </p-inputnumber>
+                                                </div>
                                             </div>
-
-
-                                            <div class="flex align-items-center mr-4">
-                                                <p-inputnumber
-                                                    preventFocusOnButtonClick
-                                                    class="mb-6" size="small" [disabled]="restTime !== DEFAULT_VALUE_REST_TIME"
-                                                    [(ngModel)]="reps"
-                                                    [showButtons]="true"
-                                                    buttonLayout="horizontal"
-                                                    inputId="horizontal" spinnerMode="horizontal" [step]="1"
-                                                    [suffix]=" reps <= 1 ? ' rep' : ' reps'" [min]="0" [max]="50">
-                                                    <ng-template #incrementbuttonicon>
-                                                        <span class="pi pi-plus"></span>
-                                                    </ng-template>
-                                                    <ng-template #decrementbuttonicon>
-                                                        <span class="pi pi-minus"></span>
-                                                    </ng-template>
-                                                </p-inputnumber>
+                                            <div class="flex justify-content-center gap-3 mb-5">
+                                                <label for="unilateral" class="text-color-secondary">
+                                                    Unilatéral
+                                                </label>
+                                                <p-toggleswitch inputId="unilateral" formControlName="unilateral"/>
                                             </div>
                                         </div>
-                                    </div>
-                                }
-                            </div>
+                                    }
+                                </div>
+                            </form>
                         </ng-template>
                     </p-step-panel>
                 }
@@ -134,7 +143,7 @@
             </div>
 
             <div class="timer" (click)="toggleTimer()" [ngClass]="{
-                'disabled': this.weight < 0 || this.weight >= 500,
+                'disabled': this.formWorkout.invalid,
             }">
                 @if (restTime !== DEFAULT_VALUE_REST_TIME) {
                     <div class="pause"></div>

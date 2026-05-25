@@ -3,9 +3,11 @@ import {
     DestroyRef,
     ElementRef,
     inject,
-    Input, OnChanges,
+    Input,
+    OnChanges,
     OnInit,
-    Output, SimpleChanges,
+    Output,
+    SimpleChanges,
     ViewChild,
     ViewEncapsulation
 } from '@angular/core';
@@ -14,14 +16,15 @@ import { HistoryService } from '../../../../services/history.service';
 import { InputNumber } from 'primeng/inputnumber';
 import { History } from '../../../../../interfaces/History';
 import { AlertService } from '../../../../services/alert.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
+import { Checkbox } from "primeng/checkbox";
 
 @Component({
     selector: 'app-exercises-table',
-    imports: [TableModule, InputNumber, FormsModule, AsyncPipe],
+    imports: [TableModule, InputNumber, FormsModule, AsyncPipe, ReactiveFormsModule, Checkbox],
     templateUrl: './exercises-table.component.html',
     styleUrl: './exercises-table.component.scss',
     encapsulation: ViewEncapsulation.None
@@ -34,11 +37,7 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
 
     @ViewChild('exerciseTable', { read: ElementRef }) exerciseTable!: ElementRef;
 
-    editingField: string;
-    updateWeight: number = 0;
-    updateReps: number = 0;
-
-    destroyRef = inject(DestroyRef);
+    private destroyRef = inject(DestroyRef);
 
     constructor(
         private readonly historyService: HistoryService,
@@ -66,30 +65,14 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
         }
     }
 
-    roundToQuarter(value: number): number {
-        return Math.round(value / 0.25) * 0.25;
+    // Allow ony 1/2 fractions
+    onWeightChange(history: History, value: number) {
+        history.weight = Math.round(value * 2) / 2;
     }
 
-    onWeightChange(value: number) {
-        this.updateWeight = this.roundToQuarter(value);
-    }
-
-
-    clickWeight(history: History) {
-        this.editingField = `weight-${ history.id }`;
-        this.updateWeight = history.weight;
-    }
-
-    clickReps(history: History) {
-        this.editingField = `reps-${ history.id }`;
-        this.updateReps = history.reps;
-    }
-
-    updateHistory(history: History) {
-        if (this.editingField === `weight-${ history.id }`) {
-            history.weight = this.updateWeight;
-        } else if (this.editingField === `reps-${ history.id }`) {
-            history.reps = this.updateReps;
+    updateHistory(history: History, value?: boolean) {
+        if (typeof value === 'boolean') {
+            history.unilateral = value;
         }
 
         this.historyService.update(history)
@@ -105,8 +88,6 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
                         message: err.error.message ?? 'Impossible de mettre à jour'
                     })
             });
-
-        this.editingField = '';
     }
 
     deleteHistory(history: History) {
