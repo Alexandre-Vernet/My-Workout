@@ -2,12 +2,12 @@
     <p-table #exerciseTable [value]="exercisesMade | async" stripedRows scrollable="true" scrollHeight="180px">
         <ng-template #header>
             <tr>
-                <th id="id" class="text-center h2">N°</th>
-                <th id="weight" class="text-center h2">Poids</th>
-                <th id="reps" class="text-center h2">Reps.</th>
-                <th id="unilateral" class="text-center h2">Unilat.</th>
-                <th id="restTime" class="text-center h2">Tps. de repos</th>
-                <th id="actions" class="text-center h2"></th>
+                <th id="id" class="text-center">N°</th>
+                <th id="weight" class="text-center">Poids</th>
+                <th id="reps" class="text-center">Reps.</th>
+                <th id="unilateral" class="text-center">Unilat.</th>
+                <th id="restTime" class="text-center">Tps. de repos</th>
+                <th id="actions" class="text-center"></th>
             </tr>
         </ng-template>
         <ng-template #body let-history let-rowIndex="rowIndex">

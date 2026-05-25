@@ -71,10 +71,8 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
     }
 
     updateHistory(history: History, value?: boolean) {
-        console.log(typeof value )
         if (typeof value === 'boolean') {
             history.unilateral = value;
-            console.log(history)
         }
 
         this.historyService.update(history)
