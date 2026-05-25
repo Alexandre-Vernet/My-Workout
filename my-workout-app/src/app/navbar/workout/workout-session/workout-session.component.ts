@@ -267,7 +267,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     private startTimer() {
         this.restTimeService.startTimer();
-        this.formWorkout.controls.reps.disable();
+        this.formWorkout.disable();
     }
 
     private stopTimer() {
@@ -279,7 +279,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         }
 
         this.restTimeService.stopTimer();
-        this.formWorkout.controls.reps.enable();
+        this.formWorkout.enable();
     }
 
 
@@ -333,6 +333,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                         id: lastHistoryId,
                         weight,
                         reps,
+                        unilateral,
                         restTime: '/'
                     };
 

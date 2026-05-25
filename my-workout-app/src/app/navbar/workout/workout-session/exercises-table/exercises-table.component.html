@@ -2,53 +2,62 @@
     <p-table #exerciseTable [value]="exercisesMade | async" stripedRows scrollable="true" scrollHeight="180px">
         <ng-template #header>
             <tr>
-                <th id="id" class="text-center">N°</th>
-                <th id="weight" class="text-center">Poids</th>
-                <th id="reps" class="text-center">Reps.</th>
-                <th id="restTime" class="text-center">Tps. de repos</th>
-                <th id="actions" class="text-center"></th>
+                <th id="id" class="text-center h2">N°</th>
+                <th id="weight" class="text-center h2">Poids</th>
+                <th id="reps" class="text-center h2">Reps.</th>
+                <th id="unilateral" class="text-center h2">Unilat.</th>
+                <th id="restTime" class="text-center h2">Tps. de repos</th>
+                <th id="actions" class="text-center h2"></th>
             </tr>
         </ng-template>
         <ng-template #body let-history let-rowIndex="rowIndex">
             <tr>
                 <td class="text-center">{{ rowIndex + 1 }}</td>
-                <td class="text-center" (click)="clickWeight(history)">
-                    @if (editingField !== 'weight-' + history.id) {
-                        {{ history.weight > 0 ? history.weight + ' kg' : '/' }}
-                    } @else {
-                        <p-inputnumber
-                            [(ngModel)]="updateWeight"
-                            inputStyleClass="update-weight"
-                            inputId="weight-input"
-                            (ngModelChange)="onWeightChange($event)"
-                            (keydown.enter)="updateHistory(history)"
-                            (focusout)="updateHistory(history)"
-                            [min]="0"
-                            [max]="500"
-                            size="small"
-                            [autofocus]="true"
-                            mode="decimal"
-                            [minFractionDigits]="1"
-                            [maxFractionDigits]="2"
-                        ></p-inputnumber>
-                    }
+                <td [pEditableColumn]="history.weight" class="text-center">
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-inputnumber
+                                [(ngModel)]="history.weight"
+                                inputStyleClass="update-weight"
+                                inputId="weight-input"
+                                (ngModelChange)="onWeightChange(history, $event)"
+                                (focusout)="updateHistory(history)"
+                                [min]="0"
+                                [max]="500"
+                                size="small"
+                                [autofocus]="true"
+                                mode="decimal"
+                                [maxFractionDigits]="1"
+                                [maxFractionDigits]="2"
+                            ></p-inputnumber>
+                        </ng-template>
+                        <ng-template #output>
+                            {{ history.weight > 0 ? history.weight + ' kg' : '/' }}
+                        </ng-template>
+                    </p-cellEditor>
                 </td>
-                <td class="text-center" (click)="clickReps(history)">
-                    @if (editingField !== 'reps-' + history.id) {
-                        {{ history.reps }}
-                    } @else {
-                        <p-inputnumber
-                            [(ngModel)]="updateReps"
-                            inputStyleClass="update-reps"
-                            inputId="integeronly"
-                            (keydown.enter)="updateHistory(history)"
-                            (focusout)="updateHistory(history)"
-                            [min]="1"
-                            [max]="99"
-                            size="small"
-                            [autofocus]="true"
-                        ></p-inputnumber>
-                    }
+                <td [pEditableColumn]="history.reps" class="text-center">
+                    <p-cellEditor>
+                        <ng-template #input>
+                            <p-inputnumber
+                                [(ngModel)]="history.reps"
+                                inputStyleClass="update-reps"
+                                inputId="reps-input"
+                                (focusout)="updateHistory(history)"
+                                [min]="1"
+                                [max]="99"
+                                size="small"
+                                [autofocus]="true"
+                            ></p-inputnumber>
+                        </ng-template>
+                        <ng-template #output>
+                            {{ history.reps }}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td class="text-center">
+                <p-checkbox [id]="rowIndex" [(ngModel)]="history.unilateral" (ngModelChange)="updateHistory(history, $event)"
+                                [binary]="true"/>
                 </td>
                 <td class="text-center">{{ history.restTime }}</td>
                 <td class="text-center" (click)="deleteHistory(history)">

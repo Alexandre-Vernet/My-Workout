@@ -76,7 +76,8 @@
                                                     <p-inputnumber
                                                         preventFocusOnButtonClick
                                                         formControlName="weight"
-                                                        (ngModelChange)="convertWeightToElastics()" [showButtons]="true"
+                                                        (ngModelChange)="convertWeightToElastics()"
+                                                        [showButtons]="true"
                                                         buttonLayout="horizontal" inputId="horizontal"
                                                         spinnerMode="horizontal" [step]="2.5"
                                                         suffix=" kg" [min]="0" [max]="500">
