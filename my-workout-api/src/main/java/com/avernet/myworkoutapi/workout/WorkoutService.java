@@ -95,7 +95,7 @@ public class WorkoutService {
             .toList();
 
         return WorkoutGroupedHistories.builder()
-            .workout(workout)
+            .workoutSummary(new WorkoutSummary(workout.getId(), workout.getDate(), workout.getDuration()))
             .historyGroups(historyGroupList)
             .muscleGroup(workout.getMuscleGroup())
             .build();

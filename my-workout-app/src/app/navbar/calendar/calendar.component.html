@@ -26,7 +26,7 @@
 ></app-dialog-select-cardio-exercise>
 
 
-<p-dialog [header]="showWorkout?.workout.date | date:'fullDate' | firstLetterUppercase" [modal]="true" [(visible)]="showModalViewWorkout"
+<p-dialog [header]="showWorkout?.workoutSummary.date | date:'fullDate' | firstLetterUppercase" [modal]="true" [(visible)]="showModalViewWorkout"
           dismissableMask="true"
           [style]="{ width: '25rem' }">
     @if (showWorkout) {
@@ -44,13 +44,13 @@
 
                     <app-history-detail [exercise]="historyGroup.exercise"
                                         [histories]="historyGroup.histories"
-                                        [duration]="showWorkout.workout.duration"></app-history-detail>
+                                        [duration]="showWorkout.workoutSummary.duration"></app-history-detail>
                 }
 
             </div>
             <div class="flex justify-content-end mt-3">
                 <p-button severity="danger"
-                          (onClick)="openModalDeleteWorkout(showWorkout.workout.id, showWorkout.muscleGroup.name, showWorkout.workout.date)"
+                          (onClick)="openModalDeleteWorkout(showWorkout.workoutSummary.id, showWorkout.muscleGroup.name, showWorkout.workoutSummary.date)"
                           icon="pi pi-trash" label="Supprimer"/>
             </div>
         </div>
