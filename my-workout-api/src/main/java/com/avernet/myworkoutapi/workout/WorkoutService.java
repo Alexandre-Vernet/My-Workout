@@ -1,7 +1,8 @@
 package com.avernet.myworkoutapi.workout;
 
-import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exception.ApiException;
+import com.avernet.myworkoutapi.history.History;
 import com.avernet.myworkoutapi.history.HistoryEntity;
 import com.avernet.myworkoutapi.history.HistoryGroup;
 import com.avernet.myworkoutapi.history.HistoryMapper;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,10 +41,14 @@ public class WorkoutService {
         if (workoutRequest.workout().getMuscleGroup().id() != MuscleGroupEnum.CARDIO.getId()) {
             // Do not create a workout if it already exists for the same user and muscle group on the same day
             // Except cardio workout because it can be done multiple times a day with different exercises (e.g. running, cycling)
-            Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDate(
+            LocalDate localDate = LocalDate.now();
+            LocalDateTime startDay = localDate.atStartOfDay();
+            LocalDateTime endDay = localDate.plusDays(1).atStartOfDay();
+            Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDateGreaterThanEqualAndDateLessThan(
                 userEntity.getId(),
                 workoutRequest.workout().getMuscleGroup().id(),
-                workoutRequest.workout().getDate()
+                startDay,
+                endDay
             );
             if (existingWorkout.isPresent()) {
                 workoutEntity = existingWorkout.get();
@@ -74,10 +81,13 @@ public class WorkoutService {
             .collect(Collectors.groupingBy(h -> h.getExercise().getId()))
             .values()
             .stream()
-            .map(historyList -> new HistoryGroup(
-                historyList.get(0).getExercise(),
-                historyList
-            ))
+            .map(historyList -> {
+                historyList.sort(Comparator.comparing(History::getId).reversed());
+                return new HistoryGroup(
+                    historyList.getFirst().getExercise(),
+                    historyList
+                );
+            })
             .toList();
 
         return WorkoutGroupedHistories.builder()
@@ -89,7 +99,11 @@ public class WorkoutService {
 
     @Transactional(readOnly = true)
     public List<Workout> findByDate(UserEntity userEntity, String start, String end) {
-        List<WorkoutEntity> workoutEntityList = workoutRepository.findByUserIdAndDateBetween(userEntity.getId(), LocalDate.parse(start), LocalDate.parse(end));
+        List<WorkoutEntity> workoutEntityList = workoutRepository.findByUserIdAndDateBetween(
+            userEntity.getId(),
+            LocalDate.parse(start).atStartOfDay(),
+            LocalDate.parse(end).atStartOfDay()
+        );
         return workoutMapper.toDtoList(workoutEntityList);
     }
 

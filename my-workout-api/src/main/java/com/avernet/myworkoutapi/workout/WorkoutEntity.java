@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class WorkoutEntity {
     Long id;
 
     @Column(nullable = false)
-    LocalDate date;
+    LocalDateTime date;
 
     @Column()
     Integer duration;

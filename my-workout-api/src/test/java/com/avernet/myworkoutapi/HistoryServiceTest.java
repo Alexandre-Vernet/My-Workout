@@ -31,7 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -89,7 +89,7 @@ public class HistoryServiceTest {
             WorkoutEntity w = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
-                .date(LocalDate.of(2026, 1, i))
+                .date(LocalDateTime.of(2026, 1, i, 0, 0))
                 .build();
             WorkoutEntity workoutEntity = workoutRepository.save(w);
 
@@ -115,7 +115,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
 
@@ -139,7 +139,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.of(2026, 1, 1))
+            .date(LocalDateTime.of(2026, 1, 1, 0, 0))
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
 
@@ -171,7 +171,7 @@ public class HistoryServiceTest {
             WorkoutEntity workoutEntity = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
-                .date(LocalDate.of(2026, 1, i))
+                .date(LocalDateTime.of(2026, 1, i, 0, 0))
                 .build();
             workoutRepository.save(workoutEntity);
         }
@@ -190,7 +190,7 @@ public class HistoryServiceTest {
             WorkoutEntity w = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
-                .date(LocalDate.of(20226, 1, i))
+                .date(LocalDateTime.of(20226, 1, i, 0, 0))
                 .build();
             WorkoutEntity workoutEntity = workoutRepository.save(w);
 
@@ -218,7 +218,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
 
@@ -254,7 +254,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
 
@@ -284,7 +284,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
 
@@ -316,7 +316,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
 
@@ -356,7 +356,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
 

@@ -1,6 +1,6 @@
 package com.avernet.myworkoutapi.history.stats;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-public record HistoryPoint(Float weight, LocalDate date) {
+public record HistoryPoint(Float weight, LocalDateTime date) {
 }

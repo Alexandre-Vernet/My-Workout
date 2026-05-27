@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -50,8 +51,10 @@ public class HistoryService {
     @Transactional(readOnly = true)
     public List<History> findTodayHistories(UserEntity userEntity, Long muscleGroupId, Long exerciseId) {
         LocalDate now = LocalDate.now();
+        LocalDateTime startOfDay = now.atStartOfDay();
+        LocalDateTime endOfDay = now.plusDays(1).atStartOfDay();
 
-        List<HistoryEntity> historyEntity = historyRepository.findTodayHistories(userEntity.getId(), muscleGroupId, exerciseId, now);
+        List<HistoryEntity> historyEntity = historyRepository.findTodayHistories(userEntity.getId(), muscleGroupId, exerciseId, startOfDay, endOfDay);
         return historyMapper.toDtoList(historyEntity);
     }
 

@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -78,7 +78,7 @@ public class MuscleGroupServiceTest {
             WorkoutEntity workoutEntity = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
-                .date(LocalDate.now().minusDays(i))
+                .date(LocalDateTime.now().minusDays(i))
                 .build();
 
             workoutRepository.save(workoutEntity);
@@ -116,7 +116,7 @@ public class MuscleGroupServiceTest {
             WorkoutEntity workoutEntity = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
-                .date(LocalDate.now())
+                .date(LocalDateTime.now())
                 .build();
 
             workoutRepository.save(workoutEntity);
