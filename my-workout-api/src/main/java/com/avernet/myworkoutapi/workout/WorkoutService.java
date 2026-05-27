@@ -82,12 +82,16 @@ public class WorkoutService {
             .values()
             .stream()
             .map(historyList -> {
-                historyList.sort(Comparator.comparing(History::getId).reversed());
+                historyList.sort(Comparator.comparing(History::getId));
+
                 return new HistoryGroup(
                     historyList.getFirst().getExercise(),
                     historyList
                 );
             })
+            .sorted(Comparator.comparing(
+                historyGroup -> historyGroup.getHistories().getFirst().getId()
+            ))
             .toList();
 
         return WorkoutGroupedHistories.builder()
