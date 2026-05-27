@@ -35,37 +35,15 @@ public class WorkoutService {
 
 
     @Transactional
-    public Workout createWorkout(UserEntity userEntity, WorkoutRequest workoutRequest) {
-        WorkoutEntity workoutEntity = workoutMapper.toEntity(workoutRequest.workout());
+    public Workout createWorkout(UserEntity user, WorkoutRequest request) {
+        WorkoutEntity workoutEntity = resolveWorkout(user, request);
 
-        if (workoutRequest.workout().getMuscleGroup().id() != MuscleGroupEnum.CARDIO.getId()) {
-            // Do not create a workout if it already exists for the same user and muscle group on the same day
-            // Except cardio workout because it can be done multiple times a day with different exercises (e.g. running, cycling)
-            LocalDate localDate = LocalDate.now();
-            LocalDateTime startDay = localDate.atStartOfDay();
-            LocalDateTime endDay = localDate.plusDays(1).atStartOfDay();
-            Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDateGreaterThanEqualAndDateLessThan(
-                userEntity.getId(),
-                workoutRequest.workout().getMuscleGroup().id(),
-                startDay,
-                endDay
-            );
-            if (existingWorkout.isPresent()) {
-                workoutEntity = existingWorkout.get();
-            }
-        }
+        HistoryEntity history = createHistory(request, workoutEntity);
 
-        workoutEntity.setUser(userEntity);
-
-        HistoryEntity historyEntity = historyMapper.toEntity(workoutRequest.history());
-        historyEntity.setWorkout(workoutEntity);
-
-        if (workoutEntity.getHistories() == null) {
-            workoutEntity.setHistories(new ArrayList<>());
-        }
-        workoutEntity.getHistories().add(historyEntity);
+        addHistory(workoutEntity, history);
 
         workoutRepository.save(workoutEntity);
+
         return workoutMapper.toDto(workoutEntity);
     }
 
@@ -114,5 +92,58 @@ public class WorkoutService {
     @Transactional
     public void delete(UserEntity userEntity, Long id) {
         workoutRepository.deleteByIdAndUserId(id, userEntity.getId());
+    }
+
+
+    private WorkoutEntity resolveWorkout(UserEntity user, WorkoutRequest request) {
+        WorkoutEntity workoutEntity = workoutMapper.toEntity(request.workout());
+        workoutEntity.setUser(user);
+
+        if (isCardio(request)) {
+            return workoutEntity;
+        }
+
+        return findOrCreateWorkout(user, request, workoutEntity);
+    }
+
+    private boolean isCardio(WorkoutRequest request) {
+        return request.workout()
+            .getMuscleGroup()
+            .id()
+            .equals(MuscleGroupEnum.CARDIO.getId());
+    }
+
+    private WorkoutEntity findOrCreateWorkout(UserEntity user,WorkoutRequest request,WorkoutEntity newWorkout) {
+        LocalDate today = LocalDate.now();
+        LocalDateTime start = today.atStartOfDay();
+        LocalDateTime end = today.plusDays(1).atStartOfDay();
+
+        return workoutRepository
+            .findByUserIdAndMuscleGroupIdAndDateGreaterThanEqualAndDateLessThan(
+                user.getId(),
+                request.workout().getMuscleGroup().id(),
+                start,
+                end
+            )
+            .orElse(newWorkout);
+    }
+
+    private HistoryEntity createHistory(WorkoutRequest request, WorkoutEntity workout) {
+        HistoryEntity history = historyMapper.toEntity(request.history());
+        history.setWorkout(workout);
+
+        if (isCardio(request)) {
+            history.setReps((short) 0);
+            history.setUnilateral(false);
+        }
+
+        return history;
+    }
+
+    private void addHistory(WorkoutEntity workout, HistoryEntity history) {
+        if (workout.getHistories() == null) {
+            workout.setHistories(new ArrayList<>());
+        }
+        workout.getHistories().add(history);
     }
 }
