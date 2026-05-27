@@ -4,7 +4,7 @@
 
 @for (history of histories; track history.id) {
     <div class="flex flex-row text-sm text-color-secondary gap-1">
-        <span>{{ history?.reps !== 0 ? history.reps : '' }}</span>
+        <span>{{ history?.reps }}</span>
         @if (history.reps && history.weight) {
             <span>x</span>
         }

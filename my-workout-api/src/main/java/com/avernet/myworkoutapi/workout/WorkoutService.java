@@ -133,7 +133,6 @@ public class WorkoutService {
         history.setWorkout(workout);
 
         if (isCardio(request)) {
-            history.setReps((short) 0);
             history.setUnilateral(false);
         }
 
