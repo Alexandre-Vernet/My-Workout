@@ -21,7 +21,6 @@ import java.util.List;
 public class Workout {
     Long id;
     LocalDateTime date;
-    Integer duration;
     User user;
     MuscleGroup muscleGroup;
     List<History> histories = new ArrayList<>();

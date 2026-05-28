@@ -22,7 +22,7 @@ public class UserExerciseController {
     UserExerciseService userExerciseService;
 
 
-    @GetMapping("find-added-exercises-by-muscle-group-id/{muscleGroupId}")
+    @GetMapping("added/{muscleGroupId}")
     List<UserExercise> findAddedExercisesByMuscleGroupId(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Integer muscleGroupId) {
         return userExerciseService.findAddedExercisesByMuscleGroupId(userEntity, muscleGroupId);
     }

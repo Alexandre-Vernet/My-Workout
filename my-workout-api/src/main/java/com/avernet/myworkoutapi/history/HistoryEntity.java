@@ -38,6 +38,9 @@ public class HistoryEntity {
     @Column
     Boolean unilateral;
 
+    @Column
+    Integer duration;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workout_id")
     WorkoutEntity workout;

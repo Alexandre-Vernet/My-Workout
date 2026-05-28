@@ -27,7 +27,7 @@ export class HistoryService {
 
 
     getGlobalStatsWithListExercises() {
-        return this.http.get<UserExercisesCountTotalWorkout>(`${ this.historyUrl }/get-global-stats`);
+        return this.http.get<UserExercisesCountTotalWorkout>(`${ this.historyUrl }/stats`);
     }
 
     getExerciseGraphs(exerciseId: number) {

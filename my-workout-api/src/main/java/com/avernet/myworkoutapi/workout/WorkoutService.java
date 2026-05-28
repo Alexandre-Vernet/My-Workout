@@ -36,7 +36,7 @@ public class WorkoutService {
 
     @Transactional
     public Workout createWorkout(UserEntity user, WorkoutRequest request) {
-        WorkoutEntity workoutEntity = resolveWorkout(user, request);
+       WorkoutEntity workoutEntity = findOrCreateWorkout(user, request);
 
         HistoryEntity history = createHistory(request, workoutEntity);
 
@@ -73,7 +73,7 @@ public class WorkoutService {
             .toList();
 
         return WorkoutGroupedHistories.builder()
-            .workoutSummary(new WorkoutSummary(workout.getId(), workout.getDate(), workout.getDuration()))
+            .workoutSummary(new WorkoutSummary(workout.getId(), workout.getDate()))
             .historyGroups(historyGroupList)
             .muscleGroup(workout.getMuscleGroup())
             .build();
@@ -95,17 +95,6 @@ public class WorkoutService {
     }
 
 
-    private WorkoutEntity resolveWorkout(UserEntity user, WorkoutRequest request) {
-        WorkoutEntity workoutEntity = workoutMapper.toEntity(request.workout());
-        workoutEntity.setUser(user);
-
-        if (isCardio(request)) {
-            return workoutEntity;
-        }
-
-        return findOrCreateWorkout(user, request, workoutEntity);
-    }
-
     private boolean isCardio(WorkoutRequest request) {
         return request.workout()
             .getMuscleGroup()
@@ -113,7 +102,10 @@ public class WorkoutService {
             .equals(MuscleGroupEnum.CARDIO.getId());
     }
 
-    private WorkoutEntity findOrCreateWorkout(UserEntity user,WorkoutRequest request,WorkoutEntity newWorkout) {
+    private WorkoutEntity findOrCreateWorkout(UserEntity user, WorkoutRequest request) {
+        WorkoutEntity workoutEntity = workoutMapper.toEntity(request.workout());
+        workoutEntity.setUser(user);
+
         LocalDate today = LocalDate.now();
         LocalDateTime start = today.atStartOfDay();
         LocalDateTime end = today.plusDays(1).atStartOfDay();
@@ -125,7 +117,7 @@ public class WorkoutService {
                 start,
                 end
             )
-            .orElse(newWorkout);
+            .orElse(workoutEntity);
     }
 
     private HistoryEntity createHistory(WorkoutRequest request, WorkoutEntity workout) {
@@ -134,6 +126,7 @@ public class WorkoutService {
 
         if (isCardio(request)) {
             history.setUnilateral(false);
+            history.setReps(null);
         }
 
         return history;

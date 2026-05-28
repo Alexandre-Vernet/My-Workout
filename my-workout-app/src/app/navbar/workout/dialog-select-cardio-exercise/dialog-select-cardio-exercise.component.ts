@@ -57,10 +57,10 @@ export class DialogSelectCardioExerciseComponent {
         const workout: Workout = {
             muscleGroup,
             date: this.workoutDate ?? new Date(),
-            duration: Number(this.inputDuration)
         };
 
         const history: History = {
+            duration: Number(this.inputDuration),
             exercise: {
                 id: this.selectedExercise.id
             }

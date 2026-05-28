@@ -31,7 +31,7 @@ export class WorkoutService {
     }
 
     findByDate(start: Date, end: Date) {
-        return this.http.get<Workout[]>(`${ this.workoutUrl }/find-by-date`, {
+        return this.http.get<Workout[]>(`${ this.workoutUrl }/date`, {
             params: {
                 start: DateUtils.toLocalDate(start),
                 end: DateUtils.toLocalDate(end)

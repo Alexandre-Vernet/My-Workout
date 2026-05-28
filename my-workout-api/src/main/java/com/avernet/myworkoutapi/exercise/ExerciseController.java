@@ -33,7 +33,7 @@ public class ExerciseController {
         return exerciseService.findAllExercisesByMuscleGroupId(muscleGroupId);
     }
 
-    @GetMapping("find-cardio-exercises")
+    @GetMapping("cardio")
     List<Exercise> findCardioExercises(@AuthenticationPrincipal UserEntity userEntity) {
         return exerciseService.findCardioExercises(userEntity);
     }
@@ -43,7 +43,7 @@ public class ExerciseController {
         return exerciseService.findExercisesMuscle(exerciseId);
     }
 
-    @GetMapping("/generate-description")
+    @GetMapping("description")
     ExerciseDescriptionResponse generateExerciseDescription(@RequestParam("exerciseName") String exerciseName) {
         return exerciseService.generateExerciseDescription(exerciseName);
     }

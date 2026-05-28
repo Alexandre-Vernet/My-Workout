@@ -20,8 +20,8 @@
         @if (history.unilateral) {
             (unilatéral)
         }
-        @if (!history.weight && !history.reps && duration) {
-            <span>{{ duration | convertTime }}</span>
+        @if (!history.weight && !history.reps && history.duration) {
+            <span>{{ history.duration | convertTime }}</span>
         }
     </div>
 }
