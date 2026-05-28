@@ -18,6 +18,7 @@ public class History {
     Float weight;
     Short reps;
     Boolean unilateral;
+    Integer duration;
     Workout workout;
     Exercise exercise;
 }

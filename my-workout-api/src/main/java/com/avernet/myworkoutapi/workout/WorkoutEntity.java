@@ -39,9 +39,6 @@ public class WorkoutEntity {
     @Column(nullable = false)
     LocalDateTime date;
 
-    @Column()
-    Integer duration;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     UserEntity user;

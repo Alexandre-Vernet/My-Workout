@@ -9,6 +9,7 @@ export interface History {
     exercise?: Exercise;
     weight?: number;
     reps?: number;
-    restTime?: string;
     unilateral?: boolean;
+    duration?: number;
+    restTime?: string;
 }

@@ -15,5 +15,4 @@ export class HistoryDetailComponent {
 
     @Input() exercise: Exercise;
     @Input() histories: History[];
-    @Input() duration: number;
 }
