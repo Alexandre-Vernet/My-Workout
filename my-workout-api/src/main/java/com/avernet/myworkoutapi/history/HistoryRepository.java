@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -30,13 +30,16 @@ public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
             WHERE w.user.id = :userId
             AND e.id = :exerciseId
             AND w.muscleGroup.id = :muscleGroupId
-            AND w.date = :today
+            AND w.date >= :startOfDay
+            AND w.date < :endOfDay
             ORDER BY h.id ASC
         """)
     List<HistoryEntity> findTodayHistories(
         @Param("userId") Long userId, @Param("muscleGroupId") Long muscleGroupId,
         @Param("exerciseId") Long exerciseId,
-        @Param("today") LocalDate today);
+        @Param("startOfDay") LocalDateTime startOfDay,
+        @Param("endOfDay") LocalDateTime endOfDay
+    );
 
     @Query("""
             SELECT new com.avernet.myworkoutapi.history.stats.exercisegraphs.ExerciseGraphsEntity(

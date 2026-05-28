@@ -11,7 +11,7 @@
         @if (history.weight) {
             <span>{{ history.weight }} kg</span>
         }
-        @if (!history.weight && (history.reps === 0 || history.reps === 1)) {
+        @if (!history.weight && history.reps === 1) {
             <span>répétition</span>
         }
         @if (!history.weight && history.reps > 1) {

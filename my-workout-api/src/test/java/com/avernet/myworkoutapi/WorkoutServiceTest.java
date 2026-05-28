@@ -29,6 +29,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,11 +78,11 @@ public class WorkoutServiceTest {
 
     @Test
     @Transactional
-    void shouldCreateWorkout() {
+    void createWorkout_shouldCreateWorkout() {
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .histories(List.of())
             .build();
 
@@ -114,33 +115,43 @@ public class WorkoutServiceTest {
 
     @Test
     void shouldFindExistingWorkoutIfAlreadyExist() {
+        LocalDate localDate = LocalDate.now();
+        LocalDateTime startDay = localDate.atStartOfDay();
+        LocalDateTime endDay = localDate.plusDays(1).atStartOfDay();
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(startDay)
             .histories(List.of())
             .build();
         workoutRepository.save(workoutEntity);
 
-        Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDate(userEntity.getId(),
+        Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDateGreaterThanEqualAndDateLessThan(userEntity.getId(),
             workoutEntity.getMuscleGroup().getId(),
-            workoutEntity.getDate());
+            startDay,
+            endDay
+        );
         assertTrue(existingWorkout.isPresent());
         assertNotNull(existingWorkout.get());
     }
 
     @Test
     void shouldNotFindExistingWorkoutIfAlreadyExist() {
+        LocalDate localDate = LocalDate.now();
+        LocalDateTime startDay = localDate.atStartOfDay();
+        LocalDateTime endDay = localDate.plusDays(1).atStartOfDay();
+
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .histories(List.of())
             .build();
 
-        Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDate(userEntity.getId(),
+        Optional<WorkoutEntity> existingWorkout = workoutRepository.findByUserIdAndMuscleGroupIdAndDateGreaterThanEqualAndDateLessThan(userEntity.getId(),
             workoutEntity.getMuscleGroup().getId(),
-            workoutEntity.getDate());
+            startDay,
+            endDay);
         assertFalse(existingWorkout.isPresent());
     }
 
@@ -149,7 +160,7 @@ public class WorkoutServiceTest {
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .build();
         workoutRepository.save(workoutEntity);
 
@@ -168,7 +179,7 @@ public class WorkoutServiceTest {
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(otherUser)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .build();
         workoutRepository.save(workoutEntity);
 
@@ -189,7 +200,7 @@ public class WorkoutServiceTest {
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .build();
 
         HistoryEntity historyEntity1Exercise1 = HistoryEntity.builder().workout(workoutEntity).reps((short) 10).unilateral(true).exercise(exerciseEntity1).build();
@@ -229,7 +240,7 @@ public class WorkoutServiceTest {
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
-            .date(LocalDate.now())
+            .date(LocalDateTime.now())
             .build();
         workoutRepository.save(workoutEntity);
 

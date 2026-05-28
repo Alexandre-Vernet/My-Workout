@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @Builder
 public class WorkoutGroupedHistories {
-    Workout workout;
+    WorkoutSummary workoutSummary;
     List<HistoryGroup> historyGroups;
     MuscleGroup muscleGroup;
 }

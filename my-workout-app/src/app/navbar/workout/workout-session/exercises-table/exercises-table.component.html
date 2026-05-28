@@ -2,17 +2,15 @@
     <p-table #exerciseTable [value]="exercisesMade | async" stripedRows scrollable="true" scrollHeight="180px">
         <ng-template #header>
             <tr>
-                <th id="id" class="text-center">N°</th>
                 <th id="weight" class="text-center">Poids</th>
                 <th id="reps" class="text-center">Reps.</th>
                 <th id="unilateral" class="text-center">Unilat.</th>
-                <th id="restTime" class="text-center">Tps. de repos</th>
+                <th id="restTime" class="text-center">Repos</th>
                 <th id="actions" class="text-center"></th>
             </tr>
         </ng-template>
         <ng-template #body let-history let-rowIndex="rowIndex">
             <tr>
-                <td class="text-center">{{ rowIndex + 1 }}</td>
                 <td [pEditableColumn]="history.weight" class="text-center">
                     <p-cellEditor>
                         <ng-template #input>

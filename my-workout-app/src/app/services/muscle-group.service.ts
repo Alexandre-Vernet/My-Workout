@@ -21,6 +21,6 @@ export class MuscleGroupService {
     }
 
     findAllRecommendedMuscleGroup() {
-        return this.http.get<MuscleGroupExerciseCount[]>(`${ this.muscleGroupUrl }/find-muscle-group-recommended`);
+        return this.http.get<MuscleGroupExerciseCount[]>(`${ this.muscleGroupUrl }/recommended`);
     }
 }

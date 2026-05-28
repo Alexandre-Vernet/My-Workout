@@ -21,8 +21,8 @@ public class MuscleGroupController {
         return muscleGroupService.findAll();
     }
 
-    @GetMapping("find-muscle-group-recommended")
-    List<MuscleGroupExerciseCount>findAllRecommendedMuscleGroup(@AuthenticationPrincipal UserEntity userEntity) {
-        return muscleGroupService.findAllRecommendedMuscleGroup(userEntity);
+    @GetMapping("recommended")
+    List<MuscleGroupExerciseCount>findAllMuscleGroupAndRecommendedMuscleGroup(@AuthenticationPrincipal UserEntity userEntity) {
+        return muscleGroupService.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
     }
 }
