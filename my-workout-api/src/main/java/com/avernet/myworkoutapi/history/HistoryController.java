@@ -32,7 +32,7 @@ public class HistoryController {
         return historyService.findTodayHistories(userEntity, muscleGroupId, exerciseId);
     }
 
-    @GetMapping("get-global-stats")
+    @GetMapping("stats")
     UserExercisesCountTotalWorkout getGlobalStatsWithListExercises(@AuthenticationPrincipal UserEntity userEntity) {
         return historyService.getGlobalStatsWithListExercises(userEntity);
     }

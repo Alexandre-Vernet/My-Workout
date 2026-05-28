@@ -31,7 +31,7 @@ public class WorkoutController {
         return workoutService.find(userEntity, id);
     }
 
-    @GetMapping("find-by-date")
+    @GetMapping("date")
     List<Workout> findByDate(@AuthenticationPrincipal UserEntity userEntity, @RequestParam String start, @RequestParam String end) {
         return workoutService.findByDate(userEntity, start, end);
     }

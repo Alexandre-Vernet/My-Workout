@@ -17,7 +17,7 @@ export class UserExerciseService {
     }
 
     findAddedExercisesByMuscleGroupId(muscleGroupId: number) {
-        return this.http.get<UserExercise[]>(`${ this.userExerciseUrl }/find-added-exercises-by-muscle-group-id/${ muscleGroupId }`);
+        return this.http.get<UserExercise[]>(`${ this.userExerciseUrl }/added/${ muscleGroupId }`);
     }
 
     toggleExerciseWorkout(exercise: Exercise) {

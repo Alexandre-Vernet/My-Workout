@@ -29,7 +29,7 @@ export class ExerciseService {
     }
 
     findCardioExercises() {
-        return this.http.get<Exercise[]>(`${ this.exerciseUrl }/find-cardio-exercises`);
+        return this.http.get<Exercise[]>(`${ this.exerciseUrl }/cardio`);
     }
 
     findExerciseMuscle(exerciseId: number) {
@@ -41,7 +41,7 @@ export class ExerciseService {
     }
 
     generateExerciseDescription(exerciseName: string) {
-        return this.http.get<{ description: string }>(`${ this.exerciseUrl }/generate-description`, {
+        return this.http.get<{ description: string }>(`${ this.exerciseUrl }/description`, {
             params: {
                 exerciseName
             }
