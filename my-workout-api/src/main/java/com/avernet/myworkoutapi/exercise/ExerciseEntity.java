@@ -27,7 +27,7 @@ public class ExerciseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(length = 40)
+    @Column(length = 50)
     String name;
 
     @Column(length = 2000)
