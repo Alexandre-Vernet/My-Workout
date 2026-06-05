@@ -1,33 +1,72 @@
-.workout-session {
-    top: 0;
-    left: 0;
+.step-button {
+    border-radius: 50%;
+    padding: .9em 1.2em;
+    border: 2.5px solid var(--step-button-border-color);
+    background: transparent;
+    text-align: center;
+}
 
-    .step-button {
-        border-radius: 50%;
-        padding: .9em 1.2em;
-        border: 2.5px solid var(--step-button-border-color);
-        background: transparent;
-        text-align: center;
+
+.panel-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.panel {
+    width: 100%;
+    animation-duration: 300ms;
+    animation-timing-function: ease-out;
+}
+
+.slide-from-right {
+    animation-name: slideFromRight;
+}
+
+.slide-from-left {
+    animation-name: slideFromLeft;
+}
+
+@keyframes slideFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
     }
-
-    p-inputnumber input {
-        text-align: center;
-    }
-
-
-    .bottom-page {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        line-height: 3;
-
-        .stopwatch span {
-            font-size: 2.5em;
-            font-weight: 700;
-        }
+    to {
+        transform: translateX(0);
+        opacity: 1;
     }
 }
+
+@keyframes slideFromLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+
+p-inputnumber input {
+    text-align: center;
+}
+
+
+.bottom-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    line-height: 3;
+
+    .stopwatch span {
+        font-size: 2.5em;
+        font-weight: 700;
+    }
+}
+
 
 .unilateral-container {
     margin-top: -20px;
@@ -75,47 +114,5 @@
 
     .pause::after {
         right: 0;
-    }
-
-}
-
-.panel-container {
-    position: relative;
-    overflow: hidden;
-}
-
-.panel {
-    width: 100%;
-    animation-duration: 300ms;
-    animation-timing-function: ease-out;
-}
-
-.slide-from-right {
-    animation-name: slideFromRight;
-}
-
-.slide-from-left {
-    animation-name: slideFromLeft;
-}
-
-@keyframes slideFromRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideFromLeft {
-    from {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
     }
 }
