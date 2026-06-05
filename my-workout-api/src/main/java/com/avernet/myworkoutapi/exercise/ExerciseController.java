@@ -4,6 +4,7 @@ import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscle;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleAddedToWorkout;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,7 +50,7 @@ public class ExerciseController {
     }
 
     @PostMapping
-    Exercise createOrUpdateExercise(@RequestBody ExerciseMuscle exerciseMuscle) {
+    Exercise createOrUpdateExercise(@Valid @RequestBody ExerciseMuscle exerciseMuscle) {
         return exerciseService.createOrUpdateExercise(exerciseMuscle);
     }
 }

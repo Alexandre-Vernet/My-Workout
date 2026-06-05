@@ -27,10 +27,10 @@ public class ExerciseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column()
+    @Column(length = 40)
     String name;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 2000)
     String description;
 
     @Column(name = "is_smart_workout")
