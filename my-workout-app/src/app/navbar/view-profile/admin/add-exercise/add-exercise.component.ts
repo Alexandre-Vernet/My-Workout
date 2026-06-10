@@ -143,13 +143,13 @@ export class AddExerciseComponent implements OnInit {
 
         this.exerciseService.createOrUpdateExercise(exerciseMuscle)
             .subscribe({
-                next: () => {
+                next: (exerciseCreated) => {
                     this.alertService.alert$.next({
                         severity: 'success',
                         message: 'L\'exercice a bien été mis à jour'
                     });
                     if (!exercise.id) {
-                        this.showDialogAddExerciseToWorkout(exerciseMuscle.exercise);
+                        this.showDialogAddExerciseToWorkout(exerciseCreated);
                     }
                 },
                 error: (err: CustomError) => {
