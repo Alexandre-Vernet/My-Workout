@@ -157,6 +157,10 @@ export class AddExerciseComponent implements OnInit {
                         this.formAddExercise.controls.name.setErrors({
                             exerciseNameAlreadyExist: true
                         })
+                    }  else if (err?.error?.errorCode === 'DOUBLE_MUSCLE_GROUP') {
+                        this.formAddExercise.controls.muscles.setErrors({
+                            duplicatMuscleGroup: true
+                        })
                     } else if (err?.error?.errors[0].field === 'exercise.name') {
                         this.formAddExercise.controls.name.setErrors({
                             exerciseNameError: true

@@ -7,8 +7,11 @@ import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscle;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleAddedToWorkout;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleEntity;
 import com.avernet.myworkoutapi.gemini.GeminiService;
+import com.avernet.myworkoutapi.muscle.Muscle;
 import com.avernet.myworkoutapi.muscle.MuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleMapper;
+import com.avernet.myworkoutapi.muscle.MuscleRepository;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroup;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupMapper;
@@ -59,6 +62,9 @@ public class ExerciseService {
 
     @Resource
     MuscleMapper muscleMapper;
+
+    @Resource
+    private MuscleRepository muscleRepository;
 
 
     @Transactional(readOnly = true)
@@ -152,12 +158,36 @@ public class ExerciseService {
     }
 
     @Transactional
-    public Exercise createOrUpdateExercise(ExerciseMuscle exerciseMuscle) {
-        if (exerciseMuscle.exercise().getId() == null) {
-            boolean exerciseNameExist = exerciseRepository.existsByName(exerciseMuscle.exercise().getName());
+    public Exercise createOrUpdateExercise(ExerciseMuscle exerciseMuscleRequest) {
+        if (exerciseMuscleRequest.exercise().getId() == null) {
+            boolean exerciseNameExist = exerciseRepository.existsByName(exerciseMuscleRequest.exercise().getName());
             if (exerciseNameExist) {
                 throw new ApiException(ErrorCodeEnum.EXERCISE_NAME_ALREADY_EXIST, "Cet exercice existe déjà", HttpStatus.CONFLICT);
             }
+        }
+
+        List<Long> muscleIds = exerciseMuscleRequest.muscles().stream()
+            .map(Muscle::id)
+            .toList();
+
+        List<Muscle> muscleList = muscleMapper.toDtoList(muscleRepository.findAllById(muscleIds));
+
+        Exercise exercise = exerciseMapper.toDto(
+            exerciseRepository.findById(exerciseMuscleRequest.exercise().getId())
+                .orElseThrow(() -> new ApiException(ErrorCodeEnum.EXERCISE_NOT_FOUND, "Cet exercice n'existe pas", HttpStatus.NOT_FOUND))
+        );
+
+        ExerciseMuscle exerciseMuscle = new ExerciseMuscle(exercise, muscleList);
+
+        // Prevent double muscle group
+        List<MuscleGroupEnum> muscleGroupList = exerciseMuscle.muscles().stream()
+            .map(Muscle::muscleGroup)
+            .map(MuscleGroup::name)
+            .distinct()
+            .toList();
+
+        if (muscleGroupList.size() > 1) {
+            throw new ApiException(ErrorCodeEnum.DOUBLE_MUSCLE_GROUP, "Impossible de sélectionner 2 groupes musculaires", HttpStatus.BAD_REQUEST);
         }
 
         ExerciseEntity exerciseEntity = exerciseMapper.toEntity(exerciseMuscle.exercise());
