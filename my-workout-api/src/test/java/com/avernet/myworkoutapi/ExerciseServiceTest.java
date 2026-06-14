@@ -202,14 +202,44 @@ public class ExerciseServiceTest {
 
         ExerciseMuscle exerciseMuscle = new ExerciseMuscle(exercise, muscleList);
 
-        Exercise exerciseCreated = service.createOrUpdateExercise(exerciseMuscle);
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(exerciseCreated.getId()).orElseThrow(ExerciseNotFoundException::new);
-        assertNotNull(exerciseCreated);
+        Exercise exerciseUpdated = service.createOrUpdateExercise(exerciseMuscle);
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(exerciseUpdated.getId()).orElseThrow(ExerciseNotFoundException::new);
+        assertNotNull(exerciseUpdated);
         assertNotNull(exerciseEntity);
         assertEquals(exercise.getId(), exerciseEntity.getId());
         assertEquals("Updated exercise name", exerciseEntity.getName());
         assertEquals("Updated exercise desc", exerciseEntity.getDescription());
         assertTrue(exerciseEntity.getSmartWorkout());
+    }
+
+    @Test
+    @Transactional
+    void createOrUpdateExercise_shouldThrowExceptionCreateExerciseWithMultipleDifferentsMuscleGroup() {
+        Exercise exercise = Exercise.builder()
+            .id(1L)
+            .name("Updated exercise name")
+            .description("Updated exercise desc")
+            .smartWorkout(true)
+            .build();
+
+        List<Muscle> muscleList = new ArrayList<>();
+        MuscleEntity muscleEntity1 = muscleRepository.findById(25L)
+            .orElseThrow(() -> new ApiException(ErrorCodeEnum.MUSCLE_NOT_FOUND, "Muscle introuvable", HttpStatus.NOT_FOUND));
+        MuscleEntity muscleEntity2 = muscleRepository.findById(33L)
+            .orElseThrow(() -> new ApiException(ErrorCodeEnum.MUSCLE_NOT_FOUND, "Muscle introuvable", HttpStatus.NOT_FOUND));
+        MuscleEntity muscleEntity3 = muscleRepository.findById(16L)
+            .orElseThrow(() -> new ApiException(ErrorCodeEnum.MUSCLE_NOT_FOUND, "Muscle introuvable", HttpStatus.NOT_FOUND));
+        muscleList.add(muscleMapper.toDto(muscleEntity1));
+        muscleList.add(muscleMapper.toDto(muscleEntity2));
+        muscleList.add(muscleMapper.toDto(muscleEntity3));
+
+        ExerciseMuscle exerciseMuscle = new ExerciseMuscle(exercise, muscleList);
+
+        ApiException apiException = assertThrows(ApiException.class, () -> service.createOrUpdateExercise(exerciseMuscle));
+        assertNotNull(apiException);
+        assertEquals(ErrorCodeEnum.DOUBLE_MUSCLE_GROUP, apiException.getErrorCode());
+        assertEquals("Impossible de sélectionner 2 groupes musculaires", apiException.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, apiException.getHttpStatus());
     }
 
     @Test

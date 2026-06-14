@@ -134,6 +134,13 @@
                         Champs requis
                     </p-message>
                 }
+                @if (formAddExercise.controls.muscles.hasError('duplicatMuscleGroup')) {
+                    <p-message
+                        severity="error"
+                        variant="simple" size="small">
+                        Impossible de sélectionner 2 groupes musculaires différents
+                    </p-message>
+                }
             </div>
         </div>
 
