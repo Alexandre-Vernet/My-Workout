@@ -202,9 +202,9 @@ public class ExerciseServiceTest {
 
         ExerciseMuscle exerciseMuscle = new ExerciseMuscle(exercise, muscleList);
 
-        Exercise exerciseCreated = service.createOrUpdateExercise(exerciseMuscle);
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(exerciseCreated.getId()).orElseThrow(ExerciseNotFoundException::new);
-        assertNotNull(exerciseCreated);
+        Exercise exerciseUpdated = service.createOrUpdateExercise(exerciseMuscle);
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(exerciseUpdated.getId()).orElseThrow(ExerciseNotFoundException::new);
+        assertNotNull(exerciseUpdated);
         assertNotNull(exerciseEntity);
         assertEquals(exercise.getId(), exerciseEntity.getId());
         assertEquals("Updated exercise name", exerciseEntity.getName());

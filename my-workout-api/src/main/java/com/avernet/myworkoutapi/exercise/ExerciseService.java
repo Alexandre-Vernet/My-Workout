@@ -172,12 +172,7 @@ public class ExerciseService {
 
         List<Muscle> muscleList = muscleMapper.toDtoList(muscleRepository.findAllById(muscleIds));
 
-        Exercise exercise = exerciseMapper.toDto(
-            exerciseRepository.findById(exerciseMuscleRequest.exercise().getId())
-                .orElseThrow(() -> new ApiException(ErrorCodeEnum.EXERCISE_NOT_FOUND, "Cet exercice n'existe pas", HttpStatus.NOT_FOUND))
-        );
-
-        ExerciseMuscle exerciseMuscle = new ExerciseMuscle(exercise, muscleList);
+        ExerciseMuscle exerciseMuscle = new ExerciseMuscle(exerciseMuscleRequest.exercise(), muscleList);
 
         // Prevent double muscle group
         List<MuscleGroupEnum> muscleGroupList = exerciseMuscle.muscles().stream()
