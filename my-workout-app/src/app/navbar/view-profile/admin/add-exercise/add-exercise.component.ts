@@ -6,7 +6,6 @@ import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Textarea } from 'primeng/textarea';
-import { ToggleSwitch } from 'primeng/toggleswitch';
 import { MuscleService } from '../../../../services/muscle.service';
 import { MultiSelect } from 'primeng/multiselect';
 import { Muscle } from '../../../../../interfaces/Muscle';
@@ -31,7 +30,6 @@ import { MuscleDropdown } from "../../../../../interfaces/MuscleDropdown";
         InputText,
         ReactiveFormsModule,
         Textarea,
-        ToggleSwitch,
         MultiSelect,
         ConfirmDialog,
         Message
@@ -44,7 +42,6 @@ export class AddExerciseComponent implements OnInit {
         id: new FormControl<number>(null),
         name: new FormControl<string>(null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
         description: new FormControl<string>(null, [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]),
-        isSmartWorkout: new FormControl<boolean>(false, Validators.required),
         muscles: new FormControl<Muscle[]>(null, Validators.required)
     });
 
@@ -91,7 +88,6 @@ export class AddExerciseComponent implements OnInit {
                         id: exercise.id,
                         name: exercise.name,
                         description: exercise.description,
-                        isSmartWorkout: exercise.smartWorkout,
                         muscles: selectedMuscles
                     });
                 },
@@ -128,12 +124,11 @@ export class AddExerciseComponent implements OnInit {
     }
 
     createExercise() {
-        const { id, name, description, isSmartWorkout, muscles } = this.formAddExercise.getRawValue();
+        const { id, name, description, muscles } = this.formAddExercise.getRawValue();
         const exercise: Exercise = {
             id,
             name: name.trim(),
             description: description.trim(),
-            smartWorkout: isSmartWorkout,
         };
 
         const exerciseMuscle: ExerciseMuscle = {

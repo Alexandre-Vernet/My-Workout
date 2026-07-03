@@ -23,5 +23,4 @@ public class Exercise {
     String name;
 
     String description;
-    Boolean smartWorkout;
 }

@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -154,7 +153,6 @@ public class ExerciseServiceTest {
         Exercise exercise = Exercise.builder()
             .name("My custom exercise")
             .description("My custom desc")
-            .smartWorkout(false)
             .build();
 
         List<Muscle> muscleList = new ArrayList<>();
@@ -176,7 +174,6 @@ public class ExerciseServiceTest {
         assertNotNull(exerciseEntity);
         assertEquals("My custom exercise", exerciseEntity.getName());
         assertEquals("My custom desc", exerciseEntity.getDescription());
-        assertFalse(exerciseEntity.getSmartWorkout());
     }
 
     @Test
@@ -186,7 +183,6 @@ public class ExerciseServiceTest {
             .id(1L)
             .name("Updated exercise name")
             .description("Updated exercise desc")
-            .smartWorkout(true)
             .build();
 
         List<Muscle> muscleList = new ArrayList<>();
@@ -209,7 +205,6 @@ public class ExerciseServiceTest {
         assertEquals(exercise.getId(), exerciseEntity.getId());
         assertEquals("Updated exercise name", exerciseEntity.getName());
         assertEquals("Updated exercise desc", exerciseEntity.getDescription());
-        assertTrue(exerciseEntity.getSmartWorkout());
     }
 
     @Test
@@ -219,7 +214,6 @@ public class ExerciseServiceTest {
             .id(1L)
             .name("Updated exercise name")
             .description("Updated exercise desc")
-            .smartWorkout(true)
             .build();
 
         List<Muscle> muscleList = new ArrayList<>();

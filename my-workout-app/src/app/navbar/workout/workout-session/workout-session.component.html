@@ -91,7 +91,7 @@
 
                                                     <i class="ml-2 pi pi-info-circle cursor-pointer"
                                                        (click)="dialogConvertWeightToElastics.toggle($event)"
-                                                       [style.visibility]="exercise.smartWorkout && formWorkout.controls.weight.value % 5 === 0 && formWorkout.controls.weight.value > 0 ? 'visible' : 'hidden'">
+                                                       [style.visibility]="formWorkout.controls.weight.value % 5 === 0 && formWorkout.controls.weight.value > 0 ? 'visible' : 'hidden'">
                                                     </i>
                                                 </div>
 
