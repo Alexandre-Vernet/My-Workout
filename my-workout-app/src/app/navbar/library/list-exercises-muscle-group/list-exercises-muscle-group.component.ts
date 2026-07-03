@@ -14,6 +14,7 @@ import { removeAccents, replaceSpaces } from '../../../shared/utils/remove-accen
 import { NgClass, UpperCasePipe } from '@angular/common';
 import { MuscleGroupExercises } from '../../../../interfaces/MuscleGroupExercises';
 import { ExerciseAddedToWorkout } from "../../../../interfaces/ExerciseAddedToWorkout";
+import { Exercise } from "../../../../interfaces/Exercise";
 
 @Component({
     selector: 'app-list-exercises',
@@ -59,7 +60,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
             });
     }
 
-    drop(event: CdkDragDrop<any[]>) {
+    drop(event: CdkDragDrop<Exercise[]>) {
         const dragged = this.muscleGroupExercises.exerciseAddedToWorkouts[event.previousIndex];
         const target = this.muscleGroupExercises.exerciseAddedToWorkouts[event.currentIndex];
 
@@ -69,6 +70,7 @@ export class ListExercisesMuscleGroupComponent implements OnInit {
         }
 
         moveItemInArray(this.muscleGroupExercises.exerciseAddedToWorkouts, event.previousIndex, event.currentIndex);
+        moveItemInArray(this.filterMuscleGroupExercises.exerciseAddedToWorkouts, event.previousIndex, event.currentIndex);
 
         const userExercises = this.muscleGroupExercises.exerciseAddedToWorkouts
             .filter(e => e.addedToWorkout)
