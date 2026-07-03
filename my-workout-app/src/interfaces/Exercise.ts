@@ -5,7 +5,6 @@ export interface Exercise {
     id?: number;
     name?: string;
     description?: string;
-    smartWorkout?: boolean;
     muscles?: Muscle[];
     exerciseMuscles?: ExerciseMuscle[];
 }
