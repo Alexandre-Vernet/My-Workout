@@ -13,10 +13,11 @@ import { replaceSpaces } from '../../../shared/utils/remove-accents';
 import { AuthService } from '../../../auth/auth.service';
 import { User } from '../../../../interfaces/User';
 import { ExerciseMuscle } from '../../../../interfaces/ExerciseMuscle';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 
 @Component({
     selector: 'app-view-exercise',
-    imports: [Button, Fieldset, Tag, Skeleton, RouterLink],
+    imports: [Button, Fieldset, Tag, Skeleton, RouterLink, Tabs, TabList, Tab, TabPanels, TabPanel],
     templateUrl: './view-exercise.component.html',
     styleUrl: './view-exercise.component.scss',
     standalone: true

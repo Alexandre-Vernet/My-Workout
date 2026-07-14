@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Exercise } from '../../interfaces/Exercise';
-import { MuscleGroupExercises } from '../../interfaces/MuscleGroupExercises';
 import { ExerciseMuscle } from '../../interfaces/ExerciseMuscle';
-import { AuthService } from "../auth/auth.service";
-import { catchError, switchMap } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -16,16 +13,23 @@ export class ExerciseService {
 
     constructor(
         private readonly http: HttpClient,
-        private readonly authService: AuthService,
     ) {
     }
 
-    findAllExercises(muscleGroupId: number) {
-        return this.authService.getCurrentUser()
-            .pipe(
-                switchMap(() => this.findAllExercisesByUserAndMuscleGroupId(muscleGroupId)),
-                catchError(() => this.findAllExercisesByMuscleGroupId(muscleGroupId))
-            )
+    findAll() {
+        return this.http.get<Exercise[]>(`${ this.exerciseUrl }`);
+    }
+
+    search(value: string) {
+        return this.http.get<Exercise[]>(`${ this.exerciseUrl }/search`, {
+            params: {
+                search: value
+            }
+        });
+    }
+
+    findExercisesByMuscleGroup(muscleGroupId: number) {
+        return this.http.get<Exercise[]>(`${ this.exerciseUrl }/muscle-group/${ muscleGroupId }`);
     }
 
     findCardioExercises() {
@@ -46,14 +50,5 @@ export class ExerciseService {
                 exerciseName
             }
         });
-    }
-
-
-    private findAllExercisesByUserAndMuscleGroupId(muscleGroupId: number) {
-        return this.http.get<MuscleGroupExercises>(`${ this.exerciseUrl }/find-all-exercises-by-user-muscle-group-id/${ muscleGroupId }`);
-    }
-
-    private findAllExercisesByMuscleGroupId(muscleGroupId: number) {
-        return this.http.get<MuscleGroupExercises>(`${ this.exerciseUrl }/find-all-exercises-by-muscle-group-id/${ muscleGroupId }`);
     }
 }

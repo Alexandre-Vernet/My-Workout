@@ -22,7 +22,7 @@
     } @else {
         @let exercise = exerciseMuscle.exercise;
 
-        <h1 class="text-center mb-3">{{ exercise.name }}</h1>
+        <h1 class="mb-3">{{ exercise.name }}</h1>
 
         <div class="flex flex-column">
             <div class="flex flex-row gap-2 flex-wrap">
@@ -42,13 +42,18 @@
             <img [src]="imagePath" [alt]="exercise.name"/>
         </div>
 
-        <div class="card flex justify-center mt-4">
-            <p-fieldset legend="Description" [toggleable]="true">
-                <p class="text-justify">
-                    {{ exercise.description }}
-                </p>
-            </p-fieldset>
-        </div>
+        <p-tabs value="0">
+            <p-tablist>
+                <p-tab value="0">Exécution</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel value="0">
+                    <p class="m-0 exercise-description">
+                        {{ exercise.description }}
+                    </p>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
 
         @if (user) {
             <div class="m-2 mt-5 flex gap-2">
