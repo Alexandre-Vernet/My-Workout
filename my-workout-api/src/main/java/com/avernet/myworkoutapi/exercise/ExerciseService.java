@@ -168,13 +168,7 @@ public class ExerciseService {
             .replace("\n", " ");
 
         String endPrompt = """
-            Contraintes :
-            - sois concis
-            - aucune mise en forme
-            - aucun retour à la ligne
-            - aucun texte en gras
-            - aucun tiret
-            - réponse directe uniquement
+            Le nombre d'étape n'est pas "fixe", ajuste au besoin pour réduire les étapes ou en ajouter si nécessaire tout en étant le plus clair et pédagogue possible.
             """;
 
         List<String> descriptionList = exerciseRepository.findAllById(List.of(1L, 6L, 19L))
