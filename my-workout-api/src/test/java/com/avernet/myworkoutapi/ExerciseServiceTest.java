@@ -3,20 +3,17 @@ package com.avernet.myworkoutapi;
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exercise.Exercise;
-import com.avernet.myworkoutapi.exercise.ExerciseAddedToWorkout;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseMapper;
 import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
 import com.avernet.myworkoutapi.exercise.ExerciseService;
-import com.avernet.myworkoutapi.exercise.MuscleGroupExercises;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscle;
 import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleAddedToWorkout;
 import com.avernet.myworkoutapi.muscle.Muscle;
 import com.avernet.myworkoutapi.muscle.MuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleMapper;
 import com.avernet.myworkoutapi.muscle.MuscleRepository;
-import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.UserRepository;
@@ -24,7 +21,6 @@ import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
@@ -63,60 +59,42 @@ public class ExerciseServiceTest {
 
     @Resource
     MuscleMapper muscleMapper;
-    @Autowired
+
+    @Resource
     private ExerciseMapper exerciseMapper;
 
-
     @Test
-    void findAllExercisesByUserAndMuscleGroupId_shouldFindExercises() {
-        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
-        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
-        ExerciseEntity exerciseEntity2 = exerciseRepository.findById(2L).orElseThrow(ExerciseNotFoundException::new);
-        ExerciseEntity exerciseEntity3 = exerciseRepository.findById(3L).orElseThrow(ExerciseNotFoundException::new);
+    void findAll_shouldFindAllExercices() {
+        List<Exercise> exerciseList = service.findAll();
 
-        UserExerciseEntity userExerciseEntity = UserExerciseEntity.builder()
-            .user(userEntity)
-            .exercise(exerciseEntity)
-            .build();
-
-        UserExerciseEntity userExerciseEntity2 = UserExerciseEntity.builder()
-            .user(userEntity)
-            .exercise(exerciseEntity2)
-            .build();
-
-        UserExerciseEntity userExerciseEntity3 = UserExerciseEntity.builder()
-            .user(userEntity)
-            .exercise(exerciseEntity3)
-            .build();
-
-        userExerciseRepository.saveAll(List.of(userExerciseEntity, userExerciseEntity2, userExerciseEntity3));
-
-
-        MuscleGroupExercises muscleGroupExercises = service.findAllExercisesWithUserDataByMuscleGroup(userEntity, 1L);
-
-
-        assertNotNull(muscleGroupExercises);
-        assertEquals(MuscleGroupEnum.PECTORAUX, muscleGroupExercises.muscleGroup().name());
-        assertNotNull(muscleGroupExercises.muscles());
-        assertEquals(3, muscleGroupExercises.muscles().size());
-        assertEquals(3, muscleGroupExercises.exerciseAddedToWorkouts().stream()
-            .filter(ExerciseAddedToWorkout::addedToWorkout)
-            .toList()
-            .size()
-        );
+        assertNotNull(exerciseList);
+        exerciseList.forEach(exercise -> {
+            assertNotNull(exercise.getId());
+            assertNotNull(exercise.getDescription());
+            assertNotNull(exercise.getMuscles());
+        });
     }
 
     @Test
-    void findAllExercisesByMuscleGroupId_shouldReturnExercices() {
-        MuscleGroupExercises muscleGroupExercises = service.findExercisesByMuscleGroup(1L);
+    void findExercisesByMuscleGroup_shouldReturnExercices() {
+        List<Exercise> exerciseList = service.findExercisesByMuscleGroup(1L);
 
+        assertNotNull(exerciseList);
+        exerciseList.forEach(exercise -> {
+            assertNotNull(exercise.getId());
+            assertNotNull(exercise.getDescription());
+            assertNotNull(exercise.getMuscles());
+        });
+    }
 
-        assertNotNull(muscleGroupExercises);
-        assertEquals(MuscleGroupEnum.PECTORAUX, muscleGroupExercises.muscleGroup().name());
-        assertNotNull(muscleGroupExercises.muscles());
-        assertEquals(3, muscleGroupExercises.muscles().size());
-        muscleGroupExercises.exerciseAddedToWorkouts()
-            .forEach(exerciseAddedToWorkout -> assertFalse(exerciseAddedToWorkout.addedToWorkout()));
+    @Test
+    void search_shouldFindExercice() {
+        String search = "Développé incliné halt";
+        List<Exercise> exerciseList = service.search(search);
+
+        assertNotNull(exerciseList);
+        assertEquals(1, exerciseList.size());
+        assertEquals("Développé incliné haltères", exerciseList.getFirst().getName());
     }
 
     @Test
