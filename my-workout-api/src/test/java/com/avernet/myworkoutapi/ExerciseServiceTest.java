@@ -14,6 +14,7 @@ import com.avernet.myworkoutapi.muscle.Muscle;
 import com.avernet.myworkoutapi.muscle.MuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleMapper;
 import com.avernet.myworkoutapi.muscle.MuscleRepository;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.UserRepository;
@@ -72,6 +73,8 @@ public class ExerciseServiceTest {
             assertNotNull(exercise.getId());
             assertNotNull(exercise.getDescription());
             assertNotNull(exercise.getMuscles());
+            assertNotNull( exercise.getMuscles().getFirst().muscleGroup().name());
+
         });
     }
 
@@ -84,6 +87,7 @@ public class ExerciseServiceTest {
             assertNotNull(exercise.getId());
             assertNotNull(exercise.getDescription());
             assertNotNull(exercise.getMuscles());
+            assertEquals(MuscleGroupEnum.PECTORAUX, exercise.getMuscles().getFirst().muscleGroup().name());
         });
     }
 
