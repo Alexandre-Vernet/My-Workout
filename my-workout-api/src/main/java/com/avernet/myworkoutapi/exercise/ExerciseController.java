@@ -23,15 +23,19 @@ public class ExerciseController {
     @Resource
     ExerciseService exerciseService;
 
-
-    @GetMapping("find-all-exercises-by-user-muscle-group-id/{muscleGroupId}")
-    MuscleGroupExercises findAllExercisesByUserAndMuscleGroupId(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long muscleGroupId) {
-        return exerciseService.findAllExercisesByUserAndMuscleGroupId(userEntity, muscleGroupId);
+    @GetMapping
+    List<Exercise> findAll() {
+        return exerciseService.findAll();
     }
 
-    @GetMapping("find-all-exercises-by-muscle-group-id/{muscleGroupId}")
-    MuscleGroupExercises findAllExercisesByMuscleGroupId(@PathVariable Long muscleGroupId) {
-        return exerciseService.findAllExercisesByMuscleGroupId(muscleGroupId);
+    @GetMapping("search")
+    List<Exercise> search(@RequestParam String search) {
+        return exerciseService.search(search);
+    }
+
+    @GetMapping("muscle-group/{muscleGroupId}")
+    List<Exercise> findExercisesByMuscleGroup(@PathVariable Long muscleGroupId) {
+        return exerciseService.findExercisesByMuscleGroup(muscleGroupId);
     }
 
     @GetMapping("cardio")

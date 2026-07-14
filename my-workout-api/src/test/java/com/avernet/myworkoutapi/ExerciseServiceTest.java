@@ -92,7 +92,7 @@ public class ExerciseServiceTest {
         userExerciseRepository.saveAll(List.of(userExerciseEntity, userExerciseEntity2, userExerciseEntity3));
 
 
-        MuscleGroupExercises muscleGroupExercises = service.findAllExercisesByUserAndMuscleGroupId(userEntity, 1L);
+        MuscleGroupExercises muscleGroupExercises = service.findAllExercisesWithUserDataByMuscleGroup(userEntity, 1L);
 
 
         assertNotNull(muscleGroupExercises);
@@ -107,8 +107,8 @@ public class ExerciseServiceTest {
     }
 
     @Test
-    void findAllExercisesByMuscleGroupId_shouldReturnAllExercices() {
-        MuscleGroupExercises muscleGroupExercises = service.findAllExercisesByMuscleGroupId(1L);
+    void findAllExercisesByMuscleGroupId_shouldReturnExercices() {
+        MuscleGroupExercises muscleGroupExercises = service.findExercisesByMuscleGroup(1L);
 
 
         assertNotNull(muscleGroupExercises);

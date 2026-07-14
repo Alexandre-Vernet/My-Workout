@@ -1,5 +1,6 @@
 package com.avernet.myworkoutapi.exercise;
 
+import com.avernet.myworkoutapi.muscle.Muscle;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,4 +26,6 @@ public class Exercise {
     String name;
 
     String description;
+
+    List<Muscle> muscles;
 }

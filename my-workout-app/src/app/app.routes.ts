@@ -1,8 +1,5 @@
 import { Route, RouterOutlet } from '@angular/router';
-import {
-    ListExercisesMuscleGroupComponent
-} from './navbar/library/list-exercises-muscle-group/list-exercises-muscle-group.component';
-import { ListMusclesGroupsComponent } from './navbar/library/list-muscles-groups/list-muscles-groups.component';
+import { ListExercisesComponent } from './navbar/library/list-exercises/list-exercises.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { authGuard } from './auth/auth.guard';
@@ -34,20 +31,16 @@ export const appRoutes: Route[] = [
         path: MenuUrls.library,
         children: [
             {
-                path: 'list-muscles-groups',
-                component: ListMusclesGroupsComponent
+                path: '',
+                component: ListExercisesComponent
             },
             {
-                path: 'list-exercises-muscle-group/:muscleGroupId',
-                component: ListExercisesMuscleGroupComponent
-            },
-            {
-                path: 'exercises/:exerciseId',
+                path: 'exercise/:exerciseId',
                 component: ViewExerciseComponent
             },
             {
                 path: '**',
-                redirectTo: 'list-muscles-groups'
+                redirectTo: ''
             }
         ]
     },
