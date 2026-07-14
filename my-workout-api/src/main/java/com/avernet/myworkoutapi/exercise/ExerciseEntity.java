@@ -39,6 +39,10 @@ public class ExerciseEntity {
     @Column(nullable = false)
     ExerciseDifficultyEnum difficulty = ExerciseDifficultyEnum.INTERMEDIATE;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    ExerciseMechanicEnum mechanic = ExerciseMechanicEnum.COMPOUND;
+
     @OneToMany(mappedBy = "exercise", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<ExerciseMuscleEntity> exerciseMuscles = new ArrayList<>();
 
