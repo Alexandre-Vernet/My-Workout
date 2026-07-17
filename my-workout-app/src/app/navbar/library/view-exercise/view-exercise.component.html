@@ -44,10 +44,24 @@
 
         <p-tabs value="0">
             <p-tablist>
-                <p-tab value="0">Exécution</p-tab>
+                <p-tab value="0">Informations</p-tab>
+                <p-tab value="1">Exécution</p-tab>
             </p-tablist>
             <p-tabpanels>
-                <p-tabpanel value="0">
+                <p-tabpanel value="0" class="informations">
+                    <h2 class="mb-3">Informations</h2>
+                    <table>
+                        <tr>
+                            <td>Niveau</td>
+                            <td>{{ exercise.difficulty | difficultyLabel }}</td>
+                        </tr>
+                        <tr>
+                            <td>Mécanique</td>
+                            <td>{{ exercise.mechanic | mechanicLabel }}</td>
+                        </tr>
+                    </table>
+                </p-tabpanel>
+                <p-tabpanel value="1">
                     <p class="m-0 exercise-description">
                         {{ exercise.description }}
                     </p>
@@ -55,16 +69,22 @@
             </p-tabpanels>
         </p-tabs>
 
-        @if (user) {
-            <div class="m-2 mt-5 flex gap-2">
+        @if (!user?.admin) {
+            <div class="p-5 flex justify-content-center">
+                <p-button (click)="toggleExerciseWorkout()"
+                          icon="pi pi-plus"
+                          size="large"
+                          [label]="exerciseMuscle.addedToWorkout ? 'Supprimer de l\'entraînement' : 'Ajouter à l\'entraînement'"
+                          [severity]="exerciseMuscle.addedToWorkout ? 'danger' : 'primary'"/>
+            </div>
+        } @else {
+            <div class="p-5 flex justify-content-center flex gap-2">
                 <p-button (click)="toggleExerciseWorkout()"
                           [label]="exerciseMuscle.addedToWorkout ? 'Supprimer de l\'entraînement' : 'Ajouter à l\'entraînement'"
                           [severity]="exerciseMuscle.addedToWorkout ? 'danger' : 'primary'"/>
-                @if (user.admin) {
-                    <p-button (click)="updateExercise()"
-                              label="Modifier"
-                              severity="info"/>
-                }
+                <p-button (click)="updateExercise()"
+                          label="Modifier"
+                          severity="info"/>
             </div>
         }
     }

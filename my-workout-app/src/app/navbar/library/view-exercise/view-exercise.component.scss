@@ -1,3 +1,18 @@
 .exercise-description {
     white-space: pre-line;
 }
+
+.informations {
+    table {
+        width: 100%;
+        border-collapse: collapse;
+
+        td {
+            padding: 6px 0;
+        }
+
+        tr:not(:last-child) td {
+            border-bottom: 1px solid rgba(0, 0, 0, .1);
+        }
+    }
+}
