@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { MechanicEnum } from "../../../interfaces/MechanicEnum";
+import { MechanicLabels } from "../../../interfaces/MechanicEnum";
 
 @Pipe({
   name: 'mechanicLabel',
@@ -7,6 +7,6 @@ import { MechanicEnum } from "../../../interfaces/MechanicEnum";
 export class MechanicLabelPipe implements PipeTransform {
 
   transform(mechanic: string) {
-    return MechanicEnum[mechanic] ?? mechanic;
+    return MechanicLabels[mechanic] ?? mechanic;
   }
 }

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { DifficultyEnum } from "../../../interfaces/DifficultyEnum";
+import { DifficultyLabels } from "../../../interfaces/DifficultyEnum";
 
 @Pipe({
   name: 'difficultyLabel',
@@ -7,6 +7,6 @@ import { DifficultyEnum } from "../../../interfaces/DifficultyEnum";
 export class DifficultyLabelPipe implements PipeTransform {
 
   transform(difficulty: string) {
-    return DifficultyEnum[difficulty] ?? difficulty;
+    return DifficultyLabels[difficulty] ?? difficulty;
   }
 }

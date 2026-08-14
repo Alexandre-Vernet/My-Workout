@@ -19,6 +19,11 @@ import { Message } from 'primeng/message';
 import { ExerciseMuscle } from '../../../../../interfaces/ExerciseMuscle';
 import { CustomError } from "../../../../../interfaces/CustomError";
 import { MuscleDropdown } from "../../../../../interfaces/MuscleDropdown";
+import { MechanicEnum } from "../../../../../interfaces/MechanicEnum";
+import { DifficultyEnum } from "../../../../../interfaces/DifficultyEnum";
+import { RadioButton } from "primeng/radiobutton";
+import { DifficultyLabelPipe } from "../../../../shared/pipes/difficulty-label.pipe";
+import { MechanicLabelPipe } from "../../../../shared/pipes/mechanic-label.pipe";
 
 @Component({
     selector: 'app-add-exercise',
@@ -32,17 +37,25 @@ import { MuscleDropdown } from "../../../../../interfaces/MuscleDropdown";
         Textarea,
         MultiSelect,
         ConfirmDialog,
-        Message
+        Message,
+        RadioButton,
+        DifficultyLabelPipe,
+        MechanicLabelPipe,
     ],
     providers: [ConfirmationService, MessageService]
 })
 export class AddExerciseComponent implements OnInit {
 
+    protected readonly MechanicEnum = MechanicEnum;
+    protected readonly DifficultyEnum = DifficultyEnum;
+
     formAddExercise = new FormGroup({
         id: new FormControl<number>(null),
         name: new FormControl<string>(null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
         description: new FormControl<string>(null, [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]),
-        muscles: new FormControl<Muscle[]>(null, Validators.required)
+        muscles: new FormControl<Muscle[]>(null, Validators.required),
+        difficulty: new FormControl<DifficultyEnum>(DifficultyEnum.BEGINNER, Validators.required),
+        mechanic: new FormControl<MechanicEnum>(MechanicEnum.COMPOUND, Validators.required),
     });
 
     loadingDescription = false;
@@ -88,7 +101,9 @@ export class AddExerciseComponent implements OnInit {
                         id: exercise.id,
                         name: exercise.name,
                         description: exercise.description,
-                        muscles: selectedMuscles
+                        muscles: selectedMuscles,
+                        difficulty: DifficultyEnum[exercise.difficulty],
+                        mechanic: MechanicEnum[exercise.mechanic]
                     });
                 },
                 error: () => this.router.navigate(['not-found'])
@@ -124,11 +139,13 @@ export class AddExerciseComponent implements OnInit {
     }
 
     createExercise() {
-        const { id, name, description, muscles } = this.formAddExercise.getRawValue();
+        const { id, name, description, muscles, difficulty, mechanic } = this.formAddExercise.getRawValue();
         const exercise: Exercise = {
             id,
             name: name.trim(),
             description: description.trim(),
+            difficulty,
+            mechanic
         };
 
         const exerciseMuscle: ExerciseMuscle = {
@@ -156,7 +173,7 @@ export class AddExerciseComponent implements OnInit {
                         this.formAddExercise.controls.muscles.setErrors({
                             duplicatMuscleGroup: true
                         })
-                    } else if (err?.error?.errors[0].field === 'exercise.name') {
+                    } else if (err?.error?.errors?.[0]?.field === 'exercise.name') {
                         this.formAddExercise.controls.name.setErrors({
                             exerciseNameError: true
                         })
