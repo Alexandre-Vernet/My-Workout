@@ -1,6 +1,4 @@
-DELETE
-FROM public.exercises
-WHERE id = 83;
+ALTER TABLE exercises ADD COLUMN difficulty VARCHAR(20) NOT NULL DEFAULT 'INTERMEDIATE';
 
 
 UPDATE public.exercises

@@ -1,3 +1,5 @@
+ALTER TABLE exercises ADD COLUMN mechanic VARCHAR(20) NOT NULL DEFAULT 'COMPOUND';
+
 UPDATE public.exercises
 SET mechanic='ISOLATION'
 WHERE id = 12;
