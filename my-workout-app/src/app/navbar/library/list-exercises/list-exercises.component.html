@@ -15,7 +15,7 @@
             <div class="search-exercise mb-2">
                 <input type="text" pInputText [formControl]="searchExercise" placeholder="Rechercher un exercice"/>
             </div>
-            <div class="filter-muscle-group mb-3 not-found-ghost-black">
+            <div class="chips-container mb-3">
                 <ul>
                     @for (muscleGroup of muscleGroupEnum; track muscleGroup) {
                         <li [class.active]="selectedMuscleGroup === muscleGroup.id"

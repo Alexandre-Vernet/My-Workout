@@ -1,12 +1,14 @@
 <div class="m-1 p-3 flex flex-row gap-2 mb-3 overflow-auto">
-    @for (muscleGroup of muscleGroups; track muscleGroup.id) {
-        <p-tag (click)="filterByMuscleGroup(muscleGroup)" severity="info"
-               [ngClass]="{
-                'border border-blue-500 bg-blue-100 text-blue-700': activeFilter?.name === muscleGroup.name,
-            }"
-        >{{ muscleGroup.name | firstLetterUppercase }}
-        </p-tag>
-    }
+    <div class="chips-container">
+        <ul>
+            @for (muscleGroup of muscleGroups; track muscleGroup.id) {
+                <li [class.active]="activeFilter?.name === muscleGroup.name"
+                    (click)="filterByMuscleGroup(muscleGroup)">
+                    {{ muscleGroup.name | firstLetterUppercase }}
+                </li>
+            }
+        </ul>
+    </div>
 </div>
 
 <div #swipeZone class="p-2">
@@ -26,7 +28,8 @@
 ></app-dialog-select-cardio-exercise>
 
 
-<p-dialog [header]="showWorkout?.workoutSummary.date | date:'fullDate' | firstLetterUppercase" [modal]="true" [(visible)]="showModalViewWorkout"
+<p-dialog [header]="showWorkout?.workoutSummary.date | date:'fullDate' | firstLetterUppercase" [modal]="true"
+          [(visible)]="showModalViewWorkout"
           dismissableMask="true"
           [style]="{ width: '25rem' }">
     @if (showWorkout) {
