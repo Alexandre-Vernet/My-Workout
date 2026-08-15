@@ -15,7 +15,7 @@
             <div class="search-exercise mb-2">
                 <input type="text" pInputText [formControl]="searchExercise" placeholder="Rechercher un exercice"/>
             </div>
-            <div class="filter-muscle-group mb-3">
+            <div class="chips-container mb-3">
                 <ul>
                     @for (muscleGroup of muscleGroupEnum; track muscleGroup) {
                         <li [class.active]="selectedMuscleGroup === muscleGroup.id"
@@ -27,7 +27,7 @@
             </div>
             @for (exercise of filterExercises; track exercise.id) {
                 <div class="card p-1" [routerLink]="['/', 'library', 'exercise', exercise.id]">
-                    <img [src]="'/assets/images/' + exercise.id + '.gif'" class="image"/>
+                    <img [src]="'/assets/images/' + exercise.id + '.gif'" class="image" alt="exercise description gif"/>
                     <div class="exercise-info">
                         <span class="exercise-name">
                             {{ exercise.name }}

@@ -17,17 +17,16 @@ import {
 } from '../workout/dialog-select-cardio-exercise/dialog-select-cardio-exercise.component';
 import { Alert } from '../../../interfaces/alert';
 import { AlertService } from '../../services/alert.service';
-import { Tag } from 'primeng/tag';
 import { ExerciseService } from '../../services/exercise.service';
 import { HistoryDetailComponent } from './history-detail/history-detail.component';
 import { Exercise } from '../../../interfaces/Exercise';
-import { DatePipe, NgClass } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { WorkoutGroupedHistories } from '../../../interfaces/WorkoutGroupedHistories';
 import { FirstLetterUppercasePipe } from '../../shared/pipes/first-letter-uppercase.pipe';
 
 @Component({
     selector: 'app-calendar',
-    imports: [FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, Tag, HistoryDetailComponent, NgClass, DatePipe, FirstLetterUppercasePipe],
+    imports: [FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, HistoryDetailComponent, DatePipe, FirstLetterUppercasePipe],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
