@@ -34,7 +34,7 @@
                         </span>
                         <div class="muscle-group">
                             <ul>
-                                @for (muscle of exercise.muscles; track muscle.id) {
+                                @for (muscle of exercise.muscles; track $index) {
                                     <li>{{ muscle.name }}</li>
                                 }
                             </ul>
