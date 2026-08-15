@@ -27,7 +27,7 @@
             </div>
             @for (exercise of filterExercises; track exercise.id) {
                 <div class="card p-1" [routerLink]="['/', 'library', 'exercise', exercise.id]">
-                    <img [src]="'/assets/images/' + exercise.id + '.gif'" class="image"/>
+                    <img [src]="'/assets/images/' + exercise.id + '.gif'" class="image" alt="exercise description gif"/>
                     <div class="exercise-info">
                         <span class="exercise-name">
                             {{ exercise.name }}
