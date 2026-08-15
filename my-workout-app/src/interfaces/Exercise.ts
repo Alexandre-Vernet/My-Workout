@@ -5,4 +5,6 @@ export interface Exercise {
     name?: string;
     description?: string;
     muscles?: Muscle[];
+    difficulty?: string;
+    mechanic?: string;
 }

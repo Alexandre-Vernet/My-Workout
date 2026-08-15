@@ -111,6 +111,48 @@
             </div>
         </div>
 
+        <!--Difficulty-->
+        <div class="mt-3 flex justify-center">
+            <div class="flex flex-wrap gap-4">
+                <div class="flex items-center">
+                    <p-radiobutton name="difficulty" formControlName="difficulty" [value]="DifficultyEnum.BEGINNER"
+                                   [inputId]="DifficultyEnum.BEGINNER"/>
+                    <label pLabel [for]="DifficultyEnum.BEGINNER"
+                           class="text-sm ml-2">{{ DifficultyEnum.BEGINNER | difficultyLabel }}</label>
+                </div>
+                <div class="flex items-center">
+                    <p-radiobutton name="difficulty" formControlName="difficulty" [value]="DifficultyEnum.INTERMEDIATE"
+                                   [inputId]="DifficultyEnum.INTERMEDIATE"/>
+                    <label pLabel [for]="DifficultyEnum.INTERMEDIATE"
+                           class="text-sm ml-2">{{ DifficultyEnum.INTERMEDIATE | difficultyLabel }}</label>
+                </div>
+                <div class="flex items-center">
+                    <p-radiobutton name="difficulty" formControlName="difficulty" [value]="DifficultyEnum.ADVANCED"
+                                   [inputId]="DifficultyEnum.ADVANCED"/>
+                    <label pLabel [for]="DifficultyEnum.ADVANCED"
+                           class="text-sm ml-2">{{ DifficultyEnum.ADVANCED | difficultyLabel }}</label>
+                </div>
+            </div>
+        </div>
+
+        <!--Mechanic-->
+        <div class="flex justify-center">
+            <div class="flex flex-wrap gap-4">
+                <div class="flex items-center">
+                    <p-radiobutton name="mechanic" formControlName="mechanic" [value]="MechanicEnum.ISOLATION"
+                                   [inputId]="MechanicEnum.ISOLATION"/>
+                    <label pLabel [for]="MechanicEnum.ISOLATION"
+                           class="text-sm ml-2">{{ MechanicEnum.ISOLATION | mechanicLabel }}</label>
+                </div>
+                <div class="flex items-center">
+                    <p-radiobutton name="mechanic" formControlName="mechanic" [value]="MechanicEnum.COMPOUND"
+                                   [inputId]="MechanicEnum.COMPOUND"/>
+                    <label pLabel [for]="MechanicEnum.COMPOUND"
+                           class="text-sm ml-2">{{ MechanicEnum.COMPOUND | mechanicLabel }}</label>
+                </div>
+            </div>
+        </div>
+
         <!--Muscles-->
         <div class="card flex justify-center mt-3">
             <div>

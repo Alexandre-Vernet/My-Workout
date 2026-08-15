@@ -3,8 +3,10 @@ package com.avernet.myworkoutapi;
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exercise.Exercise;
+import com.avernet.myworkoutapi.exercise.ExerciseDifficultyEnum;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseMapper;
+import com.avernet.myworkoutapi.exercise.ExerciseMechanicEnum;
 import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
 import com.avernet.myworkoutapi.exercise.ExerciseService;
@@ -135,6 +137,8 @@ public class ExerciseServiceTest {
         Exercise exercise = Exercise.builder()
             .name("My custom exercise")
             .description("My custom desc")
+            .difficulty(ExerciseDifficultyEnum.INTERMEDIATE)
+            .mechanic(ExerciseMechanicEnum.ISOLATION)
             .build();
 
         List<Muscle> muscleList = new ArrayList<>();
@@ -155,7 +159,8 @@ public class ExerciseServiceTest {
         assertNotNull(exerciseCreated);
         assertNotNull(exerciseEntity);
         assertEquals("My custom exercise", exerciseEntity.getName());
-        assertEquals("My custom desc", exerciseEntity.getDescription());
+        assertEquals(ExerciseDifficultyEnum.INTERMEDIATE, exerciseEntity.getDifficulty());
+        assertEquals(ExerciseMechanicEnum.ISOLATION, exerciseEntity.getMechanic());
     }
 
     @Test
@@ -165,6 +170,8 @@ public class ExerciseServiceTest {
             .id(1L)
             .name("Updated exercise name")
             .description("Updated exercise desc")
+            .difficulty(ExerciseDifficultyEnum.INTERMEDIATE)
+            .mechanic(ExerciseMechanicEnum.ISOLATION)
             .build();
 
         List<Muscle> muscleList = new ArrayList<>();
@@ -187,6 +194,8 @@ public class ExerciseServiceTest {
         assertEquals(exercise.getId(), exerciseEntity.getId());
         assertEquals("Updated exercise name", exerciseEntity.getName());
         assertEquals("Updated exercise desc", exerciseEntity.getDescription());
+        assertEquals(ExerciseDifficultyEnum.INTERMEDIATE, exerciseEntity.getDifficulty());
+        assertEquals(ExerciseMechanicEnum.ISOLATION, exerciseEntity.getMechanic());
     }
 
     @Test
@@ -196,6 +205,8 @@ public class ExerciseServiceTest {
             .id(1L)
             .name("Updated exercise name")
             .description("Updated exercise desc")
+            .difficulty(ExerciseDifficultyEnum.INTERMEDIATE)
+            .mechanic(ExerciseMechanicEnum.ISOLATION)
             .build();
 
         List<Muscle> muscleList = new ArrayList<>();

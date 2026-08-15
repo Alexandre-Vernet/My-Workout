@@ -28,4 +28,8 @@ public class Exercise {
     String description;
 
     List<Muscle> muscles;
+
+    ExerciseDifficultyEnum difficulty;
+
+    ExerciseMechanicEnum mechanic;
 }

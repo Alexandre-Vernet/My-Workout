@@ -6,6 +6,8 @@ import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,6 +34,14 @@ public class ExerciseEntity {
 
     @Column(length = 2000)
     String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    ExerciseDifficultyEnum difficulty = ExerciseDifficultyEnum.INTERMEDIATE;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    ExerciseMechanicEnum mechanic = ExerciseMechanicEnum.COMPOUND;
 
     @OneToMany(mappedBy = "exercise", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<ExerciseMuscleEntity> exerciseMuscles = new ArrayList<>();
