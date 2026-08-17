@@ -250,7 +250,7 @@ INSERT INTO public.muscles VALUES (1, 1, 'Haut des pectoraux');
 INSERT INTO public.muscles VALUES (27, 2, 'Chef latéral');
 INSERT INTO public.muscles VALUES (28, 2, 'Chef médial');
 INSERT INTO public.muscles VALUES (2, 2, 'Chef long');
-INSERT INTO public.muscles VALUES (30, 6, 'Bracho-radial');
+INSERT INTO public.muscles VALUES (30, 6, 'Brachio-radial');
 INSERT INTO public.muscles VALUES (15, 6, 'Brachial');
 INSERT INTO public.muscles VALUES (16, 6, 'Biceps court');
 INSERT INTO public.muscles VALUES (17, 6, 'Biceps long');
@@ -265,142 +265,210 @@ INSERT INTO public.muscles VALUES (33, 3, 'Abducteurs');
 
 
 
-INSERT INTO public.exercise_muscle VALUES (477, 2, 1);
-INSERT INTO public.exercise_muscle VALUES (478, 3, 1);
-INSERT INTO public.exercise_muscle VALUES (479, 5, 2);
-INSERT INTO public.exercise_muscle VALUES (480, 7, 2);
-INSERT INTO public.exercise_muscle VALUES (481, 9, 3);
-INSERT INTO public.exercise_muscle VALUES (482, 9, 4);
-INSERT INTO public.exercise_muscle VALUES (483, 9, 5);
-INSERT INTO public.exercise_muscle VALUES (484, 10, 4);
-INSERT INTO public.exercise_muscle VALUES (485, 12, 6);
-INSERT INTO public.exercise_muscle VALUES (486, 13, 8);
-INSERT INTO public.exercise_muscle VALUES (487, 14, 7);
-INSERT INTO public.exercise_muscle VALUES (488, 15, 9);
-INSERT INTO public.exercise_muscle VALUES (489, 16, 11);
-INSERT INTO public.exercise_muscle VALUES (490, 16, 10);
-INSERT INTO public.exercise_muscle VALUES (491, 17, 11);
-INSERT INTO public.exercise_muscle VALUES (492, 17, 10);
-INSERT INTO public.exercise_muscle VALUES (493, 18, 11);
-INSERT INTO public.exercise_muscle VALUES (494, 18, 12);
-INSERT INTO public.exercise_muscle VALUES (495, 21, 15);
-INSERT INTO public.exercise_muscle VALUES (496, 22, 15);
-INSERT INTO public.exercise_muscle VALUES (497, 23, 18);
-INSERT INTO public.exercise_muscle VALUES (498, 24, 19);
-INSERT INTO public.exercise_muscle VALUES (499, 25, 18);
-INSERT INTO public.exercise_muscle VALUES (500, 27, 21);
-INSERT INTO public.exercise_muscle VALUES (501, 28, 22);
-INSERT INTO public.exercise_muscle VALUES (502, 29, 22);
-INSERT INTO public.exercise_muscle VALUES (503, 31, 23);
-INSERT INTO public.exercise_muscle VALUES (504, 32, 24);
-INSERT INTO public.exercise_muscle VALUES (505, 30, 22);
-INSERT INTO public.exercise_muscle VALUES (506, 33, 3);
-INSERT INTO public.exercise_muscle VALUES (507, 33, 4);
-INSERT INTO public.exercise_muscle VALUES (508, 33, 5);
-INSERT INTO public.exercise_muscle VALUES (509, 33, 6);
-INSERT INTO public.exercise_muscle VALUES (510, 34, 19);
-INSERT INTO public.exercise_muscle VALUES (511, 40, 1);
-INSERT INTO public.exercise_muscle VALUES (512, 1, 25);
-INSERT INTO public.exercise_muscle VALUES (513, 4, 25);
-INSERT INTO public.exercise_muscle VALUES (514, 35, 25);
-INSERT INTO public.exercise_muscle VALUES (515, 36, 25);
-INSERT INTO public.exercise_muscle VALUES (516, 37, 25);
-INSERT INTO public.exercise_muscle VALUES (517, 38, 25);
-INSERT INTO public.exercise_muscle VALUES (518, 39, 26);
-INSERT INTO public.exercise_muscle VALUES (519, 41, 3);
-INSERT INTO public.exercise_muscle VALUES (520, 41, 5);
-INSERT INTO public.exercise_muscle VALUES (521, 41, 4);
-INSERT INTO public.exercise_muscle VALUES (522, 42, 3);
-INSERT INTO public.exercise_muscle VALUES (523, 43, 4);
-INSERT INTO public.exercise_muscle VALUES (524, 43, 5);
-INSERT INTO public.exercise_muscle VALUES (525, 44, 5);
-INSERT INTO public.exercise_muscle VALUES (526, 45, 3);
-INSERT INTO public.exercise_muscle VALUES (527, 45, 5);
-INSERT INTO public.exercise_muscle VALUES (528, 45, 4);
-INSERT INTO public.exercise_muscle VALUES (529, 46, 3);
-INSERT INTO public.exercise_muscle VALUES (530, 46, 5);
-INSERT INTO public.exercise_muscle VALUES (531, 47, 3);
-INSERT INTO public.exercise_muscle VALUES (532, 47, 5);
-INSERT INTO public.exercise_muscle VALUES (533, 47, 4);
-INSERT INTO public.exercise_muscle VALUES (534, 48, 3);
-INSERT INTO public.exercise_muscle VALUES (535, 48, 5);
-INSERT INTO public.exercise_muscle VALUES (536, 48, 4);
-INSERT INTO public.exercise_muscle VALUES (537, 6, 28);
-INSERT INTO public.exercise_muscle VALUES (538, 7, 27);
-INSERT INTO public.exercise_muscle VALUES (539, 7, 28);
-INSERT INTO public.exercise_muscle VALUES (540, 49, 27);
-INSERT INTO public.exercise_muscle VALUES (541, 49, 28);
-INSERT INTO public.exercise_muscle VALUES (542, 50, 27);
-INSERT INTO public.exercise_muscle VALUES (543, 8, 27);
-INSERT INTO public.exercise_muscle VALUES (544, 6, 27);
-INSERT INTO public.exercise_muscle VALUES (545, 51, 8);
-INSERT INTO public.exercise_muscle VALUES (546, 52, 8);
-INSERT INTO public.exercise_muscle VALUES (547, 53, 7);
-INSERT INTO public.exercise_muscle VALUES (548, 54, 9);
-INSERT INTO public.exercise_muscle VALUES (550, 16, 12);
-INSERT INTO public.exercise_muscle VALUES (551, 17, 12);
-INSERT INTO public.exercise_muscle VALUES (552, 55, 11);
-INSERT INTO public.exercise_muscle VALUES (554, 55, 10);
-INSERT INTO public.exercise_muscle VALUES (555, 55, 11);
-INSERT INTO public.exercise_muscle VALUES (556, 55, 12);
-INSERT INTO public.exercise_muscle VALUES (557, 56, 11);
-INSERT INTO public.exercise_muscle VALUES (558, 56, 10);
-INSERT INTO public.exercise_muscle VALUES (559, 56, 12);
-INSERT INTO public.exercise_muscle VALUES (560, 57, 11);
-INSERT INTO public.exercise_muscle VALUES (561, 57, 10);
-INSERT INTO public.exercise_muscle VALUES (563, 57, 12);
-INSERT INTO public.exercise_muscle VALUES (564, 57, 13);
-INSERT INTO public.exercise_muscle VALUES (565, 58, 10);
-INSERT INTO public.exercise_muscle VALUES (566, 19, 16);
-INSERT INTO public.exercise_muscle VALUES (567, 20, 16);
-INSERT INTO public.exercise_muscle VALUES (568, 21, 30);
-INSERT INTO public.exercise_muscle VALUES (569, 22, 30);
-INSERT INTO public.exercise_muscle VALUES (570, 59, 16);
-INSERT INTO public.exercise_muscle VALUES (571, 59, 17);
-INSERT INTO public.exercise_muscle VALUES (572, 60, 16);
-INSERT INTO public.exercise_muscle VALUES (573, 60, 17);
-INSERT INTO public.exercise_muscle VALUES (574, 61, 16);
-INSERT INTO public.exercise_muscle VALUES (575, 61, 17);
-INSERT INTO public.exercise_muscle VALUES (576, 62, 16);
-INSERT INTO public.exercise_muscle VALUES (577, 62, 17);
-INSERT INTO public.exercise_muscle VALUES (578, 19, 17);
-INSERT INTO public.exercise_muscle VALUES (579, 20, 17);
-INSERT INTO public.exercise_muscle VALUES (580, 24, 21);
-INSERT INTO public.exercise_muscle VALUES (581, 26, 21);
-INSERT INTO public.exercise_muscle VALUES (582, 63, 18);
-INSERT INTO public.exercise_muscle VALUES (583, 63, 19);
-INSERT INTO public.exercise_muscle VALUES (584, 63, 21);
-INSERT INTO public.exercise_muscle VALUES (585, 64, 19);
-INSERT INTO public.exercise_muscle VALUES (586, 64, 21);
-INSERT INTO public.exercise_muscle VALUES (587, 65, 18);
-INSERT INTO public.exercise_muscle VALUES (588, 66, 20);
-INSERT INTO public.exercise_muscle VALUES (589, 66, 21);
-INSERT INTO public.exercise_muscle VALUES (590, 67, 20);
-INSERT INTO public.exercise_muscle VALUES (591, 67, 18);
-INSERT INTO public.exercise_muscle VALUES (592, 67, 19);
-INSERT INTO public.exercise_muscle VALUES (593, 67, 20);
-INSERT INTO public.exercise_muscle VALUES (594, 68, 18);
-INSERT INTO public.exercise_muscle VALUES (595, 68, 19);
-INSERT INTO public.exercise_muscle VALUES (596, 68, 21);
-INSERT INTO public.exercise_muscle VALUES (597, 27, 20);
-INSERT INTO public.exercise_muscle VALUES (598, 69, 31);
-INSERT INTO public.exercise_muscle VALUES (599, 71, 2);
-INSERT INTO public.exercise_muscle VALUES (600, 43, 14);
-INSERT INTO public.exercise_muscle VALUES (601, 72, 3);
-INSERT INTO public.exercise_muscle VALUES (602, 72, 4);
-INSERT INTO public.exercise_muscle VALUES (603, 72, 5);
-INSERT INTO public.exercise_muscle VALUES (604, 73, 4);
-INSERT INTO public.exercise_muscle VALUES (605, 74, 32);
-INSERT INTO public.exercise_muscle VALUES (606, 74, 5);
-INSERT INTO public.exercise_muscle VALUES (607, 75, 33);
-INSERT INTO public.exercise_muscle VALUES (608, 75, 5);
-INSERT INTO public.exercise_muscle VALUES (609, 76, 10);
-INSERT INTO public.exercise_muscle VALUES (610, 76, 9);
-INSERT INTO public.exercise_muscle VALUES (611, 76, 11);
-INSERT INTO public.exercise_muscle VALUES (612, 77, 6);
-INSERT INTO public.exercise_muscle VALUES (613, 78, 4);
-INSERT INTO public.exercise_muscle VALUES (614, 78, 5);
-INSERT INTO public.exercise_muscle VALUES (615, 79, 26);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (2,1),
+                                                               (3,1),
+                                                               (5,2),
+                                                               (7,2),
+                                                               (9,3),
+                                                               (9,4),
+                                                               (9,5),
+                                                               (12,6),
+                                                               (13,8),
+                                                               (14,7);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (16,11),
+                                                               (16,10),
+                                                               (17,11),
+                                                               (17,10),
+                                                               (18,11),
+                                                               (18,12),
+                                                               (21,15),
+                                                               (22,15),
+                                                               (23,18),
+                                                               (24,19);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (25,18),
+                                                               (27,21),
+                                                               (28,22),
+                                                               (29,22),
+                                                               (31,23),
+                                                               (32,24),
+                                                               (30,22),
+                                                               (33,3),
+                                                               (33,4),
+                                                               (33,5);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (33,6),
+                                                               (34,19),
+                                                               (40,1),
+                                                               (1,25),
+                                                               (4,25),
+                                                               (35,25),
+                                                               (36,25),
+                                                               (37,25),
+                                                               (38,25),
+                                                               (39,26);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (41,3),
+                                                               (41,5),
+                                                               (41,4),
+                                                               (42,3),
+                                                               (43,4),
+                                                               (43,5),
+                                                               (44,5),
+                                                               (45,3),
+                                                               (45,5),
+                                                               (45,4);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (46,3),
+                                                               (46,5),
+                                                               (47,3),
+                                                               (47,5),
+                                                               (47,4),
+                                                               (48,3),
+                                                               (48,5),
+                                                               (48,4),
+                                                               (6,28),
+                                                               (7,27);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (7,28),
+                                                               (49,27),
+                                                               (49,28),
+                                                               (50,27),
+                                                               (8,27),
+                                                               (6,27),
+                                                               (51,8),
+                                                               (52,8),
+                                                               (53,7),
+                                                               (54,9);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (16,12),
+                                                               (17,12),
+                                                               (55,11),
+                                                               (55,10),
+                                                               (55,11),
+                                                               (55,12),
+                                                               (56,11),
+                                                               (56,10),
+                                                               (56,12),
+                                                               (57,11);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (57,10),
+                                                               (57,12),
+                                                               (57,13),
+                                                               (58,10),
+                                                               (19,16),
+                                                               (20,16),
+                                                               (21,30),
+                                                               (22,30),
+                                                               (59,16),
+                                                               (59,17);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (60,16),
+                                                               (60,17),
+                                                               (61,16),
+                                                               (61,17),
+                                                               (62,16),
+                                                               (62,17),
+                                                               (19,17),
+                                                               (20,17),
+                                                               (24,21),
+                                                               (26,21);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (63,18),
+                                                               (63,19),
+                                                               (63,21),
+                                                               (64,19),
+                                                               (64,21),
+                                                               (65,18),
+                                                               (66,20),
+                                                               (66,21),
+                                                               (67,20),
+                                                               (67,18);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (67,19),
+                                                               (67,20),
+                                                               (68,18),
+                                                               (68,19),
+                                                               (68,21),
+                                                               (27,20),
+                                                               (69,31),
+                                                               (71,2),
+                                                               (43,14),
+                                                               (72,3);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (72,4),
+                                                               (72,5),
+                                                               (73,4),
+                                                               (74,32),
+                                                               (74,5),
+                                                               (75,33),
+                                                               (75,5),
+                                                               (76,10),
+                                                               (76,9),
+                                                               (76,11);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (77,6),
+                                                               (78,4),
+                                                               (78,5),
+                                                               (79,26),
+                                                               (80,9),
+                                                               (81,15),
+                                                               (82,2),
+                                                               (82,28),
+                                                               (82,27),
+                                                               (85,18);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (85,19),
+                                                               (86,11),
+                                                               (86,12),
+                                                               (87,12),
+                                                               (88,2),
+                                                               (88,28),
+                                                               (88,27),
+                                                               (89,11),
+                                                               (90,25),
+                                                               (91,10);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (92,10),
+                                                               (92,11),
+                                                               (95,5),
+                                                               (94,7),
+                                                               (94,8),
+                                                               (93,11),
+                                                               (93,12),
+                                                               (97,14),
+                                                               (99,2),
+                                                               (100,22);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (101,16),
+                                                               (101,17),
+                                                               (102,25),
+                                                               (102,1),
+                                                               (103,1),
+                                                               (104,11),
+                                                               (104,12),
+                                                               (105,25),
+                                                               (106,26),
+                                                               (107,25);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (108,26),
+                                                               (110,1),
+                                                               (111,26),
+                                                               (112,25),
+                                                               (113,25),
+                                                               (114,26),
+                                                               (115,26),
+                                                               (116,26),
+                                                               (117,25),
+                                                               (118,26);
+INSERT INTO public.exercise_muscle (exercise_id,muscle_id) VALUES
+                                                               (119,1),
+                                                               (120,1),
+                                                               (121,25),
+                                                               (122,20);
+
 
 SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
 SELECT setval('exercise_muscle_id_seq', (SELECT MAX(id) FROM exercise_muscle));

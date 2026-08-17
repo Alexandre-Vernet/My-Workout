@@ -83,10 +83,7 @@ export class ListExercisesComponent implements OnInit {
         this.selectedMuscleGroup = muscleGroupEnum;
         this.exerciseService.findExercisesByMuscleGroup(muscleGroupEnum)
             .subscribe({
-                next: (exercises) => {
-                    console.log(exercises)
-                    this.filterExercises = exercises;
-                },
+                next: (exercises) => this.filterExercises = exercises,
                 error: (err) => {
                     this.alertService.alert$.next({
                         severity: 'error',

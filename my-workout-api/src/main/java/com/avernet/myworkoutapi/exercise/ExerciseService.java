@@ -73,6 +73,9 @@ public class ExerciseService {
     @Transactional(readOnly = true)
     public ExerciseMuscleAddedToWorkout findExercisesMuscle(Long exerciseId) {
         ExerciseEntity exerciseEntity = exerciseRepository.findExercise(exerciseId);
+        if (exerciseEntity == null) {
+            throw new ExerciseNotFoundException();
+        }
 
         List<MuscleEntity> muscleEntityList = exerciseEntity.exerciseMuscles.stream()
             .map(ExerciseMuscleEntity::getMuscle)
