@@ -14,13 +14,6 @@ import { ResetPasswordComponent } from './auth/reset-password/reset-password.com
 import { ViewExerciseComponent } from './navbar/library/view-exercise/view-exercise.component';
 import { GraphsComponent } from './navbar/stats/graphs/graphs.component';
 import { StatsComponent } from './navbar/stats/stats.component';
-import { TricepsComponent } from './muscle-structure/triceps/triceps.component';
-import { JambesComponent } from './muscle-structure/jambes/jambes.component';
-import { PectorauxComponent } from './muscle-structure/pectoraux/pectoraux.component';
-import { EpaulesComponent } from './muscle-structure/epaules/epaules.component';
-import { BicepsComponent } from './muscle-structure/biceps/biceps.component';
-import { AbdominauxComponent } from './muscle-structure/abdominaux/abdominaux.component';
-import { DosComponent } from './muscle-structure/dos/dos.component';
 import { AddExerciseComponent } from './navbar/view-profile/admin/add-exercise/add-exercise.component';
 import { defaultHomePageGuard } from './auth/default-home-page.guard';
 import { NotFoundComponent } from "./shared/not-found/not-found.component";
@@ -116,39 +109,6 @@ export const appRoutes: Route[] = [
             },
         ],
         canActivate: [authGuard]
-    },
-    {
-        path: MenuUrls.muscleStructure,
-        children: [
-            {
-                path: 'pectoraux',
-                component: PectorauxComponent
-            },
-            {
-                path: 'triceps',
-                component: TricepsComponent
-            },
-            {
-                path: 'jambes',
-                component: JambesComponent
-            },
-            {
-                path: 'epaules',
-                component: EpaulesComponent
-            },
-            {
-                path: 'dos',
-                component: DosComponent
-            },
-            {
-                path: 'biceps',
-                component: BicepsComponent
-            },
-            {
-                path: 'abdominaux',
-                component: AbdominauxComponent
-            }
-        ]
     },
     {
         path: 'auth',

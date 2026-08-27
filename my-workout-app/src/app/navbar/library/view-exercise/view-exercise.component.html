@@ -27,13 +27,11 @@
         <div class="flex flex-column">
             <div class="flex flex-row gap-2 flex-wrap">
                 @for (muscle of exerciseMuscle.muscles; track muscle) {
-                    <a class="text-sm text-secondary"
-                       [routerLink]="['muscle-structure', muscle?.muscleGroup.name.toLowerCase()]"
-                       [fragment]="replaceSpaces(muscle.name)">
+                    <span class="text-sm text-secondary">
                         <p-tag value="{{ muscle.name }}"
                                role="button"
                                tabindex="0"/>
-                    </a>
+                    </span>
                 }
             </div>
         </div>
