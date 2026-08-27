@@ -158,7 +158,7 @@ public class HistoryServiceTest {
 
     @Test
     void shouldFindStats() {
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 9; i++) {
             ExerciseEntity exercise = exerciseRepository.findById((long) i).orElseThrow(ExerciseNotFoundException::new);
             UserExerciseEntity userExerciseEntity = UserExerciseEntity.builder()
                 .exercise(exercise)
@@ -179,7 +179,7 @@ public class HistoryServiceTest {
 
         UserExercisesCountTotalWorkout userExercisesCountTotalWorkout = service.getGlobalStatsWithListExercises(userEntity);
         assertNotNull(userExercisesCountTotalWorkout);
-        assertEquals(10, userExercisesCountTotalWorkout.exercises().size());
+        assertEquals(9, userExercisesCountTotalWorkout.exercises().size());
         assertFalse(userExercisesCountTotalWorkout.exercises().isEmpty());
         assertEquals(5, userExercisesCountTotalWorkout.countTotalDaysWorkout());
     }

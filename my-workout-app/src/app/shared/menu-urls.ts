@@ -5,5 +5,4 @@ export enum MenuUrls {
     stats = 'stats',
     user = 'user',
     admin = 'admin',
-    muscleStructure = 'muscle-structure',
 }
