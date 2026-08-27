@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
 import { AlertService } from '../../../services/alert.service';
@@ -7,7 +7,6 @@ import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
-import { replaceSpaces } from '../../../shared/utils/remove-accents';
 import { AuthService } from '../../../auth/auth.service';
 import { User } from '../../../../interfaces/User';
 import { ExerciseMuscle } from '../../../../interfaces/ExerciseMuscle';
@@ -17,14 +16,12 @@ import { MechanicLabelPipe } from "../../../shared/pipes/mechanic-label.pipe";
 
 @Component({
     selector: 'app-view-exercise',
-    imports: [Button, Tag, Skeleton, RouterLink, Tabs, TabList, Tab, TabPanels, TabPanel, DifficultyLabelPipe, MechanicLabelPipe],
+    imports: [Button, Tag, Skeleton, Tabs, TabList, Tab, TabPanels, TabPanel, DifficultyLabelPipe, MechanicLabelPipe],
     templateUrl: './view-exercise.component.html',
     styleUrl: './view-exercise.component.scss',
     standalone: true
 })
 export class ViewExerciseComponent implements OnInit {
-
-    protected readonly replaceSpaces = replaceSpaces;
 
     exerciseMuscle: ExerciseMuscle;
     user: User;

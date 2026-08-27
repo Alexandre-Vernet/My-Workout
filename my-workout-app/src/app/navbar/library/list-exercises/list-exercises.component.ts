@@ -24,6 +24,7 @@ export class ListExercisesComponent implements OnInit {
     filterExercises: Exercise[];
     muscleGroupEnum = Object.entries(MuscleGroupEnum)
         .filter(([key]) => isNaN(Number(key)))
+        .sort()
         .map(([label, value]) => ({
             label,
             id: value as MuscleGroupEnum
