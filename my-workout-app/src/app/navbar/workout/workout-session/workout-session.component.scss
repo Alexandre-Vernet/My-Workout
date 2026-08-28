@@ -61,9 +61,13 @@ p-inputnumber input {
     flex-direction: column;
     line-height: 3;
 
-    .stopwatch span {
-        font-size: 2.5em;
-        font-weight: 700;
+    .stopwatch {
+        margin-top: -20px;
+
+        span {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
     }
 }
 
