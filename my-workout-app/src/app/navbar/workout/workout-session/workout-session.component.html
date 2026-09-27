@@ -1,7 +1,7 @@
 <p-confirmdialog></p-confirmdialog>
 
 <div #swipeZone>
-    @if (!userExercises || userExercises.length === 0) {
+    @if (!exercises || exercises.length === 0) {
         <div class="mt-2">
             <div class="flex-1 flex justify-content-around align-items-center">
                 <p-skeleton shape="circle" size="3rem" class="mr-2"/>
@@ -37,7 +37,7 @@
         <p-stepper [(value)]="activeStep" class="basis-[40rem]">
             <div #stepper>
                 <p-step-list class="flex justify-center w-full">
-                    @for (exerciseOrder of userExercises; track index; let index = $index) {
+                    @for (exercise of exercises; track index; let index = $index) {
                         <p-step [value]="index + 1">
                             <ng-template #content let-activateCallback="activateCallback" let-value="value">
                                 <button class="step-button"
@@ -45,7 +45,7 @@
                                             'bg-primary text-primary-contrast border-primary': value === activeStep,
                                             'border-surface': value > activeStep
                                         }"
-                                        (click)="switchPanel(exerciseOrder.exercise, index + 1)">
+                                        (click)="switchPanel(exercise, index + 1)">
                                     <span class="step-button-span">{{ index + 1 }}</span>
                                 </button>
                             </ng-template>
@@ -56,14 +56,13 @@
 
 
             <p-step-panels>
-                @for (userExercise of userExercises; track index; let index = $index) {
-                    @let exercise = userExercise?.exercise;
+                @for (exercise of exercises; track index; let index = $index) {
                     <p-step-panel [value]="index + 1">
                         <ng-template #content let-activateCallback="activateCallback">
                             <form [formGroup]="formWorkout">
                                 <div class="panel-container">
                                     <!--The for force Angular to refresh the DOM and animate on swipe-->
-                                    @for (_ of [userExercises[0]]; track animationId) {
+                                    @for (_ of [exercises[0]]; track animationId) {
                                         <div class="flex-1 flex flex-column justify-content-center panel"
                                              [class.slide-from-right]="animationDirection === 'right'"
                                              [class.slide-from-left]="animationDirection === 'left'">

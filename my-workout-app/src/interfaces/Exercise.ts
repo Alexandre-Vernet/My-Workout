@@ -7,4 +7,5 @@ export interface Exercise {
     muscles?: Muscle[];
     difficulty?: string;
     mechanic?: string;
+    order?: number;
 }

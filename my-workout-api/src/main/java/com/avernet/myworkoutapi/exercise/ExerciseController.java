@@ -57,4 +57,9 @@ public class ExerciseController {
     Exercise createOrUpdateExercise(@Valid @RequestBody ExerciseMuscle exerciseMuscle) {
         return exerciseService.createOrUpdateExercise(exerciseMuscle);
     }
+
+    @GetMapping("added/{muscleGroupId}")
+    List<Exercise> findAddedExercisesByMuscleGroupId(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Integer muscleGroupId) {
+        return exerciseService.findAddedExercisesByMuscleGroupId(userEntity, muscleGroupId);
+    }
 }

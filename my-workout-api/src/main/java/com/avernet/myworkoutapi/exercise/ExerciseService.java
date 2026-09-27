@@ -14,6 +14,7 @@ import com.avernet.myworkoutapi.muscle.MuscleRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroup;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
 import com.avernet.myworkoutapi.user.UserEntity;
+import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
 import com.google.genai.errors.ClientException;
 import jakarta.annotation.Resource;
@@ -152,6 +153,12 @@ public class ExerciseService {
         exerciseRepository.save(exerciseEntity);
 
         return exerciseMapper.toDto(exerciseEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Exercise> findAddedExercisesByMuscleGroupId(UserEntity userEntity, Integer muscleGroupId) {
+        List<UserExerciseEntity> exerciseEntityList = exerciseRepository.findAddedExercisesByMuscleGroupId(userEntity.getId(), muscleGroupId);
+        return exerciseMapper.toDtoUserExercise(exerciseEntityList);
     }
 
     private String getExerciseDescriptionTemplate(String exerciseName) {

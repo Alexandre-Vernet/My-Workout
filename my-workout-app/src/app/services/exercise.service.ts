@@ -3,6 +3,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Exercise } from '../../interfaces/Exercise';
 import { ExerciseMuscle } from '../../interfaces/ExerciseMuscle';
+import { UserExercise } from '../../interfaces/User-exercise';
 
 @Injectable({
     providedIn: 'root'
@@ -50,5 +51,9 @@ export class ExerciseService {
                 exerciseName
             }
         });
+    }
+
+    findAddedExercisesByMuscleGroupId(muscleGroupId: number) {
+        return this.http.get<Exercise[]>(`${ this.exerciseUrl }/added/${ muscleGroupId }`);
     }
 }

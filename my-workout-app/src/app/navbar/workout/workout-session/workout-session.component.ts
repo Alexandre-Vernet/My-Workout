@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    DestroyRef,
+    ElementRef,
+    inject,
+    OnInit,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
 import { BehaviorSubject, filter, map } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
@@ -21,13 +30,12 @@ import { AlertService } from '../../../services/alert.service';
 import { convertWeightElastic } from '../../../shared/utils/convert-weight-elastic';
 import { PreventFocusOnButtonClickDirective } from '../../../shared/directives/prevent-focus-on-button-click.directive';
 import { NgClass, UpperCasePipe } from '@angular/common';
-import { UserExerciseService } from '../../../services/user-exercise.service';
-import { UserExercise } from '../../../../interfaces/User-exercise';
 import { CustomError } from "../../../../interfaces/CustomError";
 import { MuscleGroupEnum } from "../../../../interfaces/MuscleGroupEnum";
 import { DEFAULT_VALUE_REST_TIME, RestTimeService } from "../../../services/rest-time.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToggleSwitch } from "primeng/toggleswitch";
+import { ExerciseService } from '../../../services/exercise.service';
 
 @Component({
     selector: 'app-workout-session',
@@ -43,7 +51,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     protected readonly DEFAULT_VALUE_REST_TIME = DEFAULT_VALUE_REST_TIME;
 
     workout: Workout;
-    userExercises: UserExercise[] = [];
+    exercises: Exercise[] = [];
     exercisesMade = new BehaviorSubject<History[]>([]);
     currentExercise: Exercise;
     muscleGroupEnum: MuscleGroupEnum;
@@ -79,18 +87,15 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     animationId = 0;
     private currentTab: number;
 
-    constructor(
-        private readonly activatedRoute: ActivatedRoute,
-        private readonly workoutService: WorkoutService,
-        private readonly userExerciseService: UserExerciseService,
-        private readonly historyService: HistoryService,
-        private readonly alertService: AlertService,
-        private readonly confirmationService: ConfirmationService,
-        private readonly router: Router,
-        private readonly restTimeService: RestTimeService,
-        private readonly destroyRef: DestroyRef
-    ) {
-    }
+    private readonly activatedRoute = inject(ActivatedRoute);
+    private readonly workoutService = inject(WorkoutService);
+    private readonly exerciseService = inject(ExerciseService);
+    private readonly historyService = inject(HistoryService);
+    private readonly alertService = inject(AlertService);
+    private readonly confirmationService = inject(ConfirmationService);
+    private readonly router = inject(Router);
+    private readonly restTimeService = inject(RestTimeService);
+    private readonly destroyRef = inject(DestroyRef);
 
     ngOnInit() {
         this.muscleGroupEnum = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
@@ -171,7 +176,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     private findExercises() {
-        this.userExerciseService.findAddedExercisesByMuscleGroupId(this.muscleGroupEnum)
+        this.exerciseService.findAddedExercisesByMuscleGroupId(this.muscleGroupEnum)
             .pipe(
                 map(exercises => {
                     if (!exercises || exercises.length === 0) {
@@ -185,10 +190,10 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             )
             .subscribe({
                 next: (exercises) => {
-                    this.userExercises = exercises;
-                    this.currentExercise = exercises[this.activeStep - 1].exercise;
+                    this.exercises = exercises;
+                    this.currentExercise = exercises[this.activeStep - 1];
                     if (!this.currentExercise) {
-                        this.currentExercise = this.userExercises[0].exercise;
+                        this.currentExercise = this.exercises[0];
                         this.switchPanel(this.currentExercise);
                     }
                     this.fillInputWeightRepsLastSavedValue();
@@ -207,13 +212,13 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
 
     private nextStep() {
-        if (this.activeStep < this.userExercises.length) {
+        if (this.activeStep < this.exercises.length) {
             const oldStep = this.activeStep;
             this.activeStep++;
             this.animationDirection = this.activeStep > oldStep ? 'right' : 'left';
 
-            const nextExercise = this.userExercises[this.activeStep - 1];
-            this.switchPanel(nextExercise.exercise, this.activeStep);
+            const nextExercise = this.exercises[this.activeStep - 1];
+            this.switchPanel(nextExercise, this.activeStep);
             this.animationDirection = 'right';
         }
     }
@@ -224,8 +229,8 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             this.activeStep--;
             this.animationDirection = this.activeStep < oldStep ? 'left' : 'right';
 
-            const previousExercise = this.userExercises[this.activeStep - 1];
-            this.switchPanel(previousExercise.exercise, this.activeStep);
+            const previousExercise = this.exercises[this.activeStep - 1];
+            this.switchPanel(previousExercise, this.activeStep);
             this.animationDirection = 'left';
         }
     }

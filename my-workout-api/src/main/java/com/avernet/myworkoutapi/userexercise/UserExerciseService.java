@@ -26,13 +26,6 @@ public class UserExerciseService {
     @Resource
     private ExerciseMapper exerciseMapper;
 
-
-    @Transactional(readOnly = true)
-    public List<UserExercise> findAddedExercisesByMuscleGroupId(UserEntity userEntity, Integer muscleGroupId) {
-        List<UserExerciseEntity> exerciseEntityList = userExerciseRepository.findAddedExercisesByMuscleGroupId(userEntity.getId(), muscleGroupId);
-        return userExerciseMapper.toDtoList(exerciseEntityList);
-    }
-
     @Transactional
     public UserExercise createOrDelete(UserEntity userEntity, Exercise exercise) {
         UserExerciseEntity userExerciseEntity = userExerciseRepository.findByUserIdAndExerciseId(userEntity.getId(), exercise.getId());
