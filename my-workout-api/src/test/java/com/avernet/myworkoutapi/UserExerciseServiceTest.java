@@ -15,7 +15,6 @@ import com.avernet.myworkoutapi.userexercise.UserExercise;
 import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseMapper;
 import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
-import com.avernet.myworkoutapi.userexercise.UserExerciseService;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,9 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Sql(scripts = "/data.sql")
 @Transactional
 public class UserExerciseServiceTest {
-
-    @Resource
-    UserExerciseService service;
 
     @Resource
     UserExerciseRepository userExerciseRepository;
