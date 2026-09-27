@@ -80,12 +80,11 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> 
     @Query("""
             SELECT ue
                 FROM UserExerciseEntity ue
-                LEFT JOIN ue.exercise e
-                LEFT JOIN ue.user u
-                LEFT JOIN e.exerciseMuscles em
-                LEFT JOIN em.muscle m
-                LEFT JOIN m.muscleGroup mg
-                WHERE u.id = :userId
+                JOIN ue.exercise e
+                JOIN e.exerciseMuscles em
+                JOIN em.muscle m
+                JOIN m.muscleGroup mg
+                WHERE ue.user.id = :userId
                 AND mg.id = :muscleGroupId
                 ORDER BY ue.order ASC, e.id ASC
         """)
