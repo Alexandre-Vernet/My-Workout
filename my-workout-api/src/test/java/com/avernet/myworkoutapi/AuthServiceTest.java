@@ -37,10 +37,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AuthServiceTest {
 
     @Resource
-    AuthService service;
+    private AuthService service;
 
     @Resource
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Test
     void shouldLoginUser() {

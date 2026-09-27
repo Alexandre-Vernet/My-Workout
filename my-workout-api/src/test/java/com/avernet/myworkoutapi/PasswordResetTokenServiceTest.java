@@ -36,13 +36,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PasswordResetTokenServiceTest {
 
     @Resource
-    PasswordResetTokenService service;
+    private PasswordResetTokenService service;
 
     @Resource
-    PasswordResetTokenRepository repository;
+    private PasswordResetTokenRepository repository;
 
     @Resource
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Test
     void generateLinkResetPassword_shouldReturnLinkReset() {

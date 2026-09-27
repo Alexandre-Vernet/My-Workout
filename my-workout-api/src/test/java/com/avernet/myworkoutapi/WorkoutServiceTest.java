@@ -45,25 +45,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class WorkoutServiceTest {
 
     @Resource
-    WorkoutService service;
+    private WorkoutService service;
 
     @Resource
-    WorkoutRepository workoutRepository;
+    private WorkoutRepository workoutRepository;
 
     @Resource
-    ExerciseRepository exerciseRepository;
+    private ExerciseRepository exerciseRepository;
 
     @Resource
-    MuscleGroupRepository muscleGroupRepository;
+    private MuscleGroupRepository muscleGroupRepository;
 
     @Resource
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Resource
-    WorkoutMapper workoutMapper;
+    private WorkoutMapper workoutMapper;
 
     @Resource
-    HistoryMapper historyMapper;
+    private HistoryMapper historyMapper;
 
 
     UserEntity userEntity;

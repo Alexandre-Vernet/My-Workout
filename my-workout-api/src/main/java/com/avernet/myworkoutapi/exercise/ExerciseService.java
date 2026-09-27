@@ -32,22 +32,22 @@ import java.util.Optional;
 public class ExerciseService {
 
     @Resource
-    GeminiService geminiService;
+    private GeminiService geminiService;
 
     @Resource
-    AuthService authService;
+    private AuthService authService;
 
     @Resource
-    ExerciseRepository exerciseRepository;
+    private ExerciseRepository exerciseRepository;
 
     @Resource
     private UserExerciseRepository userExerciseRepository;
 
     @Resource
-    ExerciseMapper exerciseMapper;
+    private ExerciseMapper exerciseMapper;
 
     @Resource
-    MuscleMapper muscleMapper;
+    private MuscleMapper muscleMapper;
 
     @Resource
     private MuscleRepository muscleRepository;
