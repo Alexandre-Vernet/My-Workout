@@ -27,16 +27,16 @@ import java.util.Objects;
 public class HistoryService {
 
     @Resource
-    HistoryRepository historyRepository;
+    private HistoryRepository historyRepository;
 
     @Resource
-    WorkoutRepository workoutRepository;
+    private WorkoutRepository workoutRepository;
 
     @Resource
-    ExerciseRepository exerciseRepository;
+    private ExerciseRepository exerciseRepository;
 
     @Resource
-    HistoryMapper historyMapper;
+    private HistoryMapper historyMapper;
 
     @Resource
     private ExerciseMapper exerciseMapper;

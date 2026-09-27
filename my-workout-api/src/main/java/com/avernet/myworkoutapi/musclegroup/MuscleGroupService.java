@@ -13,13 +13,13 @@ import java.util.List;
 public class MuscleGroupService {
 
     @Resource
-    MuscleGroupRepository muscleGroupRepository;
+    private MuscleGroupRepository muscleGroupRepository;
 
     @Resource
-    MuscleGroupMapper muscleGroupMapper;
+    private MuscleGroupMapper muscleGroupMapper;
 
     @Resource
-    MuscleGroupExerciseCountMapper muscleGroupExerciseCountMapper;
+    private MuscleGroupExerciseCountMapper muscleGroupExerciseCountMapper;
 
 
     @Transactional(readOnly = true)

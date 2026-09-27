@@ -1,6 +1,7 @@
 package com.avernet.myworkoutapi.exercise;
 
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
+import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -75,4 +76,17 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> 
     ExerciseEntity findExercise(@Param("exerciseId") Long exerciseId);
 
     boolean existsByName(String name);
+
+    @Query("""
+            SELECT ue
+                FROM UserExerciseEntity ue
+                JOIN ue.exercise e
+                JOIN e.exerciseMuscles em
+                JOIN em.muscle m
+                JOIN m.muscleGroup mg
+                WHERE ue.user.id = :userId
+                AND mg.id = :muscleGroupId
+                ORDER BY ue.order ASC, e.id ASC
+        """)
+    List<UserExerciseEntity> findAddedExercisesByMuscleGroupId(@Param("userId") Long userId, @Param("muscleGroupId") Integer muscleGroupId);
 }

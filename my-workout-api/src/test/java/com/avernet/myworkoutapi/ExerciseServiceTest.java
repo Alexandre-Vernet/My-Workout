@@ -16,13 +16,17 @@ import com.avernet.myworkoutapi.muscle.Muscle;
 import com.avernet.myworkoutapi.muscle.MuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleMapper;
 import com.avernet.myworkoutapi.muscle.MuscleRepository;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.UserRepository;
 import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
 import jakarta.annotation.Resource;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -38,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -46,25 +51,42 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ExerciseServiceTest {
 
     @Resource
-    ExerciseService service;
+    private ExerciseService service;
 
     @Resource
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Resource
-    UserExerciseRepository userExerciseRepository;
+    private UserExerciseRepository userExerciseRepository;
 
     @Resource
-    ExerciseRepository exerciseRepository;
+    private ExerciseRepository exerciseRepository;
 
     @Resource
-    MuscleRepository muscleRepository;
+    private MuscleRepository muscleRepository;
 
     @Resource
-    MuscleMapper muscleMapper;
+    private MuscleGroupRepository muscleGroupRepository;
+
+    @Resource
+    private MuscleMapper muscleMapper;
 
     @Resource
     private ExerciseMapper exerciseMapper;
+
+    UserEntity userEntity;
+    ExerciseEntity exerciseEntity;
+    ExerciseEntity exerciseEntity2;
+    ExerciseEntity exerciseEntity3;
+
+
+    @BeforeEach
+    void setup() {
+        userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
+        exerciseEntity2 = exerciseRepository.findById(2L).orElseThrow(ExerciseNotFoundException::new);
+        exerciseEntity3 = exerciseRepository.findById(3L).orElseThrow(ExerciseNotFoundException::new);
+    }
 
     @Test
     void findAll_shouldFindAllExercices() {
@@ -75,7 +97,7 @@ public class ExerciseServiceTest {
             assertNotNull(exercise.getId());
             assertNotNull(exercise.getDescription());
             assertNotNull(exercise.getMuscles());
-            assertNotNull( exercise.getMuscles().getFirst().muscleGroup().name());
+            assertNotNull(exercise.getMuscles().getFirst().muscleGroup().name());
 
         });
     }
@@ -241,5 +263,64 @@ public class ExerciseServiceTest {
         assertEquals(ErrorCodeEnum.EXERCISE_NAME_ALREADY_EXIST, apiException.getErrorCode());
         assertEquals("Cet exercice existe déjà", apiException.getMessage());
         assertEquals(HttpStatus.CONFLICT, apiException.getHttpStatus());
+    }
+
+    @Test
+    void findAddedExercisesByMuscleGroupId_shouldFindExercisesExceptExercisesNotLinkedToMuscleGroupSelected() {
+        MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findById(1L).orElseThrow(MuscleGroupNotFoundException::new);
+
+        ExerciseEntity exerciseEntity4 = exerciseRepository.findById(20L).orElseThrow(ExerciseNotFoundException::new); /*Exercise is not linked to the muscle group 1*/
+
+        UserExerciseEntity userExerciseEntity1 = UserExerciseEntity.builder().order(1).user(userEntity).exercise(exerciseEntity).build();
+        UserExerciseEntity userExerciseEntity2 = UserExerciseEntity.builder().order(2).user(userEntity).exercise(exerciseEntity2).build();
+        UserExerciseEntity userExerciseEntity3 = UserExerciseEntity.builder().order(3).user(userEntity).exercise(exerciseEntity3).build();
+        UserExerciseEntity userExerciseEntity4 = UserExerciseEntity.builder().order(4).user(userEntity).exercise(exerciseEntity4).build();
+        userExerciseRepository.save(userExerciseEntity1);
+        userExerciseRepository.save(userExerciseEntity2);
+        userExerciseRepository.save(userExerciseEntity3);
+        userExerciseRepository.save(userExerciseEntity4);
+
+        List<Exercise> exerciseList = service.findAddedExercisesByMuscleGroupId(userEntity, muscleGroupEntity.getId());
+        assertFalse(exerciseList.isEmpty());
+        assertEquals(3, exerciseList.size());
+    }
+
+    @Test
+    @Transactional
+    void toggleExercise_shouldCreateUserExercise() {
+        Exercise userExercise1 = service.toggleExercise(userEntity, exerciseMapper.toDto(exerciseEntity));
+        assertNotNull(userExercise1);
+        assertEquals(1, userExercise1.getOrder());
+        Boolean userExerciseEntity = userExerciseRepository.existsByExerciseAndUser(exerciseEntity, userEntity);
+        assertTrue(userExerciseEntity);
+
+        Exercise userExercise2 = service.toggleExercise(userEntity, exerciseMapper.toDto(exerciseEntity2));
+        assertNotNull(userExercise2);
+        assertEquals(2, userExercise2.getOrder());
+        Boolean userExerciseEntity2 = userExerciseRepository.existsByExerciseAndUser(exerciseEntity, userEntity);
+        assertTrue(userExerciseEntity2);
+
+        Exercise userExercise3 = service.toggleExercise(userEntity, exerciseMapper.toDto(exerciseEntity3));
+        assertNotNull(userExercise3);
+        assertEquals(3, userExercise3.getOrder());
+        Boolean userExerciseEntity3 = userExerciseRepository.existsByExerciseAndUser(exerciseEntity, userEntity);
+        assertTrue(userExerciseEntity3);
+    }
+
+    @Test
+    @Transactional
+    void toggleExercise_shouldDeleteUserExercise() {
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
+
+        UserExerciseEntity userExercise = UserExerciseEntity.builder()
+            .user(userEntity)
+            .exercise(exerciseEntity)
+            .build();
+
+        userExerciseRepository.save(userExercise);
+
+        service.toggleExercise(userEntity, exerciseMapper.toDto(exerciseEntity));
+        Boolean userExerciseEntity = userExerciseRepository.existsByExerciseAndUser(exerciseEntity, userEntity);
+        assertFalse(userExerciseEntity);
     }
 }

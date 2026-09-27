@@ -35,22 +35,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MuscleGroupServiceTest {
 
     @Resource
-    MuscleGroupService service;
+    private MuscleGroupService service;
 
     @Resource
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Resource
-    UserExerciseRepository userExerciseRepository;
+    private UserExerciseRepository userExerciseRepository;
 
     @Resource
-    ExerciseRepository exerciseRepository;
+    private ExerciseRepository exerciseRepository;
 
     @Resource
-    WorkoutRepository workoutRepository;
+    private WorkoutRepository workoutRepository;
 
     @Resource
-    MuscleGroupRepository muscleGroupRepository;
+    private MuscleGroupRepository muscleGroupRepository;
 
 
     @Test()

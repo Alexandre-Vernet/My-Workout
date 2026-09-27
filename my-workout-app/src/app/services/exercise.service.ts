@@ -33,7 +33,7 @@ export class ExerciseService {
     }
 
     findCardioExercises() {
-        return this.http.get<Exercise[]>(`${ this.exerciseUrl }/cardio`);
+        return this.http.get<Exercise[]>(`${ this.exerciseUrl }/user/cardio`);
     }
 
     findExerciseMuscle(exerciseId: number) {
@@ -50,5 +50,13 @@ export class ExerciseService {
                 exerciseName
             }
         });
+    }
+
+    findAddedExercisesByMuscleGroupId(muscleGroupId: number) {
+        return this.http.get<Exercise[]>(`${ this.exerciseUrl }/user/added/${ muscleGroupId }`);
+    }
+
+    toggleExerciseWorkout(exercise: Exercise) {
+        return this.http.post<Exercise>(`${ this.exerciseUrl }/user/toggle`, exercise);
     }
 }

@@ -12,8 +12,11 @@ import com.avernet.myworkoutapi.muscle.MuscleEntity;
 import com.avernet.myworkoutapi.muscle.MuscleMapper;
 import com.avernet.myworkoutapi.muscle.MuscleRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroup;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
+import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
 import com.avernet.myworkoutapi.user.UserEntity;
+import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
 import com.google.genai.errors.ClientException;
 import jakarta.annotation.Resource;
@@ -29,25 +32,28 @@ import java.util.Optional;
 public class ExerciseService {
 
     @Resource
-    GeminiService geminiService;
+    private GeminiService geminiService;
 
     @Resource
-    AuthService authService;
+    private AuthService authService;
 
     @Resource
-    ExerciseRepository exerciseRepository;
+    private ExerciseRepository exerciseRepository;
 
     @Resource
     private UserExerciseRepository userExerciseRepository;
 
     @Resource
-    ExerciseMapper exerciseMapper;
+    private ExerciseMapper exerciseMapper;
 
     @Resource
-    MuscleMapper muscleMapper;
+    private MuscleMapper muscleMapper;
 
     @Resource
     private MuscleRepository muscleRepository;
+
+    @Resource
+    private MuscleGroupRepository muscleGroupRepository;
 
     @Transactional(readOnly = true)
     public List<Exercise> findAll() {
@@ -152,6 +158,32 @@ public class ExerciseService {
         exerciseRepository.save(exerciseEntity);
 
         return exerciseMapper.toDto(exerciseEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Exercise> findAddedExercisesByMuscleGroupId(UserEntity userEntity, Integer muscleGroupId) {
+        List<UserExerciseEntity> exerciseEntityList = exerciseRepository.findAddedExercisesByMuscleGroupId(userEntity.getId(), muscleGroupId);
+        return exerciseMapper.toDtoUserExercise(exerciseEntityList);
+    }
+
+    @Transactional
+    public Exercise toggleExercise(UserEntity userEntity, Exercise exercise) {
+        UserExerciseEntity userExerciseEntity = userExerciseRepository.findByUserIdAndExerciseId(userEntity.getId(), exercise.getId());
+        if (userExerciseEntity != null) {
+            userExerciseRepository.delete(userExerciseEntity);
+            return null;
+        } else {
+            MuscleGroupEntity muscleGroupEntity = muscleGroupRepository.findByExercise(exercise.getId());
+            int order = userExerciseRepository.getOrder(userEntity.getId(), muscleGroupEntity.getId());
+            UserExerciseEntity userExerciseEntityToSave = UserExerciseEntity.builder()
+                .user(userEntity)
+                .exercise(exerciseMapper.toEntity(exercise))
+                .order(order)
+                .build();
+
+            UserExerciseEntity userExerciseEntitySaved = userExerciseRepository.save(userExerciseEntityToSave);
+            return exerciseMapper.toDtoUserExercise(userExerciseEntitySaved);
+        }
     }
 
     private String getExerciseDescriptionTemplate(String exerciseName) {

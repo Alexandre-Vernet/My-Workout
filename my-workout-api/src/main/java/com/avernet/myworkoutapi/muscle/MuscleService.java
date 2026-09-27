@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class MuscleService {
 
     @Resource
-    MuscleRepository muscleRepository;
+    private MuscleRepository muscleRepository;
 
 
     @Transactional(readOnly = true)

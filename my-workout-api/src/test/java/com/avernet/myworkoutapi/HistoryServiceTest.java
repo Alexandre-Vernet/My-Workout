@@ -47,25 +47,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HistoryServiceTest {
 
     @Resource
-    HistoryService service;
+    private HistoryService service;
 
     @Resource
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Resource
-    ExerciseRepository exerciseRepository;
+    private ExerciseRepository exerciseRepository;
 
     @Resource
-    WorkoutRepository workoutRepository;
+    private WorkoutRepository workoutRepository;
 
     @Resource
-    HistoryRepository historyRepository;
+    private HistoryRepository historyRepository;
 
     @Resource
-    MuscleGroupRepository muscleGroupRepository;
+    private MuscleGroupRepository muscleGroupRepository;
 
     @Resource
-    UserExerciseRepository userExerciseRepository;
+    private UserExerciseRepository userExerciseRepository;
 
     @Resource
     private HistoryMapper historyMapper;

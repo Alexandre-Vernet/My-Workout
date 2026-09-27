@@ -32,4 +32,6 @@ public class Exercise {
     ExerciseDifficultyEnum difficulty;
 
     ExerciseMechanicEnum mechanic;
+
+    Integer order;
 }

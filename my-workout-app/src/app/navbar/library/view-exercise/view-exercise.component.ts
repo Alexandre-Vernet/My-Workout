@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { ExerciseService } from '../../../services/exercise.service';
 import { AlertService } from '../../../services/alert.service';
-import { UserExerciseService } from '../../../services/user-exercise.service';
 import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { Skeleton } from 'primeng/skeleton';
@@ -29,7 +28,6 @@ export class ViewExerciseComponent implements OnInit {
 
     constructor(
         private readonly exerciseService: ExerciseService,
-        private readonly userExerciseService: UserExerciseService,
         private readonly activatedRoute: ActivatedRoute,
         private readonly alertService: AlertService,
         private readonly authService: AuthService,
@@ -56,7 +54,7 @@ export class ViewExerciseComponent implements OnInit {
     }
 
     toggleExerciseWorkout() {
-        this.userExerciseService.toggleExerciseWorkout(this.exerciseMuscle.exercise)
+        this.exerciseService.toggleExerciseWorkout(this.exerciseMuscle.exercise)
             .subscribe({
                 next: () => this.exerciseMuscle.addedToWorkout = !this.exerciseMuscle.addedToWorkout,
                 error: (err) => {

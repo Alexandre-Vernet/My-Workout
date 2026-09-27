@@ -38,11 +38,6 @@ public class ExerciseController {
         return exerciseService.findExercisesByMuscleGroup(muscleGroupId);
     }
 
-    @GetMapping("cardio")
-    List<Exercise> findCardioExercises(@AuthenticationPrincipal UserEntity userEntity) {
-        return exerciseService.findCardioExercises(userEntity);
-    }
-
     @GetMapping("{exerciseId}")
     ExerciseMuscleAddedToWorkout findExercisesMuscle(@PathVariable Long exerciseId) {
         return exerciseService.findExercisesMuscle(exerciseId);
@@ -56,5 +51,20 @@ public class ExerciseController {
     @PostMapping
     Exercise createOrUpdateExercise(@Valid @RequestBody ExerciseMuscle exerciseMuscle) {
         return exerciseService.createOrUpdateExercise(exerciseMuscle);
+    }
+
+    @GetMapping("user/cardio")
+    List<Exercise> findCardioExercises(@AuthenticationPrincipal UserEntity userEntity) {
+        return exerciseService.findCardioExercises(userEntity);
+    }
+
+    @PostMapping("user/toggle")
+    Exercise toggleExercise(@AuthenticationPrincipal UserEntity userEntity, @RequestBody Exercise exercise) {
+        return exerciseService.toggleExercise(userEntity, exercise);
+    }
+
+    @GetMapping("user/added/{muscleGroupId}")
+    List<Exercise> findAddedExercisesByMuscleGroupId(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Integer muscleGroupId) {
+        return exerciseService.findAddedExercisesByMuscleGroupId(userEntity, muscleGroupId);
     }
 }

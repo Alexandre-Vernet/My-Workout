@@ -10,7 +10,6 @@ import { MuscleService } from '../../../../services/muscle.service';
 import { MultiSelect } from 'primeng/multiselect';
 import { Muscle } from '../../../../../interfaces/Muscle';
 import { AlertService } from '../../../../services/alert.service';
-import { UserExerciseService } from '../../../../services/user-exercise.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -66,7 +65,6 @@ export class AddExerciseComponent implements OnInit {
         private readonly exerciseService: ExerciseService,
         private readonly muscleService: MuscleService,
         private readonly alertService: AlertService,
-        private readonly userExerciseService: UserExerciseService,
         private readonly confirmationService: ConfirmationService,
         private readonly messageService: MessageService,
         private readonly activatedRoute: ActivatedRoute,
@@ -216,7 +214,7 @@ export class AddExerciseComponent implements OnInit {
     }
 
     private addExerciseToWorkout(exercise: Exercise) {
-        this.userExerciseService.toggleExerciseWorkout(exercise)
+        this.exerciseService.toggleExerciseWorkout(exercise)
             .subscribe({
                 next: () => {
                     this.alertService.alert$.next({
