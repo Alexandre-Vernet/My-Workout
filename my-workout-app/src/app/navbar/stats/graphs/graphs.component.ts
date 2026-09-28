@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { HistoryService } from '../../../services/history.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ExerciseGraphs } from '../../../../interfaces/ExerciseGraphs';
 import Chart, { ChartItem } from 'chart.js/auto';
 import { Skeleton } from 'primeng/skeleton';
@@ -14,19 +14,14 @@ import { Skeleton } from 'primeng/skeleton';
 })
 export class GraphsComponent implements OnInit {
 
+    exerciseId = input.required<number>();
     exerciseGraphs: ExerciseGraphs;
 
-    constructor(
-        private readonly historyService: HistoryService,
-        private readonly activatedRoute: ActivatedRoute,
-        private readonly router: Router
-    ) {
-    }
+    private readonly historyService = inject(HistoryService);
+    private readonly router = inject(Router);
 
     ngOnInit() {
-        const exerciseId = Number(this.activatedRoute.snapshot.paramMap.get('exerciseId'));
-
-        this.historyService.getExerciseGraphs(exerciseId)
+        this.historyService.getExerciseGraphs(this.exerciseId())
             .subscribe({
                 next: (exerciseGraphs) => {
                     this.exerciseGraphs = exerciseGraphs;

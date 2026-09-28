@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { Router } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
@@ -34,14 +34,11 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     isOpenModalExerciseCardio = false;
 
-    constructor(
-        private readonly muscleGroupService: MuscleGroupService,
-        private readonly exerciseService: ExerciseService,
-        private readonly alertService: AlertService,
-        private readonly confirmationService: ConfirmationService,
-        private readonly router: Router
-    ) {
-    }
+    private readonly muscleGroupService = inject(MuscleGroupService);
+    private readonly exerciseService = inject(ExerciseService);
+    private readonly alertService = inject(AlertService);
+    private readonly confirmationService = inject(ConfirmationService);
+    private readonly router = inject(Router);
 
     ngOnInit() {
         forkJoin([

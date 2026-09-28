@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Skeleton } from 'primeng/skeleton';
 import { AlertService } from '../../../services/alert.service';
 import { InputText } from "primeng/inputtext";
@@ -33,11 +33,8 @@ export class ListExercisesComponent implements OnInit {
 
     searchExercise = new FormControl();
 
-    constructor(
-        private readonly exerciseService: ExerciseService,
-        private readonly alertService: AlertService
-    ) {
-    }
+    private readonly exerciseService = inject(ExerciseService);
+    private readonly alertService = inject(AlertService);
 
     ngOnInit() {
         this.exerciseService.findAll()

@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { Component, input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { AlertService } from '../../../services/alert.service';
 import { Button } from 'primeng/button';
@@ -22,13 +21,13 @@ import { MechanicLabelPipe } from "../../../shared/pipes/mechanic-label.pipe";
 })
 export class ViewExerciseComponent implements OnInit {
 
+    exerciseId = input.required<number>();
     exerciseMuscle: ExerciseMuscle;
     user: User;
     imagePath = '';
 
     constructor(
         private readonly exerciseService: ExerciseService,
-        private readonly activatedRoute: ActivatedRoute,
         private readonly alertService: AlertService,
         private readonly authService: AuthService,
         private readonly router: Router
@@ -39,11 +38,7 @@ export class ViewExerciseComponent implements OnInit {
         this.authService.getCurrentUser()
             .subscribe(user => this.user = user);
 
-        this.activatedRoute.params.pipe(
-            switchMap((params: {
-                exerciseId: number
-            }) => this.exerciseService.findExerciseMuscle(Number(params.exerciseId)))
-        )
+        this.exerciseService.findExerciseMuscle(this.exerciseId())
             .subscribe({
                 next: (exerciseMuscle) => {
                     this.exerciseMuscle = exerciseMuscle;

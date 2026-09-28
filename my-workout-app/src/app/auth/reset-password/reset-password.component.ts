@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
@@ -25,24 +25,21 @@ import { PasswordResetTokenService } from "../password-reset-token.service";
     standalone: true
 })
 export class ResetPasswordComponent implements OnInit {
+    token = input.required<string>();
+
     formResetPassword = new FormGroup({
         newPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
         confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     });
 
-    token: string;
-
     constructor(
         private readonly passwordResetTokenService: PasswordResetTokenService,
         private readonly router: Router,
-        private readonly activatedRoute: ActivatedRoute
     ) {
     }
 
     ngOnInit() {
-        const token = this.activatedRoute.snapshot.queryParamMap.get('token');
-        this.isTokenValid(token);
-        this.token = token;
+        this.isTokenValid(this.token());
     }
 
     private isTokenValid(token: string) {
@@ -74,7 +71,7 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     resetPassword(password: string) {
-        this.passwordResetTokenService.resetPassword(this.token, password)
+        this.passwordResetTokenService.resetPassword(this.token(), password)
             .subscribe({
                 next: () => this.redirectToSignIn(),
                 error: (err) => this.formResetPassword.setErrors({ error: err.error.message ?? 'Une erreur s\'est produite' })

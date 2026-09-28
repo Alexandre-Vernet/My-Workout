@@ -1,4 +1,4 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, inject, Input, Output } from '@angular/core';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { FloatLabel } from 'primeng/floatlabel';
@@ -28,11 +28,8 @@ export class ForgotPasswordComponent {
 
     isLoading = false;
 
-    constructor(
-        private readonly passwordResetTokenService: PasswordResetTokenService,
-        private readonly alertService: AlertService
-    ) {
-    }
+    private readonly passwordResetTokenService = inject(PasswordResetTokenService);
+    private readonly alertService = inject(AlertService);
 
     forgotPassword() {
         this.isLoading = true;

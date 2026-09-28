@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, EventClickArg, EventInput, EventMountArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -107,14 +107,10 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     setWorkoutDate: Date;
     isOpenModalExerciseCardio = false;
 
-    constructor(
-        private readonly workoutService: WorkoutService,
-        private readonly exerciseService: ExerciseService,
-        private readonly confirmationService: ConfirmationService,
-        private readonly alertService: AlertService,
-    ) {
-
-    }
+    private readonly workoutService = inject(WorkoutService);
+    private readonly exerciseService = inject(ExerciseService);
+    private readonly confirmationService = inject(ConfirmationService);
+    private readonly alertService = inject(AlertService);
 
     ngOnInit() {
         setTimeout(() => this.calendarComponent.getApi().refetchEvents(), 0);

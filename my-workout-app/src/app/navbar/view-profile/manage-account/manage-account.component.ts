@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, inject, OnInit, Output } from '@angular/core';
 import { Button } from 'primeng/button';
 import { FloatLabel } from 'primeng/floatlabel';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -34,11 +34,8 @@ export class ManageAccountComponent implements OnInit {
 
     @Output() showAlert = new Subject<Alert>();
 
-    constructor(
-        private readonly authService: AuthService,
-        private readonly router: Router
-    ) {
-    }
+    private readonly authService = inject(AuthService);
+    private readonly router = inject(Router);
 
     ngOnInit() {
         this.authService.getCurrentUser()

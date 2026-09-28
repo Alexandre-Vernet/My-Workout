@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { ChangeThemeComponent } from './change-theme/change-theme.component';
@@ -22,11 +22,8 @@ export class ViewProfileComponent implements OnInit {
 
     user: User;
 
-    constructor(
-        private readonly alertService: AlertService,
-        private readonly authService: AuthService
-    ) {
-    }
+    private readonly alertService = inject(AlertService);
+    private readonly authService = inject(AuthService);
 
     ngOnInit() {
         this.authService.getCurrentUser()
