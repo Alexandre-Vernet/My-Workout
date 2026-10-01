@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MenuUrls } from '../shared/menu-urls';
 import { delay, filter } from 'rxjs';
@@ -12,10 +12,7 @@ import { delay, filter } from 'rxjs';
 })
 export class NavbarComponent implements AfterViewInit {
 
-    constructor(
-        private readonly router: Router,
-    ) {
-    }
+    private readonly router = inject(Router);
 
     ngAfterViewInit() {
         const body = document.body;

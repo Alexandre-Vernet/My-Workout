@@ -1,5 +1,5 @@
 import { ApplicationConfig, isDevMode, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -12,9 +12,10 @@ export const appConfig: ApplicationConfig = {
     providers: [
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideRouter(appRoutes, withInMemoryScrolling({
-            scrollPositionRestoration: 'top',
-            anchorScrolling: 'enabled'
-        })),
+                scrollPositionRestoration: 'top',
+                anchorScrolling: 'enabled'
+            }),
+            withComponentInputBinding()),
         provideHttpClient(withInterceptors([authInterceptor])),
         provideAnimationsAsync(),
         providePrimeNG({

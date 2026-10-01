@@ -1,4 +1,4 @@
-import { Component, Output } from '@angular/core';
+import { Component, inject, Output } from '@angular/core';
 import { Button } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
 import { Subject } from 'rxjs';
@@ -21,12 +21,9 @@ export class AccountActionsComponent {
 
     @Output() showAlert = new Subject<Alert>();
 
-    constructor(
-        private readonly authService: AuthService,
-        private readonly router: Router,
-        private readonly confirmationService: ConfirmationService,
-    ) {
-    }
+    private readonly authService = inject(AuthService);
+    private readonly router = inject(Router);
+    private readonly confirmationService = inject(ConfirmationService);
 
     signOut() {
         this.authService.signOut();

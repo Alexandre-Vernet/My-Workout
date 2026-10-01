@@ -39,11 +39,8 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
 
     private destroyRef = inject(DestroyRef);
 
-    constructor(
-        private readonly historyService: HistoryService,
-        private readonly alertService: AlertService
-    ) {
-    }
+    private readonly historyService = inject(HistoryService);
+    private readonly alertService = inject(AlertService);
 
     ngOnInit() {
         this.findTodayExercicesHistory();

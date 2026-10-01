@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, input, OnInit } from '@angular/core';
 import { ExerciseService } from '../../../../services/exercise.service';
 import { Exercise } from '../../../../../interfaces/Exercise';
 import { Button } from 'primeng/button';
@@ -12,7 +12,7 @@ import { Muscle } from '../../../../../interfaces/Muscle';
 import { AlertService } from '../../../../services/alert.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { filter, switchMap, tap } from 'rxjs';
 import { Message } from 'primeng/message';
 import { ExerciseMuscle } from '../../../../../interfaces/ExerciseMuscle';
@@ -45,6 +45,8 @@ import { MechanicLabelPipe } from "../../../../shared/pipes/mechanic-label.pipe"
 })
 export class AddExerciseComponent implements OnInit {
 
+    exerciseId = input<number>();
+
     protected readonly MechanicEnum = MechanicEnum;
     protected readonly DifficultyEnum = DifficultyEnum;
 
@@ -67,7 +69,6 @@ export class AddExerciseComponent implements OnInit {
         private readonly alertService: AlertService,
         private readonly confirmationService: ConfirmationService,
         private readonly messageService: MessageService,
-        private readonly activatedRoute: ActivatedRoute,
         private readonly router: Router
     ) {
     }
@@ -76,14 +77,8 @@ export class AddExerciseComponent implements OnInit {
         this.muscleService.findAllMuscles()
             .pipe(
                 tap(musclesDropdown => this.musclesDropdown = musclesDropdown),
-                switchMap(() =>
-                    this.activatedRoute.params.pipe(
-                        filter((params: { exerciseId: number }) => !!params.exerciseId),
-                        switchMap(params =>
-                            this.exerciseService.findExerciseMuscle(Number(params.exerciseId))
-                        )
-                    )
-                )
+                filter(() => !!this.exerciseId()),
+                switchMap(() => this.exerciseService.findExerciseMuscle(this.exerciseId()))
             )
             .subscribe({
                 next: (exerciseMuscle) => {

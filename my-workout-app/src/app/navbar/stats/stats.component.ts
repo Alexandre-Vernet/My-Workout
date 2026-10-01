@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AlertService } from '../../services/alert.service';
 import { Skeleton } from 'primeng/skeleton';
@@ -15,11 +15,8 @@ export class StatsComponent implements OnInit {
 
     userExercisesCountTotalWorkout: UserExercisesCountTotalWorkout;
 
-    constructor(
-        private readonly historyService: HistoryService,
-        private readonly alertService: AlertService,
-    ) {
-    }
+    private readonly historyService = inject(HistoryService);
+    private readonly alertService = inject(AlertService);
 
     ngOnInit() {
         this.historyService.getGlobalStatsWithListExercises()

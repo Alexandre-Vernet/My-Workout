@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
@@ -28,11 +28,8 @@ export class LoginComponent {
 
     showDialogForgotPassword: boolean;
 
-    constructor(
-        private readonly authService: AuthService,
-        private readonly router: Router
-    ) {
-    }
+    private readonly authService = inject(AuthService);
+    private readonly router = inject(Router);
 
     signIn() {
         const {

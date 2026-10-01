@@ -1,9 +1,9 @@
 import {
     AfterViewInit,
     Component,
-    DestroyRef,
+    DestroyRef, effect,
     ElementRef,
-    inject,
+    inject, input,
     OnInit,
     ViewChild,
     ViewEncapsulation
@@ -49,6 +49,11 @@ import { ExerciseService } from '../../../services/exercise.service';
 export class WorkoutSessionComponent implements OnInit, AfterViewInit {
 
     protected readonly DEFAULT_VALUE_REST_TIME = DEFAULT_VALUE_REST_TIME;
+
+    muscleGroupId = input.required<number>();
+    tab = input<number>(1, {
+        transform: (value: string) => value !== null ? Number(value) : null
+    });
 
     workout: Workout;
     exercises: Exercise[] = [];
@@ -97,10 +102,19 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     private readonly restTimeService = inject(RestTimeService);
     private readonly destroyRef = inject(DestroyRef);
 
+    constructor() {
+        effect(() => {
+            if (!this.tab()) {
+                this.setTabUrl(1);
+            }
+            this.currentTab = this.tab() ?? 1;
+            this.activeStep = this.currentTab;
+        });
+    }
+
     ngOnInit() {
-        this.muscleGroupEnum = Number(this.activatedRoute.snapshot.paramMap.get('muscleGroupId'));
+        this.muscleGroupEnum = this.muscleGroupId();
         this.workout = null;
-        this.getCurrentTabFromUrl();
         this.findExercises();
 
         this.restTimeService.restTime$
@@ -233,18 +247,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             this.switchPanel(previousExercise, this.activeStep);
             this.animationDirection = 'left';
         }
-    }
-
-    private getCurrentTabFromUrl() {
-        this.activatedRoute.queryParams
-            .subscribe(params => {
-                const tabParam = +params['tab'];
-                if (!tabParam) {
-                    this.setTabUrl(1);
-                }
-                this.currentTab = tabParam || 1;
-                this.activeStep = this.currentTab;
-            });
     }
 
     private setTabUrl(index: number) {

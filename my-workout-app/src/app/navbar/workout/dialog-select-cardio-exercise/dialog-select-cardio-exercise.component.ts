@@ -1,4 +1,4 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, inject, Input, Output } from '@angular/core';
 import { Dialog } from 'primeng/dialog';
 import { Subject } from 'rxjs';
 import { Exercise } from '../../../../interfaces/Exercise';
@@ -35,10 +35,8 @@ export class DialogSelectCardioExerciseComponent {
     selectedExercise: Exercise;
     inputDuration: number;
 
-    constructor(
-        private readonly workoutService: WorkoutService,
-    ) {
-    }
+    private readonly workoutService = inject(WorkoutService);
+
 
     onHideModal() {
         this.resetDuration();

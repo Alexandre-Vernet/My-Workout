@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { presets } from '../../../shared/theme/presets';
@@ -22,10 +22,7 @@ export class ChangeThemeComponent implements OnInit {
     selectedTheme: string;
     isCheckedDarkMode: boolean;
 
-    constructor(
-        private readonly themeService: ThemeService
-    ) {
-    }
+    private readonly themeService = inject(ThemeService);
 
     ngOnInit() {
         this.selectedTheme = localStorage.getItem('theme');
