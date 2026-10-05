@@ -1,4 +1,4 @@
-import { Component, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { ExerciseService } from '../../../../services/exercise.service';
 import { Exercise } from '../../../../../interfaces/Exercise';
 import { Button } from 'primeng/button';
@@ -63,15 +63,12 @@ export class AddExerciseComponent implements OnInit {
 
     musclesDropdown: MuscleDropdown[] = [];
 
-    constructor(
-        private readonly exerciseService: ExerciseService,
-        private readonly muscleService: MuscleService,
-        private readonly alertService: AlertService,
-        private readonly confirmationService: ConfirmationService,
-        private readonly messageService: MessageService,
-        private readonly router: Router
-    ) {
-    }
+    private readonly exerciseService = inject(ExerciseService);
+    private readonly muscleService = inject(MuscleService);
+    private readonly alertService = inject(AlertService);
+    private readonly confirmationService = inject(ConfirmationService);
+    private readonly messageService = inject(MessageService);
+    private readonly router = inject(Router);
 
     ngOnInit() {
         this.muscleService.findAllMuscles()
@@ -162,7 +159,7 @@ export class AddExerciseComponent implements OnInit {
                         this.formAddExercise.controls.name.setErrors({
                             exerciseNameAlreadyExist: true
                         })
-                    }  else if (err?.error?.errorCode === 'DOUBLE_MUSCLE_GROUP') {
+                    } else if (err?.error?.errorCode === 'DOUBLE_MUSCLE_GROUP') {
                         this.formAddExercise.controls.muscles.setErrors({
                             duplicatMuscleGroup: true
                         })

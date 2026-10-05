@@ -45,6 +45,7 @@
             <p-tablist>
                 <p-tab value="0">Informations</p-tab>
                 <p-tab value="1">Exécution</p-tab>
+                <p-tab value="2">Changer l'ordre</p-tab>
             </p-tablist>
             <p-tabpanels>
                 <p-tabpanel value="0" class="informations">
@@ -65,6 +66,35 @@
                         {{ exercise.description }}
                     </p>
                 </p-tabpanel>
+                @if (user) {
+                    <p-tabpanel value="2">
+                        <label pLabel class="font-bold! mb-2 block" for="horizontal">Position dans la séance</label>
+                        <div class="flex gap-3">
+                            <div
+                                class="flex-1 flex flex-column justify-center align-items-center w-full gap-3">
+                                <div class="flex align-items-center">
+                                    <p-inputnumber [formControl]="formPosition" [showButtons]="true"
+                                                   buttonLayout="horizontal"
+                                                   inputId="horizontal" spinnerMode="horizontal" [min]="1" [step]="1"
+                                                   mode="decimal">
+                                        <ng-template #incrementbuttonicon>
+                                            <span class="pi pi-plus"></span>
+                                        </ng-template>
+                                        <ng-template #decrementbuttonicon>
+                                            <span class="pi pi-minus"></span>
+                                        </ng-template>
+                                    </p-inputnumber>
+                                </div>
+                            </div>
+                            @if (formPosition.hasError('duplicateOrder')) {
+                                <p-message severity="error" variant="simple" size="small">
+                                    Doublon
+                                </p-message>
+                            }
+                            <button pButton (click)="updateOrder()">Mettre à jour</button>
+                        </div>
+                    </p-tabpanel>
+                }
             </p-tabpanels>
         </p-tabs>
 

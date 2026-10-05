@@ -1,9 +1,11 @@
 import {
     AfterViewInit,
     Component,
-    DestroyRef, effect,
+    DestroyRef,
+    effect,
     ElementRef,
-    inject, input,
+    inject,
+    input,
     OnInit,
     ViewChild,
     ViewEncapsulation
@@ -21,13 +23,10 @@ import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../interfaces/History';
 import { Skeleton } from 'primeng/skeleton';
 import { ExercisesTableComponent } from './exercises-table/exercises-table.component';
-import { Elastic } from '../../../../interfaces/elastic';
-import { Popover } from 'primeng/popover';
 import { WorkoutService } from '../../../services/workout.service';
 import { Workout } from '../../../../interfaces/Workout';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { AlertService } from '../../../services/alert.service';
-import { convertWeightElastic } from '../../../shared/utils/convert-weight-elastic';
 import { PreventFocusOnButtonClickDirective } from '../../../shared/directives/prevent-focus-on-button-click.directive';
 import { NgClass, UpperCasePipe } from '@angular/common';
 import { CustomError } from "../../../../interfaces/CustomError";
@@ -39,7 +38,7 @@ import { ExerciseService } from '../../../services/exercise.service';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective, NgClass, UpperCasePipe, ReactiveFormsModule, ToggleSwitch],
+    imports: [Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, Skeleton, ExercisesTableComponent, RouterLink, PreventFocusOnButtonClickDirective, NgClass, UpperCasePipe, ReactiveFormsModule, ToggleSwitch],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
     standalone: true,
@@ -80,8 +79,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         unilateral: new FormControl<boolean>(false, [Validators.required])
     });
 
-
-    weightToElastics: Elastic[] = [];
 
     @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
     @ViewChild('stepper', { static: false }) stepper!: ElementRef<HTMLDivElement>;
@@ -180,11 +177,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         this.setTabUrl(index);
     }
 
-
-    convertWeightToElastics() {
-        this.weightToElastics = convertWeightElastic(this.formWorkout.controls.weight.value);
-    }
-
     resetWorkout() {
         this.workout = null;
     }
@@ -267,8 +259,6 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     reps: history?.reps ?? 8,
                     unilateral: history?.unilateral ?? false
                 });
-
-                this.convertWeightToElastics();
             });
     }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { of, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -14,10 +14,7 @@ export class AuthService {
 
     authUrl = environment.authUrl();
 
-    constructor(
-        private readonly http: HttpClient
-    ) {
-    }
+    private readonly http = inject(HttpClient);
 
     login(loginRequest: LoginRequest) {
         return this.http.post<AuthResponse>(`${ this.authUrl }/login`, loginRequest)
