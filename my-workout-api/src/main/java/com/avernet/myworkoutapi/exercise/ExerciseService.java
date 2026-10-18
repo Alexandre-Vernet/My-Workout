@@ -16,6 +16,7 @@ import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupRepository;
 import com.avernet.myworkoutapi.user.UserEntity;
+import com.avernet.myworkoutapi.userexercise.UserExercise;
 import com.avernet.myworkoutapi.userexercise.UserExerciseEntity;
 import com.avernet.myworkoutapi.userexercise.UserExerciseRepository;
 import com.google.genai.errors.ClientException;
@@ -78,10 +79,7 @@ public class ExerciseService {
 
     @Transactional(readOnly = true)
     public ExerciseMuscleAddedToWorkout findExercisesMuscle(Long exerciseId) {
-        ExerciseEntity exerciseEntity = exerciseRepository.findExercise(exerciseId);
-        if (exerciseEntity == null) {
-            throw new ExerciseNotFoundException();
-        }
+        ExerciseEntity exerciseEntity = exerciseRepository.findExercise(exerciseId).orElseThrow(ExerciseNotFoundException::new);
 
         List<MuscleEntity> muscleEntityList = exerciseEntity.exerciseMuscles.stream()
             .map(ExerciseMuscleEntity::getMuscle)
@@ -184,6 +182,38 @@ public class ExerciseService {
             UserExerciseEntity userExerciseEntitySaved = userExerciseRepository.save(userExerciseEntityToSave);
             return exerciseMapper.toDtoUserExercise(userExerciseEntitySaved);
         }
+    }
+
+    @Transactional
+    public Exercise updateOrder(UserEntity userEntity, Long exerciseId, int order) {
+
+        ExerciseEntity exerciseEntity = exerciseRepository
+            .findExercise(exerciseId)
+            .orElseThrow(ExerciseNotFoundException::new);
+
+        MuscleGroupEntity muscleGroupEntity = exerciseEntity.getExerciseMuscles()
+            .stream()
+            .map(ExerciseMuscleEntity::getMuscle)
+            .map(MuscleEntity::getMuscleGroup)
+            .findFirst()
+            .orElseThrow(ExerciseNotFoundException::new);
+
+        Optional<UserExerciseEntity> existingExercise = userExerciseRepository.findByUserExerciseAndMuscleGroup(
+            userEntity.getId(),
+            exerciseId,
+            order,
+            muscleGroupEntity.getId());
+
+        if (existingExercise.isPresent()) {
+            throw new ApiException(ErrorCodeEnum.DUPLICATE_ORDER, "Doublon d'ordre", HttpStatus.BAD_REQUEST);
+        }
+
+        UserExerciseEntity userExercise = userExerciseRepository
+            .findByUserIdAndExerciseId(userEntity.getId(), exerciseId);
+
+        userExercise.setOrder(order);
+
+        return exerciseMapper.toDtoUserExercise(userExercise);
     }
 
     private String getExerciseDescriptionTemplate(String exerciseName) {

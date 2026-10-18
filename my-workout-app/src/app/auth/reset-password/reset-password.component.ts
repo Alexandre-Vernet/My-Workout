@@ -1,4 +1,4 @@
-import { Component, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
@@ -32,11 +32,9 @@ export class ResetPasswordComponent implements OnInit {
         confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     });
 
-    constructor(
-        private readonly passwordResetTokenService: PasswordResetTokenService,
-        private readonly router: Router,
-    ) {
-    }
+
+    private readonly passwordResetTokenService = inject(PasswordResetTokenService);
+    private readonly router = inject(Router);
 
     ngOnInit() {
         this.isTokenValid(this.token());

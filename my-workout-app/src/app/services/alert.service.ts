@@ -8,7 +8,4 @@ import { Alert } from '../../interfaces/alert';
 export class AlertService {
 
     alert$: BehaviorSubject<Alert> = new BehaviorSubject<Alert>(null);
-
-    constructor() {
-    }
 }

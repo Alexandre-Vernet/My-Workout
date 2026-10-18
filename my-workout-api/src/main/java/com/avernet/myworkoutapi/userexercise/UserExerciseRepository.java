@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserExerciseRepository extends JpaRepository<UserExerciseEntity, Long> {
 
@@ -25,4 +27,25 @@ public interface UserExerciseRepository extends JpaRepository<UserExerciseEntity
                 AND mg.id = :muscleGroupId
         """)
     Integer getOrder(@Param("userId") Long userId, @Param("muscleGroupId") Integer muscleGroupId);
+
+    @Query("""
+    SELECT ue
+    FROM UserExerciseEntity ue
+    WHERE ue.user.id = :userId
+      AND ue.exercise.id <> :exerciseId
+      AND ue.order = :order
+      AND EXISTS (
+          SELECT 1
+          FROM ExerciseMuscleEntity em
+          JOIN em.muscle m
+          WHERE em.exercise.id = ue.exercise.id
+            AND m.muscleGroup.id = :muscleGroupId
+      )
+""")
+    Optional<UserExerciseEntity> findByUserExerciseAndMuscleGroup(
+        @Param("userId") Long userId,
+        @Param("exerciseId") Long exerciseId,
+        @Param("order") Integer order,
+        @Param("muscleGroupId") Integer muscleGroupId
+    );
 }

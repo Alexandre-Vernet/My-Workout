@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { History } from '../../interfaces/History';
 import { HttpClient } from '@angular/common/http';
@@ -12,10 +12,7 @@ export class HistoryService {
 
     historyUrl = environment.historyUrl();
 
-    constructor(
-        private readonly http: HttpClient
-    ) {
-    }
+    private readonly http = inject(HttpClient);
 
     findLastHistoryWeightByExerciseId(exerciseId: number) {
         return this.http.get<History>(`${ this.historyUrl }/last/${ exerciseId }`);
