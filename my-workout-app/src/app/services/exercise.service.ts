@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Exercise } from '../../interfaces/Exercise';
@@ -11,10 +11,7 @@ export class ExerciseService {
 
     exerciseUrl = environment.exerciseUrl();
 
-    constructor(
-        private readonly http: HttpClient,
-    ) {
-    }
+    private readonly http = inject(HttpClient);
 
     findAll() {
         return this.http.get<Exercise[]>(`${ this.exerciseUrl }`);
@@ -58,5 +55,9 @@ export class ExerciseService {
 
     toggleExerciseWorkout(exercise: Exercise) {
         return this.http.post<Exercise>(`${ this.exerciseUrl }/user/toggle`, exercise);
+    }
+
+    updateOrder(exercise: Exercise, order: number) {
+        return this.http.patch<Exercise>(`${ this.exerciseUrl }/${ exercise.id }/order`, order);
     }
 }

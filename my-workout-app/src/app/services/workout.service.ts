@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Workout } from '../../interfaces/Workout';
@@ -13,10 +13,7 @@ export class WorkoutService {
 
     workoutUrl = environment.workoutUrl();
 
-    constructor(
-        private readonly http: HttpClient
-    ) {
-    }
+    private readonly http = inject(HttpClient);
 
     create(workout: Workout, history: History) {
         return this.http.post<Workout>(this.workoutUrl, { workout, history });

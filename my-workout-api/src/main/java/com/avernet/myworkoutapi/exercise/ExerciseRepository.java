@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> {
@@ -73,7 +74,7 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> 
                 LEFT JOIN FETCH em.muscle m
                 WHERE e.id = :exerciseId
         """)
-    ExerciseEntity findExercise(@Param("exerciseId") Long exerciseId);
+    Optional<ExerciseEntity> findExercise(@Param("exerciseId") Long exerciseId);
 
     boolean existsByName(String name);
 

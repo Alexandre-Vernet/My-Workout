@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { Alert } from '../../../interfaces/alert';
 import { Message } from 'primeng/message';
 import { AlertService } from '../../services/alert.service';
@@ -13,10 +13,7 @@ import { AlertService } from '../../services/alert.service';
 export class AlertComponent implements OnInit {
     alert: Alert;
 
-    constructor(
-        private readonly alertService: AlertService
-    ) {
-    }
+    private readonly alertService = inject(AlertService);
 
     ngOnInit() {
         this.alertService.alert$

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { DEFAULT_VALUE_REST_TIME, RestTimeService } from "../../services/rest-time.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Message } from "primeng/message";
@@ -20,13 +20,9 @@ export class RestTimeBannerComponent implements OnInit {
     showBanner = false;
     restTime = '';
 
-
-    constructor(
-        private readonly router: Router,
-        private readonly restTimeService: RestTimeService,
-        private readonly destroyRef: DestroyRef,
-    ) {
-    }
+    private readonly router = inject(Router);
+    private readonly restTimeService = inject(RestTimeService);
+    private readonly destroyRef = inject(DestroyRef);
 
     ngOnInit() {
         this.router.events

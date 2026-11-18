@@ -75,7 +75,6 @@
                                                     <p-inputnumber
                                                         preventFocusOnButtonClick
                                                         formControlName="weight"
-                                                        (ngModelChange)="convertWeightToElastics()"
                                                         [showButtons]="true"
                                                         buttonLayout="horizontal" inputId="horizontal"
                                                         spinnerMode="horizontal" [step]="2.5"
@@ -87,11 +86,6 @@
                                                             <span class="pi pi-minus"></span>
                                                         </ng-template>
                                                     </p-inputnumber>
-
-                                                    <i class="ml-2 pi pi-info-circle cursor-pointer"
-                                                       (click)="dialogConvertWeightToElastics.toggle($event)"
-                                                       [style.visibility]="formWorkout.controls.weight.value % 5 === 0 && formWorkout.controls.weight.value > 0 ? 'visible' : 'hidden'">
-                                                    </i>
                                                 </div>
 
 
@@ -152,21 +146,4 @@
             </div>
         </div>
     }
-</div>
-
-<div class="card flex justify-center">
-    <p-popover #dialogConvertWeightToElastics>
-        <div class="p-3">
-            <h4 class="mb-2 font-semibold text-lg">Élastiques utilisés</h4>
-            <ul>
-                @for (elastic of weightToElastics; track index; let index = $index) {
-                    <li
-                        class="flex items-center justify-between p-2 gap-1 rounded">
-                        <span class="font-medium text-primary">{{ elastic.name }}</span>
-                        <span class="text-sm"> ({{ elastic.weight }} kg)</span>
-                    </li>
-                }
-            </ul>
-        </div>
-    </p-popover>
 </div>
