@@ -1,21 +1,28 @@
-import { Component, input, OnInit, inject } from '@angular/core';
+import { Component, input, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { AlertService } from '../../../services/alert.service';
-import { Button } from 'primeng/button';
-import { Tag } from 'primeng/tag';
-import { Skeleton } from 'primeng/skeleton';
 import { AuthService } from '../../../auth/auth.service';
 import { User } from '../../../../interfaces/User';
 import { ExerciseMuscle } from '../../../../interfaces/ExerciseMuscle';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
+import { CustomError } from '../../../../interfaces/CustomError';
+import { DifficultyEnum } from '../../../../interfaces/DifficultyEnum';
 import { DifficultyLabelPipe } from "../../../shared/pipes/difficulty-label.pipe";
 import { MechanicLabelPipe } from "../../../shared/pipes/mechanic-label.pipe";
+import { getErrorMessage } from "../../../shared/utils/http-error";
 import { getMuscleGroupColor } from "../../../shared/utils/muscle-group-color";
+
+type DetailTab = 'info' | 'execution';
+
+const DIFFICULTY_COLOR: Record<DifficultyEnum, string> = {
+    [DifficultyEnum.BEGINNER]: 'var(--p-green-500)',
+    [DifficultyEnum.INTERMEDIATE]: 'var(--p-orange-500)',
+    [DifficultyEnum.ADVANCED]: 'var(--p-red-500)'
+};
 
 @Component({
     selector: 'app-view-exercise',
-    imports: [Button, Tag, Skeleton, Tabs, TabList, Tab, TabPanels, TabPanel, DifficultyLabelPipe, MechanicLabelPipe],
+    imports: [DifficultyLabelPipe, MechanicLabelPipe],
     templateUrl: './view-exercise.component.html',
     styleUrl: './view-exercise.component.scss',
     standalone: true
@@ -32,6 +39,8 @@ export class ViewExerciseComponent implements OnInit {
     exerciseMuscle!: ExerciseMuscle;
     user: User | undefined;
     imagePath = '';
+
+    protected readonly activeTab = signal<DetailTab>('info');
 
     ngOnInit() {
         this.authService.getCurrentUser()
@@ -51,6 +60,14 @@ export class ViewExerciseComponent implements OnInit {
         return getMuscleGroupColor(this.exerciseMuscle.muscles?.[0]?.muscleGroup?.name);
     }
 
+    protected difficultyColor(difficulty: string | undefined): string {
+        return DIFFICULTY_COLOR[difficulty as DifficultyEnum] ?? 'var(--p-text-muted-color)';
+    }
+
+    protected setActiveTab(tab: DetailTab) {
+        this.activeTab.set(tab);
+    }
+
     // Closes the detail overlay by navigating back up to the library list route
     // (this component is nested under it — see app.routes.ts).
     protected goBack() {
@@ -61,10 +78,10 @@ export class ViewExerciseComponent implements OnInit {
         this.exerciseService.toggleExerciseWorkout(this.exerciseMuscle.exercise!)
             .subscribe({
                 next: () => this.exerciseMuscle.addedToWorkout = !this.exerciseMuscle.addedToWorkout,
-                error: (err) => {
+                error: (err: CustomError) => {
                     this.alertService.show({
                         severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'enregistrer cet exercice'
+                        message: getErrorMessage(err, 'Impossible d\'enregistrer cet exercice')
                     });
                 }
             });

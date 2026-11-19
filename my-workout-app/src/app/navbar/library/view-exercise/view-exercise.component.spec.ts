@@ -7,6 +7,7 @@ import { ExerciseService } from '../../../services/exercise.service';
 import { AuthService } from '../../../auth/auth.service';
 import { AlertService } from '../../../services/alert.service';
 import { ExerciseMuscle } from '../../../../interfaces/ExerciseMuscle';
+import { DifficultyEnum } from '../../../../interfaces/DifficultyEnum';
 
 describe('ViewExerciseComponent', () => {
     let fixture: ComponentFixture<ViewExerciseComponent>;
@@ -103,6 +104,32 @@ describe('ViewExerciseComponent', () => {
         component.updateExercise();
 
         expect(navigateSpy).toHaveBeenCalledWith(['admin', 'update-exercise', 5]);
+    });
+
+    it('defaults to the "info" tab and switches via setActiveTab()', () => {
+        createComponent();
+
+        expect(component['activeTab']()).toBe('info');
+
+        component['setActiveTab']('execution');
+
+        expect(component['activeTab']()).toBe('execution');
+    });
+
+    describe('difficultyColor()', () => {
+        it('maps each difficulty to its own color', () => {
+            createComponent();
+
+            expect(component['difficultyColor'](DifficultyEnum.BEGINNER)).toBe('var(--p-green-500)');
+            expect(component['difficultyColor'](DifficultyEnum.INTERMEDIATE)).toBe('var(--p-orange-500)');
+            expect(component['difficultyColor'](DifficultyEnum.ADVANCED)).toBe('var(--p-red-500)');
+        });
+
+        it('falls back to the muted text color for an unknown difficulty', () => {
+            createComponent();
+
+            expect(component['difficultyColor'](undefined)).toBe('var(--p-text-muted-color)');
+        });
     });
 
     it('goBack() navigates up to the parent library route', () => {

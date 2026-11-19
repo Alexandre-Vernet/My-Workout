@@ -1,5 +1,42 @@
+@use "../../../../skeleton";
+@use "../../../../buttons";
+
+@keyframes exercise-hero-in {
+    from {
+        opacity: 0;
+        transform: scale(.94);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes exercise-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes exercise-badge-in {
+    from {
+        opacity: 0;
+        transform: scale(.4);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 .exercise-view {
     margin: 12px;
+    padding-bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-offset) + 16px);
 }
 
 .exercise-back {
@@ -32,18 +69,50 @@
 }
 
 .exercise-hero {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 220px;
     border-radius: var(--radius-lg);
     margin-bottom: 16px;
+    animation: exercise-hero-in .4s cubic-bezier(.22, 1, .36, 1) both;
 }
 
 .exercise-hero-image {
     width: 65%;
     height: 65%;
     object-fit: contain;
+}
+
+.exercise-hero-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background: var(--p-primary-color);
+    box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--p-primary-color) 70%, transparent);
+    animation: exercise-badge-in .3s cubic-bezier(.34, 1.56, .64, 1) both;
+
+    svg {
+        width: 15px;
+        height: 15px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2.4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+}
+
+.exercise-view-body {
+    animation: exercise-fade-in .35s ease both;
 }
 
 .exercise-view-body h1 {
@@ -59,30 +128,116 @@
     margin-bottom: 18px;
 }
 
+.muscle-tag {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: .78rem;
+    font-weight: 700;
+}
+
+.view-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--chips-background-color);
+    border-radius: var(--radius-md);
+    padding: 4px;
+    margin-bottom: 16px;
+
+    button {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 9px 8px;
+        border-radius: calc(var(--radius-md) - 4px);
+        font: inherit;
+        font-size: .85rem;
+        font-weight: 700;
+        color: var(--p-text-muted-color);
+        cursor: pointer;
+        transition: background .2s ease, color .2s ease, box-shadow .2s ease;
+
+        &.active {
+            background: var(--card-background);
+            color: var(--p-primary-color);
+            box-shadow: var(--card-shadow);
+        }
+    }
+}
+
+.info-grid,
+.exercise-description {
+    animation: exercise-fade-in .3s ease both;
+}
+
+.info-grid {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+
+    &:not(:last-child) {
+        border-bottom: 1px solid var(--chips-background-color);
+    }
+}
+
+.pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: .8rem;
+    font-weight: 700;
+}
+
+.pill-muted {
+    color: var(--p-text-muted-color);
+    background: var(--chips-background-color);
+}
+
 .exercise-description {
     white-space: pre-line;
     color: var(--p-text-muted-color);
     line-height: 1.6;
 }
 
-.informations {
-    table {
-        width: 100%;
-        border-collapse: collapse;
-
-        td {
-            padding: 10px 0;
-        }
-
-        tr:not(:last-child) td {
-            border-bottom: 1px solid var(--chips-background-color);
-        }
-    }
-}
-
 .exercise-actions {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     gap: 10px;
-    padding: 24px 0;
+    padding: 24px 0 8px;
+}
+
+.skeleton-title {
+    display: block;
+    width: 45%;
+    height: 24px;
+    margin-bottom: 16px;
+}
+
+.skeleton-tags {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 18px;
+}
+
+.skeleton-tag {
+    width: 72px;
+    height: 24px;
+    border-radius: 20px;
+}
+
+.skeleton-hero {
+    display: block;
+    height: 220px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+}
+
+.skeleton-panel {
+    display: block;
+    height: 160px;
+    border-radius: var(--radius-md);
 }
