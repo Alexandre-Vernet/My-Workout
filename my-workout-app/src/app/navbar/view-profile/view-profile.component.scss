@@ -1,3 +1,5 @@
+@use "../../../skeleton";
+
 @keyframes profile-in {
     from {
         opacity: 0;
@@ -6,15 +8,6 @@
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-@keyframes profile-shimmer {
-    0% {
-        background-position: -120% 0;
-    }
-    100% {
-        background-position: 220% 0;
     }
 }
 
@@ -157,19 +150,6 @@
     stroke-linejoin: round;
 }
 
-.skeleton-fill {
-    background: linear-gradient(90deg, var(--chips-background-color) 25%, var(--card-background) 50%, var(--chips-background-color) 75%);
-    background-size: 200% 100%;
-    animation: profile-shimmer 1.4s ease-in-out infinite;
-}
-
 .profile-hero.skeleton .profile-identity {
     width: 100%;
-}
-
-.skeleton-line {
-    display: block;
-    width: 55%;
-    height: 16px;
-    border-radius: var(--radius-sm);
 }

@@ -5,12 +5,20 @@ import { provideRouter, Router } from '@angular/router';
 import { GraphsComponent } from './graphs.component';
 import { HistoryService } from '../../../services/history.service';
 import { ExerciseGraphs } from '../../../../interfaces/ExerciseGraphs';
+import { HistoryPoint } from '../../../../interfaces/HistoryPoint';
 
 describe('GraphsComponent', () => {
     let fixture: ComponentFixture<GraphsComponent>;
     let component: GraphsComponent;
     let httpMock: HttpTestingController;
     let historyService: HistoryService;
+
+    function manyPoints(count: number): HistoryPoint[] {
+        return Array.from({ length: count }, (_, i) => ({
+            date: new Date(2020, 0, i + 1),
+            weight: 50 + i
+        }));
+    }
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -71,5 +79,54 @@ describe('GraphsComponent', () => {
         fixture.destroy();
 
         expect(destroySpy).toHaveBeenCalled();
+    });
+
+    it('defaults to the "all" period when there are few history points', () => {
+        fixture.detectChanges();
+        httpMock.expectOne(`${ historyService.historyUrl }/exercise-graph/5`).flush({
+            exercise: { id: 5, name: 'Squat' },
+            historyPoints: manyPoints(5),
+            totalWeight: 0,
+            maxWeight: 0,
+            totalReps: 0
+        });
+
+        expect(component['selectedPeriod']()).toBe('all');
+    });
+
+    it('defaults to the "3m" period when there are many history points', () => {
+        fixture.detectChanges();
+        httpMock.expectOne(`${ historyService.historyUrl }/exercise-graph/5`).flush({
+            exercise: { id: 5, name: 'Squat' },
+            historyPoints: manyPoints(31),
+            totalWeight: 0,
+            maxWeight: 0,
+            totalReps: 0
+        });
+
+        expect(component['selectedPeriod']()).toBe('3m');
+    });
+
+    it('filteredHistoryPoints() narrows to the selected calendar window', () => {
+        const oldPoint: HistoryPoint = { date: new Date(Date.now() - 400 * 24 * 60 * 60 * 1000), weight: 40 };
+        const recentPoint: HistoryPoint = { date: new Date(), weight: 60 };
+
+        fixture.detectChanges();
+        httpMock.expectOne(`${ historyService.historyUrl }/exercise-graph/5`).flush({
+            exercise: { id: 5, name: 'Squat' },
+            historyPoints: [oldPoint, recentPoint],
+            totalWeight: 0,
+            maxWeight: 0,
+            totalReps: 0
+        });
+
+        expect(component['filteredHistoryPoints']()).toEqual([oldPoint, recentPoint]);
+
+        // Sets the signal directly rather than going through setPeriod(), which also
+        // redraws the Chart.js chart — chart rendering isn't exercised under jsdom
+        // (see CLAUDE.md: no canvas 2D context, tolerated without mocking elsewhere).
+        component['selectedPeriod'].set('1m');
+
+        expect(component['filteredHistoryPoints']()).toEqual([recentPoint]);
     });
 });

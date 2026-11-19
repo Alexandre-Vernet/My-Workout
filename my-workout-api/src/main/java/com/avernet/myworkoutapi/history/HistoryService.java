@@ -19,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 @Service
 public class HistoryService {
@@ -73,18 +73,25 @@ public class HistoryService {
         ExerciseGraphsEntity exerciseGraphsEntity = historyRepository.getExerciseGraphs(userEntity.getId(), exerciseId);
         List<HistoryEntity> historyEntityList = historyRepository.findHistoriesByUserAndExercise(userEntity.getId(), exerciseId);
 
-        List<HistoryPoint> historyPoints = new ArrayList<>();
-
-        Float lastWeight = null;
-
-        for (HistoryEntity h : historyEntityList.stream().toList()) {
+        // One point per day (the heaviest set of the day) instead of one point per set: on an
+        // exercise trained for months with progressive sets within a session, per-set points
+        // make the chart unreadable without being more meaningful than the day's best lift.
+        Map<LocalDate, Float> maxWeightByDay = new LinkedHashMap<>();
+        for (HistoryEntity h : historyEntityList) {
+            LocalDate day = h.getWorkout().getDate().toLocalDate();
             Float currentWeight = h.getWeight();
+            Float existingWeight = maxWeightByDay.get(day);
 
-            if (!Objects.equals(currentWeight, lastWeight)) {
-                historyPoints.add(new HistoryPoint(currentWeight, h.getWorkout().getDate()));
-                lastWeight = currentWeight;
+            if (!maxWeightByDay.containsKey(day) || existingWeight == null) {
+                maxWeightByDay.put(day, currentWeight);
+            } else if (currentWeight != null) {
+                maxWeightByDay.put(day, Math.max(existingWeight, currentWeight));
             }
         }
+
+        List<HistoryPoint> historyPoints = maxWeightByDay.entrySet().stream()
+            .map(entry -> new HistoryPoint(entry.getValue(), entry.getKey().atStartOfDay()))
+            .toList();
 
         return new ExerciseGraphs(
             exerciseMapper.toDto(exerciseGraphsEntity.exercise()),

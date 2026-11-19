@@ -214,6 +214,45 @@ public class HistoryServiceTest {
     }
 
     @Test
+    void shouldAggregateOneHistoryPointPerDay() {
+        WorkoutEntity day1 = workoutRepository.save(WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .date(LocalDateTime.of(2026, 1, 1, 0, 0))
+            .build());
+
+        for (Float weight : new Float[] { 50F, 52F, 48F }) {
+            historyRepository.save(HistoryEntity.builder()
+                .exercise(exerciseEntity)
+                .reps((short) 10)
+                .weight(weight)
+                .unilateral(true)
+                .workout(day1)
+                .build());
+        }
+
+        WorkoutEntity day2 = workoutRepository.save(WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .date(LocalDateTime.of(2026, 1, 2, 0, 0))
+            .build());
+
+        historyRepository.save(HistoryEntity.builder()
+            .exercise(exerciseEntity)
+            .reps((short) 10)
+            .weight(55F)
+            .unilateral(true)
+            .workout(day2)
+            .build());
+
+        ExerciseGraphs exerciseGraphs = service.getExerciseGraphs(userEntity, exerciseEntity.getId());
+
+        assertEquals(2, exerciseGraphs.historyPoints().size());
+        assertEquals(52F, exerciseGraphs.historyPoints().get(0).weight());
+        assertEquals(55F, exerciseGraphs.historyPoints().get(1).weight());
+    }
+
+    @Test
     void shouldUpdateHistory() {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
