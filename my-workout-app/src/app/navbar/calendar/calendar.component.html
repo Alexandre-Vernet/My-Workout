@@ -5,41 +5,49 @@
     </div>
 </header>
 
-<div class="chip-row">
-    <div class="chip" [class.active]="!activeFilter" (click)="clearMuscleGroupFilter()">Tous</div>
-    @for (muscleGroup of muscleGroups; track muscleGroup.id) {
-        <div class="chip" [class.active]="activeFilter?.name === muscleGroup.name"
-             (click)="filterByMuscleGroup(muscleGroup)">
-            <span class="chip-dot" [style.background]="groupColor(muscleGroup.name)"></span>
-            {{ muscleGroup.name | firstLetterUppercase }}
-        </div>
-    }
-</div>
-
-<div appSwipe (swipeLeft)="nextMonth()" (swipeRight)="previousMonth()" class="swipe-area">
-    <div class="cal-grid"
-         [class.slide-next]="transitionClass() === 'slide-next'"
-         [class.slide-prev]="transitionClass() === 'slide-prev'">
-        @for (weekday of weekdays; track weekday) {
-            <div class="cal-weekday">{{ weekday }}</div>
-        }
-        @for (calendarDay of calendarDays; track $index) {
-            @if (calendarDay) {
-                <div class="cal-day" [class.today]="calendarDay.isToday" [class.muted]="calendarDay.muted"
-                     (click)="onDayClick(calendarDay)">
-                    {{ calendarDay.day }}
-                    <div class="cal-dots">
-                        @for (color of calendarDay.dotColors; track $index) {
-                            <span [style.background]="color"></span>
-                        }
-                    </div>
-                </div>
-            } @else {
-                <div></div>
-            }
+@if (loading) {
+    <div class="skeleton-cal-grid">
+        @for (skeleton of skeletonDays; track $index) {
+            <span class="skeleton-fill skeleton-cal-day"></span>
         }
     </div>
-</div>
+} @else {
+    <div class="chip-row">
+        <div class="chip" [class.active]="!activeFilter" (click)="clearMuscleGroupFilter()">Tous</div>
+        @for (muscleGroup of muscleGroups; track muscleGroup.id) {
+            <div class="chip" [class.active]="activeFilter?.name === muscleGroup.name"
+                 (click)="filterByMuscleGroup(muscleGroup)">
+                <span class="chip-dot" [style.background]="groupColor(muscleGroup.name)"></span>
+                {{ muscleGroup.name | firstLetterUppercase }}
+            </div>
+        }
+    </div>
+
+    <div appSwipe (swipeLeft)="nextMonth()" (swipeRight)="previousMonth()" class="swipe-area">
+        <div class="cal-grid"
+             [class.slide-next]="transitionClass() === 'slide-next'"
+             [class.slide-prev]="transitionClass() === 'slide-prev'">
+            @for (weekday of weekdays; track weekday) {
+                <div class="cal-weekday">{{ weekday }}</div>
+            }
+            @for (calendarDay of calendarDays; track $index) {
+                @if (calendarDay) {
+                    <div class="cal-day" [class.today]="calendarDay.isToday" [class.muted]="calendarDay.muted"
+                         (click)="onDayClick(calendarDay)">
+                        {{ calendarDay.day }}
+                        <div class="cal-dots">
+                            @for (color of calendarDay.dotColors; track $index) {
+                                <span [style.background]="color"></span>
+                            }
+                        </div>
+                    </div>
+                } @else {
+                    <div></div>
+                }
+            }
+        </div>
+    </div>
+}
 
 <div class="sheet-backdrop" [class.open]="sheetOpen()" (click)="closeSheet()"></div>
 <div class="sheet" [class.open]="sheetOpen()">

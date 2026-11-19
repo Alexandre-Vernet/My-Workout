@@ -23,6 +23,7 @@ interface CalendarDay {
 
 const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 const MAX_VISIBLE_DOTS = 3;
+const SKELETON_DAYS_COUNT = 35;
 
 @Component({
     selector: 'app-calendar',
@@ -49,6 +50,9 @@ export class CalendarComponent implements OnInit {
     workouts: Workout[] = [];
     activeFilter: MuscleGroup | null = null;
     muscleGroups: MuscleGroup[] = [];
+    loading = true;
+
+    protected readonly skeletonDays = Array.from({ length: SKELETON_DAYS_COUNT });
 
     private readonly workoutService = inject(WorkoutService);
     private readonly confirmationService = inject(ConfirmationService);
@@ -176,8 +180,10 @@ export class CalendarComponent implements OnInit {
                     this.workouts = workouts;
                     this.getMuscleGroups();
                     this.buildCalendarDays();
+                    this.loading = false;
                 },
                 error: (err) => {
+                    this.loading = false;
                     this.alertService.show({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible d\'afficher le calendrier'

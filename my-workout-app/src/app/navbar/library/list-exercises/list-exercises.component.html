@@ -7,9 +7,7 @@
     @if (loading) {
         <div class="skeleton-grid">
             @for (skeleton of [1, 2, 3, 4, 5, 6]; track skeleton) {
-                <div class="skeleton-card">
-                    <p-skeleton width="100%" height="100%"/>
-                </div>
+                <div class="skeleton-card skeleton-fill"></div>
             }
         </div>
     } @else {

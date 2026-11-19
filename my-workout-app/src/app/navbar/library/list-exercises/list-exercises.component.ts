@@ -1,7 +1,6 @@
 import { Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
-import { Skeleton } from 'primeng/skeleton';
 import { AlertService } from '../../../services/alert.service';
-import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MuscleGroupEnum } from "../../../../interfaces/MuscleGroupEnum";
 import { FirstLetterUppercasePipe } from "../../../shared/pipes/first-letter-uppercase.pipe";
 import { ExerciseService } from "../../../services/exercise.service";
@@ -19,7 +18,7 @@ interface ExerciseGroup {
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [Skeleton, FormsModule, FirstLetterUppercasePipe, RouterLink, RouterOutlet, ReactiveFormsModule, PluralPipe],
+    imports: [FirstLetterUppercasePipe, RouterLink, RouterOutlet, ReactiveFormsModule, PluralPipe],
     templateUrl: './list-exercises.component.html',
     styleUrl: './list-exercises.component.scss',
     standalone: true
