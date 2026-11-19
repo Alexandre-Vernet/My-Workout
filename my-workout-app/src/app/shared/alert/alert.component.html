@@ -1,7 +1,7 @@
-@if (alert) {
+@if (alertService.alert(); as alert) {
     <p-message closable="true"
-               (onClose)="alert = null"
-               [severity]="alert?.severity">{{ alert?.message }}
+               (onClose)="alertService.show(null)"
+               [severity]="alert.severity">{{ alert.message }}
     </p-message>
 
 }

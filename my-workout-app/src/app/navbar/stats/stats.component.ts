@@ -13,7 +13,7 @@ import { HistoryService } from '../../services/history.service';
 })
 export class StatsComponent implements OnInit {
 
-    userExercisesCountTotalWorkout: UserExercisesCountTotalWorkout;
+    userExercisesCountTotalWorkout!: UserExercisesCountTotalWorkout;
 
     private readonly historyService = inject(HistoryService);
     private readonly alertService = inject(AlertService);
@@ -23,7 +23,7 @@ export class StatsComponent implements OnInit {
             .subscribe({
                 next: (userExercisesCountTotalWorkout) => this.userExercisesCountTotalWorkout = userExercisesCountTotalWorkout,
                 error: (err) => {
-                    this.alertService.alert$.next({
+                    this.alertService.show({
                         severity: 'error',
                         message: err?.error?.message ?? 'Erreur lors de la récupération des statistiques'
                     });

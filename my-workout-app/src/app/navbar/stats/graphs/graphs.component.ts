@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HistoryService } from '../../../services/history.service';
 import { Router } from '@angular/router';
 import { ExerciseGraphs } from '../../../../interfaces/ExerciseGraphs';
@@ -12,10 +12,14 @@ import { Skeleton } from 'primeng/skeleton';
     imports: [Skeleton],
     standalone: true
 })
-export class GraphsComponent implements OnInit {
+export class GraphsComponent implements OnInit, OnDestroy {
 
     exerciseId = input.required<number>();
-    exerciseGraphs: ExerciseGraphs;
+    exerciseGraphs!: ExerciseGraphs;
+
+    @ViewChild('barCanvas') barCanvas!: ElementRef<HTMLCanvasElement>;
+
+    private chart: Chart | null = null;
 
     private readonly historyService = inject(HistoryService);
     private readonly router = inject(Router);
@@ -26,9 +30,9 @@ export class GraphsComponent implements OnInit {
                 next: (exerciseGraphs) => {
                     this.exerciseGraphs = exerciseGraphs;
 
-                    const ctx = document.getElementById('bar');
+                    this.chart?.destroy();
 
-                    new Chart(ctx as ChartItem, {
+                    this.chart = new Chart(this.barCanvas.nativeElement as ChartItem, {
                         type: 'line',
 
                         data: {
@@ -57,5 +61,9 @@ export class GraphsComponent implements OnInit {
                 },
                 error: () => this.router.navigate(['not-found'])
             });
+    }
+
+    ngOnDestroy() {
+        this.chart?.destroy();
     }
 }

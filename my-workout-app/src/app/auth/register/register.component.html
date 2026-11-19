@@ -42,7 +42,7 @@
                         </p-message>
                     }
                     @if (formRegister.controls.password.hasError('passwordNotMatch') ||
-                        formRegister.controls.password.value.trim() !== formRegister.controls.confirmPassword.value.trim()) {
+                        (formRegister.controls.password.value ?? '').trim() !== (formRegister.controls.confirmPassword.value ?? '').trim()) {
                         <p-message
                             severity="error" variant="simple" size="small">
                             Les mots de passe ne correspondent pas

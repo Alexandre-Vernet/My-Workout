@@ -1,8 +1,8 @@
-<div [routerLink]="['/', 'library', 'exercise', exercise?.id]">
-    <h3 class="text-primary mb-2">{{ exercise.name }}</h3>
+<div [routerLink]="['/', 'library', 'exercise', exercise().id]">
+    <h3 class="text-primary mb-2">{{ exercise().name }}</h3>
 </div>
 
-@for (history of histories; track history.id) {
+@for (history of histories(); track history.id) {
     <div class="flex flex-row text-sm text-color-secondary gap-1">
         <span>{{ history?.reps }}</span>
         @if (history.reps && history.weight) {
@@ -14,7 +14,7 @@
         @if (!history.weight && history.reps === 1) {
             <span>répétition</span>
         }
-        @if (!history.weight && history.reps > 1) {
+        @if (!history.weight && (history.reps ?? 0) > 1) {
             <span>répétitions</span>
         }
         @if (history.unilateral) {

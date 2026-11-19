@@ -1,17 +1,17 @@
-import { Component, inject, OnInit, Output } from '@angular/core';
+import { Component, inject, OnInit, output } from '@angular/core';
 import { Button } from 'primeng/button';
 import { FloatLabel } from 'primeng/floatlabel';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { ToggleSwitch } from 'primeng/toggleswitch';
-import { User } from '../../../../interfaces/User';
-import { Subject } from 'rxjs';
+import { UpdateUserRequest } from '../../../../interfaces/UpdateUserRequest';
 import { AuthService } from '../../../auth/auth.service';
 import { Alert } from '../../../../interfaces/alert';
 import { Ripple } from 'primeng/ripple';
 import { Router } from "@angular/router";
 import { CustomError } from "../../../../interfaces/CustomError";
+import { applyValidationErrors, getErrorCode, isValidationError } from "../../../shared/utils/http-error";
 
 @Component({
     selector: 'app-manage-account',
@@ -22,7 +22,7 @@ import { CustomError } from "../../../../interfaces/CustomError";
 })
 export class ManageAccountComponent implements OnInit {
 
-    currentEmail: string;
+    currentEmail: string | undefined;
     formGroup = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email, Validators.maxLength(255)]),
         password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(255)]),
@@ -30,9 +30,9 @@ export class ManageAccountComponent implements OnInit {
     });
 
 
-    isCheckedChangePassword: boolean;
+    isCheckedChangePassword = false;
 
-    @Output() showAlert = new Subject<Alert>();
+    showAlert = output<Alert>();
 
     private readonly authService = inject(AuthService);
     private readonly router = inject(Router);
@@ -56,34 +56,30 @@ export class ManageAccountComponent implements OnInit {
 
     updateUser() {
         const { email, password, confirmPassword } = this.formGroup.value;
-        const user: User = { email, password, confirmPassword };
+        const user: UpdateUserRequest = {};
 
-        if (!user.email) {
-            delete user.email;
+        if (email) {
+            user.email = email;
         }
-        if (!user.password && !user.confirmPassword) {
-            delete user.password;
-            delete user.confirmPassword;
+        if (password && confirmPassword) {
+            user.password = password;
+            user.confirmPassword = confirmPassword;
         }
 
         this.authService.updateUser(user)
             .subscribe({
                 next: () => {
                     this.router.navigate(['/auth/login']);
-                    this.showAlert.next({
+                    this.showAlert.emit({
                         message: 'Votre compte a bien été mis à jour, veuillez vous reconnecter',
                         severity: 'success'
                     });
                 },
                 error: (err: CustomError) => {
-                    if (err.error.type === 'VALIDATION') {
-                        err.error.errors.forEach(error => {
-                            this.formGroup.get(error.field).setErrors({
-                                validation: error.message
-                            })
-                        });
+                    if (isValidationError(err)) {
+                        applyValidationErrors(err, this.formGroup);
                     } else {
-                        if (err.error.errorCode === 'EMAIL_ALREADY_IN_USE') {
+                        if (getErrorCode(err) === 'EMAIL_ALREADY_IN_USE') {
                             this.formGroup.controls.email.setErrors({
                                 emailAlreadyInUse: true
                             });

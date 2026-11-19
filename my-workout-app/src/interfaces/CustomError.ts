@@ -1,7 +1,7 @@
 import { HttpStatusCode } from "@angular/common/http";
 
 export class CustomError {
-    error: {
+    error?: {
         /*CustomError business*/
         message: string;
 

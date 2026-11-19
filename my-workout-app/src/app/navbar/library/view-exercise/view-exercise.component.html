@@ -20,7 +20,7 @@
             <p-skeleton width="8rem" height="3rem"/>
         </div>
     } @else {
-        @let exercise = exerciseMuscle.exercise;
+        @let exercise = exerciseMuscle.exercise!;
 
         <h1 class="mb-3">{{ exercise.name }}</h1>
 

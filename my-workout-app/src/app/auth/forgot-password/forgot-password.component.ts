@@ -1,4 +1,4 @@
-import { Component, inject, Input, Output } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { FloatLabel } from 'primeng/floatlabel';
@@ -8,9 +8,9 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import emailjs from '@emailjs/browser';
 import { environment } from '../../../environments/environment';
 import { AlertService } from '../../services/alert.service';
-import { Subject } from 'rxjs';
 import { NgClass } from '@angular/common';
 import { PasswordResetTokenService } from "../password-reset-token.service";
+import { getErrorMessage } from "../../shared/utils/http-error";
 
 @Component({
     selector: 'app-forgot-password',
@@ -21,8 +21,7 @@ import { PasswordResetTokenService } from "../password-reset-token.service";
 })
 export class ForgotPasswordComponent {
 
-    @Input() showDialogForgotPassword = false;
-    @Output() showDialogForgotPasswordChange = new Subject<void>();
+    showDialogForgotPassword = model(false);
 
     email = new FormControl('', Validators.email);
 
@@ -34,7 +33,7 @@ export class ForgotPasswordComponent {
     forgotPassword() {
         this.isLoading = true;
 
-        const email = this.email.value;
+        const email = this.email.value ?? '';
         const { appName, logoUrl } = environment;
 
         this.passwordResetTokenService.forgotPassword(email)
@@ -52,7 +51,7 @@ export class ForgotPasswordComponent {
                             this.closeModal();
                             this.isLoading = false;
 
-                            this.alertService.alert$.next({
+                            this.alertService.show({
                                 severity: 'success',
                                 message: 'Un email vous a été envoyé pour réinitialiser votre mot de passe'
                             });
@@ -60,17 +59,25 @@ export class ForgotPasswordComponent {
                         () => {
                             this.isLoading = false;
 
-                            this.alertService.alert$.next({
+                            this.alertService.show({
                                 severity: 'error',
                                 message: 'Une erreur s`est produite lors de l`envoi de l`email'
                             });
                         }
                     );
+                },
+                error: (err) => {
+                    this.isLoading = false;
+
+                    this.alertService.show({
+                        severity: 'error',
+                        message: getErrorMessage(err, 'Une erreur s\'est produite, veuillez réessayer')
+                    });
                 }
             });
     }
 
     closeModal() {
-        this.showDialogForgotPasswordChange.next();
+        this.showDialogForgotPassword.set(false);
     }
 }

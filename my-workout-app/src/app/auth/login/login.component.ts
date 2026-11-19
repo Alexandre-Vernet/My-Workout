@@ -26,7 +26,7 @@ export class LoginComponent {
         password: new FormControl('', [Validators.required])
     });
 
-    showDialogForgotPassword: boolean;
+    showDialogForgotPassword = false;
 
     private readonly authService = inject(AuthService);
     private readonly router = inject(Router);
@@ -37,7 +37,7 @@ export class LoginComponent {
             password
         } = this.formLogin.value;
 
-        const loginRequest = new LoginRequest(email?.trim(), password);
+        const loginRequest = new LoginRequest(email?.trim() ?? '', password ?? '');
 
         this.authService.login(loginRequest)
             .subscribe({

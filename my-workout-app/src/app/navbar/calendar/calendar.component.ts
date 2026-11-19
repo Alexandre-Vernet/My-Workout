@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, EventClickArg, EventInput, EventMountArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -23,17 +23,19 @@ import { Exercise } from '../../../interfaces/Exercise';
 import { DatePipe } from '@angular/common';
 import { WorkoutGroupedHistories } from '../../../interfaces/WorkoutGroupedHistories';
 import { FirstLetterUppercasePipe } from '../../shared/pipes/first-letter-uppercase.pipe';
+import { MuscleGroupKey } from '../../../interfaces/MuscleGroup';
+import { SwipeDirective } from '../../shared/directives/swipe.directive';
 
 @Component({
     selector: 'app-calendar',
-    imports: [FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, HistoryDetailComponent, DatePipe, FirstLetterUppercasePipe],
+    imports: [FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, HistoryDetailComponent, DatePipe, FirstLetterUppercasePipe, SwipeDirective],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
     encapsulation: ViewEncapsulation.None,
     providers: [ConfirmationService]
 })
-export class CalendarComponent implements OnInit, AfterViewInit {
+export class CalendarComponent implements OnInit {
 
     @ViewChild('calendarComponent', { static: false }) calendarComponent!: FullCalendarComponent;
     calendarOptions: CalendarOptions = {
@@ -64,7 +66,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                         this.workouts = workouts;
 
                         this.filterWorkouts = this.activeFilter
-                            ? workouts.filter(w => w.muscleGroup.name === this.activeFilter.name)
+                            ? workouts.filter(w => w.muscleGroup?.name === this.activeFilter?.name)
                             : workouts;
 
                         this.getMuscleGroups();
@@ -75,8 +77,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                             end.setSeconds(end.getSeconds() + 1);
 
                             return {
-                                id: w.id.toString(),
-                                title: w.muscleGroup.name,
+                                id: w.id?.toString(),
+                                title: w.muscleGroup?.name,
                                 start,
                                 end
                             };
@@ -91,20 +93,16 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     workouts: Workout[] = [];
     filterWorkouts: Workout[] = [];
-    activeFilter: MuscleGroup;
+    activeFilter: MuscleGroup | null = null;
 
-    showWorkout: WorkoutGroupedHistories;
+    showWorkout: WorkoutGroupedHistories | null = null;
     showModalViewWorkout = false;
 
     muscleGroups: MuscleGroup[] = [];
 
     cardioExercises: Exercise[] = [];
 
-    @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
-    swipeStartX = 0;
-    swipeEndX = 0;
-
-    setWorkoutDate: Date;
+    setWorkoutDate: Date = new Date();
     isOpenModalExerciseCardio = false;
 
     private readonly workoutService = inject(WorkoutService);
@@ -114,31 +112,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         setTimeout(() => this.calendarComponent.getApi().refetchEvents(), 0);
-    }
-
-    ngAfterViewInit() {
-        const el = this.swipeZone.nativeElement;
-
-        el.addEventListener('touchstart', (e: TouchEvent) => {
-            this.swipeStartX = e.changedTouches[0].screenX;
-        });
-
-        el.addEventListener('touchend', (e: TouchEvent) => {
-            this.swipeEndX = e.changedTouches[0].screenX;
-            this.handleSwipe();
-        });
-    }
-
-    handleSwipe() {
-        const deltaX = this.swipeEndX - this.swipeStartX;
-
-        if (Math.abs(deltaX) < 50) return; // Ignore small swipes
-
-        if (deltaX < 0) {
-            this.nextMonth();
-        } else {
-            this.previousMonth();
-        }
     }
 
     openModalDeleteWorkout(id: number, muscleGroupName: string, date: Date) {
@@ -166,13 +139,13 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                             this.calendarComponent.getApi().refetchEvents();
                             this.getMuscleGroups();
 
-                            this.alertService.alert$.next({
+                            this.alertService.show({
                                 severity: 'success',
                                 message: 'Suppression effectuée'
                             });
                         },
                         error: (err) => {
-                            this.alertService.alert$.next({
+                            this.alertService.show({
                                 severity: 'error',
                                 message: err?.error?.message ?? 'Impossible de supprimer l\'entraînement'
                             });
@@ -187,15 +160,15 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         this.workouts.push(workout);
         this.calendarComponent.getApi().refetchEvents();
 
-        this.alertService.alert$.next({
+        this.alertService.show({
             severity: 'success',
-            message: `${ workout.histories[0].exercise.name } a été ajouté au calendrier`
+            message: `${ workout.histories?.[0]?.exercise?.name } a été ajouté au calendrier`
         });
     }
 
     showAlert(alert: Alert) {
         window.scrollTo(0, 0);
-        this.alertService.alert$.next(alert);
+        this.alertService.show(alert);
     }
 
 
@@ -203,12 +176,12 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         this.muscleGroups = [];
         // Filter by name because all cardio exercises has the same id
         this.workouts.forEach(w => {
-            if (!this.muscleGroups.some(mg => mg.name === w.muscleGroup.name)) {
+            if (w.muscleGroup && !this.muscleGroups.some(mg => mg.name === w.muscleGroup?.name)) {
                 this.muscleGroups.push(w.muscleGroup);
             }
         });
 
-        this.muscleGroups.sort((a, b) => a.name.localeCompare(b.name));
+        this.muscleGroups.sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
     }
 
     filterByMuscleGroup(muscleGroup: MuscleGroup) {
@@ -219,13 +192,13 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             return;
         }
 
-        this.filterWorkouts = this.workouts.filter(w => w.muscleGroup.name === muscleGroup.name);
+        this.filterWorkouts = this.workouts.filter(w => w.muscleGroup?.name === muscleGroup.name);
         this.calendarComponent.getApi().refetchEvents();
         this.activeFilter = muscleGroup;
     }
 
     private customizeCalendar(info: EventMountArg) {
-        const eventNameFormated = removeAccents(info.event.title);
+        const eventNameFormated = removeAccents(info.event.title) as MuscleGroupKey;
         const label: string = muscleGroupMap[eventNameFormated]?.label ?? info.event.title;
         const color: string = muscleGroupMap[eventNameFormated]?.color || '#d77c05';
 
@@ -258,7 +231,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                         this.setWorkoutDate = info.date;
                         this.setWorkoutDate.setHours(new Date().getHours(), new Date().getMinutes(), 0, 0);
                     } else {
-                        this.alertService.alert$.next({
+                        this.alertService.show({
                             severity: 'error',
                             message: 'Aucun exercice cardio n\'a été ajouté, ajoutez en un depuis la bibliothèque'
                         });
@@ -267,14 +240,14 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             });
     }
 
-    private previousMonth() {
+    protected previousMonth() {
         const btnPreviousMonth = document.querySelector('.fc-prev-button') as HTMLButtonElement;
         if (btnPreviousMonth) {
             btnPreviousMonth.click();
         }
     }
 
-    private nextMonth() {
+    protected nextMonth() {
         const btnNextMonth = document.querySelector('.fc-next-button') as HTMLButtonElement;
         if (btnNextMonth) {
             btnNextMonth.click();

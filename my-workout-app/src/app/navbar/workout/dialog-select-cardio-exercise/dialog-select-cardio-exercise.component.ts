@@ -1,6 +1,5 @@
-import { Component, inject, Input, Output } from '@angular/core';
+import { Component, inject, input, model, output } from '@angular/core';
 import { Dialog } from 'primeng/dialog';
-import { Subject } from 'rxjs';
 import { Exercise } from '../../../../interfaces/Exercise';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { Workout } from '../../../../interfaces/Workout';
@@ -25,22 +24,21 @@ import { MuscleGroupEnum } from '../../../../interfaces/MuscleGroupEnum';
 })
 export class DialogSelectCardioExerciseComponent {
 
-    @Input() openModal: boolean;
-    @Output() openModalChange = new Subject<void>();
-    @Input() workoutDate: Date;
-    @Input() cardioExercises: Exercise[] = [];
-    @Output() createdWorkout = new Subject<Workout>();
-    @Output() showAlert = new Subject<Alert>();
+    openModal = model(false);
+    workoutDate = input<Date>();
+    cardioExercises = input<Exercise[]>([]);
+    createdWorkout = output<Workout>();
+    showAlert = output<Alert>();
 
-    selectedExercise: Exercise;
-    inputDuration: number;
+    selectedExercise: Exercise | null = null;
+    inputDuration: number | null = null;
 
     private readonly workoutService = inject(WorkoutService);
 
 
     onHideModal() {
         this.resetDuration();
-        this.openModalChange.next();
+        this.openModal.set(false);
     }
 
     showInputDuration(exercise: Exercise) {
@@ -54,13 +52,13 @@ export class DialogSelectCardioExerciseComponent {
 
         const workout: Workout = {
             muscleGroup,
-            date: this.workoutDate ?? new Date(),
+            date: this.workoutDate() ?? new Date(),
         };
 
         const history: History = {
             duration: Number(this.inputDuration),
             exercise: {
-                id: this.selectedExercise.id
+                id: this.selectedExercise?.id
             }
         };
 
@@ -68,25 +66,26 @@ export class DialogSelectCardioExerciseComponent {
             .subscribe({
                 next: (workout) => {
                     const h: History = {
-                        exercise: this.selectedExercise
+                        exercise: this.selectedExercise ?? undefined
                     };
+                    workout.histories = workout.histories ?? [];
                     workout.histories.push(h);
-                    this.createdWorkout.next(workout);
+                    this.createdWorkout.emit(workout);
 
-                    this.showAlert.next({
+                    this.showAlert.emit({
                         severity: 'success',
-                        message: `L'entraînement ${ this.selectedExercise.name } a été créé avec succès`
+                        message: `L'entraînement ${ this.selectedExercise?.name } a été créé avec succès`
                     });
                 },
                 error: (err) => {
-                    this.showAlert.next({
+                    this.showAlert.emit({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible de créer l\'entraînement'
                     });
                 },
                 complete: () => {
                     this.resetDuration();
-                    this.openModalChange.next();
+                    this.openModal.set(false);
                 }
             });
 

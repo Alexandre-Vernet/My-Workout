@@ -9,16 +9,23 @@ export const authGuard = () => {
     const alertService = inject(AlertService);
     const authService = inject(AuthService);
 
+    if (!authService.hasToken()) {
+        alertService.show({
+            severity: 'error',
+            message: 'Vous devez être connecté pour accéder à cette page'
+        });
+        return router.createUrlTree(['/auth/login']);
+    }
+
     return authService.getCurrentUser()
         .pipe(
             map(() => true),
             catchError(() => {
-                router.navigate(['/auth/login']);
-                alertService.alert$.next({
+                alertService.show({
                     severity: 'error',
                     message: 'Vous devez être connecté pour accéder à cette page'
                 });
-                return of(false);
+                return of(router.createUrlTree(['/auth/login']));
             })
         );
 };

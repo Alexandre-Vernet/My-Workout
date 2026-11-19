@@ -18,11 +18,11 @@
         </div>
     </div>
 } @else {
-    <h1 class="text-center mt-1 font-bold">{{ exerciseGraphs?.exercise?.name }}</h1>
+    <h1 class="text-center mt-1 font-bold">{{ exerciseGraphs.exercise.name }}</h1>
 }
 
 <div class="m-2">
-    <canvas id="bar" class="mt-8 mb-6"></canvas>
+    <canvas #barCanvas class="mt-8 mb-6"></canvas>
 </div>
 
 @if (exerciseGraphs) {

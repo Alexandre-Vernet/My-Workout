@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { MuscleDropdown } from '../../interfaces/MuscleDropdown';
@@ -7,13 +7,10 @@ import { MuscleDropdown } from '../../interfaces/MuscleDropdown';
   providedIn: 'root',
 })
 export class MuscleService {
+    private readonly http = inject(HttpClient);
+
 
     muscleUrl = environment.muscleUrl();
-
-    constructor(
-        private readonly http: HttpClient
-    ) {
-    }
 
     findAllMuscles() {
         return this.http.get<MuscleDropdown[]>(this.muscleUrl);

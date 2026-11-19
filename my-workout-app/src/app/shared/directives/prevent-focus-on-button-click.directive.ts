@@ -1,16 +1,17 @@
-import { Directive, ElementRef, AfterViewInit } from '@angular/core';
+import { Directive, ElementRef, AfterViewInit, inject } from '@angular/core';
 
 @Directive({
-    selector: '[preventFocusOnButtonClick]'
+    selector: '[appPreventFocusOnButtonClick]'
 })
 export class PreventFocusOnButtonClickDirective implements AfterViewInit {
-    constructor(private el: ElementRef) {}
+    private readonly el = inject(ElementRef);
+
 
     ngAfterViewInit() {
         const input = this.el.nativeElement.querySelector('input');
         const buttons = this.el.nativeElement.querySelectorAll('button');
 
-        buttons.forEach(button => {
+        buttons.forEach((button: HTMLButtonElement) => {
             button.addEventListener('mousedown', (event: MouseEvent) => {
                 // Prevent the input from gaining focus
                 event.preventDefault();

@@ -1,4 +1,4 @@
-import { Component, input, OnInit } from '@angular/core';
+import { Component, input, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
@@ -25,18 +25,15 @@ import { PasswordResetTokenService } from "../password-reset-token.service";
     standalone: true
 })
 export class ResetPasswordComponent implements OnInit {
+    private readonly passwordResetTokenService = inject(PasswordResetTokenService);
+    private readonly router = inject(Router);
+
     token = input.required<string>();
 
     formResetPassword = new FormGroup({
         newPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
         confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     });
-
-    constructor(
-        private readonly passwordResetTokenService: PasswordResetTokenService,
-        private readonly router: Router,
-    ) {
-    }
 
     ngOnInit() {
         this.isTokenValid(this.token());
@@ -65,7 +62,7 @@ export class ResetPasswordComponent implements OnInit {
                 this.formResetPassword.setErrors({ error: 'Passwords do not match' });
                 return;
             }
-            this.resetPassword(newPassword);
+            this.resetPassword(newPassword ?? '');
         }
         return;
     }

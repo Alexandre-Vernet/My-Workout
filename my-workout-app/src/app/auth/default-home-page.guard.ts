@@ -8,16 +8,13 @@ export const defaultHomePageGuard = () => {
     const router = inject(Router);
     const authService = inject(AuthService);
 
+    if (!authService.hasToken()) {
+        return router.createUrlTree([MenuUrls.library]);
+    }
 
     return authService.getCurrentUser()
         .pipe(
-            map(() => {
-                router.navigate([MenuUrls.workout]);
-                return false;
-            }),
-            catchError(() => {
-                router.navigate([MenuUrls.library]);
-                return of(false);
-            })
+            map(() => router.createUrlTree([MenuUrls.workout])),
+            catchError(() => of(router.createUrlTree([MenuUrls.library])))
         );
 };

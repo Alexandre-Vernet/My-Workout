@@ -7,21 +7,21 @@ import { MuscleGroupEnum } from "../../../../interfaces/MuscleGroupEnum";
 import { FirstLetterUppercasePipe } from "../../../shared/pipes/first-letter-uppercase.pipe";
 import { ExerciseService } from "../../../services/exercise.service";
 import { Exercise } from "../../../../interfaces/Exercise";
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { debounceTime, of, switchMap } from "rxjs";
-import { PlurialPipe } from "../../../shared/pipes/plurial.pipe";
+import { PluralPipe } from "../../../shared/pipes/plural.pipe";
 
 @Component({
     selector: 'app-list-exercises',
-    imports: [Skeleton, InputText, FormsModule, FirstLetterUppercasePipe, RouterLink, ReactiveFormsModule, PlurialPipe],
+    imports: [Skeleton, InputText, FormsModule, FirstLetterUppercasePipe, RouterLink, ReactiveFormsModule, PluralPipe],
     templateUrl: './list-exercises.component.html',
     styleUrl: './list-exercises.component.scss',
     standalone: true
 })
 export class ListExercisesComponent implements OnInit {
 
-    exercises: Exercise[];
-    filterExercises: Exercise[];
+    exercises: Exercise[] = [];
+    filterExercises: Exercise[] = [];
     muscleGroupEnum = Object.entries(MuscleGroupEnum)
         .filter(([key]) => isNaN(Number(key)))
         .sort()
@@ -29,12 +29,13 @@ export class ListExercisesComponent implements OnInit {
             label,
             id: value as MuscleGroupEnum
         }));
-    selectedMuscleGroup: number;
+    selectedMuscleGroup: number | null = null;
 
     searchExercise = new FormControl();
 
     private readonly exerciseService = inject(ExerciseService);
     private readonly alertService = inject(AlertService);
+    private readonly route = inject(ActivatedRoute);
 
     ngOnInit() {
         this.exerciseService.findAll()
@@ -42,9 +43,10 @@ export class ListExercisesComponent implements OnInit {
                 next: (exercises) => {
                     this.exercises = exercises;
                     this.filterExercises = exercises;
+                    this.applyMuscleGroupFromQueryParams();
                 },
                 error: (err) => {
-                    this.alertService.alert$.next({
+                    this.alertService.show({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible d\'afficher la bibliothèque d\'exercices'
                     });
@@ -83,11 +85,18 @@ export class ListExercisesComponent implements OnInit {
             .subscribe({
                 next: (exercises) => this.filterExercises = exercises,
                 error: (err) => {
-                    this.alertService.alert$.next({
+                    this.alertService.show({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible d\'afficher la bibliothèque d\'exercices'
                     });
                 }
             });
+    }
+
+    private applyMuscleGroupFromQueryParams() {
+        const muscleGroupParam = this.route.snapshot.queryParamMap.get('muscleGroup');
+        if (muscleGroupParam) {
+            this.filterExercise(Number(muscleGroupParam));
+        }
     }
 }

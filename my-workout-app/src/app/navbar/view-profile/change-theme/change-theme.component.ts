@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { ThemeService } from '../../../shared/theme/theme.service';
-import { presets } from '../../../shared/theme/presets';
+import { presets, PresetName } from '../../../shared/theme/presets';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -19,8 +19,8 @@ export class ChangeThemeComponent implements OnInit {
         value
     }));
 
-    selectedTheme: string;
-    isCheckedDarkMode: boolean;
+    selectedTheme: string | null = null;
+    isCheckedDarkMode = false;
 
     private readonly themeService = inject(ThemeService);
 
@@ -31,7 +31,7 @@ export class ChangeThemeComponent implements OnInit {
 
 
     updatePreset(presetName: string) {
-        const preset = this.presets[presetName].preset;
+        const preset = this.presets[presetName as PresetName].preset;
         this.themeService.updateTheme(preset, presetName);
     }
 

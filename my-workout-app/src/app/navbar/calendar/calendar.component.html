@@ -11,7 +11,7 @@
     </div>
 </div>
 
-<div #swipeZone class="p-2">
+<div appSwipe (swipeLeft)="nextMonth()" (swipeRight)="previousMonth()" class="p-2">
     <full-calendar #calendarComponent [options]="calendarOptions">
         <ng-template #eventContent let-arg>
             <span class="text-sm">{{ arg.event.title }}</span>
@@ -28,7 +28,7 @@
 ></app-dialog-select-cardio-exercise>
 
 
-<p-dialog [header]="showWorkout?.workoutSummary.date | date:'fullDate' | firstLetterUppercase" [modal]="true"
+<p-dialog [header]="showWorkout?.workoutSummary?.date | date:'fullDate' | firstLetterUppercase" [modal]="true"
           [(visible)]="showModalViewWorkout"
           dismissableMask="true"
           [style]="{ width: '25rem' }">
@@ -37,7 +37,7 @@
 
             <div class="card p-3 border-round-lg">
 
-                <h2 class="mb-3">{{ showWorkout.muscleGroup.name | firstLetterUppercase }}</h2>
+                <h2 class="mb-3">{{ showWorkout.muscleGroup?.name | firstLetterUppercase }}</h2>
 
                 <!-- List exercises -->
                 @for (historyGroup of showWorkout.historyGroups; track i; let i = $index) {
@@ -45,14 +45,14 @@
                         <hr class="mt-3 mb-3"/>
                     }
 
-                    <app-history-detail [exercise]="historyGroup.exercise"
+                    <app-history-detail [exercise]="historyGroup.exercise!"
                                         [histories]="historyGroup.histories"></app-history-detail>
                 }
 
             </div>
             <div class="flex justify-content-end mt-3">
                 <p-button severity="danger"
-                          (onClick)="openModalDeleteWorkout(showWorkout.workoutSummary.id, showWorkout.muscleGroup.name, showWorkout.workoutSummary.date)"
+                          (onClick)="openModalDeleteWorkout(showWorkout.workoutSummary!.id!, showWorkout.muscleGroup!.name!, showWorkout.workoutSummary!.date)"
                           icon="pi pi-trash" label="Supprimer"/>
             </div>
         </div>

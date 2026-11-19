@@ -18,9 +18,10 @@ import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { ExerciseService } from "../../../services/exercise.service";
 import { Exercise } from "../../../../interfaces/Exercise";
 import { forkJoin } from "rxjs";
+import { confirmNoExercisesAdded } from "../../../shared/utils/confirm-no-exercises-dialog";
 
 @Component({
-    selector: 'select-muscle-group-workout',
+    selector: 'app-select-muscle-group-workout',
     imports: [Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog, FirstLetterUppercasePipe],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
@@ -30,7 +31,7 @@ import { forkJoin } from "rxjs";
 export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     muscleGroupExerciseCount: MuscleGroupExerciseCount[] = [];
-    cardioExercises: Exercise[];
+    cardioExercises: Exercise[] = [];
 
     isOpenModalExerciseCardio = false;
 
@@ -68,7 +69,7 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     protected showAlert(alert: Alert) {
         window.scrollTo(0, 0);
-        this.alertService.alert$.next(alert);
+        this.alertService.show(alert);
     }
 
     private openModalExerciseCardio(muscleGroup: MuscleGroup) {
@@ -83,23 +84,10 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
     }
 
     private showDialogNoExercisesAdded(muscleGroup: MuscleGroup) {
-        this.confirmationService.confirm({
-            header: 'Attention',
-            message: `Vous n'avez ajouté aucun exercice à votre bibliothèque.<br/>Commencez par en ajouter pour pouvoir lancer un entraînement.`,
-            closable: true,
-            closeOnEscape: true,
-            dismissableMask: true,
-            icon: 'pi pi-exclamation-triangle',
-            acceptButtonProps: {
-                label: 'Ajouter'
-            },
-            rejectButtonProps: {
-                label: 'Annuler',
-                severity: 'secondary',
-                outlined: true
-            },
-            accept: () => this.router.navigate(['/', 'library', 'list-exercises-muscle-group', muscleGroup.id]),
-            reject: () => this.router.navigate(['/', 'workout'])
-        });
+        confirmNoExercisesAdded(
+            this.confirmationService,
+            () => this.router.navigate(['/', 'library'], { queryParams: { muscleGroup: muscleGroup.id } }),
+            () => this.router.navigate(['/', 'workout'])
+        );
     }
 }

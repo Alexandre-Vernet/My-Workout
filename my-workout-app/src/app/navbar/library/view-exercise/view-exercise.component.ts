@@ -1,4 +1,4 @@
-import { Component, input, OnInit } from '@angular/core';
+import { Component, input, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { AlertService } from '../../../services/alert.service';
@@ -20,19 +20,16 @@ import { MechanicLabelPipe } from "../../../shared/pipes/mechanic-label.pipe";
     standalone: true
 })
 export class ViewExerciseComponent implements OnInit {
+    private readonly exerciseService = inject(ExerciseService);
+    private readonly alertService = inject(AlertService);
+    private readonly authService = inject(AuthService);
+    private readonly router = inject(Router);
+
 
     exerciseId = input.required<number>();
-    exerciseMuscle: ExerciseMuscle;
-    user: User;
+    exerciseMuscle!: ExerciseMuscle;
+    user: User | undefined;
     imagePath = '';
-
-    constructor(
-        private readonly exerciseService: ExerciseService,
-        private readonly alertService: AlertService,
-        private readonly authService: AuthService,
-        private readonly router: Router
-    ) {
-    }
 
     ngOnInit() {
         this.authService.getCurrentUser()
@@ -42,18 +39,18 @@ export class ViewExerciseComponent implements OnInit {
             .subscribe({
                 next: (exerciseMuscle) => {
                     this.exerciseMuscle = exerciseMuscle;
-                    this.imagePath = `/assets/images/${ exerciseMuscle.exercise.id }.gif`;
+                    this.imagePath = `/assets/images/${ exerciseMuscle.exercise?.id }.gif`;
                 },
                 error: () => this.router.navigate(['not-found'])
             });
     }
 
     toggleExerciseWorkout() {
-        this.exerciseService.toggleExerciseWorkout(this.exerciseMuscle.exercise)
+        this.exerciseService.toggleExerciseWorkout(this.exerciseMuscle.exercise!)
             .subscribe({
                 next: () => this.exerciseMuscle.addedToWorkout = !this.exerciseMuscle.addedToWorkout,
                 error: (err) => {
-                    this.alertService.alert$.next({
+                    this.alertService.show({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible d\'enregistrer cet exercice'
                     });
@@ -62,6 +59,6 @@ export class ViewExerciseComponent implements OnInit {
     }
 
     updateExercise() {
-        this.router.navigate(['admin', 'update-exercise', this.exerciseMuscle.exercise.id]);
+        this.router.navigate(['admin', 'update-exercise', this.exerciseMuscle.exercise?.id]);
     }
 }

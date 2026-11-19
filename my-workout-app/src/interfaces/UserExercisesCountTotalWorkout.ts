@@ -1,6 +1,6 @@
 import { Exercise } from './Exercise';
 
-export class UserExercisesCountTotalWorkout {
+export interface UserExercisesCountTotalWorkout {
     countTotalDaysWorkout: number;
     exercises: Exercise[];
 }

@@ -86,3 +86,5 @@ export const presets = {
         color: '#F43F5E'
     }
 };
+
+export type PresetName = keyof typeof presets;

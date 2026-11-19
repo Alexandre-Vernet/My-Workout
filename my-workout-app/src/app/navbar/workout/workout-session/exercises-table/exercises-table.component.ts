@@ -3,10 +3,10 @@ import {
     DestroyRef,
     ElementRef,
     inject,
-    Input,
+    input,
     OnChanges,
     OnInit,
-    Output,
+    output,
     SimpleChanges,
     ViewChild,
     ViewEncapsulation
@@ -17,10 +17,11 @@ import { InputNumber } from 'primeng/inputnumber';
 import { History } from '../../../../../interfaces/History';
 import { AlertService } from '../../../../services/alert.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { Checkbox } from "primeng/checkbox";
+import { getErrorMessage } from '../../../../shared/utils/http-error';
 
 @Component({
     selector: 'app-exercises-table',
@@ -30,27 +31,29 @@ import { Checkbox } from "primeng/checkbox";
     encapsulation: ViewEncapsulation.None
 })
 export class ExercisesTableComponent implements OnInit, OnChanges {
-    @Input() muscleGroupId: number;
-    @Input() exerciseId: number;
-    @Input() exercisesMade = new BehaviorSubject<History[]>([]);
-    @Output() resetWorkout = new Subject<void>();
+    muscleGroupId = input.required<number>();
+    exerciseId = input.required<number>();
+    exercisesMade = input.required<BehaviorSubject<History[]>>();
+    resetWorkout = output<void>();
 
     @ViewChild('exerciseTable', { read: ElementRef }) exerciseTable!: ElementRef;
 
-    private destroyRef = inject(DestroyRef);
+    private readonly destroyRef = inject(DestroyRef);
 
     private readonly historyService = inject(HistoryService);
     private readonly alertService = inject(AlertService);
 
     ngOnInit() {
         this.findTodayExercicesHistory();
-        this.exercisesMade
+        this.exercisesMade()
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => setTimeout(() => this.scrollBottomTable(), 100));
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['exerciseId'].currentValue !== changes['exerciseId'].previousValue) {
+        // The initial load is already handled by ngOnInit(); only react to later changes here.
+        if (changes['exerciseId'] && !changes['exerciseId'].firstChange
+            && changes['exerciseId'].currentValue !== changes['exerciseId'].previousValue) {
             this.findTodayExercicesHistory();
         }
     }
@@ -75,14 +78,14 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
         this.historyService.update(history)
             .subscribe({
                 next: () =>
-                    this.alertService.alert$.next({
+                    this.alertService.show({
                         severity: 'success',
                         message: 'Mise à jour réussie'
                     }),
                 error: (err) =>
-                    this.alertService.alert$.next({
+                    this.alertService.show({
                         severity: 'error',
-                        message: err.error.message ?? 'Impossible de mettre à jour'
+                        message: getErrorMessage(err, 'Impossible de mettre à jour')
                     })
             });
     }
@@ -91,36 +94,36 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
         this.historyService.delete(history)
             .subscribe({
                 next: () => {
-                    this.exercisesMade.next(this.exercisesMade.getValue().filter(e => e.id !== history.id));
+                    this.exercisesMade().next(this.exercisesMade().getValue().filter(e => e.id !== history.id));
 
-                    if (this.exercisesMade.getValue().length === 0) {
-                        this.resetWorkout.next();
+                    if (this.exercisesMade().getValue().length === 0) {
+                        this.resetWorkout.emit();
                     }
                 },
                 error: (err) =>
-                    this.alertService.alert$.next({
+                    this.alertService.show({
                         severity: 'error',
-                        message: err.error.message ?? 'Erreur lors de la suppression'
+                        message: getErrorMessage(err, 'Erreur lors de la suppression')
                     })
             });
     }
 
 
     private findTodayExercicesHistory() {
-        this.historyService.findTodayExercicesHistory(this.muscleGroupId, this.exerciseId)
+        this.historyService.findTodayExercicesHistory(this.muscleGroupId(), this.exerciseId())
             .subscribe({
                 next: (history) => {
                     if (history) {
-                        this.exercisesMade.next(history.map(h => ({
+                        this.exercisesMade().next(history.map(h => ({
                                 ...h,
                                 restTime: '/'
                             })
                         ));
                     }
                 },
-                error: (err) => this.alertService.alert$.next({
+                error: (err) => this.alertService.show({
                     severity: 'error',
-                    message: err.error.message ?? 'Erreur lors de la récupération de l\'historique'
+                    message: getErrorMessage(err, 'Erreur lors de la récupération de l\'historique')
                 })
             });
     }

@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Alert } from '../../../interfaces/alert';
+import { Component, DestroyRef, effect, inject, ViewEncapsulation } from '@angular/core';
 import { Message } from 'primeng/message';
 import { AlertService } from '../../services/alert.service';
+
+const AUTO_HIDE_DELAY_MS = 4000;
 
 @Component({
     selector: 'app-alert',
@@ -10,23 +11,30 @@ import { AlertService } from '../../services/alert.service';
     styleUrl: './alert.component.scss',
     encapsulation: ViewEncapsulation.None
 })
-export class AlertComponent implements OnInit {
-    alert: Alert;
+export class AlertComponent {
+    protected readonly alertService = inject(AlertService);
 
-    constructor(
-        private readonly alertService: AlertService
-    ) {
-    }
+    private readonly destroyRef = inject(DestroyRef);
+    private hideTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-    ngOnInit() {
-        this.alertService.alert$
-            .subscribe(alert => {
-                this.alert = alert;
+    constructor() {
+        effect(() => {
+            const alert = this.alertService.alert();
 
-                // Hide modal after 4s
-                setTimeout(() => {
-                    this.alert = null;
-                }, 4000);
-            });
+            if (this.hideTimeoutId) {
+                clearTimeout(this.hideTimeoutId);
+                this.hideTimeoutId = null;
+            }
+
+            if (alert) {
+                this.hideTimeoutId = setTimeout(() => this.alertService.show(null), AUTO_HIDE_DELAY_MS);
+            }
+        });
+
+        this.destroyRef.onDestroy(() => {
+            if (this.hideTimeoutId) {
+                clearTimeout(this.hideTimeoutId);
+            }
+        });
     }
 }

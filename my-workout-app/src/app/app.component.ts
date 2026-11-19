@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { NavbarComponent } from './navbar/navbar.component';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { PrimeNG } from 'primeng/config';
@@ -23,17 +23,17 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 })
 export class AppComponent implements OnInit {
+    private readonly sw = inject(SwPush);
+    private readonly swUpdate = inject(SwUpdate);
+    private readonly router = inject(Router);
+    private readonly primeng = inject(PrimeNG);
+    private readonly themeService = inject(ThemeService);
+    private readonly destroyRef = inject(DestroyRef);
+
 
     hideNavbar = false;
 
-    constructor(
-        private readonly sw: SwPush,
-        private readonly swUpdate: SwUpdate,
-        private router: Router,
-        private primeng: PrimeNG,
-        private readonly themeService: ThemeService,
-        private readonly destroyRef: DestroyRef
-    ) {
+    constructor() {
         if (environment.production) {
             // Force refresh PWA
             this.swUpdate.checkForUpdate();

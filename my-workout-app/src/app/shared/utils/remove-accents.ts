@@ -12,5 +12,5 @@ export const replaceSpaces = (str: string) => {
     if (!str) {
         return null;
     }
-    return removeAccents(str).split(' ').join('-');
+    return removeAccents(str)?.split(' ').join('-') ?? null;
 }

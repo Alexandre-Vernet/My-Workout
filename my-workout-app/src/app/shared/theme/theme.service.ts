@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { updatePreset } from '@primeuix/themes';
-import { presets } from './presets';
+import { presets, PresetName } from './presets';
+
+type Preset = (typeof presets)[PresetName]['preset'];
 
 @Injectable({
     providedIn: 'root'
@@ -18,10 +20,10 @@ export class ThemeService {
             return;
         }
 
-        this.updateTheme(presets[presetName].preset, presetName);
+        this.updateTheme(presets[presetName as PresetName].preset, presetName);
     }
 
-    updateTheme(preset, presetName: string) {
+    updateTheme(preset: Preset, presetName: string) {
         updatePreset(preset);
         localStorage.setItem('theme', presetName);
     }
@@ -40,11 +42,7 @@ export class ThemeService {
 
     toggleDarkMode(isCheckedDarkMode: boolean) {
         const element = document.querySelector('html');
-        element.classList.toggle('dark-mode');
-        if (isCheckedDarkMode) {
-            localStorage.setItem('dark-mode', 'true');
-        } else {
-            localStorage.setItem('dark-mode', 'false');
-        }
+        element?.classList.toggle('dark-mode', isCheckedDarkMode);
+        localStorage.setItem('dark-mode', isCheckedDarkMode ? 'true' : 'false');
     }
 }

@@ -6,6 +6,7 @@ import { NgClass } from '@angular/common';
 import { Message } from 'primeng/message';
 import { CustomError } from "../../../interfaces/CustomError";
 import { RegisterRequest } from "../../../interfaces/RegisterRequest";
+import { applyValidationErrors, getErrorCode, isValidationError } from "../../shared/utils/http-error";
 
 @Component({
     selector: 'app-register',
@@ -41,25 +42,21 @@ export class RegisterComponent {
             return;
         }
 
-        const registerRequest = new RegisterRequest(email?.trim(), password, confirmPassword);
+        const registerRequest = new RegisterRequest(email?.trim() ?? '', password ?? '', confirmPassword ?? '');
 
         this.authService.register(registerRequest)
             .subscribe({
                 next: () => this.router.navigateByUrl('/'),
                 error: (err: CustomError) => {
-                    if (err.error.type === 'VALIDATION') {
-                        err.error.errors.forEach(error => {
-                            this.formRegister.get(error.field).setErrors({
-                                validation: error.message
-                            })
-                        });
+                    if (isValidationError(err)) {
+                        applyValidationErrors(err, this.formRegister);
                     } else {
-                        if (err.error.errorCode === 'EMAIL_ALREADY_IN_USE') {
+                        const errorCode = getErrorCode(err);
+                        if (errorCode === 'EMAIL_ALREADY_IN_USE') {
                             this.formRegister.controls.email.setErrors({
                                 emailAlreadyInUse: true
                             });
-                        }
-                        if (err.error.errorCode === 'PASSWORD_NOT_MATCH') {
+                        } else if (errorCode === 'PASSWORD_NOT_MATCH') {
                             this.formRegister.controls.password.setErrors({
                                 passwordNotMatch: true
                             });

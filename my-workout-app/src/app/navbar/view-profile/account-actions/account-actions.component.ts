@@ -1,7 +1,6 @@
-import { Component, inject, Output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { Button } from 'primeng/button';
 import { Ripple } from 'primeng/ripple';
-import { Subject } from 'rxjs';
 import { ConfirmationService } from 'primeng/api';
 import { AuthService } from '../../../auth/auth.service';
 import { Router } from '@angular/router';
@@ -19,7 +18,7 @@ import { MenuUrls } from '../../../shared/menu-urls';
 })
 export class AccountActionsComponent {
 
-    @Output() showAlert = new Subject<Alert>();
+    showAlert = output<Alert>();
 
     private readonly authService = inject(AuthService);
     private readonly router = inject(Router);
@@ -54,7 +53,7 @@ export class AccountActionsComponent {
         this.authService.deleteAccount()
             .subscribe({
                 next: () => {
-                    this.showAlert.next({
+                    this.showAlert.emit({
                         message: 'Votre compte a bien été supprimé',
                         severity: 'success'
                     });
@@ -62,7 +61,7 @@ export class AccountActionsComponent {
                     this.signOut();
                 },
                 error: (err) => {
-                    this.showAlert.next({
+                    this.showAlert.emit({
                         severity: 'error',
                         message: err?.error?.message ?? 'Erreur lors de la suppression de votre compte'
                     });

@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
 import { Alert } from '../../interfaces/alert';
 
 @Injectable({
@@ -7,8 +6,9 @@ import { Alert } from '../../interfaces/alert';
 })
 export class AlertService {
 
-    alert$: BehaviorSubject<Alert> = new BehaviorSubject<Alert>(null);
+    readonly alert = signal<Alert | null>(null);
 
-    constructor() {
+    show(alert: Alert | null) {
+        this.alert.set(alert);
     }
 }

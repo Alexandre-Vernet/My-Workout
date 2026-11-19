@@ -9,7 +9,7 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
     const authService = inject(AuthService);
     const alertService = inject(AlertService);
 
-    const token = localStorage.getItem('access-token');
+    const token = authService.getAccessToken();
     if (token) {
         request = request.clone({
             setHeaders: {
@@ -19,15 +19,18 @@ export const authInterceptor = (request: HttpRequest<unknown>, next: HttpHandler
     }
     return next(request)
         .pipe(
-            tap(() => alertService.alert$.next(null)),
+            tap(() => alertService.show(null)),
             catchError((err) => {
                 if (err.status === 401 || err.status === 403) {
                     return authService.refresh()
                         .pipe(
-                            switchMap(({ accessToken }) => {
+                            switchMap((authResponse) => {
+                                if (!authResponse) {
+                                    return throwError(() => new Error('Unauthorized'));
+                                }
                                 const newRequest = request.clone({
                                     setHeaders: {
-                                        Authorization: `Bearer ${ accessToken }`
+                                        Authorization: `Bearer ${ authResponse.accessToken }`
                                     }
                                 });
                                 return next(newRequest);

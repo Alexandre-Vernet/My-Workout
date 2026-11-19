@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { History } from '../../../../interfaces/History';
 import { Exercise } from '../../../../interfaces/Exercise';
 import { RouterLink } from '@angular/router';
@@ -13,6 +13,6 @@ import { ConvertTimePipe } from '../../../shared/pipes/convert-time.pipe';
 })
 export class HistoryDetailComponent {
 
-    @Input() exercise: Exercise;
-    @Input() histories: History[];
+    exercise = input.required<Exercise>();
+    histories = input.required<History[]>();
 }

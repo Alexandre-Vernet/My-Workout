@@ -5,7 +5,7 @@
                 <div>
                     <div class="login__field">
                         <i class="pi pi-user login__icon"></i>
-                        <input formControlName="email" type="text" class="login__input" placeholder="Email">
+                        <input formControlName="email" type="text" class="login__input" placeholder="Email" aria-label="Email">
                     </div>
                     @if (formLogin.controls.email.touched && formLogin.controls.email.hasError('email')) {
                         <p-message
@@ -22,7 +22,7 @@
                 </div>
                 <div class="login__field">
                     <i class="pi pi-lock login__icon"></i>
-                    <input formControlName="password" type="password" class="login__input" placeholder="Mot de passe">
+                    <input formControlName="password" type="password" class="login__input" placeholder="Mot de passe" aria-label="Mot de passe">
                 </div>
                 <button class="button login__submit" [ngClass]="{
                     'disabled': formLogin.invalid
@@ -33,9 +33,9 @@
                 </button>
             </form>
             <div class="register">
-                <span (click)="showDialogForgotPassword = true">
+                <button type="button" class="link-button" (click)="showDialogForgotPassword = true">
                     <h3>Mot de passe oublié</h3>
-                </span>
+                </button>
                 <a routerLink="/auth/register">
                     <h3>Pas encore inscrit ? Créez un compte ici</h3>
                 </a>

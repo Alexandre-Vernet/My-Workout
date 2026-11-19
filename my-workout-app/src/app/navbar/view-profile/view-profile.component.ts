@@ -20,7 +20,7 @@ import { User } from '../../../interfaces/User';
 })
 export class ViewProfileComponent implements OnInit {
 
-    user: User;
+    user: User | undefined;
 
     private readonly alertService = inject(AlertService);
     private readonly authService = inject(AuthService);
@@ -31,6 +31,6 @@ export class ViewProfileComponent implements OnInit {
     }
 
     displayAlert(alert: Alert) {
-        this.alertService.alert$.next(alert);
+        this.alertService.show(alert);
     }
 }
