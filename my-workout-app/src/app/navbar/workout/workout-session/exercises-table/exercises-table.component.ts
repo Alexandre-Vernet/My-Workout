@@ -1,53 +1,48 @@
 import {
     Component,
-    DestroyRef,
     ElementRef,
+    effect,
     inject,
     input,
+    model,
     OnChanges,
     OnInit,
     output,
     SimpleChanges,
-    ViewChild,
-    ViewEncapsulation
+    ViewChild
 } from '@angular/core';
-import { TableModule } from 'primeng/table';
 import { HistoryService } from '../../../../services/history.service';
-import { InputNumber } from 'primeng/inputnumber';
 import { History } from '../../../../../interfaces/History';
 import { AlertService } from '../../../../services/alert.service';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AsyncPipe } from '@angular/common';
-import { Checkbox } from "primeng/checkbox";
 import { getErrorMessage } from '../../../../shared/utils/http-error';
+import { NumberStepperComponent } from '../../../../shared/number-stepper/number-stepper.component';
 
 @Component({
     selector: 'app-exercises-table',
-    imports: [TableModule, InputNumber, FormsModule, AsyncPipe, ReactiveFormsModule, Checkbox],
+    imports: [NumberStepperComponent],
     templateUrl: './exercises-table.component.html',
-    styleUrl: './exercises-table.component.scss',
-    encapsulation: ViewEncapsulation.None
+    styleUrl: './exercises-table.component.scss'
 })
 export class ExercisesTableComponent implements OnInit, OnChanges {
     muscleGroupId = input.required<number>();
     exerciseId = input.required<number>();
-    exercisesMade = input.required<BehaviorSubject<History[]>>();
+    exercisesMade = model.required<History[]>();
     resetWorkout = output<void>();
 
-    @ViewChild('exerciseTable', { read: ElementRef }) exerciseTable!: ElementRef;
-
-    private readonly destroyRef = inject(DestroyRef);
+    @ViewChild('historyScroll') historyScroll!: ElementRef<HTMLElement>;
 
     private readonly historyService = inject(HistoryService);
     private readonly alertService = inject(AlertService);
 
+    constructor() {
+        effect(() => {
+            this.exercisesMade();
+            setTimeout(() => this.scrollBottomTable(), 100);
+        });
+    }
+
     ngOnInit() {
         this.findTodayExercicesHistory();
-        this.exercisesMade()
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => setTimeout(() => this.scrollBottomTable(), 100));
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -59,15 +54,23 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
     }
 
     scrollBottomTable() {
-        const tableBody: HTMLElement = this.exerciseTable?.nativeElement.querySelector('.p-datatable-table-container');
-        if (tableBody) {
-            tableBody.scrollTop = tableBody.scrollHeight;
+        const container = this.historyScroll?.nativeElement;
+        if (container) {
+            container.scrollTop = container.scrollHeight;
         }
     }
 
     // Allow ony 1/2 fractions
-    onWeightChange(history: History, value: number) {
-        history.weight = Math.round(value * 2) / 2;
+    onWeightChange(history: History, value: number | null) {
+        history.weight = value !== null ? Math.round(value * 2) / 2 : undefined;
+    }
+
+    onRepsChange(history: History, value: number | null) {
+        history.reps = value ?? undefined;
+    }
+
+    toggleUnilateral(history: History) {
+        this.updateHistory(history, !history.unilateral);
     }
 
     updateHistory(history: History, value?: boolean) {
@@ -94,9 +97,9 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
         this.historyService.delete(history)
             .subscribe({
                 next: () => {
-                    this.exercisesMade().next(this.exercisesMade().getValue().filter(e => e.id !== history.id));
+                    this.exercisesMade.update(list => list.filter(e => e.id !== history.id));
 
-                    if (this.exercisesMade().getValue().length === 0) {
+                    if (this.exercisesMade().length === 0) {
                         this.resetWorkout.emit();
                     }
                 },
@@ -114,7 +117,7 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
             .subscribe({
                 next: (history) => {
                     if (history) {
-                        this.exercisesMade().next(history.map(h => ({
+                        this.exercisesMade.set(history.map(h => ({
                                 ...h,
                                 restTime: '/'
                             })

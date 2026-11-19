@@ -39,14 +39,14 @@ describe('RestTimeBannerComponent', () => {
         restTimeService.restTime.set({ minutes: 0, seconds: 5, centiseconds: 0 });
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('p-message')).toBeTruthy();
+        expect(fixture.nativeElement.querySelector('.rest-banner')).toBeTruthy();
     });
 
     it('does not show the banner when no timer is running, even off the workout-session page', async () => {
         await router.navigateByUrl('/calendar');
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('p-message')).toBeFalsy();
+        expect(fixture.nativeElement.querySelector('.rest-banner')).toBeFalsy();
     });
 
     it('stopTimer() stops the underlying rest timer', () => {

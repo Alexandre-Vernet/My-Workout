@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
-import { ConfirmationService } from 'primeng/api';
 import { WorkoutSessionComponent } from './workout-session.component';
 import { ExerciseService } from '../../../services/exercise.service';
 import { HistoryService } from '../../../services/history.service';
@@ -18,7 +17,6 @@ describe('WorkoutSessionComponent', () => {
     let httpMock: HttpTestingController;
     let exerciseService: ExerciseService;
     let historyService: HistoryService;
-    let confirmationService: ConfirmationService;
 
     const squat: Exercise = { id: 1, name: 'Squat' };
     const legPress: Exercise = { id: 2, name: 'Leg press' };
@@ -35,7 +33,6 @@ describe('WorkoutSessionComponent', () => {
         httpMock = TestBed.inject(HttpTestingController);
         exerciseService = TestBed.inject(ExerciseService);
         historyService = TestBed.inject(HistoryService);
-        confirmationService = fixture.debugElement.injector.get(ConfirmationService);
     }
 
     function loadWithExercises(exercises: Exercise[] = [squat, legPress]) {
@@ -58,19 +55,41 @@ describe('WorkoutSessionComponent', () => {
             expect(component.currentExercise).toEqual(squat);
         });
 
-        it('prompts to add exercises and redirects home on reject when the muscle group is empty', () => {
+        it('prompts to add exercises when the muscle group is empty', () => {
             createComponent();
-            const router = TestBed.inject(Router);
-            const navigateSpy = vi.spyOn(router, 'navigate');
-            const confirmSpy = vi.spyOn(confirmationService, 'confirm');
 
             fixture.detectChanges();
             httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/added/${ MuscleGroupEnum.JAMBES }`).flush([]);
 
-            const { reject } = confirmSpy.mock.calls[0][0];
-            reject!();
+            expect(component['confirmNoExercisesOpen']()).toBe(true);
+        });
 
+        it('cancelAddExercises() closes the dialog and redirects to the workout home', () => {
+            createComponent();
+            const router = TestBed.inject(Router);
+            const navigateSpy = vi.spyOn(router, 'navigate');
+
+            fixture.detectChanges();
+            httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/added/${ MuscleGroupEnum.JAMBES }`).flush([]);
+
+            component['cancelAddExercises']();
+
+            expect(component['confirmNoExercisesOpen']()).toBe(false);
             expect(navigateSpy).toHaveBeenCalledWith(['/', 'workout']);
+        });
+
+        it('confirmAddExercises() closes the dialog and navigates to the library for this muscle group', () => {
+            createComponent();
+            const router = TestBed.inject(Router);
+            const navigateSpy = vi.spyOn(router, 'navigate');
+
+            fixture.detectChanges();
+            httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/added/${ MuscleGroupEnum.JAMBES }`).flush([]);
+
+            component['confirmAddExercises']();
+
+            expect(component['confirmNoExercisesOpen']()).toBe(false);
+            expect(navigateSpy).toHaveBeenCalledWith(['/', 'library'], { queryParams: { muscleGroup: MuscleGroupEnum.JAMBES } });
         });
 
         it('redirects home and shows an alert when the muscle group does not exist', () => {
@@ -138,7 +157,7 @@ describe('WorkoutSessionComponent', () => {
             httpMock.expectOne(workoutService.workoutUrl).flush(createdWorkout);
 
             expect(component.workout).toEqual(createdWorkout);
-            expect(component.exercisesMade.getValue()).toHaveLength(1);
+            expect(component.exercisesMade()).toHaveLength(1);
             expect(component.formWorkout.disabled).toBe(true);
         });
 
@@ -156,7 +175,7 @@ describe('WorkoutSessionComponent', () => {
             component.toggleTimer();
 
             expect(component.formWorkout.disabled).toBe(false);
-            expect(component.exercisesMade.getValue()[0].restTime).not.toBe('/');
+            expect(component.exercisesMade()[0].restTime).not.toBe('/');
 
             vi.useRealTimers();
         });
@@ -172,18 +191,28 @@ describe('WorkoutSessionComponent', () => {
         });
     });
 
-    describe('convertWeightToElastics()', () => {
+    describe('form field handlers', () => {
         beforeEach(() => {
             createComponent();
             loadWithExercises();
         });
 
-        it('converts the current weight into the matching elastic combination', () => {
-            component.formWorkout.controls.weight.setValue(15);
+        it('onWeightChange() updates the form control', () => {
+            component['onWeightChange'](15);
 
-            component.convertWeightToElastics();
+            expect(component.formWorkout.controls.weight.value).toBe(15);
+        });
 
-            expect(component.weightToElastics.map(e => e.weight)).toEqual([15]);
+        it('onRepsChange() updates the form control', () => {
+            component['onRepsChange'](12);
+
+            expect(component.formWorkout.controls.reps.value).toBe(12);
+        });
+
+        it('onUnilateralChange() updates the form control', () => {
+            component['onUnilateralChange'](true);
+
+            expect(component.formWorkout.controls.unilateral.value).toBe(true);
         });
     });
 });

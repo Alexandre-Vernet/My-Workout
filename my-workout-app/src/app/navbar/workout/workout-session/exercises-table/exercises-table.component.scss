@@ -1,11 +1,98 @@
+@keyframes history-row-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .exercises-table {
-    height: 180px;
+    background: var(--card-background);
+    border-radius: var(--radius-md);
+    box-shadow: var(--card-shadow);
+    padding: 10px 12px;
 }
 
-.update-weight {
-    width: 50px;
+.history-head,
+.history-row {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 40px 50px 32px;
+    align-items: center;
+    gap: 6px;
 }
 
-.update-reps {
-    width: 40px;
+.history-head {
+    padding: 0 2px 8px;
+
+    span {
+        color: var(--p-text-muted-color);
+        font-size: .72rem;
+        font-weight: 700;
+        text-align: center;
+    }
+}
+
+.history-scroll {
+    max-height: 190px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.history-row {
+    animation: history-row-in .25s ease both;
+
+    &:not(:last-child) {
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--chips-background-color);
+    }
+}
+
+.history-check,
+.history-delete {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto;
+    border: none;
+    border-radius: 50%;
+    background: var(--chips-background-color);
+    color: var(--p-text-muted-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform .15s cubic-bezier(.34, 1.56, .64, 1), background .2s ease, color .2s ease;
+
+    &:active {
+        transform: scale(.88);
+    }
+
+    svg {
+        width: 15px;
+        height: 15px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2.4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+}
+
+.history-check.checked {
+    background: var(--p-primary-color);
+    color: #ffffff;
+}
+
+.history-delete {
+    color: var(--p-red-400);
+}
+
+.history-rest {
+    text-align: center;
+    font-size: .82rem;
+    color: var(--p-text-muted-color);
 }

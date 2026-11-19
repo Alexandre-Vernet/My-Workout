@@ -1,26 +1,21 @@
 import { Component, inject, input, model, output } from '@angular/core';
-import { Dialog } from 'primeng/dialog';
 import { Exercise } from '../../../../interfaces/Exercise';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { Workout } from '../../../../interfaces/Workout';
 import { WorkoutService } from '../../../services/workout.service';
 import { History } from '../../../../interfaces/History';
 import { Alert } from '../../../../interfaces/alert';
-import { ConfirmationService } from 'primeng/api';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { InputNumber } from 'primeng/inputnumber';
-import { Button } from 'primeng/button';
-import { FormsModule } from '@angular/forms';
-import { FloatLabel } from 'primeng/floatlabel';
 import { MuscleGroupEnum } from '../../../../interfaces/MuscleGroupEnum';
+import { CustomError } from '../../../../interfaces/CustomError';
+import { getErrorMessage } from '../../../shared/utils/http-error';
+import { NumberStepperComponent } from '../../../shared/number-stepper/number-stepper.component';
 
 @Component({
     selector: 'app-dialog-select-cardio-exercise',
-    imports: [Dialog, ConfirmDialog, InputNumber, Button, FormsModule, FloatLabel],
+    imports: [NumberStepperComponent],
     templateUrl: './dialog-select-cardio-exercise.component.html',
     styleUrl: './dialog-select-cardio-exercise.component.scss',
-    standalone: true,
-    providers: [ConfirmationService]
+    standalone: true
 })
 export class DialogSelectCardioExerciseComponent {
 
@@ -77,10 +72,10 @@ export class DialogSelectCardioExerciseComponent {
                         message: `L'entraînement ${ this.selectedExercise?.name } a été créé avec succès`
                     });
                 },
-                error: (err) => {
+                error: (err: CustomError) => {
                     this.showAlert.emit({
                         severity: 'error',
-                        message: err?.error?.message ?? 'Impossible de créer l\'entraînement'
+                        message: getErrorMessage(err, 'Impossible de créer l\'entraînement')
                     });
                 },
                 complete: () => {

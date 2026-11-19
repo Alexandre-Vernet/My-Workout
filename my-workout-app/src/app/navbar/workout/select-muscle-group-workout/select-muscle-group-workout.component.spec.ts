@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
-import { ConfirmationService } from 'primeng/api';
 import { SelectMuscleGroupWorkoutComponent } from './select-muscle-group-workout.component';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { ExerciseService } from '../../../services/exercise.service';
@@ -16,7 +15,6 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
     let httpMock: HttpTestingController;
     let muscleGroupService: MuscleGroupService;
     let exerciseService: ExerciseService;
-    let confirmationService: ConfirmationService;
     let router: Router;
 
     const recommended: MuscleGroupExerciseCount[] = [
@@ -34,7 +32,6 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
         httpMock = TestBed.inject(HttpTestingController);
         muscleGroupService = TestBed.inject(MuscleGroupService);
         exerciseService = TestBed.inject(ExerciseService);
-        confirmationService = fixture.debugElement.injector.get(ConfirmationService);
         router = TestBed.inject(Router);
     });
 
@@ -47,6 +44,10 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
         httpMock.expectOne(`${ muscleGroupService.muscleGroupUrl }/recommended`).flush(recommended);
         httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/cardio`).flush(cardioExercises);
     }
+
+    it('starts with no muscle groups loaded, so the skeleton can render', () => {
+        expect(component.muscleGroupExerciseCount).toBeNull();
+    });
 
     it('loads the recommended muscle groups and cardio exercises on init', () => {
         loadInitialData([{ id: 1, name: 'Running' }]);
@@ -77,12 +78,33 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
 
     it('prompts to add exercises when clicking cardio without any cardio exercise added', () => {
         loadInitialData();
-        const confirmSpy = vi.spyOn(confirmationService, 'confirm');
 
         component['clickMuscleGroup']({ id: MuscleGroupEnum.CARDIO, name: 'cardio' });
 
-        expect(confirmSpy).toHaveBeenCalledOnce();
+        expect(component['confirmNoExercisesOpen']()).toBe(true);
         expect(component.isOpenModalExerciseCardio).toBe(false);
+    });
+
+    it('confirmAddExercises() closes the dialog and navigates to the library for the pending muscle group', () => {
+        loadInitialData();
+        const navigateSpy = vi.spyOn(router, 'navigate');
+
+        component['clickMuscleGroup']({ id: MuscleGroupEnum.CARDIO, name: 'cardio' });
+        component['confirmAddExercises']();
+
+        expect(component['confirmNoExercisesOpen']()).toBe(false);
+        expect(navigateSpy).toHaveBeenCalledWith(['/', 'library'], { queryParams: { muscleGroup: MuscleGroupEnum.CARDIO } });
+    });
+
+    it('cancelAddExercises() closes the dialog and navigates back to the workout home', () => {
+        loadInitialData();
+        const navigateSpy = vi.spyOn(router, 'navigate');
+
+        component['clickMuscleGroup']({ id: MuscleGroupEnum.CARDIO, name: 'cardio' });
+        component['cancelAddExercises']();
+
+        expect(component['confirmNoExercisesOpen']()).toBe(false);
+        expect(navigateSpy).toHaveBeenCalledWith(['/', 'workout']);
     });
 
     it('showAlert() forwards the alert to the AlertService', () => {

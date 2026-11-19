@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { BehaviorSubject } from 'rxjs';
 import { ExercisesTableComponent } from './exercises-table.component';
 import { HistoryService } from '../../../../services/history.service';
 import { AlertService } from '../../../../services/alert.service';
@@ -12,7 +11,6 @@ describe('ExercisesTableComponent', () => {
     let component: ExercisesTableComponent;
     let httpMock: HttpTestingController;
     let historyService: HistoryService;
-    let exercisesMade: BehaviorSubject<History[]>;
 
     function createComponent() {
         TestBed.configureTestingModule({
@@ -20,12 +18,10 @@ describe('ExercisesTableComponent', () => {
             providers: [provideHttpClient(), provideHttpClientTesting()]
         });
 
-        exercisesMade = new BehaviorSubject<History[]>([]);
-
         fixture = TestBed.createComponent(ExercisesTableComponent);
         fixture.componentRef.setInput('muscleGroupId', 1);
         fixture.componentRef.setInput('exerciseId', 5);
-        fixture.componentRef.setInput('exercisesMade', exercisesMade);
+        fixture.componentRef.setInput('exercisesMade', []);
         component = fixture.componentInstance;
         httpMock = TestBed.inject(HttpTestingController);
         historyService = TestBed.inject(HistoryService);
@@ -42,7 +38,7 @@ describe('ExercisesTableComponent', () => {
         httpMock.expectOne(`${ historyService.historyUrl }/today/1/5`)
             .flush([{ id: 1, weight: 60, reps: 8 }]);
 
-        expect(exercisesMade.getValue()).toEqual([{ id: 1, weight: 60, reps: 8, restTime: '/' }]);
+        expect(component.exercisesMade()).toEqual([{ id: 1, weight: 60, reps: 8, restTime: '/' }]);
     });
 
     it('shows an error alert when loading today\'s history fails', () => {
@@ -80,7 +76,7 @@ describe('ExercisesTableComponent', () => {
         httpMock.expectNone(`${ historyService.historyUrl }/today/1/5`);
     });
 
-    it('onWeightChange() rounds the weight to the nearest half unit', () => {
+    it('onWeightChange() rounds the weight to the nearest half unit without saving', () => {
         createComponent();
         fixture.detectChanges();
         httpMock.expectOne(`${ historyService.historyUrl }/today/1/5`).flush([]);
@@ -89,6 +85,34 @@ describe('ExercisesTableComponent', () => {
         component.onWeightChange(history, 61.3);
 
         expect(history.weight).toBe(61.5);
+    });
+
+    it('onRepsChange() updates the reps without saving', () => {
+        createComponent();
+        fixture.detectChanges();
+        httpMock.expectOne(`${ historyService.historyUrl }/today/1/5`).flush([]);
+
+        const history: History = { id: 1 };
+        component.onRepsChange(history, 12);
+
+        expect(history.reps).toBe(12);
+    });
+
+    describe('toggleUnilateral()', () => {
+        beforeEach(() => {
+            createComponent();
+            fixture.detectChanges();
+            httpMock.expectOne(`${ historyService.historyUrl }/today/1/5`).flush([]);
+        });
+
+        it('flips and saves the unilateral flag', () => {
+            const history: History = { id: 1, unilateral: false };
+
+            component.toggleUnilateral(history);
+
+            expect(history.unilateral).toBe(true);
+            httpMock.expectOne(`${ historyService.historyUrl }/1`).flush(history);
+        });
     });
 
     describe('updateHistory()', () => {
@@ -138,7 +162,7 @@ describe('ExercisesTableComponent', () => {
 
             httpMock.expectOne(`${ historyService.historyUrl }/1`).flush(null);
 
-            expect(exercisesMade.getValue()).toEqual([{ id: 2, restTime: '/' }]);
+            expect(component.exercisesMade()).toEqual([{ id: 2, restTime: '/' }]);
             expect(resetEmitted).toBe(false);
         });
 
@@ -151,7 +175,7 @@ describe('ExercisesTableComponent', () => {
             component.deleteHistory({ id: 2 });
             httpMock.expectOne(`${ historyService.historyUrl }/2`).flush(null);
 
-            expect(exercisesMade.getValue()).toEqual([]);
+            expect(component.exercisesMade()).toEqual([]);
             expect(resetEmitted).toBe(true);
         });
 

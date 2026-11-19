@@ -1,172 +1,106 @@
-<p-confirmdialog></p-confirmdialog>
-
-<div appSwipe [threshold]="65" excludeSelector=".swipe-exclude-stepper" (swipeLeft)="nextStep()" (swipeRight)="previousStep()">
+<div
+    class="session"
+    appSwipe
+    [threshold]="65"
+    excludeSelector=".swipe-exclude"
+    (swipeLeft)="nextStep()"
+    (swipeRight)="previousStep()">
     @if (!exercises || exercises.length === 0) {
-        <div class="mt-2">
-            <div class="flex-1 flex justify-content-around align-items-center">
-                <p-skeleton shape="circle" size="3rem" class="mr-2"/>
-                <p-skeleton shape="circle" size="3rem" class="mr-2"/>
-                <p-skeleton shape="circle" size="3rem" class="mr-2"/>
-                <p-skeleton shape="circle" size="3rem" class="mr-2"/>
+        <div class="session-skeleton">
+            <div class="skeleton-dots">
+                @for (skeleton of [0, 1, 2, 3]; track skeleton) {
+                    <span class="skeleton-fill skeleton-dot"></span>
+                }
             </div>
-
-            <div class="flex-1 flex flex-column justify-center align-items-center mt-6 mb-8">
-                <p-skeleton class="mb-4" width="10rem" height="3rem"/>
-                <p-skeleton width="15rem" height="4rem"/>
-            </div>
-
-            @for (skeleton of [0, 1, 2, 3]; track skeleton) {
-                <div class="m-2 mb-2">
-                    <p-skeleton width="100%" height="4rem"/>
-                </div>
-            }
-
-            <div class="bottom-page mt-8">
-                <div class="stopwatch text-primary mb-3">
-                <span>
-                    <p-skeleton width="10rem" height="3rem"/>
-                </span>
-                </div>
-                <p-skeleton shape="circle" size="4rem" class="mr-2"/>
-            </div>
+            <span class="skeleton-fill skeleton-line skeleton-title"></span>
+            <span class="skeleton-fill skeleton-steppers"></span>
+            <span class="skeleton-fill skeleton-table"></span>
+            <span class="skeleton-fill skeleton-timer"></span>
         </div>
     } @else {
-        <p-confirmdialog></p-confirmdialog>
+        <div class="step-dots swipe-exclude">
+            @for (exercise of exercises; track exercise.id; let index = $index) {
+                <button
+                    type="button"
+                    class="step-dot"
+                    [class.active]="activeStep === index + 1"
+                    [class.done]="index + 1 < activeStep"
+                    (click)="switchPanel(exercise, index + 1)">
+                    {{ index + 1 }}
+                </button>
+            }
+        </div>
 
+        <div class="panel-container">
+            <!--The for forces Angular to refresh the DOM and animate on swipe-->
+            @for (_ of [exercises[0]]; track animationId) {
+                <div
+                    class="panel"
+                    [class.slide-from-right]="animationDirection === 'right'"
+                    [class.slide-from-left]="animationDirection === 'left'">
+                    <h3 [routerLink]="['/', 'library', 'exercise', currentExercise.id]">
+                        {{ currentExercise.name | uppercase }}
+                    </h3>
 
-        <p-stepper [(value)]="activeStep" class="basis-[40rem]">
-            <div class="swipe-exclude-stepper">
-                <p-step-list class="flex justify-center w-full">
-                    @for (exercise of exercises; track index; let index = $index) {
-                        <p-step [value]="index + 1">
-                            <ng-template #content let-activateCallback="activateCallback" let-value="value">
-                                <button class="step-button"
-                                        [ngClass]="{
-                                            'bg-primary text-primary-contrast border-primary': value === activeStep,
-                                            'border-surface': value > activeStep
-                                        }"
-                                        (click)="switchPanel(exercise, index + 1)">
-                                    <span class="step-button-span">{{ index + 1 }}</span>
-                                </button>
-                            </ng-template>
-                        </p-step>
-                    }
-                </p-step-list>
-            </div>
+                    <div class="session-field">
+                        <app-number-stepper
+                            [value]="formWorkout.controls.weight.value"
+                            [disabled]="formWorkout.disabled"
+                            [step]="2.5"
+                            [min]="0"
+                            [max]="500"
+                            suffix=" kg"
+                            (valueChange)="onWeightChange($event)"/>
+                    </div>
 
+                    <div class="session-field">
+                        <app-number-stepper
+                            [value]="formWorkout.controls.reps.value"
+                            [disabled]="formWorkout.disabled"
+                            [step]="1"
+                            [min]="0"
+                            [max]="100"
+                            [suffix]="(formWorkout.controls.reps.value ?? 0) <= 1 ? ' rep' : ' reps'"
+                            (valueChange)="onRepsChange($event)"/>
+                    </div>
 
-            <p-step-panels>
-                @for (exercise of exercises; track index; let index = $index) {
-                    <p-step-panel [value]="index + 1">
-                        <ng-template #content let-activateCallback="activateCallback">
-                            <form [formGroup]="formWorkout">
-                                <div class="panel-container">
-                                    <!--The for force Angular to refresh the DOM and animate on swipe-->
-                                    @for (_ of [exercises[0]]; track animationId) {
-                                        <div class="flex-1 flex flex-column justify-content-center panel"
-                                             [class.slide-from-right]="animationDirection === 'right'"
-                                             [class.slide-from-left]="animationDirection === 'left'">
-                                            <h3 [routerLink]="['/', 'library', 'exercise', exercise.id]"
-                                                class="text-center text-2xl font-bold mb-4">{{ exercise.name | uppercase }}</h3>
+                    <div class="toggle-row">
+                        <label for="unilateral">Unilatéral</label>
+                        <app-toggle-switch
+                            inputId="unilateral"
+                            [checked]="!!formWorkout.controls.unilateral.value"
+                            [disabled]="formWorkout.disabled"
+                            (checkedChange)="onUnilateralChange($event)"/>
+                    </div>
+                </div>
+            }
+        </div>
 
-                                            <div
-                                                class="flex-1 flex flex-column justify-center align-items-center w-full gap-3">
-                                                <div class="flex align-items-center">
-                                                    <p-inputnumber
-                                                        appPreventFocusOnButtonClick
-                                                        formControlName="weight"
-                                                        (ngModelChange)="convertWeightToElastics()"
-                                                        [showButtons]="true"
-                                                        buttonLayout="horizontal" inputId="horizontal"
-                                                        spinnerMode="horizontal" [step]="2.5"
-                                                        suffix=" kg" [min]="0" [max]="500">
-                                                        <ng-template #incrementbuttonicon>
-                                                            <span class="pi pi-plus"></span>
-                                                        </ng-template>
-                                                        <ng-template #decrementbuttonicon>
-                                                            <span class="pi pi-minus"></span>
-                                                        </ng-template>
-                                                    </p-inputnumber>
-
-                                                    <i class="ml-2 pi pi-info-circle cursor-pointer"
-                                                       (click)="dialogConvertWeightToElastics.toggle($event)"
-                                                       [style.visibility]="(formWorkout.controls.weight.value ?? 0) % 5 === 0 && (formWorkout.controls.weight.value ?? 0) > 0 ? 'visible' : 'hidden'">
-                                                    </i>
-                                                </div>
-
-
-                                                <div class="flex align-items-center mr-4">
-                                                    <p-inputnumber
-                                                        appPreventFocusOnButtonClick
-                                                        class="mb-6" size="small"
-                                                        formControlName="reps"
-                                                        [showButtons]="true"
-                                                        buttonLayout="horizontal"
-                                                        inputId="horizontal" spinnerMode="horizontal" [step]="1"
-                                                        [suffix]=" (formWorkout.controls.reps.value ?? 0) <= 1 ? ' rep' : ' reps'" [min]="0" [max]="100">
-                                                        <ng-template #incrementbuttonicon>
-                                                            <span class="pi pi-plus"></span>
-                                                        </ng-template>
-                                                        <ng-template #decrementbuttonicon>
-                                                            <span class="pi pi-minus"></span>
-                                                        </ng-template>
-                                                    </p-inputnumber>
-                                                </div>
-                                            </div>
-                                            <div class="flex justify-content-center gap-3 mb-5 unilateral-container">
-                                                <label for="unilateral" class="text-color-secondary">
-                                                    Unilatéral
-                                                </label>
-                                                <p-toggleswitch inputId="unilateral" formControlName="unilateral"/>
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
-                            </form>
-                        </ng-template>
-                    </p-step-panel>
-                }
-
-                <app-exercises-table [muscleGroupId]="muscleGroupEnum"
-                                     [exercisesMade]="exercisesMade"
-                                     [exerciseId]="currentExercise.id!"
-                                     (resetWorkout)="resetWorkout()">
-                </app-exercises-table>
-            </p-step-panels>
-        </p-stepper>
-
+        <app-exercises-table
+            [muscleGroupId]="muscleGroupEnum"
+            [(exercisesMade)]="exercisesMade"
+            [exerciseId]="currentExercise.id!"
+            (resetWorkout)="resetWorkout()"/>
 
         <div class="bottom-page">
-            <div class="stopwatch text-primary">
-                <span>{{ restTimeService.restTime() | restTime }}</span>
-            </div>
+            <span class="stopwatch">{{ restTimeService.restTime() | restTime }}</span>
 
-            <div class="timer" (click)="toggleTimer()" [ngClass]="{
-                'disabled': this.formWorkout.invalid,
-            }">
+            <button type="button" class="timer-btn" [class.disabled]="formWorkout.invalid" (click)="toggleTimer()">
                 @if (restTimeService.restTime() !== DEFAULT_VALUE_REST_TIME) {
-                    <div class="pause"></div>
+                    <svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
                 } @else {
-                    <div class="play"></div>
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                 }
-            </div>
+            </button>
         </div>
     }
 </div>
 
-<div class="card flex justify-center">
-    <p-popover #dialogConvertWeightToElastics>
-        <div class="p-3">
-            <h4 class="mb-2 font-semibold text-lg">Élastiques utilisés</h4>
-            <ul>
-                @for (elastic of weightToElastics; track index; let index = $index) {
-                    <li
-                        class="flex items-center justify-between p-2 gap-1 rounded">
-                        <span class="font-medium text-primary">{{ elastic.name }}</span>
-                        <span class="text-sm"> ({{ elastic.weight }} kg)</span>
-                    </li>
-                }
-            </ul>
-        </div>
-    </p-popover>
-</div>
+<app-confirm-dialog
+    [open]="confirmNoExercisesOpen()"
+    [title]="NO_EXERCISES_DIALOG.title"
+    [message]="NO_EXERCISES_DIALOG.message"
+    [confirmLabel]="NO_EXERCISES_DIALOG.confirmLabel"
+    [cancelLabel]="NO_EXERCISES_DIALOG.cancelLabel"
+    (confirmed)="confirmAddExercises()"
+    (cancelled)="cancelAddExercises()"/>

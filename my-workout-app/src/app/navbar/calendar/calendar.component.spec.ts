@@ -63,4 +63,51 @@ describe('CalendarComponent', () => {
         expect(component.loading).toBe(false);
         httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`).flush([]);
     });
+
+    describe('monthSessionDays / weekdayLabel / dayGroupsLabel', () => {
+        beforeEach(() => {
+            component['displayedMonth'] = new Date(2026, 0, 1);
+        });
+
+        it('lists days with a session, most recent first', () => {
+            fixture.detectChanges();
+            httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`).flush([
+                { id: 1, date: new Date(2026, 0, 5), muscleGroup: { id: 1, name: 'pectoraux' } },
+                { id: 2, date: new Date(2026, 0, 20), muscleGroup: { id: 2, name: 'jambes' } }
+            ]);
+
+            expect(component['monthSessionDays'].map(d => d.day)).toEqual([20, 5]);
+        });
+
+        it('excludes days fully filtered out by the active muscle group', () => {
+            fixture.detectChanges();
+            httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`).flush([
+                { id: 1, date: new Date(2026, 0, 5), muscleGroup: { id: 1, name: 'pectoraux' } },
+                { id: 2, date: new Date(2026, 0, 20), muscleGroup: { id: 2, name: 'jambes' } }
+            ]);
+
+            component['filterByMuscleGroup']({ id: 2, name: 'jambes' });
+
+            expect(component['monthSessionDays'].map(d => d.day)).toEqual([20]);
+        });
+
+        it('formats the weekday for a given date', () => {
+            expect(component['weekdayLabel'](new Date(2026, 0, 5))).toBe('Lun');
+        });
+
+        it('joins unique muscle group labels for a day, respecting the active filter', () => {
+            fixture.detectChanges();
+            httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`).flush([
+                { id: 1, date: new Date(2026, 0, 5), muscleGroup: { id: 1, name: 'pectoraux' } },
+                { id: 2, date: new Date(2026, 0, 5), muscleGroup: { id: 2, name: 'jambes' } }
+            ]);
+            const day = component['monthSessionDays'][0];
+
+            expect(component['dayGroupsLabel'](day)).toBe('Pecs · Jambes');
+
+            component['filterByMuscleGroup']({ id: 2, name: 'jambes' });
+
+            expect(component['dayGroupsLabel'](component['monthSessionDays'][0])).toBe('Jambes');
+        });
+    });
 });

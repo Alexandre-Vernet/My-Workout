@@ -5,6 +5,7 @@
     role="switch"
     [attr.aria-checked]="checked()"
     [class.checked]="checked()"
+    [disabled]="disabled()"
     (click)="toggle()">
     <span class="toggle-thumb"></span>
 </button>

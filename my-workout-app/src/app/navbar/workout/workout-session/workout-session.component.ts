@@ -1,54 +1,56 @@
 import {
     Component,
     effect,
-    inject, input,
+    inject,
+    input,
     OnInit,
-    ViewEncapsulation
+    signal
 } from '@angular/core';
-import { BehaviorSubject, filter, map } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Exercise } from '../../../../interfaces/Exercise';
-import { InputNumber } from 'primeng/inputnumber';
-import { TableModule } from 'primeng/table';
-import { ConfirmationService } from 'primeng/api';
-import { ConfirmDialog } from 'primeng/confirmdialog';
 import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../interfaces/History';
-import { Skeleton } from 'primeng/skeleton';
 import { ExercisesTableComponent } from './exercises-table/exercises-table.component';
-import { Elastic } from '../../../../interfaces/elastic';
-import { Popover } from 'primeng/popover';
 import { WorkoutService } from '../../../services/workout.service';
 import { Workout } from '../../../../interfaces/Workout';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { AlertService } from '../../../services/alert.service';
-import { convertWeightElastic } from '../../../shared/utils/convert-weight-elastic';
-import { PreventFocusOnButtonClickDirective } from '../../../shared/directives/prevent-focus-on-button-click.directive';
-import { NgClass, UpperCasePipe } from '@angular/common';
+import { UpperCasePipe } from '@angular/common';
 import { CustomError } from "../../../../interfaces/CustomError";
 import { MuscleGroupEnum } from "../../../../interfaces/MuscleGroupEnum";
 import { DEFAULT_VALUE_REST_TIME, RestTimeService } from "../../../services/rest-time.service";
-import { ToggleSwitch } from "primeng/toggleswitch";
 import { ExerciseService } from '../../../services/exercise.service';
-import { confirmNoExercisesAdded } from '../../../shared/utils/confirm-no-exercises-dialog';
+import { NO_EXERCISES_DIALOG } from '../../../shared/utils/confirm-no-exercises-dialog';
 import { getErrorMessage } from '../../../shared/utils/http-error';
 import { RestTimePipe } from "../../../shared/pipes/rest-time.pipe";
 import { SwipeDirective } from '../../../shared/directives/swipe.directive';
+import { NumberStepperComponent } from '../../../shared/number-stepper/number-stepper.component';
+import { ToggleSwitchComponent } from '../../../shared/toggle-switch/toggle-switch.component';
+import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective, NgClass, UpperCasePipe, ReactiveFormsModule, ToggleSwitch, RestTimePipe, SwipeDirective],
+    imports: [
+        ExercisesTableComponent,
+        RouterLink,
+        UpperCasePipe,
+        RestTimePipe,
+        SwipeDirective,
+        NumberStepperComponent,
+        ToggleSwitchComponent,
+        ConfirmDialogComponent
+    ],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
-    standalone: true,
-    providers: [ConfirmationService],
-    encapsulation: ViewEncapsulation.None,
+    standalone: true
 })
 export class WorkoutSessionComponent implements OnInit {
 
     protected readonly DEFAULT_VALUE_REST_TIME = DEFAULT_VALUE_REST_TIME;
+    protected readonly NO_EXERCISES_DIALOG = NO_EXERCISES_DIALOG;
+    protected readonly confirmNoExercisesOpen = signal(false);
 
     muscleGroupId = input.required<number>();
     tab = input<number, string>(1, {
@@ -57,7 +59,7 @@ export class WorkoutSessionComponent implements OnInit {
 
     workout: Workout | null = null;
     exercises: Exercise[] = [];
-    exercisesMade = new BehaviorSubject<History[]>([]);
+    exercisesMade = signal<History[]>([]);
     currentExercise!: Exercise;
     muscleGroupEnum!: MuscleGroupEnum;
 
@@ -73,9 +75,6 @@ export class WorkoutSessionComponent implements OnInit {
         unilateral: new FormControl<boolean>(false, [Validators.required])
     });
 
-
-    weightToElastics: Elastic[] = [];
-
     animationDirection: 'left' | 'right' = 'right';
     animationId = 0;
     private currentTab!: number;
@@ -85,7 +84,6 @@ export class WorkoutSessionComponent implements OnInit {
     private readonly exerciseService = inject(ExerciseService);
     private readonly historyService = inject(HistoryService);
     private readonly alertService = inject(AlertService);
-    private readonly confirmationService = inject(ConfirmationService);
     private readonly router = inject(Router);
     protected readonly restTimeService = inject(RestTimeService);
 
@@ -125,18 +123,35 @@ export class WorkoutSessionComponent implements OnInit {
         this.animationId++;
         this.currentExercise = exercise;
         this.fillInputWeightRepsLastSavedValue();
-        this.exercisesMade.next([]);
+        this.exercisesMade.set([]);
         this.stopTimer();
         this.setTabUrl(index);
     }
 
+    protected onWeightChange(value: number | null) {
+        this.formWorkout.controls.weight.setValue(value);
+    }
 
-    convertWeightToElastics() {
-        this.weightToElastics = convertWeightElastic(this.formWorkout.controls.weight.value ?? 0) ?? [];
+    protected onRepsChange(value: number | null) {
+        this.formWorkout.controls.reps.setValue(value ?? 1);
+    }
+
+    protected onUnilateralChange(value: boolean) {
+        this.formWorkout.controls.unilateral.setValue(value);
     }
 
     resetWorkout() {
         this.workout = null;
+    }
+
+    protected confirmAddExercises() {
+        this.confirmNoExercisesOpen.set(false);
+        this.router.navigate(['/', 'library'], { queryParams: { muscleGroup: this.muscleGroupEnum } });
+    }
+
+    protected cancelAddExercises() {
+        this.confirmNoExercisesOpen.set(false);
+        this.redirectWorkoutHome();
     }
 
     private findExercises() {
@@ -144,7 +159,7 @@ export class WorkoutSessionComponent implements OnInit {
             .pipe(
                 map(exercises => {
                     if (!exercises || exercises.length === 0) {
-                        this.showDialogNoExercisesAdded(this.muscleGroupEnum);
+                        this.confirmNoExercisesOpen.set(true);
                         return null;
                     }
 
@@ -217,8 +232,6 @@ export class WorkoutSessionComponent implements OnInit {
                     reps: history?.reps ?? 8,
                     unilateral: history?.unilateral ?? false
                 });
-
-                this.convertWeightToElastics();
             });
     }
 
@@ -228,23 +241,18 @@ export class WorkoutSessionComponent implements OnInit {
     }
 
     private stopTimer() {
-        if (this.exercisesMade.getValue().length > 0) {
+        if (this.exercisesMade().length > 0) {
             const { minutes, seconds, centiseconds } = this.restTimeService.restTime();
             const formattedRestTime = `${ minutes.toString().padStart(2, '0') }:${ seconds.toString().padStart(2, '0') }:${ centiseconds.toString().padStart(2, '0') }`;
-            this.exercisesMade.getValue()[this.exercisesMade.getValue().length - 1].restTime = formattedRestTime;
+
+            this.exercisesMade.update(list => {
+                const last = list[list.length - 1];
+                return [...list.slice(0, -1), { ...last, restTime: formattedRestTime }];
+            });
         }
 
         this.restTimeService.stopTimer();
         this.formWorkout.enable();
-    }
-
-
-    private showDialogNoExercisesAdded(muscleGroupId: number) {
-        confirmNoExercisesAdded(
-            this.confirmationService,
-            () => this.router.navigate(['/', 'library'], { queryParams: { muscleGroup: muscleGroupId } }),
-            () => this.redirectWorkoutHome()
-        );
     }
 
     private createWorkout() {
@@ -279,10 +287,7 @@ export class WorkoutSessionComponent implements OnInit {
                         restTime: '/'
                     };
 
-                    this.exercisesMade.next([
-                        ...this.exercisesMade.value,
-                        exerciseMade
-                    ]);
+                    this.exercisesMade.update(list => [...list, exerciseMade]);
                 },
                 error: () => {
                     this.alertService.show({

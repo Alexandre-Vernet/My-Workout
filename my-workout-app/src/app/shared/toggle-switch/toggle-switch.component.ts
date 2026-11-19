@@ -10,8 +10,12 @@ export class ToggleSwitchComponent {
 
     inputId = input<string>();
     checked = model(false);
+    disabled = input(false);
 
     toggle() {
+        if (this.disabled()) {
+            return;
+        }
         this.checked.set(!this.checked());
     }
 }

@@ -1,0 +1,35 @@
+<div class="number-stepper" [class.compact]="compact()" [class.disabled]="disabled()">
+    <button
+        type="button"
+        class="stepper-btn"
+        aria-label="Diminuer"
+        [disabled]="disabled()"
+        (mousedown)="$event.preventDefault()"
+        (click)="decrement()">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+    </button>
+
+    <div class="stepper-value">
+        <input
+            #valueInput
+            type="number"
+            inputmode="decimal"
+            [value]="value()"
+            [disabled]="disabled()"
+            (input)="onInput(valueInput.value)"
+            (blur)="blurred.emit()"/>
+        @if (suffix()) {
+            <span class="stepper-suffix">{{ suffix() }}</span>
+        }
+    </div>
+
+    <button
+        type="button"
+        class="stepper-btn"
+        aria-label="Augmenter"
+        [disabled]="disabled()"
+        (mousedown)="$event.preventDefault()"
+        (click)="increment()">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+</div>

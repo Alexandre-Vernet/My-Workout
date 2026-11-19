@@ -4,7 +4,7 @@ import { ConfirmationService } from 'primeng/api';
 import { forkJoin } from 'rxjs';
 import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../../interfaces/Workout';
-import { getMuscleGroupColor } from '../../shared/utils/muscle-group-color';
+import { getMuscleGroupColor, getMuscleGroupLabel } from '../../shared/utils/muscle-group-color';
 import { MuscleGroup } from '../../../interfaces/MuscleGroup';
 import { AlertService } from '../../services/alert.service';
 import { HistoryDetailComponent } from './history-detail/history-detail.component';
@@ -141,6 +141,27 @@ export class CalendarComponent implements OnInit {
 
     protected groupColor(muscleGroupName: string | null | undefined): string {
         return getMuscleGroupColor(muscleGroupName);
+    }
+
+    // Days with a session, most recent first, respecting the active muscle group filter
+    // (a day fully filtered out by `buildCalendarDays()` is flagged `muted`).
+    protected get monthSessionDays(): CalendarDay[] {
+        return this.calendarDays
+            .filter((day): day is CalendarDay => day !== null && day.workouts.length > 0 && !day.muted)
+            .slice()
+            .reverse();
+    }
+
+    protected weekdayLabel(date: Date): string {
+        return this.weekdays[(date.getDay() + 6) % 7];
+    }
+
+    protected dayGroupsLabel(day: CalendarDay): string {
+        const relevantWorkouts = this.activeFilter
+            ? day.workouts.filter(w => w.muscleGroup?.name === this.activeFilter?.name)
+            : day.workouts;
+
+        return [...new Set(relevantWorkouts.map(w => getMuscleGroupLabel(w.muscleGroup?.name)))].join(' · ');
     }
 
     private changeMonth(direction: 1 | -1) {

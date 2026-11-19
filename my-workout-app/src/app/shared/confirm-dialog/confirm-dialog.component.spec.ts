@@ -20,13 +20,13 @@ describe('ConfirmDialogComponent', () => {
         fixture.componentRef.setInput('open', false);
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.confirm-backdrop')).toBeNull();
+        expect(fixture.nativeElement.querySelector('.overlay-backdrop')).toBeNull();
     });
 
     it('renders the message when open', () => {
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.confirm-card p').textContent).toContain('Are you sure?');
+        expect(fixture.nativeElement.querySelector('.overlay-card p').textContent).toContain('Are you sure?');
     });
 
     it('emits confirmed when the confirm button is clicked', () => {
@@ -46,7 +46,7 @@ describe('ConfirmDialogComponent', () => {
         component.cancelled.subscribe(() => cancelCount++);
 
         fixture.nativeElement.querySelector('.confirm-actions button').click();
-        fixture.nativeElement.querySelector('.confirm-backdrop').click();
+        fixture.nativeElement.querySelector('.overlay-backdrop').click();
 
         expect(cancelCount).toBe(2);
     });

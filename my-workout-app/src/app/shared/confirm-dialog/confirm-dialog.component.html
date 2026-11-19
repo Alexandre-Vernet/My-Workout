@@ -1,6 +1,6 @@
 @if (open()) {
-    <div class="confirm-backdrop" (click)="cancelled.emit()">
-        <div class="confirm-card" (click)="$event.stopPropagation()">
+    <div class="overlay-backdrop" (click)="cancelled.emit()">
+        <div class="overlay-card" (click)="$event.stopPropagation()">
             <h2>{{ title() }}</h2>
             <p>{{ message() }}</p>
             <div class="confirm-actions">

@@ -1,7 +1,11 @@
 @if (showBanner() && restTimeService.restTime() !== DEFAULT_VALUE_REST_TIME) {
-    <p-message closable="true"
-               (click)="redirectToWorkout()"
-               (onClose)="stopTimer()"
-               severity="info">{{ restTimeService.restTime() | restTime }}
-    </p-message>
+    <div class="rest-banner">
+        <button type="button" class="rest-banner-main" (click)="redirectToWorkout()">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>
+            <span>{{ restTimeService.restTime() | restTime }}</span>
+        </button>
+        <button type="button" class="rest-banner-close" aria-label="Arrêter le chrono" (click)="stopTimer()">
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+    </div>
 }

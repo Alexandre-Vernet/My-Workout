@@ -46,4 +46,13 @@ describe('ToggleSwitchComponent', () => {
         expect(component.checked()).toBe(true);
         expect(emitted).toBe(true);
     });
+
+    it('toggle() does nothing while disabled', () => {
+        fixture.componentRef.setInput('disabled', true);
+        fixture.detectChanges();
+
+        fixture.nativeElement.querySelector('button').click();
+
+        expect(component.checked()).toBe(false);
+    });
 });

@@ -60,7 +60,7 @@ projet frontend) ; seuls le thème et les tokens d'authentification vivent dans 
     la date depuis les composants **locaux**, jamais `toISOString()` qui décale d'un
     jour selon le fuseau), `http-error.ts` (voir
     [Erreurs HTTP](#erreurs-http--toujours-passer-par-http-errorts)),
-    `convert-weight-elastic.ts`, `remove-accents.ts`, `confirm-no-exercises-dialog.ts`
+    `remove-accents.ts`, `confirm-no-exercises-dialog.ts`
     (dialogue "aucun exercice ajouté" partagé entre `workout-session` et
     `select-muscle-group-workout`), `muscle-group-color.ts` (`getMuscleGroupColor`/
     `getMuscleGroupLabel` : seul point de lookup dans `muscleGroupMap`, réutilisé par
@@ -69,8 +69,8 @@ projet frontend) ; seuls le thème et les tokens d'authentification vivent dans 
   - `not-found/`, `menu-urls.ts` (enum des segments de route utilisés par le menu).
 - `src/interfaces/` — types de données : une interface par fichier, nommé comme le
   type exporté, en **PascalCase** (`Exercise.ts`, `MuscleGroup.ts`, `Workout.ts`...).
-  Deux fichiers historiques dérogent à la règle (`alert.ts`, `elastic.ts`) : ne pas en
-  ajouter d'autres sur ce modèle. `LoginRequest`/`RegisterRequest` sont les seules
+  Un fichier historique déroge à la règle (`alert.ts`) : ne pas en ajouter d'autres
+  sur ce modèle. `LoginRequest`/`RegisterRequest` sont les seules
   vraies `class` (constructeur), tout le reste est une `interface`, un `type` ou un
   `enum` — ne pas utiliser `class` pour une forme de donnée qui n'est jamais
   construite avec `new`.

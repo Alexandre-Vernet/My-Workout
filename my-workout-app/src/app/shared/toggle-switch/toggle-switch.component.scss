@@ -16,8 +16,13 @@
         background: var(--p-primary-color);
     }
 
-    &:active .toggle-thumb {
+    &:active:not(:disabled) .toggle-thumb {
         width: 25px;
+    }
+
+    &:disabled {
+        opacity: .55;
+        cursor: not-allowed;
     }
 }
 

@@ -47,6 +47,34 @@
             }
         </div>
     </div>
+
+    <div class="month-sessions">
+        <h2 class="month-sessions-title">Séances du mois</h2>
+        @if (monthSessionDays.length === 0) {
+            <div class="month-sessions-empty">
+                <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+                <p>Aucune séance {{ activeFilter ? 'pour ce groupe ' : '' }}ce mois-ci</p>
+            </div>
+        } @else {
+            @for (day of monthSessionDays; track day.date.getTime()) {
+                <div class="session-row" (click)="onDayClick(day)">
+                    <div class="session-row-date">
+                        <strong>{{ day.day }}</strong>
+                        <small>{{ weekdayLabel(day.date) }}</small>
+                    </div>
+                    <div class="session-row-info">
+                        <div class="cal-dots">
+                            @for (color of day.dotColors; track $index) {
+                                <span [style.background]="color"></span>
+                            }
+                        </div>
+                        <span class="session-row-groups">{{ dayGroupsLabel(day) }}</span>
+                    </div>
+                    <svg class="session-row-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+                </div>
+            }
+        }
+    </div>
 }
 
 <div class="sheet-backdrop" [class.open]="sheetOpen()" (click)="closeSheet()"></div>

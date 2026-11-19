@@ -1,17 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DEFAULT_VALUE_REST_TIME, RestTimeService } from "../../services/rest-time.service";
-import { Message } from "primeng/message";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter, map } from "rxjs";
 import { RestTimePipe } from "../pipes/rest-time.pipe";
 
 @Component({
     selector: 'app-rest-time-banner',
-    imports: [
-        Message,
-        RestTimePipe
-    ],
+    imports: [RestTimePipe],
     templateUrl: './rest-time-banner.component.html',
     styleUrl: './rest-time-banner.component.scss',
 })
