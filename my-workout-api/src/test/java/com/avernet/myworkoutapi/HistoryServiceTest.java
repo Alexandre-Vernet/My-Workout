@@ -236,7 +236,7 @@ public class HistoryServiceTest {
         historyToUpdate.setReps((short) 12);
         historyToUpdate.setWeight(60F);
 
-        History updatedHistory = service.update(historyToUpdate.getId(), historyToUpdate);
+        History updatedHistory = service.update(userEntity, historyToUpdate.getId(), historyToUpdate);
         HistoryEntity historyUpdated = historyRepository.findById(historyToUpdate.getId())
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.HISTORY_NOT_FOUND, "Cet historique n'existe pas", HttpStatus.NOT_FOUND));
 
@@ -273,10 +273,37 @@ public class HistoryServiceTest {
         historyToUpdate.setReps((short) 12);
         historyToUpdate.setWeight(60F);
 
-        ApiException exception = assertThrows(ApiException.class, () -> service.update(historyToUpdate.getId(), historyToUpdate));
+        ApiException exception = assertThrows(ApiException.class, () -> service.update(userEntity, historyToUpdate.getId(), historyToUpdate));
         assertEquals("Cet historique n'existe pas", exception.getMessage());
         assertEquals(ErrorCodeEnum.HISTORY_NOT_FOUND, exception.getErrorCode());
         assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    }
+
+    @Test
+    void shouldNotUpdateOrDeleteAnotherUsersHistory() {
+        WorkoutEntity w = WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .date(LocalDateTime.now())
+            .build();
+        WorkoutEntity workoutEntity = workoutRepository.save(w);
+
+        HistoryEntity historyEntity = HistoryEntity.builder()
+            .exercise(exerciseEntity)
+            .reps((short) 10)
+            .weight(50F)
+            .unilateral(true)
+            .workout(workoutEntity)
+            .build();
+        historyRepository.save(historyEntity);
+
+        History historyToUpdate = historyMapper.toDto(historyEntity);
+        historyToUpdate.setReps((short) 12);
+
+        UserEntity otherUser = userRepository.findById(2L).orElseThrow(UserNotFoundException::new);
+
+        assertThrows(ApiException.class, () -> service.update(otherUser, historyToUpdate.getId(), historyToUpdate));
+        assertThrows(ApiException.class, () -> service.delete(otherUser, historyToUpdate.getId()));
     }
 
     @Test
@@ -302,7 +329,7 @@ public class HistoryServiceTest {
         historyToUpdate.setReps((short) 12);
         historyToUpdate.setWeight(60F);
 
-        service.delete(historyToUpdate.getId());
+        service.delete(userEntity, historyToUpdate.getId());
 
         ApiException exception = assertThrows(ApiException.class, () -> historyRepository.findById(historyToUpdate.getId())
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.HISTORY_NOT_FOUND, "Cet historique n'existe pas", HttpStatus.NOT_FOUND)));
@@ -343,7 +370,7 @@ public class HistoryServiceTest {
         historyToUpdate.setReps((short) 12);
         historyToUpdate.setWeight(60F);
 
-        service.delete(historyToUpdate.getId());
+        service.delete(userEntity, historyToUpdate.getId());
 
         WorkoutEntity workoutExist = workoutRepository.findById(workoutEntity.getId())
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.WORKOUT_NOT_FOUND, "Cette séance n'existe pas", HttpStatus.NOT_FOUND));
@@ -374,7 +401,7 @@ public class HistoryServiceTest {
         historyToUpdate.setReps((short) 12);
         historyToUpdate.setWeight(60F);
 
-        service.delete(historyToUpdate.getId());
+        service.delete(userEntity, historyToUpdate.getId());
 
         assertThrows(ApiException.class, () -> workoutRepository.findById(workoutEntity.getId())
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.WORKOUT_NOT_FOUND, "Cette séance n'existe pas", HttpStatus.NOT_FOUND)));

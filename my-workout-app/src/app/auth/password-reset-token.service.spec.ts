@@ -25,7 +25,7 @@ describe('PasswordResetTokenService', () => {
 
         const req = httpMock.expectOne(r => r.url === `${ service.passwordResetTokenUrl }/forgot-password`);
         expect(req.request.params.get('email')).toBe('alex@example.com');
-        req.flush({ link: 'https://my-workout.alexandre-vernet.fr/reset?token=abc' });
+        req.flush(null);
     });
 
     it('isTokenValid() sends the token as a query param', () => {

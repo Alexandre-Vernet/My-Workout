@@ -5,8 +5,6 @@ import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import emailjs from '@emailjs/browser';
-import { environment } from '../../../environments/environment';
 import { AlertService } from '../../services/alert.service';
 import { NgClass } from '@angular/common';
 import { PasswordResetTokenService } from "../password-reset-token.service";
@@ -34,37 +32,17 @@ export class ForgotPasswordComponent {
         this.isLoading = true;
 
         const email = this.email.value ?? '';
-        const { appName, logoUrl } = environment;
 
         this.passwordResetTokenService.forgotPassword(email)
             .subscribe({
-                next: ({ link }) => {
-                    emailjs.send(environment.EMAIL_JS.SERVICE_ID, environment.EMAIL_JS.TEMPLATE_ID, {
-                            linkResetPassword: link,
-                            email,
-                            appName,
-                            logoUrl
-                        },
-                        environment.EMAIL_JS.PUBLIC_KEY
-                    ).then(
-                        () => {
-                            this.closeModal();
-                            this.isLoading = false;
+                next: () => {
+                    this.closeModal();
+                    this.isLoading = false;
 
-                            this.alertService.show({
-                                severity: 'success',
-                                message: 'Un email vous a été envoyé pour réinitialiser votre mot de passe'
-                            });
-                        },
-                        () => {
-                            this.isLoading = false;
-
-                            this.alertService.show({
-                                severity: 'error',
-                                message: 'Une erreur s`est produite lors de l`envoi de l`email'
-                            });
-                        }
-                    );
+                    this.alertService.show({
+                        severity: 'success',
+                        message: 'Si un compte existe pour cet email, un lien de réinitialisation vous a été envoyé'
+                    });
                 },
                 error: (err) => {
                     this.isLoading = false;

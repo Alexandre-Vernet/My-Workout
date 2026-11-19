@@ -1,15 +1,17 @@
 package com.avernet.myworkoutapi.auth.passwordreset;
 
+import com.avernet.myworkoutapi.error.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.user.UserEntity;
-import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.UserRepository;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,37 +26,43 @@ public class PasswordResetTokenService {
     @Resource
     BCryptPasswordEncoder passwordEncoder;
 
-    @Value("${allowed.origin}")
-    String allowedOrigin;
+    @Resource
+    PasswordResetMailService passwordResetMailService;
 
 
     @Transactional
-    public LinkResetPasswordResponse generateLinkResetPassword(String email) {
-        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public void generatePasswordResetToken(String email) {
+        Optional<UserEntity> userEntity = userRepository.findByEmail(email);
+        if (userEntity.isEmpty()) {
+            return;
+        }
 
         String token = UUID.randomUUID().toString();
 
         PasswordResetTokenEntity passwordResetTokenEntity = PasswordResetTokenEntity.builder()
             .token(token)
-            .user(userEntity)
+            .user(userEntity.get())
             .used(false)
             .expirationDate(LocalDateTime.now().plusMinutes(15))
             .build();
 
         passwordResetTokenRepository.save(passwordResetTokenEntity);
 
-        String link = allowedOrigin +
-            "/auth/" +
-            "reset-password" +
-            "?token=" +
-            token;
-
-        return new LinkResetPasswordResponse(link);
+        passwordResetMailService.sendPasswordResetEmail(userEntity.get().getEmail(), token);
     }
 
     @Transactional
     public void resetPassword(ResetPasswordTokenPassword resetPasswordTokenPassword) {
         PasswordResetTokenEntity passwordResetTokenEntity = passwordResetTokenRepository.findByToken(resetPasswordTokenPassword.token());
+
+        boolean isValid = passwordResetTokenEntity != null
+            && !passwordResetTokenEntity.getUsed()
+            && LocalDateTime.now().isBefore(passwordResetTokenEntity.getExpirationDate());
+
+        if (!isValid) {
+            throw new ApiException(ErrorCodeEnum.INVALID_TOKEN, "Token invalide ou expiré", HttpStatus.FORBIDDEN);
+        }
+
         passwordResetTokenEntity.setUsed(true);
 
         UserEntity userEntity = passwordResetTokenEntity.getUser();

@@ -8,9 +8,18 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
+
+    @Query("""
+            SELECT h FROM HistoryEntity h
+            JOIN h.workout w
+            WHERE h.id = :historyId
+            AND w.user.id = :userId
+        """)
+    Optional<HistoryEntity> findByIdAndWorkoutUserId(@Param("historyId") Long historyId, @Param("userId") Long userId);
 
     @Query("""
             SELECT h FROM HistoryEntity h

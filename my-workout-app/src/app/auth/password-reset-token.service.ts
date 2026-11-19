@@ -12,7 +12,7 @@ export class PasswordResetTokenService {
     passwordResetTokenUrl = environment.passwordResetTokenUrl();
 
     forgotPassword(email: string) {
-        return this.http.get<{ link: string }>(`${ this.passwordResetTokenUrl }/forgot-password`, {
+        return this.http.get<void>(`${ this.passwordResetTokenUrl }/forgot-password`, {
             params: { email }
         });
     }

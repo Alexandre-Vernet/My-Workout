@@ -22,7 +22,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -143,15 +142,4 @@ public class AuthService {
         userRepository.delete(userEntity);
     }
 
-    public Map<String, String> sendEmailForgotPassword(String email) {
-        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() -> new ApiException(ErrorCodeEnum.USER_NOT_FOUND, "Utilisateur introuvable", HttpStatus.BAD_REQUEST));
-
-        UserDetails userDetails = UserEntity.builder()
-            .id(userEntity.getId())
-            .email(userEntity.getEmail())
-            .build();
-
-        String token = jwtService.generateToken(userDetails);
-        return Map.of("token", token);
-    }
 }

@@ -96,8 +96,8 @@ public class HistoryService {
     }
 
     @Transactional
-    public History update(Long historyId, History history) {
-        HistoryEntity historyEntity = historyRepository.findById(historyId)
+    public History update(UserEntity userEntity, Long historyId, History history) {
+        HistoryEntity historyEntity = historyRepository.findByIdAndWorkoutUserId(historyId, userEntity.getId())
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.HISTORY_NOT_FOUND, "Cet historique n'existe pas", HttpStatus.NOT_FOUND));
 
         if (history.getWeight() == null || history.getWeight() == 0) {
@@ -119,8 +119,8 @@ public class HistoryService {
     }
 
     @Transactional
-    public void delete(Long historyId) {
-        HistoryEntity historyEntity = historyRepository.findById(historyId)
+    public void delete(UserEntity userEntity, Long historyId) {
+        HistoryEntity historyEntity = historyRepository.findByIdAndWorkoutUserId(historyId, userEntity.getId())
             .orElseThrow(() -> new ApiException(ErrorCodeEnum.HISTORY_NOT_FOUND, "Cet historique n'existe pas", HttpStatus.NOT_FOUND));
 
         WorkoutEntity workoutEntity = historyEntity.getWorkout();

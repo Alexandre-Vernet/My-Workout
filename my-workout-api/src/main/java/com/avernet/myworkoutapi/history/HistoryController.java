@@ -43,12 +43,12 @@ public class HistoryController {
     }
 
     @PatchMapping("{historyId}")
-    History update(@PathVariable Long historyId, @RequestBody History history) {
-        return historyService.update(historyId, history);
+    History update(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long historyId, @RequestBody History history) {
+        return historyService.update(userEntity, historyId, history);
     }
 
     @DeleteMapping("{historyId}")
-    void delete(@PathVariable Long historyId) {
-        historyService.delete(historyId);
+    void delete(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long historyId) {
+        historyService.delete(userEntity, historyId);
     }
 }

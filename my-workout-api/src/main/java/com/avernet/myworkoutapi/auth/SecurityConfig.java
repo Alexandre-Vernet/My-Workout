@@ -35,6 +35,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/exercises/{exerciseId}").permitAll()
                     .requestMatchers(HttpMethod.GET, "/exercises/muscle-group/{muscleGroupId}").permitAll()
                     .requestMatchers(HttpMethod.GET, "/muscle-group").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/exercises").hasAuthority("ROLE_ADMIN")
                     .requestMatchers(HttpMethod.GET, "/password-reset-token/forgot-password").permitAll()
                     .requestMatchers(HttpMethod.POST, "/password-reset-token/reset-password").permitAll()
                     .requestMatchers(HttpMethod.GET, "/password-reset-token/valid").permitAll()
