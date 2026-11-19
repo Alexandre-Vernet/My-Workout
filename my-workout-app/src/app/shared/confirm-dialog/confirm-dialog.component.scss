@@ -1,0 +1,65 @@
+@use "../../../buttons";
+
+@keyframes confirm-backdrop-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes confirm-card-in {
+    from {
+        opacity: 0;
+        transform: scale(.92) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, .55);
+    backdrop-filter: blur(4px);
+    animation: confirm-backdrop-in .2s ease;
+}
+
+.confirm-card {
+    width: 100%;
+    max-width: 340px;
+    border-radius: var(--radius-lg);
+    background: var(--card-background);
+    box-shadow: var(--shadow-elevated);
+    padding: 24px;
+    animation: confirm-card-in .25s cubic-bezier(.34, 1.56, .64, 1);
+
+    h2 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: var(--p-text-muted-color);
+        line-height: 1.5;
+    }
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+
+    .btn {
+        flex: 1;
+    }
+}

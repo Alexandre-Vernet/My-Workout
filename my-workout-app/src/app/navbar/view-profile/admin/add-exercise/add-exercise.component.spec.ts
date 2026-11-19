@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { AddExerciseComponent } from './add-exercise.component';
 import { ExerciseService } from '../../../../services/exercise.service';
 import { MuscleService } from '../../../../services/muscle.service';
@@ -17,7 +16,6 @@ describe('AddExerciseComponent', () => {
     let httpMock: HttpTestingController;
     let exerciseService: ExerciseService;
     let muscleService: MuscleService;
-    let confirmationService: ConfirmationService;
 
     const musclesDropdown: MuscleDropdown[] = [
         { label: 'Pectoraux', value: 'pectoraux', items: [{ id: 1, name: 'Grand pectoral' }] }
@@ -34,7 +32,6 @@ describe('AddExerciseComponent', () => {
         httpMock = TestBed.inject(HttpTestingController);
         exerciseService = TestBed.inject(ExerciseService);
         muscleService = TestBed.inject(MuscleService);
-        confirmationService = fixture.debugElement.injector.get(ConfirmationService);
     }
 
     afterEach(() => {
@@ -95,6 +92,27 @@ describe('AddExerciseComponent', () => {
         });
     });
 
+    describe('isMuscleSelected() / toggleMuscle()', () => {
+        beforeEach(() => {
+            createComponent();
+            fixture.detectChanges();
+            httpMock.expectOne(muscleService.muscleUrl).flush(musclesDropdown);
+        });
+
+        it('toggleMuscle() adds then removes a muscle from the control', () => {
+            const muscle = musclesDropdown[0].items[0];
+
+            component.toggleMuscle(muscle);
+            expect(component.isMuscleSelected(muscle)).toBe(true);
+            expect(component.formAddExercise.controls.muscles.value).toEqual([muscle]);
+            expect(component.formAddExercise.controls.muscles.touched).toBe(true);
+
+            component.toggleMuscle(muscle);
+            expect(component.isMuscleSelected(muscle)).toBe(false);
+            expect(component.formAddExercise.controls.muscles.value).toEqual([]);
+        });
+    });
+
     describe('generateExerciseDescription()', () => {
         beforeEach(() => {
             createComponent();
@@ -141,29 +159,27 @@ describe('AddExerciseComponent', () => {
 
         it('shows a success alert and offers to add the new exercise to the workout', () => {
             const alertService = TestBed.inject(AlertService);
-            const confirmSpy = vi.spyOn(confirmationService, 'confirm');
 
-            component.createExercise({ target: document.createElement('button') } as unknown as Event);
+            component.createExercise();
 
             httpMock.expectOne(exerciseService.exerciseUrl).flush({ id: 1, name: 'Squat' });
 
             expect(alertService.alert()?.severity).toBe('success');
-            expect(confirmSpy).toHaveBeenCalledOnce();
+            expect(component.addToWorkoutConfirm()).toEqual({ id: 1, name: 'Squat' });
         });
 
         it('does not prompt to add to the workout when updating an existing exercise', () => {
             component.formAddExercise.controls.id.setValue(1);
-            const confirmSpy = vi.spyOn(confirmationService, 'confirm');
 
-            component.createExercise({ target: document.createElement('button') } as unknown as Event);
+            component.createExercise();
 
             httpMock.expectOne(exerciseService.exerciseUrl).flush({ id: 1, name: 'Squat' });
 
-            expect(confirmSpy).not.toHaveBeenCalled();
+            expect(component.addToWorkoutConfirm()).toBeNull();
         });
 
         it('flags a duplicate exercise name on the name field', () => {
-            component.createExercise({ target: document.createElement('button') } as unknown as Event);
+            component.createExercise();
 
             httpMock.expectOne(exerciseService.exerciseUrl)
                 .flush({ errorCode: 'EXERCISE_NAME_ALREADY_EXIST' }, { status: 409, statusText: 'Conflict' });
@@ -172,7 +188,7 @@ describe('AddExerciseComponent', () => {
         });
 
         it('flags a duplicate muscle group on the muscles field', () => {
-            component.createExercise({ target: document.createElement('button') } as unknown as Event);
+            component.createExercise();
 
             httpMock.expectOne(exerciseService.exerciseUrl)
                 .flush({ errorCode: 'DOUBLE_MUSCLE_GROUP' }, { status: 409, statusText: 'Conflict' });
@@ -180,33 +196,28 @@ describe('AddExerciseComponent', () => {
             expect(component.formAddExercise.controls.muscles.hasError('duplicatMuscleGroup')).toBe(true);
         });
 
-        it('accepting the workout prompt adds the exercise to the workout', () => {
+        it('confirmAddToWorkout() adds the pending exercise to the workout', () => {
             const alertService = TestBed.inject(AlertService);
-            const confirmSpy = vi.spyOn(confirmationService, 'confirm');
 
-            component.createExercise({ target: document.createElement('button') } as unknown as Event);
+            component.createExercise();
             httpMock.expectOne(exerciseService.exerciseUrl).flush({ id: 1, name: 'Squat' });
 
-            const { accept } = confirmSpy.mock.calls[0][0];
-            accept!();
+            component.confirmAddToWorkout();
 
             httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/toggle`).flush({ id: 1, name: 'Squat' });
 
             expect(alertService.alert()?.message).toBe('Exercice ajouté à vos entraînements');
+            expect(component.addToWorkoutConfirm()).toBeNull();
         });
 
-        it('rejecting the workout prompt notifies via the message service', () => {
-            const messageService = fixture.debugElement.injector.get(MessageService);
-            const addSpy = vi.spyOn(messageService, 'add');
-            const confirmSpy = vi.spyOn(confirmationService, 'confirm');
-
-            component.createExercise({ target: document.createElement('button') } as unknown as Event);
+        it('cancelAddToWorkout() clears the pending confirmation without calling the API', () => {
+            component.createExercise();
             httpMock.expectOne(exerciseService.exerciseUrl).flush({ id: 1, name: 'Squat' });
 
-            const { reject } = confirmSpy.mock.calls[0][0];
-            reject!();
+            component.cancelAddToWorkout();
 
-            expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
+            expect(component.addToWorkoutConfirm()).toBeNull();
+            httpMock.expectNone(`${ exerciseService.exerciseUrl }/user/toggle`);
         });
     });
 });

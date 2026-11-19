@@ -1,0 +1,10 @@
+<button
+    type="button"
+    [id]="inputId()"
+    class="toggle-switch"
+    role="switch"
+    [attr.aria-checked]="checked()"
+    [class.checked]="checked()"
+    (click)="toggle()">
+    <span class="toggle-thumb"></span>
+</button>

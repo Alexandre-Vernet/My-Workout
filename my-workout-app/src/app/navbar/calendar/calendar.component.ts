@@ -1,120 +1,100 @@
-import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
-import { CalendarOptions, EventClickArg, EventInput, EventMountArg } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../../interfaces/Workout';
-import { Dialog } from 'primeng/dialog';
-import { Button } from 'primeng/button';
-import { removeAccents } from '../../shared/utils/remove-accents';
-import { MuscleGroup, muscleGroupMap } from '../../../interfaces/MuscleGroup';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
-import {
-    DialogSelectCardioExerciseComponent
-} from '../workout/dialog-select-cardio-exercise/dialog-select-cardio-exercise.component';
-import { Alert } from '../../../interfaces/alert';
+import { getMuscleGroupColor } from '../../shared/utils/muscle-group-color';
+import { MuscleGroup } from '../../../interfaces/MuscleGroup';
 import { AlertService } from '../../services/alert.service';
-import { ExerciseService } from '../../services/exercise.service';
 import { HistoryDetailComponent } from './history-detail/history-detail.component';
-import { Exercise } from '../../../interfaces/Exercise';
-import { DatePipe } from '@angular/common';
 import { WorkoutGroupedHistories } from '../../../interfaces/WorkoutGroupedHistories';
 import { FirstLetterUppercasePipe } from '../../shared/pipes/first-letter-uppercase.pipe';
-import { MuscleGroupKey } from '../../../interfaces/MuscleGroup';
 import { SwipeDirective } from '../../shared/directives/swipe.directive';
+
+interface CalendarDay {
+    readonly day: number;
+    readonly date: Date;
+    readonly isToday: boolean;
+    readonly workouts: readonly Workout[];
+    readonly dotColors: readonly string[];
+    readonly muted: boolean;
+}
+
+const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+const MAX_VISIBLE_DOTS = 3;
 
 @Component({
     selector: 'app-calendar',
-    imports: [FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, HistoryDetailComponent, DatePipe, FirstLetterUppercasePipe, SwipeDirective],
+    imports: [ConfirmDialog, HistoryDetailComponent, FirstLetterUppercasePipe, SwipeDirective],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     standalone: true,
-    encapsulation: ViewEncapsulation.None,
     providers: [ConfirmationService]
 })
 export class CalendarComponent implements OnInit {
 
-    @ViewChild('calendarComponent', { static: false }) calendarComponent!: FullCalendarComponent;
-    calendarOptions: CalendarOptions = {
-        timeZone: 'local',
-        locale: 'fr',
-        plugins: [dayGridPlugin, interactionPlugin],
-        initialView: 'dayGridMonth',
-        weekends: true,
-        firstDay: 1,
-        height: 600,
-        buttonText: {
-            today: 'Aujourd\'hui'
-        },
-        headerToolbar: {
-            left: 'title,prev,next',
-            center: '',
-            right: 'today'
-        },
-        eventClick: this.eventClick.bind(this),
-        eventDidMount: this.customizeCalendar.bind(this),
-        dateClick: this.dateClick.bind(this),
-        events: ((info, success, failure) => {
-            const { start, end } = info;
+    protected readonly weekdays = WEEKDAYS;
 
-            this.workoutService.findByDate(start, end)
-                .subscribe({
-                    next: (workouts) => {
-                        this.workouts = workouts;
+    protected displayedMonth = CalendarComponent.startOfMonth(new Date());
+    protected calendarDays: (CalendarDay | null)[] = [];
+    protected monthLabel = '';
+    protected sessionCountLabel = '';
+    protected readonly transitionClass = signal<'' | 'slide-prev' | 'slide-next'>('');
 
-                        this.filterWorkouts = this.activeFilter
-                            ? workouts.filter(w => w.muscleGroup?.name === this.activeFilter?.name)
-                            : workouts;
-
-                        this.getMuscleGroups();
-
-                        const events: EventInput[] = this.filterWorkouts.map(w => {
-                            const start = new Date(w.date);
-                            const end = new Date(start);
-                            end.setSeconds(end.getSeconds() + 1);
-
-                            return {
-                                id: w.id?.toString(),
-                                title: w.muscleGroup?.name,
-                                start,
-                                end
-                            };
-                        });
-
-                        success(events);
-                    },
-                    error: (err) => failure(err)
-                });
-        })
-    };
+    protected readonly sheetOpen = signal(false);
+    protected sheetDateLabel = '';
+    protected sheetWorkouts: WorkoutGroupedHistories[] = [];
 
     workouts: Workout[] = [];
-    filterWorkouts: Workout[] = [];
     activeFilter: MuscleGroup | null = null;
-
-    showWorkout: WorkoutGroupedHistories | null = null;
-    showModalViewWorkout = false;
-
     muscleGroups: MuscleGroup[] = [];
 
-    cardioExercises: Exercise[] = [];
-
-    setWorkoutDate: Date = new Date();
-    isOpenModalExerciseCardio = false;
-
     private readonly workoutService = inject(WorkoutService);
-    private readonly exerciseService = inject(ExerciseService);
     private readonly confirmationService = inject(ConfirmationService);
     private readonly alertService = inject(AlertService);
 
     ngOnInit() {
-        setTimeout(() => this.calendarComponent.getApi().refetchEvents(), 0);
+        this.loadMonth();
     }
 
-    openModalDeleteWorkout(id: number, muscleGroupName: string, date: Date) {
+    protected previousMonth() {
+        this.changeMonth(-1);
+    }
+
+    protected nextMonth() {
+        this.changeMonth(1);
+    }
+
+    protected filterByMuscleGroup(muscleGroup: MuscleGroup) {
+        if (muscleGroup.name === this.activeFilter?.name) {
+            this.clearMuscleGroupFilter();
+            return;
+        }
+
+        this.activeFilter = muscleGroup;
+        this.buildCalendarDays();
+    }
+
+    protected clearMuscleGroupFilter() {
+        this.activeFilter = null;
+        this.buildCalendarDays();
+    }
+
+    protected onDayClick(calendarDay: CalendarDay) {
+        if (calendarDay.workouts.length === 0) {
+            return;
+        }
+
+        this.openDaySheet(calendarDay);
+    }
+
+    protected closeSheet() {
+        this.sheetOpen.set(false);
+    }
+
+    protected openModalDeleteWorkout(id: number, muscleGroupName: string, date: Date) {
+        this.sheetOpen.set(false);
         const formattedDate = new Date(date);
         this.confirmationService.confirm({
             header: 'Attention',
@@ -136,8 +116,8 @@ export class CalendarComponent implements OnInit {
                     .subscribe({
                         next: () => {
                             this.workouts = this.workouts.filter(w => w.id !== id);
-                            this.calendarComponent.getApi().refetchEvents();
                             this.getMuscleGroups();
+                            this.buildCalendarDays();
 
                             this.alertService.show({
                                 severity: 'success',
@@ -151,26 +131,60 @@ export class CalendarComponent implements OnInit {
                             });
                         }
                     });
-                this.showModalViewWorkout = false;
             }
         });
     }
 
-    createdWorkout(workout: Workout) {
-        this.workouts.push(workout);
-        this.calendarComponent.getApi().refetchEvents();
+    protected groupColor(muscleGroupName: string | null | undefined): string {
+        return getMuscleGroupColor(muscleGroupName);
+    }
 
-        this.alertService.show({
-            severity: 'success',
-            message: `${ workout.histories?.[0]?.exercise?.name } a été ajouté au calendrier`
+    private changeMonth(direction: 1 | -1) {
+        this.transitionClass.set(direction === 1 ? 'slide-next' : 'slide-prev');
+        setTimeout(() => this.transitionClass.set(''), 320);
+
+        this.displayedMonth = new Date(this.displayedMonth.getFullYear(), this.displayedMonth.getMonth() + direction, 1);
+        this.loadMonth();
+    }
+
+    private openDaySheet(calendarDay: CalendarDay) {
+        this.sheetDateLabel = calendarDay.date.toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long'
         });
+
+        forkJoin(calendarDay.workouts.map(w => this.workoutService.findById(w.id!)))
+            .subscribe(groupedHistories => {
+                this.sheetWorkouts = groupedHistories;
+                this.sheetOpen.set(true);
+            });
     }
 
-    showAlert(alert: Alert) {
-        window.scrollTo(0, 0);
-        this.alertService.show(alert);
-    }
+    private loadMonth() {
+        const year = this.displayedMonth.getFullYear();
+        const month = this.displayedMonth.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const start = new Date(year, month, 1);
+        const end = new Date(year, month, daysInMonth);
 
+        this.monthLabel = this.displayedMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+
+        this.workoutService.findByDate(start, end)
+            .subscribe({
+                next: (workouts) => {
+                    this.workouts = workouts;
+                    this.getMuscleGroups();
+                    this.buildCalendarDays();
+                },
+                error: (err) => {
+                    this.alertService.show({
+                        severity: 'error',
+                        message: err?.error?.message ?? 'Impossible d\'afficher le calendrier'
+                    });
+                }
+            });
+    }
 
     private getMuscleGroups() {
         this.muscleGroups = [];
@@ -184,73 +198,46 @@ export class CalendarComponent implements OnInit {
         this.muscleGroups.sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
     }
 
-    filterByMuscleGroup(muscleGroup: MuscleGroup) {
-        if (muscleGroup.name === this.activeFilter?.name) {
-            this.filterWorkouts = this.workouts;
-            this.calendarComponent.getApi().refetchEvents();
-            this.activeFilter = null;
-            return;
-        }
+    private buildCalendarDays() {
+        const year = this.displayedMonth.getFullYear();
+        const month = this.displayedMonth.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const startOffset = (new Date(year, month, 1).getDay() + 6) % 7; // Monday-first
+        const today = new Date();
 
-        this.filterWorkouts = this.workouts.filter(w => w.muscleGroup?.name === muscleGroup.name);
-        this.calendarComponent.getApi().refetchEvents();
-        this.activeFilter = muscleGroup;
-    }
+        const days: (CalendarDay | null)[] = new Array(startOffset).fill(null);
+        let daysWithSessions = 0;
 
-    private customizeCalendar(info: EventMountArg) {
-        const eventNameFormated = removeAccents(info.event.title) as MuscleGroupKey;
-        const label: string = muscleGroupMap[eventNameFormated]?.label ?? info.event.title;
-        const color: string = muscleGroupMap[eventNameFormated]?.color || '#d77c05';
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day);
+            const workoutsThatDay = this.workouts.filter(w => CalendarComponent.isSameDay(new Date(w.date), date));
+            const visibleWorkouts = this.activeFilter
+                ? workoutsThatDay.filter(w => w.muscleGroup?.name === this.activeFilter?.name)
+                : workoutsThatDay;
 
-        const spanEventName = info.el.querySelector('span.text-sm') as HTMLElement;
-        if (spanEventName) {
-            spanEventName.textContent = label;
-        }
+            if (workoutsThatDay.length > 0) {
+                daysWithSessions++;
+            }
 
-        info.el.classList.add('event-color-style');
-        info.el.style.borderLeftColor = color;
-
-    }
-
-    private eventClick(info: EventClickArg) {
-        const workoutId = Number(info.event.id);
-        this.workoutService.findById(workoutId)
-            .subscribe(workout => {
-                this.showModalViewWorkout = true;
-                this.showWorkout = workout;
+            days.push({
+                day,
+                date,
+                isToday: CalendarComponent.isSameDay(date, today),
+                workouts: workoutsThatDay,
+                dotColors: visibleWorkouts.slice(0, MAX_VISIBLE_DOTS).map(w => getMuscleGroupColor(w.muscleGroup?.name)),
+                muted: workoutsThatDay.length > 0 && this.activeFilter !== null && visibleWorkouts.length === 0
             });
-    }
-
-    private dateClick(info: DateClickArg) {
-        this.exerciseService.findCardioExercises()
-            .subscribe({
-                next: (cardioExercises) => {
-                    if (cardioExercises.length > 0) {
-                        this.cardioExercises = cardioExercises;
-                        this.isOpenModalExerciseCardio = true;
-                        this.setWorkoutDate = info.date;
-                        this.setWorkoutDate.setHours(new Date().getHours(), new Date().getMinutes(), 0, 0);
-                    } else {
-                        this.alertService.show({
-                            severity: 'error',
-                            message: 'Aucun exercice cardio n\'a été ajouté, ajoutez en un depuis la bibliothèque'
-                        });
-                    }
-                }
-            });
-    }
-
-    protected previousMonth() {
-        const btnPreviousMonth = document.querySelector('.fc-prev-button') as HTMLButtonElement;
-        if (btnPreviousMonth) {
-            btnPreviousMonth.click();
         }
+
+        this.calendarDays = days;
+        this.sessionCountLabel = `${ daysWithSessions } séance${ daysWithSessions > 1 ? 's' : '' } ce mois-ci`;
     }
 
-    protected nextMonth() {
-        const btnNextMonth = document.querySelector('.fc-next-button') as HTMLButtonElement;
-        if (btnNextMonth) {
-            btnNextMonth.click();
-        }
+    private static isSameDay(a: Date, b: Date): boolean {
+        return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    }
+
+    private static startOfMonth(date: Date): Date {
+        return new Date(date.getFullYear(), date.getMonth(), 1);
     }
 }

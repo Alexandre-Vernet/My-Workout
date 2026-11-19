@@ -1,98 +1,49 @@
-<div class="navbar">
-    <menu class="menu">
+<nav class="bottom-nav">
+    <span class="nav-pill" [style.transform]="'translateX(' + (activeIndex() * 100) + '%)'"></span>
 
-        <button class="menu__item" routerLinkActive="active" style="--bgColorItem: #ff8c00;">
-            <a routerLink="/library">
-                <svg class="icon mr-2" viewBox="0 0 24 24">
-                    <path stroke-width="2" d="M4 6H20M4 12H20M4 18H20"/>
-                </svg>
-            </a>
-        </button>
+    @for (item of navItems; track item.route; let i = $index) {
+        <a class="nav-item"
+           [class.nav-item-main]="item.isMain"
+           [class.active]="activeIndex() === i"
+           [routerLink]="item.route">
 
-        <button class="menu__item" routerLinkActive="active" style="--bgColorItem: #f54888;">
-            <a routerLink="/calendar">
-                <svg class="icon mr-2-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                     stroke="#ffffff">
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                    <g id="SVGRepo_iconCarrier">
-                        <g id="Calendar / Calendar_Days">
-                            <path id="Vector"
-                                  d="M8 4H7.2002C6.08009 4 5.51962 4 5.0918 4.21799C4.71547 4.40973 4.40973 4.71547 4.21799 5.0918C4 5.51962 4 6.08009 4 7.2002V8M8 4H16M8 4V2M16 4H16.8002C17.9203 4 18.4796 4 18.9074 4.21799C19.2837 4.40973 19.5905 4.71547 19.7822 5.0918C20 5.5192 20 6.07899 20 7.19691V8M16 4V2M4 8V16.8002C4 17.9203 4 18.4801 4.21799 18.9079C4.40973 19.2842 4.71547 19.5905 5.0918 19.7822C5.5192 20 6.07899 20 7.19691 20H16.8031C17.921 20 18.48 20 18.9074 19.7822C19.2837 19.5905 19.5905 19.2842 19.7822 18.9079C20 18.4805 20 17.9215 20 16.8036V8M4 8H20M16 16H16.002L16.002 16.002L16 16.002V16ZM12 16H12.002L12.002 16.002L12 16.002V16ZM8 16H8.002L8.00195 16.002L8 16.002V16ZM16.002 12V12.002L16 12.002V12H16.002ZM12 12H12.002L12.002 12.002L12 12.002V12ZM8 12H8.002L8.00195 12.002L8 12.002V12Z"
-                                  stroke="#ffffff" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"></path>
-                        </g>
-                    </g>
-                </svg>
-            </a>
-        </button>
+            @if (item.isMain) {
+                <span class="nav-main-circle">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6.5 6.5l11 11M4 9l3-3 3 3M20 15l-3 3-3-3M2.5 11.5l3 3M21.5 9.5l-3-3"/>
+                    </svg>
+                </span>
+            } @else {
+                @switch (item.icon) {
+                    @case ('library') {
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="7" height="7" rx="2"/>
+                            <rect x="14" y="3" width="7" height="7" rx="2"/>
+                            <rect x="3" y="14" width="7" height="7" rx="2"/>
+                            <rect x="14" y="14" width="7" height="7" rx="2"/>
+                        </svg>
+                    }
+                    @case ('calendar') {
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="5" width="18" height="16" rx="2"/>
+                            <path d="M3 9h18M8 3v4M16 3v4"/>
+                        </svg>
+                    }
+                    @case ('stats') {
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 20V10M12 20V4M20 20v-7"/>
+                        </svg>
+                    }
+                    @case ('profile') {
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/>
+                        </svg>
+                    }
+                }
+            }
 
-        <button class="menu__item" routerLinkActive="active" style="--bgColorItem: var(--p-primary-500);">
-            <a routerLink="/workout">
-                <svg class="icon mr-2-5 mb-1" viewBox="0 0 64 64" data-name="Layer 1" id="Layer_1"
-                     xmlns="http://www.w3.org/2000/svg"
-                     fill="#000000">
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                    <g id="SVGRepo_iconCarrier">
-                        <defs>
-                            <style>.cls-1 {
-                                fill: #231f20;
-                            }</style>
-                        </defs>
-                        <title></title>
-                        <path class="cls-1" stroke-width="2"
-                              d="M11.67,37.36h-3a1,1,0,0,1-1-1V27.64a1,1,0,0,1,1-1h3a1,1,0,0,1,1,1v8.72A1,1,0,0,1,11.67,37.36Zm-2-2h1V28.64h-1Z"></path>
-                        <path class="cls-1" stroke-width="2"
-                              d="M15.67,39.59h-4a1,1,0,0,1-1-1V25.41a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1V38.59A1,1,0,0,1,15.67,39.59Zm-3-2h2V26.41h-2Z"></path>
-                        <path class="cls-1" stroke-width="2"
-                              d="M22.32,42H15.67a1,1,0,0,1-1-1V23a1,1,0,0,1,1-1h6.65a1,1,0,0,1,1,1V41A1,1,0,0,1,22.32,42Zm-5.65-2h4.65V24H16.67Z"></path>
-                        <path class="cls-1" stroke-width="2"
-                              d="M55.33,37.36h-3a1,1,0,0,1-1-1V27.64a1,1,0,0,1,1-1h3a1,1,0,0,1,1,1v8.72A1,1,0,0,1,55.33,37.36Zm-2-2h1V28.64h-1Z"></path>
-                        <path class="cls-1" stroke-width="2"
-                              d="M52.32,39.59h-4a1,1,0,0,1-1-1V25.41a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1V38.59A1,1,0,0,1,52.32,39.59Zm-3-2h2V26.41h-2Z"></path>
-                        <path class="cls-1" stroke-width="2"
-                              d="M48.32,42H41.67a1,1,0,0,1-1-1V23a1,1,0,0,1,1-1h6.65a1,1,0,0,1,1,1V41A1,1,0,0,1,48.32,42Zm-5.65-2h4.65V24H42.67Z"></path>
-                        <path class="cls-1" stroke-width="2"
-                              d="M41.67,35H22.32a1,1,0,0,1-1-1V30a1,1,0,0,1,1-1H41.67a1,1,0,0,1,1,1V34A1,1,0,0,1,41.67,35ZM23.32,33H40.67V31H23.32Z"></path>
-                    </g>
-                </svg>
-            </a>
-        </button>
-
-        <button class="menu__item" style="--bgColorItem: #e0b115;" routerLinkActive="active">
-            <a routerLink="/stats">
-                <svg class="icon mr-2 mb-1" viewBox="0 0 24 24" id="thunder" data-name="Flat Color"
-                     xmlns="http://www.w3.org/2000/svg">
-                    <path id="primary" stroke-width="2"
-                          d="M18.82,9.18A2,2,0,0,0,17,8H15.19l1.33-3.26a2,2,0,0,0-.19-1.84A2.06,2.06,0,0,0,14.62,2H10.28A2,2,0,0,0,8.37,3.27l-3.23,8a2,2,0,0,0,.2,1.83,2.06,2.06,0,0,0,1.71.9H9.81L8,20.74a1,1,0,0,0,.5,1.15A1.12,1.12,0,0,0,9,22a1,1,0,0,0,.76-.35l8.8-10.37A2,2,0,0,0,18.82,9.18Z"
-                          ></path>
-                </svg>
-            </a>
-        </button>
-
-        <button class="menu__item" style="--bgColorItem:#65ddb7;" routerLinkActive="active">
-            <a routerLink="/user">
-                <svg class="icon mt-1" viewBox="0 0 24 24">
-                    <path stroke-width="2"
-                          d="M8 7C9.65685 7 11 5.65685 11 4C11 2.34315 9.65685 1 8 1C6.34315 1 5 2.34315 5 4C5 5.65685 6.34315 7 8 7Z"/>
-                    <path stroke-width="2" d="M14 12C14 10.3431 12.6569 9 11 9H5C3.34315 9 2 10.3431 2 12V15H14V12Z"/>
-                </svg>
-            </a>
-        </button>
-
-        <div class="menu__border"></div>
-
-    </menu>
-
-    <div class="svg-container">
-        <svg viewBox="0 0 202.9 45.5">
-            <clipPath id="menu" clipPathUnits="objectBoundingBox"
-                      transform="scale(0.0049285362247413 0.021978021978022)">
-                <path d="M6.7,45.5c5.7,0.1,14.1-0.4,23.3-4c5.7-2.3,9.9-5,18.1-10.5c10.7-7.1,11.8-9.2,20.6-14.3c5-2.9,9.2-5.2,15.2-7
-          c7.1-2.1,13.3-2.3,17.6-2.1c4.2-0.2,10.5,0.1,17.6,2.1c6.1,1.8,10.2,4.1,15.2,7c8.8,5,9.9,7.1,20.6,14.3c8.3,5.5,12.4,8.2,18.1,10.5
-          c9.2,3.6,17.6,4.2,23.3,4H6.7z"/>
-            </clipPath>
-        </svg>
-    </div>
-</div>
+            <small>{{ item.label }}</small>
+        </a>
+    }
+</nav>

@@ -1,6 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ConfirmationService } from 'primeng/api';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { ChangeThemeComponent } from './change-theme/change-theme.component';
 import { ManageAccountComponent } from './manage-account/manage-account.component';
 import { Alert } from '../../../interfaces/alert';
@@ -12,15 +10,16 @@ import { User } from '../../../interfaces/User';
 
 @Component({
     selector: 'app-view-profile',
-    imports: [ReactiveFormsModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink],
+    imports: [ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink],
     templateUrl: './view-profile.component.html',
     styleUrl: './view-profile.component.scss',
-    standalone: true,
-    providers: [ConfirmationService]
+    standalone: true
 })
 export class ViewProfileComponent implements OnInit {
 
     user: User | undefined;
+
+    protected readonly initial = computed(() => this.user?.email.charAt(0).toUpperCase() ?? '');
 
     private readonly alertService = inject(AlertService);
     private readonly authService = inject(AuthService);

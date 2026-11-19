@@ -1,9 +1,68 @@
-.image {
-    width: 250px;
+.exercise-view {
+    margin: 12px;
+}
+
+.exercise-back {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--chips-background-color);
+    background: var(--card-background);
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    transition: transform .15s cubic-bezier(.34, 1.56, .64, 1);
+
+    &:active {
+        transform: scale(.88);
+    }
+
+    svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+}
+
+.exercise-hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 220px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 16px;
+}
+
+.exercise-hero-image {
+    width: 65%;
+    height: 65%;
+    object-fit: contain;
+}
+
+.exercise-view-body h1 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 18px;
 }
 
 .exercise-description {
     white-space: pre-line;
+    color: var(--p-text-muted-color);
+    line-height: 1.6;
 }
 
 .informations {
@@ -12,11 +71,18 @@
         border-collapse: collapse;
 
         td {
-            padding: 6px 0;
+            padding: 10px 0;
         }
 
         tr:not(:last-child) td {
-            border-bottom: 1px solid rgba(0, 0, 0, .1);
+            border-bottom: 1px solid var(--chips-background-color);
         }
     }
+}
+
+.exercise-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px 0;
 }

@@ -32,17 +32,17 @@ describe('ChangeThemeComponent', () => {
         expect(component.isCheckedDarkMode).toBe(true);
     });
 
-    it('updatePreset() persists the chosen theme name', () => {
+    it('updatePreset() persists the chosen theme name and updates selectedTheme', () => {
         component.updatePreset('emerald');
 
         expect(localStorage.getItem('theme')).toBe('emerald');
+        expect(component.selectedTheme).toBe('emerald');
     });
 
     it('toggleDarkMode() toggles the dark-mode class and persists the state', () => {
-        component.isCheckedDarkMode = true;
+        component.toggleDarkMode(true);
 
-        component.toggleDarkMode();
-
+        expect(component.isCheckedDarkMode).toBe(true);
         expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
         expect(localStorage.getItem('dark-mode')).toBe('true');
     });

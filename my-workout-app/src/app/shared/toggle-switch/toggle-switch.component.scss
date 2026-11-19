@@ -1,0 +1,35 @@
+.toggle-switch {
+    flex-shrink: 0;
+    width: 46px;
+    height: 27px;
+    border-radius: 9999px;
+    border: none;
+    padding: 3px;
+    background: var(--chips-background-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background .25s ease;
+    -webkit-tap-highlight-color: transparent;
+
+    &.checked {
+        background: var(--p-primary-color);
+    }
+
+    &:active .toggle-thumb {
+        width: 25px;
+    }
+}
+
+.toggle-thumb {
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+    transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), width .15s ease;
+}
+
+.toggle-switch.checked .toggle-thumb {
+    transform: translateX(19px);
+}

@@ -104,4 +104,18 @@ describe('ViewExerciseComponent', () => {
 
         expect(navigateSpy).toHaveBeenCalledWith(['admin', 'update-exercise', 5]);
     });
+
+    it('goBack() navigates up to the parent library route', () => {
+        createComponent();
+        const router = TestBed.inject(Router);
+        const navigateSpy = vi.spyOn(router, 'navigate');
+
+        fixture.detectChanges();
+        httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
+        httpMock.expectOne(`${ exerciseService.exerciseUrl }/5`).flush(exerciseMuscle);
+
+        component['goBack']();
+
+        expect(navigateSpy).toHaveBeenCalledWith(['..'], { relativeTo: component['route'] });
+    });
 });

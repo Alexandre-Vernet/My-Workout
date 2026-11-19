@@ -1,0 +1,67 @@
+@keyframes field-error-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.field {
+    position: relative;
+    width: 100%;
+
+    input,
+    textarea {
+        width: 100%;
+        padding: 20px 14px 8px;
+        border: 1.5px solid var(--chips-background-color);
+        border-radius: var(--radius-md);
+        background: var(--card-background);
+        color: inherit;
+        font: inherit;
+        outline: none;
+        transition: border-color .2s ease, box-shadow .2s ease;
+
+        &:focus {
+            border-color: var(--p-primary-400);
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--p-primary-color) 15%, transparent);
+        }
+    }
+
+    textarea {
+        min-height: 140px;
+        padding-top: 24px;
+        resize: none;
+        line-height: 1.5;
+    }
+
+    label {
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        color: var(--p-text-muted-color);
+        font-size: 1em;
+        pointer-events: none;
+        transition: top .18s ease, font-size .18s ease, color .18s ease, font-weight .18s ease;
+    }
+
+    input:focus ~ label,
+    input:not(:placeholder-shown) ~ label,
+    textarea:focus ~ label,
+    textarea:not(:placeholder-shown) ~ label {
+        top: 7px;
+        font-size: .72em;
+        font-weight: 700;
+        color: var(--p-primary-color);
+    }
+}
+
+.field-error {
+    margin-top: 6px;
+    font-size: .8em;
+    color: var(--p-red-400);
+    animation: field-error-in .18s ease;
+}

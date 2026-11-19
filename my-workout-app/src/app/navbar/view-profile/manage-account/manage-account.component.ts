@@ -1,21 +1,16 @@
 import { Component, inject, OnInit, output } from '@angular/core';
-import { Button } from 'primeng/button';
-import { FloatLabel } from 'primeng/floatlabel';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
-import { ToggleSwitch } from 'primeng/toggleswitch';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UpdateUserRequest } from '../../../../interfaces/UpdateUserRequest';
 import { AuthService } from '../../../auth/auth.service';
 import { Alert } from '../../../../interfaces/alert';
-import { Ripple } from 'primeng/ripple';
 import { Router } from "@angular/router";
 import { CustomError } from "../../../../interfaces/CustomError";
 import { applyValidationErrors, getErrorCode, isValidationError } from "../../../shared/utils/http-error";
+import { ToggleSwitchComponent } from '../../../shared/toggle-switch/toggle-switch.component';
 
 @Component({
     selector: 'app-manage-account',
-    imports: [Button, FloatLabel, FormsModule, InputText, Message, ToggleSwitch, ReactiveFormsModule, Ripple],
+    imports: [ReactiveFormsModule, ToggleSwitchComponent],
     templateUrl: './manage-account.component.html',
     styleUrl: './manage-account.component.scss',
     standalone: true

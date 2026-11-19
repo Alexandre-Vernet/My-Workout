@@ -1,5 +1,5 @@
 import { Component, input, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { AlertService } from '../../../services/alert.service';
 import { Button } from 'primeng/button';
@@ -11,6 +11,7 @@ import { ExerciseMuscle } from '../../../../interfaces/ExerciseMuscle';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 import { DifficultyLabelPipe } from "../../../shared/pipes/difficulty-label.pipe";
 import { MechanicLabelPipe } from "../../../shared/pipes/mechanic-label.pipe";
+import { getMuscleGroupColor } from "../../../shared/utils/muscle-group-color";
 
 @Component({
     selector: 'app-view-exercise',
@@ -24,6 +25,7 @@ export class ViewExerciseComponent implements OnInit {
     private readonly alertService = inject(AlertService);
     private readonly authService = inject(AuthService);
     private readonly router = inject(Router);
+    private readonly route = inject(ActivatedRoute);
 
 
     exerciseId = input.required<number>();
@@ -43,6 +45,16 @@ export class ViewExerciseComponent implements OnInit {
                 },
                 error: () => this.router.navigate(['not-found'])
             });
+    }
+
+    protected get heroColor(): string {
+        return getMuscleGroupColor(this.exerciseMuscle.muscles?.[0]?.muscleGroup?.name);
+    }
+
+    // Closes the detail overlay by navigating back up to the library list route
+    // (this component is nested under it — see app.routes.ts).
+    protected goBack() {
+        this.router.navigate(['..'], { relativeTo: this.route });
     }
 
     toggleExerciseWorkout() {

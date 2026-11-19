@@ -1,0 +1,21 @@
+@if (open()) {
+    <div class="confirm-backdrop" (click)="cancelled.emit()">
+        <div class="confirm-card" (click)="$event.stopPropagation()">
+            <h2>{{ title() }}</h2>
+            <p>{{ message() }}</p>
+            <div class="confirm-actions">
+                <button type="button" class="btn btn-secondary" (click)="cancelled.emit()">
+                    {{ cancelLabel() }}
+                </button>
+                <button
+                    type="button"
+                    class="btn"
+                    [class.btn-danger]="danger()"
+                    [class.btn-primary]="!danger()"
+                    (click)="confirmed.emit()">
+                    {{ confirmLabel() }}
+                </button>
+            </div>
+        </div>
+    </div>
+}

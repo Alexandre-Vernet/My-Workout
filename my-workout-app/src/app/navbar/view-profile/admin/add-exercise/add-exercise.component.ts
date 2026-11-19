@@ -1,55 +1,38 @@
-import { Component, input, OnInit, inject } from '@angular/core';
+import { Component, input, OnInit, inject, signal } from '@angular/core';
 import { ExerciseService } from '../../../../services/exercise.service';
 import { Exercise } from '../../../../../interfaces/Exercise';
-import { Button } from 'primeng/button';
-import { FloatLabel } from 'primeng/floatlabel';
-import { InputText } from 'primeng/inputtext';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Textarea } from 'primeng/textarea';
 import { MuscleService } from '../../../../services/muscle.service';
-import { MultiSelect } from 'primeng/multiselect';
 import { Muscle } from '../../../../../interfaces/Muscle';
 import { AlertService } from '../../../../services/alert.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Router } from '@angular/router';
 import { filter, switchMap, tap } from 'rxjs';
-import { Message } from 'primeng/message';
 import { ExerciseMuscle } from '../../../../../interfaces/ExerciseMuscle';
 import { CustomError } from "../../../../../interfaces/CustomError";
 import { MuscleDropdown } from "../../../../../interfaces/MuscleDropdown";
 import { MechanicEnum } from "../../../../../interfaces/MechanicEnum";
 import { DifficultyEnum } from "../../../../../interfaces/DifficultyEnum";
-import { RadioButton } from "primeng/radiobutton";
 import { DifficultyLabelPipe } from "../../../../shared/pipes/difficulty-label.pipe";
 import { MechanicLabelPipe } from "../../../../shared/pipes/mechanic-label.pipe";
-import { getErrorCode } from "../../../../shared/utils/http-error";
+import { getErrorCode, getErrorMessage } from "../../../../shared/utils/http-error";
+import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
+import { getMuscleGroupColor } from '../../../../shared/utils/muscle-group-color';
 
 @Component({
     selector: 'app-add-exercise',
     templateUrl: './add-exercise.component.html',
-    styleUrls: ['./add-exercise.component.scss'],
+    styleUrl: './add-exercise.component.scss',
     imports: [
-        Button,
-        FloatLabel,
-        InputText,
         ReactiveFormsModule,
-        Textarea,
-        MultiSelect,
-        ConfirmDialog,
-        Message,
-        RadioButton,
         DifficultyLabelPipe,
         MechanicLabelPipe,
-    ],
-    providers: [ConfirmationService, MessageService]
+        ConfirmDialogComponent,
+    ]
 })
 export class AddExerciseComponent implements OnInit {
     private readonly exerciseService = inject(ExerciseService);
     private readonly muscleService = inject(MuscleService);
     private readonly alertService = inject(AlertService);
-    private readonly confirmationService = inject(ConfirmationService);
-    private readonly messageService = inject(MessageService);
     private readonly router = inject(Router);
 
 
@@ -57,6 +40,7 @@ export class AddExerciseComponent implements OnInit {
 
     protected readonly MechanicEnum = MechanicEnum;
     protected readonly DifficultyEnum = DifficultyEnum;
+    protected readonly getMuscleGroupColor = getMuscleGroupColor;
 
     formAddExercise = new FormGroup({
         id: new FormControl<number | null>(null),
@@ -70,6 +54,8 @@ export class AddExerciseComponent implements OnInit {
     loadingDescription = false;
 
     musclesDropdown: MuscleDropdown[] = [];
+    musclesPanelOpen = signal(false);
+    addToWorkoutConfirm = signal<Exercise | null>(null);
 
     ngOnInit() {
         this.muscleService.findAllMuscles()
@@ -133,7 +119,21 @@ export class AddExerciseComponent implements OnInit {
             })
     }
 
-    createExercise(event: Event) {
+    isMuscleSelected(muscle: Muscle): boolean {
+        return !!this.formAddExercise.controls.muscles.value?.some(selected => selected.id === muscle.id);
+    }
+
+    toggleMuscle(muscle: Muscle) {
+        const muscles = this.formAddExercise.controls.muscles.value ?? [];
+        const updatedMuscles = this.isMuscleSelected(muscle)
+            ? muscles.filter(selected => selected.id !== muscle.id)
+            : [...muscles, muscle];
+
+        this.formAddExercise.controls.muscles.setValue(updatedMuscles);
+        this.formAddExercise.controls.muscles.markAsTouched();
+    }
+
+    createExercise() {
         const { id, name, description, muscles, difficulty, mechanic } = this.formAddExercise.getRawValue();
         const exercise: Exercise = {
             id: id ?? undefined,
@@ -156,7 +156,7 @@ export class AddExerciseComponent implements OnInit {
                         message: 'L\'exercice a bien été mis à jour'
                     });
                     if (!exercise.id) {
-                        this.showDialogAddExerciseToWorkout(exerciseCreated, event);
+                        this.addToWorkoutConfirm.set(exerciseCreated);
                     }
                 },
                 error: (err: CustomError) => {
@@ -182,33 +182,18 @@ export class AddExerciseComponent implements OnInit {
             });
     }
 
+    confirmAddToWorkout() {
+        const exercise = this.addToWorkoutConfirm();
+        if (!exercise) {
+            return;
+        }
 
-    private showDialogAddExerciseToWorkout(exercise: Exercise, event: Event) {
-        this.confirmationService.confirm({
-            target: event.target as EventTarget,
-            message: 'Voulez-vous ajouter cet exercice à vos entraînements ?',
-            header: 'Confirmation',
-            closable: true,
-            closeOnEscape: true,
-            icon: 'pi pi-exclamation-triangle',
-            rejectButtonProps: {
-                label: 'Non',
-                severity: 'secondary',
-                outlined: true,
-            },
-            acceptButtonProps: {
-                label: 'Oui',
-            },
-            accept: () => this.addExerciseToWorkout(exercise),
-            reject: () => {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Rejected',
-                    detail: 'You have rejected',
-                    life: 3000,
-                });
-            },
-        });
+        this.addToWorkoutConfirm.set(null);
+        this.addExerciseToWorkout(exercise);
+    }
+
+    cancelAddToWorkout() {
+        this.addToWorkoutConfirm.set(null);
     }
 
     private addExerciseToWorkout(exercise: Exercise) {
@@ -220,10 +205,10 @@ export class AddExerciseComponent implements OnInit {
                         message: 'Exercice ajouté à vos entraînements'
                     });
                 },
-                error: (err) => {
+                error: (err: CustomError) => {
                     this.alertService.show({
                         severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'enregistrer cet exercice'
+                        message: getErrorMessage(err, 'Impossible d\'enregistrer cet exercice')
                     });
                 }
             });

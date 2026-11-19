@@ -1,27 +1,31 @@
-<div [routerLink]="['/', 'library', 'exercise', exercise().id]">
-    <h3 class="text-primary mb-2">{{ exercise().name }}</h3>
-</div>
+<a class="history-exercise-name" [routerLink]="['/', 'library', 'exercise', exercise().id]">
+    {{ exercise().name }}
+</a>
 
-@for (history of histories(); track history.id) {
-    <div class="flex flex-row text-sm text-color-secondary gap-1">
-        <span>{{ history?.reps }}</span>
-        @if (history.reps && history.weight) {
-            <span>x</span>
-        }
-        @if (history.weight) {
-            <span>{{ history.weight }} kg</span>
-        }
-        @if (!history.weight && history.reps === 1) {
-            <span>répétition</span>
-        }
-        @if (!history.weight && (history.reps ?? 0) > 1) {
-            <span>répétitions</span>
-        }
-        @if (history.unilateral) {
-            (unilatéral)
-        }
-        @if (!history.weight && !history.reps && history.duration) {
-            <span>{{ history.duration | convertTime }}</span>
-        }
-    </div>
-}
+<div class="history-sets">
+    @for (history of histories(); track history.id) {
+        <span class="history-set">
+            @if (history?.reps) {
+                <span>{{ history.reps }}</span>
+            }
+            @if (history.reps && history.weight) {
+                <span>x</span>
+            }
+            @if (history.weight) {
+                <span>{{ history.weight }} kg</span>
+            }
+            @if (!history.weight && history.reps === 1) {
+                <span>répétition</span>
+            }
+            @if (!history.weight && (history.reps ?? 0) > 1) {
+                <span>répétitions</span>
+            }
+            @if (history.unilateral) {
+                <span class="history-set-unilateral">(unilatéral)</span>
+            }
+            @if (!history.weight && !history.reps && history.duration) {
+                <span>{{ history.duration | convertTime }}</span>
+            }
+        </span>
+    }
+</div>

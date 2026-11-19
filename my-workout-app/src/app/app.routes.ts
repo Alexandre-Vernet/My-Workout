@@ -21,12 +21,13 @@ import { NotFoundComponent } from "./shared/not-found/not-found.component";
 
 export const appRoutes: Route[] = [
     {
+        // ViewExerciseComponent is nested (not a sibling) so ListExercisesComponent stays
+        // mounted underneath it — the exercise detail renders in its child <router-outlet>
+        // as a sliding overlay instead of a full page swap, while keeping a real,
+        // shareable URL and working browser back button.
         path: MenuUrls.library,
+        component: ListExercisesComponent,
         children: [
-            {
-                path: '',
-                component: ListExercisesComponent
-            },
             {
                 path: 'exercise/:exerciseId',
                 component: ViewExerciseComponent

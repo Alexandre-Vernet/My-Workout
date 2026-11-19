@@ -53,6 +53,19 @@ img {
     --step-button-border-color: #e2e8f0;
     --login-text-color: #000000;
     --chips-background-color: #e2e8f0;
+
+    /* Redesign tokens: shared rounding/elevation/glass scale, built on the existing
+       PrimeNG preset + card variables above so they follow theme and dark mode changes. */
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+    --shadow-elevated: 0 20px 45px -20px rgba(15, 15, 35, 0.18);
+    --surface-glass: rgba(255, 255, 255, 0.78);
+
+    /* Floating bottom-nav footprint, used by any fixed element (e.g. the calendar's
+       day sheet) that needs to stop above it instead of sliding underneath. */
+    --bottom-nav-height: 68px;
+    --bottom-nav-offset: max(16px, env(safe-area-inset-bottom));
 }
 
 .dark-mode {
@@ -64,6 +77,9 @@ img {
     --fc-border-color: #2a2a2a;
     --step-button-border-color: #2a2a2a;
     --chips-background-color: var(--p-surface-700);
+
+    --shadow-elevated: 0 20px 45px -20px rgba(0, 0, 0, 0.65);
+    --surface-glass: rgba(24, 24, 28, 0.72);
 }
 
 

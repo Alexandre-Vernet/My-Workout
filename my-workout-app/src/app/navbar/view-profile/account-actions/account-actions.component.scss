@@ -1,0 +1,8 @@
+@use "../../../../sections";
+@use "../../../../buttons";
+
+.actions-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

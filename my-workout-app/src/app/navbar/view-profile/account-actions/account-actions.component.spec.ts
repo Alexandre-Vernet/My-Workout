@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
-import { ConfirmationService } from 'primeng/api';
 import { AccountActionsComponent } from './account-actions.component';
 import { AuthService } from '../../../auth/auth.service';
 import { MenuUrls } from '../../../shared/menu-urls';
@@ -12,7 +11,6 @@ describe('AccountActionsComponent', () => {
     let component: AccountActionsComponent;
     let httpMock: HttpTestingController;
     let authService: AuthService;
-    let confirmationService: ConfirmationService;
     let router: Router;
 
     beforeEach(() => {
@@ -27,7 +25,6 @@ describe('AccountActionsComponent', () => {
         component = fixture.componentInstance;
         httpMock = TestBed.inject(HttpTestingController);
         authService = TestBed.inject(AuthService);
-        confirmationService = fixture.debugElement.injector.get(ConfirmationService);
         router = TestBed.inject(Router);
     });
 
@@ -45,13 +42,29 @@ describe('AccountActionsComponent', () => {
         expect(navigateSpy).toHaveBeenCalledWith([MenuUrls.library]);
     });
 
-    it('openDialogConfirmDeleteAccount() asks for confirmation before deleting', () => {
-        const confirmSpy = vi.spyOn(confirmationService, 'confirm');
-
+    it('openDialogConfirmDeleteAccount() opens the confirmation dialog without deleting yet', () => {
         component.openDialogConfirmDeleteAccount();
 
-        expect(confirmSpy).toHaveBeenCalledOnce();
+        expect(component['confirmDeleteOpen']()).toBe(true);
         httpMock.expectNone(authService.authUrl);
+    });
+
+    it('onCancelDelete() closes the dialog without deleting', () => {
+        component.openDialogConfirmDeleteAccount();
+
+        component.onCancelDelete();
+
+        expect(component['confirmDeleteOpen']()).toBe(false);
+        httpMock.expectNone(authService.authUrl);
+    });
+
+    it('onConfirmDelete() closes the dialog and deletes the account', () => {
+        component.openDialogConfirmDeleteAccount();
+
+        component.onConfirmDelete();
+
+        expect(component['confirmDeleteOpen']()).toBe(false);
+        httpMock.expectOne(authService.authUrl).flush(null);
     });
 
     describe('deleteAccount()', () => {

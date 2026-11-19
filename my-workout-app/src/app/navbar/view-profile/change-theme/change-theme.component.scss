@@ -1,18 +1,28 @@
-.palette-container {
-    width: 100%;
+@use "../../../../sections";
 
-    .palette-label {
-        font-size: 14px;
+.swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: 0 0 0 2px var(--card-background);
+    transition: transform .2s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s ease;
+    -webkit-tap-highlight-color: transparent;
+
+    &:active {
+        transform: scale(.88);
     }
 
-    .palette {
-        height: 12px;
-        border-radius: 9999px;
-        overflow: hidden;
-
-        div {
-            flex: 1;
-            border-radius: 1px;
-        }
+    &.selected {
+        box-shadow: 0 0 0 2px var(--card-background), 0 0 0 4px currentColor;
+        transform: scale(1.08);
     }
 }

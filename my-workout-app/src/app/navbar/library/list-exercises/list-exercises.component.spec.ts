@@ -45,10 +45,13 @@ describe('ListExercisesComponent', () => {
         setup();
         fixture.detectChanges();
 
+        expect(component.loading).toBe(true);
+
         httpMock.expectOne(exerciseService.exerciseUrl).flush(exercises);
 
         expect(component.exercises).toEqual(exercises);
         expect(component.filterExercises).toEqual(exercises);
+        expect(component.loading).toBe(false);
     });
 
     it('shows an error alert when the exercise list fails to load', () => {
@@ -60,6 +63,7 @@ describe('ListExercisesComponent', () => {
             .flush('error', { status: 500, statusText: 'Server error' });
 
         expect(alertService.alert()?.severity).toBe('error');
+        expect(component.loading).toBe(false);
     });
 
     it('applies the muscleGroup query param by filtering the library on load', () => {
@@ -143,6 +147,67 @@ describe('ListExercisesComponent', () => {
 
             expect(component.filterExercises).toEqual([exercises[0]]);
             expect(component.selectedMuscleGroup).toBeNull();
+        });
+    });
+
+    describe('exercise detail overlay (onDetailActivate / onDetailDeactivate)', () => {
+        it('opens when the nested exercise route activates', () => {
+            setup();
+
+            component['onDetailActivate']();
+
+            expect(component['detailOpen']()).toBe(true);
+        });
+
+        it('closes when the nested exercise route deactivates', () => {
+            setup();
+            component['onDetailActivate']();
+
+            component['onDetailDeactivate']();
+
+            expect(component['detailOpen']()).toBe(false);
+        });
+    });
+
+    describe('isBrowsing / groupedExercises (default browse view)', () => {
+        const pectoraux: Exercise = {
+            id: 3, name: 'Développé couché',
+            muscles: [{ id: 1, name: 'Grand pectoral', muscleGroup: { id: 1, name: 'pectoraux' } }]
+        };
+        const jambes: Exercise = {
+            id: 4, name: 'Squat',
+            muscles: [{ id: 2, name: 'Quadriceps', muscleGroup: { id: 3, name: 'jambes' } }]
+        };
+
+        beforeEach(() => {
+            setup();
+            fixture.detectChanges();
+            httpMock.expectOne(exerciseService.exerciseUrl).flush([pectoraux, jambes]);
+        });
+
+        it('is true when neither a muscle group filter nor a search is active', () => {
+            expect(component['isBrowsing']).toBe(true);
+        });
+
+        it('is false once a muscle group filter is selected', () => {
+            component['filterExercise'](3);
+            httpMock.expectOne(`${ exerciseService.exerciseUrl }/muscle-group/3`).flush([jambes]);
+
+            expect(component['isBrowsing']).toBe(false);
+        });
+
+        it('is false once a search term is entered', () => {
+            component.searchExercise.setValue('squ');
+
+            expect(component['isBrowsing']).toBe(false);
+        });
+
+        it('groups exercises by muscle group, sorted by label', () => {
+            const groups = component['groupedExercises'];
+
+            expect(groups.map((g: { label: string }) => g.label)).toEqual(['Jambes', 'Pecs']);
+            expect(groups.find((g: { label: string }) => g.label === 'Pecs')?.exercises).toEqual([pectoraux]);
+            expect(groups.find((g: { label: string }) => g.label === 'Jambes')?.exercises).toEqual([jambes]);
         });
     });
 });

@@ -1,10 +1,37 @@
-<p-confirmdialog></p-confirmdialog>
+<div class="section">
+    <h2 class="section-title">
+        <span class="section-icon">
+            <svg viewBox="0 0 24 24">
+                <path d="M4 6h16M4 12h16M4 18h16"/>
+                <circle cx="9" cy="6" r="1.6" fill="currentColor" stroke="none"/>
+                <circle cx="15" cy="12" r="1.6" fill="currentColor" stroke="none"/>
+                <circle cx="9" cy="18" r="1.6" fill="currentColor" stroke="none"/>
+            </svg>
+        </span>
+        Actions
+    </h2>
 
-<div class="m-1 flex-1 flex flex-column gap-3">
-    <span class="text-lg text-color-secondary">Actions</span>
-    <div class="flex-1 flex justify-content-between align-items-center">
-        <p-button pRipple icon="pi pi-lock" label="Déconnexion" severity="secondary" (onClick)="signOut()" />
-        <p-button pRipple icon="pi pi-trash" label="Supprimer mon compte" severity="danger"
-                  (onClick)="openDialogConfirmDeleteAccount()" />
+    <div class="actions-row">
+        <button type="button" class="btn btn-secondary" (click)="signOut()">
+            <svg viewBox="0 0 24 24">
+                <path d="M9 12h12m0 0l-4-4m4 4l-4 4M15 5V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1"/>
+            </svg>
+            Déconnexion
+        </button>
+        <button type="button" class="btn btn-danger" (click)="openDialogConfirmDeleteAccount()">
+            <svg viewBox="0 0 24 24">
+                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
+            </svg>
+            Supprimer mon compte
+        </button>
     </div>
 </div>
+
+<app-confirm-dialog
+    [open]="confirmDeleteOpen()"
+    message="Voulez-vous vraiment supprimer votre compte ainsi que toutes vos données ?"
+    confirmLabel="Supprimer"
+    cancelLabel="Annuler"
+    [danger]="true"
+    (confirmed)="onConfirmDelete()"
+    (cancelled)="onCancelDelete()"/>

@@ -1,0 +1,28 @@
+@use "../../../../sections";
+@use "../../../../fields";
+@use "../../../../buttons";
+
+.account-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.password-reveal {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height .3s ease, opacity .25s ease;
+
+    &.open {
+        max-height: 260px;
+        opacity: 1;
+    }
+}
+
+.password-reveal-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 2px;
+}
