@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
+import { I18N } from '../i18n/i18n';
 
 @Component({
     selector: 'app-number-stepper',
@@ -8,6 +9,8 @@ import { ChangeDetectionStrategy, Component, input, model, output } from '@angul
     standalone: true
 })
 export class NumberStepperComponent {
+
+    protected readonly i18n = I18N.common.numberStepper;
 
     value = model<number | null>(null);
     step = input(1);

@@ -49,7 +49,7 @@
                             [step]="2.5"
                             [min]="0"
                             [max]="500"
-                            suffix=" kg"
+                            [suffix]="i18n.weightSuffix"
                             (valueChange)="onWeightChange($event)"/>
                     </div>
 
@@ -60,12 +60,12 @@
                             [step]="1"
                             [min]="0"
                             [max]="100"
-                            [suffix]="(formWorkout.controls.reps.value ?? 0) <= 1 ? ' rep' : ' reps'"
+                            [suffix]="i18n.repsSuffix(formWorkout.controls.reps.value ?? 0)"
                             (valueChange)="onRepsChange($event)"/>
                     </div>
 
                     <div class="toggle-row">
-                        <label for="unilateral">Unilatéral</label>
+                        <label for="unilateral">{{ i18n.unilateralLabel }}</label>
                         <app-toggle-switch
                             inputId="unilateral"
                             [checked]="!!formWorkout.controls.unilateral.value"

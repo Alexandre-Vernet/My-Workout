@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 import { LoginRequest } from "../../../interfaces/LoginRequest";
+import { I18N } from '../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-login',
@@ -27,10 +28,12 @@ export class LoginComponent {
 
     showDialogForgotPassword = false;
 
+    protected readonly i18n = I18N.auth.login;
+
     private readonly authService = inject(AuthService);
     private readonly router = inject(Router);
 
-    signIn() {
+    protected signIn() {
         const {
             email,
             password

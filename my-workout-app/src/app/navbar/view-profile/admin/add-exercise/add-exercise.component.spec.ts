@@ -38,7 +38,7 @@ describe('AddExerciseComponent', () => {
         httpMock.verify();
     });
 
-    describe('ngOnInit()', () => {
+    describe('initial load', () => {
         it('only loads the muscle dropdown when creating a new exercise', () => {
             createComponent();
             fixture.detectChanges();
@@ -102,13 +102,13 @@ describe('AddExerciseComponent', () => {
         it('toggleMuscle() adds then removes a muscle from the control', () => {
             const muscle = musclesDropdown[0].items[0];
 
-            component.toggleMuscle(muscle);
-            expect(component.isMuscleSelected(muscle)).toBe(true);
+            component['toggleMuscle'](muscle);
+            expect(component['isMuscleSelected'](muscle)).toBe(true);
             expect(component.formAddExercise.controls.muscles.value).toEqual([muscle]);
             expect(component.formAddExercise.controls.muscles.touched).toBe(true);
 
-            component.toggleMuscle(muscle);
-            expect(component.isMuscleSelected(muscle)).toBe(false);
+            component['toggleMuscle'](muscle);
+            expect(component['isMuscleSelected'](muscle)).toBe(false);
             expect(component.formAddExercise.controls.muscles.value).toEqual([]);
         });
     });
@@ -122,7 +122,7 @@ describe('AddExerciseComponent', () => {
         });
 
         it('fills the description field on success', () => {
-            component.generateExerciseDescription();
+            component['generateExerciseDescription']();
 
             httpMock.expectOne(r => r.url === `${ exerciseService.exerciseUrl }/description`)
                 .flush({ description: 'A compound leg exercise.' });
@@ -132,7 +132,7 @@ describe('AddExerciseComponent', () => {
         });
 
         it('flags a quota-exceeded error on the description field', () => {
-            component.generateExerciseDescription();
+            component['generateExerciseDescription']();
 
             httpMock.expectOne(r => r.url === `${ exerciseService.exerciseUrl }/description`)
                 .flush({ errorCode: 'QUOTA_EXCEEDED' }, { status: 429, statusText: 'Too Many Requests' });
@@ -160,7 +160,7 @@ describe('AddExerciseComponent', () => {
         it('shows a success alert and offers to add the new exercise to the workout', () => {
             const alertService = TestBed.inject(AlertService);
 
-            component.createExercise();
+            component['createExercise']();
 
             httpMock.expectOne(exerciseService.exerciseUrl).flush({ id: 1, name: 'Squat' });
 
@@ -171,7 +171,7 @@ describe('AddExerciseComponent', () => {
         it('does not prompt to add to the workout when updating an existing exercise', () => {
             component.formAddExercise.controls.id.setValue(1);
 
-            component.createExercise();
+            component['createExercise']();
 
             httpMock.expectOne(exerciseService.exerciseUrl).flush({ id: 1, name: 'Squat' });
 
@@ -179,7 +179,7 @@ describe('AddExerciseComponent', () => {
         });
 
         it('flags a duplicate exercise name on the name field', () => {
-            component.createExercise();
+            component['createExercise']();
 
             httpMock.expectOne(exerciseService.exerciseUrl)
                 .flush({ errorCode: 'EXERCISE_NAME_ALREADY_EXIST' }, { status: 409, statusText: 'Conflict' });
@@ -188,7 +188,7 @@ describe('AddExerciseComponent', () => {
         });
 
         it('flags a duplicate muscle group on the muscles field', () => {
-            component.createExercise();
+            component['createExercise']();
 
             httpMock.expectOne(exerciseService.exerciseUrl)
                 .flush({ errorCode: 'DOUBLE_MUSCLE_GROUP' }, { status: 409, statusText: 'Conflict' });
@@ -199,10 +199,10 @@ describe('AddExerciseComponent', () => {
         it('confirmAddToWorkout() adds the pending exercise to the workout', () => {
             const alertService = TestBed.inject(AlertService);
 
-            component.createExercise();
+            component['createExercise']();
             httpMock.expectOne(exerciseService.exerciseUrl).flush({ id: 1, name: 'Squat' });
 
-            component.confirmAddToWorkout();
+            component['confirmAddToWorkout']();
 
             httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/toggle`).flush({ id: 1, name: 'Squat' });
 
@@ -211,10 +211,10 @@ describe('AddExerciseComponent', () => {
         });
 
         it('cancelAddToWorkout() clears the pending confirmation without calling the API', () => {
-            component.createExercise();
+            component['createExercise']();
             httpMock.expectOne(exerciseService.exerciseUrl).flush({ id: 1, name: 'Squat' });
 
-            component.cancelAddToWorkout();
+            component['cancelAddToWorkout']();
 
             expect(component.addToWorkoutConfirm()).toBeNull();
             httpMock.expectNone(`${ exerciseService.exerciseUrl }/user/toggle`);

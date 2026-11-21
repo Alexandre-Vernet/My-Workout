@@ -7,6 +7,7 @@ import { AccountActionsComponent } from './account-actions/account-actions.compo
 import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { I18N } from '../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-view-profile',
@@ -21,10 +22,11 @@ export class ViewProfileComponent {
     private readonly alertService = inject(AlertService);
     private readonly authService = inject(AuthService);
 
+    protected readonly i18n = I18N.viewProfile.viewProfile;
     protected readonly user = toSignal(this.authService.getCurrentUser());
     protected readonly initial = computed(() => this.user()?.email.charAt(0).toUpperCase() ?? '');
 
-    displayAlert(alert: Alert) {
+    protected displayAlert(alert: Alert) {
         this.alertService.show(alert);
     }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { Router } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
@@ -17,6 +17,7 @@ import { forkJoin } from "rxjs";
 import { NO_EXERCISES_DIALOG } from "../../../shared/utils/confirm-no-exercises-dialog";
 import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 import { getMuscleGroupColor } from '../../../shared/utils/muscle-group-color';
+import { I18N } from '../../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-select-muscle-group-workout',
@@ -26,7 +27,9 @@ import { getMuscleGroupColor } from '../../../shared/utils/muscle-group-color';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class SelectMuscleGroupWorkoutComponent implements OnInit {
+export class SelectMuscleGroupWorkoutComponent {
+
+    protected readonly i18n = I18N.workout.selectMuscleGroup;
 
     protected readonly muscleGroupExerciseCount = signal<MuscleGroupExerciseCount[] | null>(null);
     protected readonly cardioExercises = signal<Exercise[]>([]);
@@ -44,18 +47,23 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
     private readonly alertService = inject(AlertService);
     private readonly router = inject(Router);
 
-    ngOnInit() {
-        forkJoin([
-            this.muscleGroupService.findAllRecommendedMuscleGroup(),
-            this.exerciseService.findCardioExercises()
-        ])
-            .subscribe(([muscleGroupExerciseCount, cardioExercises]) => {
-                this.muscleGroupExerciseCount.set(muscleGroupExerciseCount);
-                this.cardioExercises.set(cardioExercises);
-            });
+    constructor() {
+        // Deferred to the first change detection flush (like the lifecycle hook it
+        // replaces) rather than fired here, so tests that never call
+        // fixture.detectChanges() don't leave an unflushed HTTP request behind.
+        effect(() => {
+            forkJoin([
+                this.muscleGroupService.findAllRecommendedMuscleGroup(),
+                this.exerciseService.findCardioExercises()
+            ])
+                .subscribe(([muscleGroupExerciseCount, cardioExercises]) => {
+                    this.muscleGroupExerciseCount.set(muscleGroupExerciseCount);
+                    this.cardioExercises.set(cardioExercises);
+                });
+        });
     }
 
-    openModalCardioExerciseChange() {
+    protected openModalCardioExerciseChange() {
         this.isOpenModalExerciseCardio.set(false);
         this.muscleGroupService.findAllRecommendedMuscleGroup()
             .subscribe(muscleGroupExerciseCount => this.muscleGroupExerciseCount.set(muscleGroupExerciseCount));

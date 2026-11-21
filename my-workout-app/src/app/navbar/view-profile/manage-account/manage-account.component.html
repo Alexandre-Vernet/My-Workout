@@ -6,29 +6,29 @@
                 <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/>
             </svg>
         </span>
-        Gérer mon compte
+        {{ i18n.title }}
     </h2>
 
     <form [formGroup]="formGroup" class="account-form">
         <div class="field">
             <input id="email" type="email" formControlName="email" placeholder=" " autocomplete="email"/>
-            <label for="email">Email</label>
+            <label for="email">{{ i18n.emailLabel }}</label>
         </div>
         @if (formGroup.controls.email.touched && formGroup.controls.email.hasError('email')) {
-            <p class="field-error">L'email n'est pas valide</p>
+            <p class="field-error">{{ i18n.emailInvalidError }}</p>
         }
         @if (formGroup.controls.email.touched && formGroup.controls.email.hasError('emailAlreadyInUse')) {
-            <p class="field-error">Cet email est déjà utilisé</p>
+            <p class="field-error">{{ i18n.emailAlreadyInUseError }}</p>
         }
         @if (formGroup.controls.email.hasError('validation')) {
             <p class="field-error">{{ formGroup.controls.email.getError('validation') }}</p>
         }
         @if (formGroup.controls.email.touched && formGroup.controls.email.hasError('unknownError')) {
-            <p class="field-error">Une erreur s'est produite</p>
+            <p class="field-error">{{ i18n.unknownError }}</p>
         }
 
         <div class="toggle-row">
-            <label for="change-password">Changer le mot de passe</label>
+            <label for="change-password">{{ i18n.changePasswordLabel }}</label>
             <app-toggle-switch
                 inputId="change-password"
                 [checked]="isCheckedChangePassword"
@@ -39,10 +39,10 @@
             <div class="password-reveal-inner">
                 <div class="field">
                     <input id="password" type="password" formControlName="password" placeholder=" "/>
-                    <label for="password">Nouveau mot de passe</label>
+                    <label for="password">{{ i18n.newPasswordLabel }}</label>
                 </div>
                 @if (formGroup.controls.password.touched && formGroup.controls.password.hasError('minlength')) {
-                    <p class="field-error">Le mot de passe doit contenir au minimum 6 caractères</p>
+                    <p class="field-error">{{ i18n.passwordMinLengthError }}</p>
                 }
                 @if (formGroup.controls.password.hasError('validation')) {
                     <p class="field-error">{{ formGroup.controls.password.getError('validation') }}</p>
@@ -50,13 +50,13 @@
 
                 <div class="field">
                     <input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder=" "/>
-                    <label for="confirmPassword">Confirmer le mot de passe</label>
+                    <label for="confirmPassword">{{ i18n.confirmPasswordLabel }}</label>
                 </div>
                 @if (formGroup.controls.confirmPassword.touched && formGroup.controls.confirmPassword.hasError('minlength')) {
-                    <p class="field-error">Le mot de passe doit contenir au minimum 6 caractères</p>
+                    <p class="field-error">{{ i18n.passwordMinLengthError }}</p>
                 }
                 @if (formGroup.controls.confirmPassword.touched && formGroup.controls.password.value !== formGroup.controls.confirmPassword.value) {
-                    <p class="field-error">Les mot de passe ne correspondent pas</p>
+                    <p class="field-error">{{ i18n.passwordMismatchError }}</p>
                 }
             </div>
         </div>
@@ -77,7 +77,7 @@
             currentEmail() === formGroup.controls.email.value
           )"
             (click)="updateUser()">
-            Mettre à jour
+            {{ i18n.submit }}
         </button>
     </form>
 </div>

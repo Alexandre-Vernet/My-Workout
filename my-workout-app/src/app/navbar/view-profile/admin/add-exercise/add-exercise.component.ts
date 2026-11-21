@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, inject, signal } from '@angular/core';
 import { ExerciseService } from '../../../../services/exercise.service';
 import { Exercise } from '../../../../../interfaces/Exercise';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,6 +17,7 @@ import { MechanicLabelPipe } from "../../../../shared/pipes/mechanic-label.pipe"
 import { getErrorCode, getErrorMessage } from "../../../../shared/utils/http-error";
 import { ConfirmDialogComponent } from '../../../../shared/confirm-dialog/confirm-dialog.component';
 import { getMuscleGroupColor } from '../../../../shared/utils/muscle-group-color';
+import { I18N } from '../../../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-add-exercise',
@@ -30,7 +31,7 @@ import { getMuscleGroupColor } from '../../../../shared/utils/muscle-group-color
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddExerciseComponent implements OnInit {
+export class AddExerciseComponent {
     private readonly exerciseService = inject(ExerciseService);
     private readonly muscleService = inject(MuscleService);
     private readonly alertService = inject(AlertService);
@@ -39,6 +40,7 @@ export class AddExerciseComponent implements OnInit {
 
     exerciseId = input<number>();
 
+    protected readonly i18n = I18N.viewProfile.addExercise;
     protected readonly MechanicEnum = MechanicEnum;
     protected readonly DifficultyEnum = DifficultyEnum;
     protected readonly getMuscleGroupColor = getMuscleGroupColor;
@@ -58,40 +60,42 @@ export class AddExerciseComponent implements OnInit {
     musclesPanelOpen = signal(false);
     addToWorkoutConfirm = signal<Exercise | null>(null);
 
-    ngOnInit() {
-        this.muscleService.findAllMuscles()
-            .pipe(
-                tap(musclesDropdown => this.musclesDropdown.set(musclesDropdown)),
-                filter(() => !!this.exerciseId()),
-                switchMap(() => this.exerciseService.findExerciseMuscle(this.exerciseId()!))
-            )
-            .subscribe({
-                next: (exerciseMuscle) => {
-                    const exercise = exerciseMuscle.exercise;
-                    if (!exercise) {
-                        return;
-                    }
+    constructor() {
+        effect(() => {
+            this.muscleService.findAllMuscles()
+                .pipe(
+                    tap(musclesDropdown => this.musclesDropdown.set(musclesDropdown)),
+                    filter(() => !!this.exerciseId()),
+                    switchMap(() => this.exerciseService.findExerciseMuscle(this.exerciseId()!))
+                )
+                .subscribe({
+                    next: (exerciseMuscle) => {
+                        const exercise = exerciseMuscle.exercise;
+                        if (!exercise) {
+                            return;
+                        }
 
-                    const allMuscles = this.musclesDropdown().flatMap(group => group.items);
+                        const allMuscles = this.musclesDropdown().flatMap(group => group.items);
 
-                    const selectedMuscles = allMuscles.filter(dropdownMuscle =>
-                        exerciseMuscle.muscles?.some(muscle => muscle.id === dropdownMuscle.id)
-                    );
+                        const selectedMuscles = allMuscles.filter(dropdownMuscle =>
+                            exerciseMuscle.muscles?.some(muscle => muscle.id === dropdownMuscle.id)
+                        );
 
-                    this.formAddExercise.patchValue({
-                        id: exercise.id,
-                        name: exercise.name,
-                        description: exercise.description,
-                        muscles: selectedMuscles,
-                        difficulty: exercise.difficulty as DifficultyEnum,
-                        mechanic: exercise.mechanic as MechanicEnum
-                    });
-                },
-                error: () => this.router.navigate(['not-found'])
-            });
+                        this.formAddExercise.patchValue({
+                            id: exercise.id,
+                            name: exercise.name,
+                            description: exercise.description,
+                            muscles: selectedMuscles,
+                            difficulty: exercise.difficulty as DifficultyEnum,
+                            mechanic: exercise.mechanic as MechanicEnum
+                        });
+                    },
+                    error: () => this.router.navigate(['not-found'])
+                });
+        });
     }
 
-    generateExerciseDescription() {
+    protected generateExerciseDescription() {
         this.loadingDescription.set(true);
         const exerciseName = this.formAddExercise.controls.name.value ?? '';
         this.exerciseService.generateExerciseDescription(exerciseName)
@@ -120,11 +124,11 @@ export class AddExerciseComponent implements OnInit {
             })
     }
 
-    isMuscleSelected(muscle: Muscle): boolean {
+    protected isMuscleSelected(muscle: Muscle): boolean {
         return !!this.formAddExercise.controls.muscles.value?.some(selected => selected.id === muscle.id);
     }
 
-    toggleMuscle(muscle: Muscle) {
+    protected toggleMuscle(muscle: Muscle) {
         const muscles = this.formAddExercise.controls.muscles.value ?? [];
         const updatedMuscles = this.isMuscleSelected(muscle)
             ? muscles.filter(selected => selected.id !== muscle.id)
@@ -134,7 +138,7 @@ export class AddExerciseComponent implements OnInit {
         this.formAddExercise.controls.muscles.markAsTouched();
     }
 
-    createExercise() {
+    protected createExercise() {
         const { id, name, description, muscles, difficulty, mechanic } = this.formAddExercise.getRawValue();
         const exercise: Exercise = {
             id: id ?? undefined,
@@ -154,7 +158,7 @@ export class AddExerciseComponent implements OnInit {
                 next: (exerciseCreated) => {
                     this.alertService.show({
                         severity: 'success',
-                        message: 'L\'exercice a bien été mis à jour'
+                        message: this.i18n.exerciseUpdatedSuccess
                     });
                     if (!exercise.id) {
                         this.addToWorkoutConfirm.set(exerciseCreated);
@@ -183,7 +187,7 @@ export class AddExerciseComponent implements OnInit {
             });
     }
 
-    confirmAddToWorkout() {
+    protected confirmAddToWorkout() {
         const exercise = this.addToWorkoutConfirm();
         if (!exercise) {
             return;
@@ -193,7 +197,7 @@ export class AddExerciseComponent implements OnInit {
         this.addExerciseToWorkout(exercise);
     }
 
-    cancelAddToWorkout() {
+    protected cancelAddToWorkout() {
         this.addToWorkoutConfirm.set(null);
     }
 
@@ -203,13 +207,13 @@ export class AddExerciseComponent implements OnInit {
                 next: () => {
                     this.alertService.show({
                         severity: 'success',
-                        message: 'Exercice ajouté à vos entraînements'
+                        message: this.i18n.exerciseAddedToWorkoutSuccess
                     });
                 },
                 error: (err: CustomError) => {
                     this.alertService.show({
                         severity: 'error',
-                        message: getErrorMessage(err, 'Impossible d\'enregistrer cet exercice')
+                        message: getErrorMessage(err, this.i18n.exerciseAddToWorkoutError)
                     });
                 }
             });

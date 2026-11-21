@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CustomError } from "../../../interfaces/CustomError";
 import { getErrorMessage } from "../../shared/utils/http-error";
 import { PasswordResetTokenService } from "../password-reset-token.service";
+import { I18N } from '../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-reset-password',
@@ -13,7 +14,7 @@ import { PasswordResetTokenService } from "../password-reset-token.service";
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class ResetPasswordComponent implements OnInit {
+export class ResetPasswordComponent {
     private readonly passwordResetTokenService = inject(PasswordResetTokenService);
     private readonly router = inject(Router);
 
@@ -24,8 +25,10 @@ export class ResetPasswordComponent implements OnInit {
         confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     });
 
-    ngOnInit() {
-        this.isTokenValid(this.token());
+    protected readonly i18n = I18N.auth.resetPassword;
+
+    constructor() {
+        effect(() => this.isTokenValid(this.token()));
     }
 
     private isTokenValid(token: string) {
@@ -40,15 +43,15 @@ export class ResetPasswordComponent implements OnInit {
             });
     }
 
-    redirectToSignIn() {
+    protected redirectToSignIn() {
         this.router.navigate(['/auth/login']);
     }
 
-    submitForm() {
+    protected submitForm() {
         if (this.formResetPassword.valid) {
             const { newPassword, confirmPassword } = this.formResetPassword.value;
             if (newPassword !== confirmPassword) {
-                this.formResetPassword.setErrors({ error: 'Passwords do not match' });
+                this.formResetPassword.setErrors({ error: this.i18n.passwordsDoNotMatch });
                 return;
             }
             this.resetPassword(newPassword ?? '');
@@ -56,12 +59,12 @@ export class ResetPasswordComponent implements OnInit {
         return;
     }
 
-    resetPassword(password: string) {
+    private resetPassword(password: string) {
         this.passwordResetTokenService.resetPassword(this.token(), password)
             .subscribe({
                 next: () => this.redirectToSignIn(),
                 error: (err: CustomError) => this.formResetPassword.setErrors({
-                    error: getErrorMessage(err, 'Une erreur s\'est produite')
+                    error: getErrorMessage(err, this.i18n.errorFallback)
                 })
             });
     }

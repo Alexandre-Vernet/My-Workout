@@ -54,6 +54,7 @@ projet frontend) ; seuls le thème et les tokens d'authentification vivent dans 
     `prevent-focus-on-button-click.directive.ts`.
   - `pipes/` : `plural.pipe.ts`, `rest-time.pipe.ts`, `difficulty-label.pipe.ts`,
     `mechanic-label.pipe.ts`, `first-letter-uppercase.pipe.ts`, `convert-time.pipe.ts`.
+  - `i18n/` : fichiers de langue — voir [i18n](#i18n--fichier-de-langue-unique).
   - `theme/` : `theme.service.ts` (thème clair/sombre via la classe `.dark-mode` sur
     `<html>`, 17 presets `@primeuix/themes` dans `presets.ts`/`preset-*.ts` ;
     `theme.service.ts` injecte lui-même les variables CSS du thème via
@@ -254,15 +255,31 @@ avec une fonction `transform` pour convertir la chaîne de query param en `numbe
 
 ### Visibilité des membres
 
+La règle s'applique aussi bien aux **propriétés** qu'aux **méthodes** — une méthode
+sans modificateur explicite n'est pas différente d'une propriété sans modificateur,
+elle doit être tranchée de la même façon :
+
 - `private readonly` par défaut pour tout ce qui n'est utilisé que dans la classe —
-  en particulier **tout** service injecté (`private readonly exerciseService = inject(ExerciseService)`).
+  en particulier **tout** service injecté (`private readonly exerciseService = inject(ExerciseService)`)
+  et toute méthode interne appelée seulement par d'autres méthodes de la classe
+  (ex. `private buildPayload(...)`).
 - `protected readonly` uniquement pour ce qui est lu depuis le template du composant
   (ex. `protected readonly restTimeService = inject(RestTimeService)` quand le
-  template fait `restTimeService.restTime()`).
+  template fait `restTimeService.restTime()`, ou `protected onSubmit()` appelée par
+  un `(click)`/`(ngSubmit)` du template).
 - `public` (sans modificateur) réservé à l'API réellement consommée depuis
-  l'extérieur de la classe.
+  l'extérieur de la classe — ce qui inclut les **hooks de cycle de vie Angular**
+  (`ngOnInit`, `ngOnChanges`, `ngOnDestroy`, `ngAfterViewInit`...) et les méthodes
+  d'une interface implémentée (ex. `ControlValueAccessor`) : le framework doit
+  pouvoir les appeler depuis l'extérieur de la classe, elles restent donc sans
+  modificateur (implicitement `public`), ce n'est pas une exception à la règle mais
+  une conséquence de la définition d'« API externe ».
 - `readonly` sur toute propriété jamais réassignée après initialisation (signaux
   compris).
+- Un membre (propriété ou méthode) sans modificateur explicite et qui n'est ni un
+  hook de cycle de vie ni une méthode d'interface implémentée est un oubli à
+  corriger, pas un choix : trancher `private`/`protected`/`public` selon les règles
+  ci-dessus plutôt que le laisser filer en public par défaut.
 
 ## Règles spécifiques à ce projet
 
@@ -332,13 +349,61 @@ ci-dessous, qui n'est plus affaire de goût mais de correction :
   peut garder son `!` : le garde structurel le rend réellement sûr à l'exécution, ce
   n'est pas qu'une déclaration de type.
 
+### `ngOnInit` : à éviter, préférer `effect()`/`computed()`
+
+`ngOnInit()` reste un hook de cycle de vie legacy : il force à relire manuellement
+l'état déjà disponible (un `input()`, un service) au lieu de laisser Angular
+recalculer automatiquement quand cet état change. Dans une app **zoneless** basée sur
+les signaux (voir [État : signaux et RxJS](#état--signaux-et-rxjs-où-tracer-la-limite)),
+c'est l'approche réactive qui doit être le réflexe par défaut, pas `ngOnInit()` :
+
+- Une valeur dérivée d'un ou plusieurs signaux (`input()`, signal de service,
+  `toSignal()`...) sans effet de bord est un `computed()`, jamais un champ calculé
+  une fois dans `ngOnInit()` puis jamais remis à jour.
+- Un chargement déclenché par un `input()` qui change (ex. charger les détails d'un
+  exercice quand `exerciseId` change) est un `effect()` qui lit `this.exerciseId()`
+  et relance l'appel, pas un `ngOnInit()` qui ne s'exécute qu'une fois — ça couvre
+  aussi le cas où l'input change après la création du composant, que `ngOnInit()`
+  seul ne couvre pas.
+- Un appel déclenché une seule fois à la création du composant et qui ne dépend
+  d'aucun signal (ex. un appel HTTP sans paramètre, juste pour peupler l'état
+  initial) reste un `effect()` si cet appel a un effet asynchrone (HTTP,
+  `subscribe()`...) : l'effet ne trackant aucun signal, il ne se déclenche qu'une
+  fois, mais **après** le constructeur plutôt que pendant — ce délai est ce qui fait
+  qu'un test qui ne monte le composant qu'avec `TestBed.createComponent(...)` sans
+  appeler `fixture.detectChanges()` (pour vérifier un état initial synchrone, ou
+  parce que le reste du scénario ne s'y intéresse pas) ne se retrouve pas avec une
+  requête HTTP déclenchée dans son dos et jamais consommée (`httpMock.verify()`
+  échoue, et peut même corrompre le `TestBed` des tests suivants si l'erreur sort
+  d'un `afterEach` — bug réel rencontré en remplaçant plusieurs `ngOnInit()` de ce
+  projet). Seul un appel **synchrone et sans effet de bord observable par un test**
+  (ex. une simple affectation de champ à partir d'une constante) peut aller
+  directement dans le corps du constructeur sans `effect()`. En cas de doute, partir
+  d'`effect()` plutôt que du constructeur nu : le coût est nul (l'effet ne se
+  redéclenche jamais s'il ne lit aucun signal) et ça évite cette classe de bug.
+  N'utiliser `ngOnInit()` que si l'ordre d'initialisation Angular (inputs déjà liés,
+  DI résolue) est réellement requis et qu'aucune des deux options ci-dessus ne
+  s'applique.
+- Avant d'ajouter un `ngOnInit()` à un composant qui n'en a pas, se demander si la
+  donnée qu'il remplit est dérivable (`computed()`) ou doit juste réagir à un signal
+  (`effect()`) — dans les deux cas ça évite le hook. Ne pas retirer un `ngOnInit()`
+  existant juste pour le principe si sa logique ne correspond à aucun des deux
+  patterns ci-dessus (ex. un abonnement avec effet de bord pur, cf.
+  [État : signaux et RxJS](#état--signaux-et-rxjs-où-tracer-la-limite)) — l'objectif
+  est d'en avoir le moins possible, pas de l'interdire totalement.
+
 ### `ngOnChanges` et `ngOnInit` sur le même input
 
 - Angular déclenche `ngOnChanges` avec `firstChange: true` **avant** `ngOnInit()`, dès
   le premier binding d'un input. Si `ngOnInit()` charge déjà des données à partir de
   cet input, `ngOnChanges` ne doit réagir qu'aux changements **suivants**
   (`changes['x'] && !changes['x'].firstChange && ...`), sinon le chargement initial
-  part en double (bug réel corrigé dans `ExercisesTableComponent`).
+  part en double (bug réel corrigé dans `ExercisesTableComponent`). Si l'un ou l'autre
+  de ces deux hooks peut être remplacé par l'`effect()` décrit ci-dessus, ce bug de
+  double appel disparaît par construction (l'`effect()` s'exécute une fois à
+  l'initialisation puis à chaque changement du signal, sans distinction à gérer
+  manuellement) — préférer cette voie plutôt que corriger `firstChange` sur du code
+  neuf.
 
 ### Langue : code en anglais, contenu utilisateur en français
 
@@ -350,6 +415,50 @@ ci-dessous, qui n'est plus affaire de goût mais de correction :
 - Un commentaire n'est utile que pour expliquer un *pourquoi* non évident (ex. le
   fuseau horaire dans `date-utils.ts`) — jamais pour décrire une action qu'on vient
   de faire ou répéter ce que le code dit déjà.
+
+### i18n : fichier de langue unique
+
+Tout le texte brut visible par l'utilisateur (labels, titres, messages d'alerte,
+placeholders, `aria-label`, textes de confirmation...) est centralisé dans
+`src/app/shared/i18n/` plutôt qu'écrit en dur dans un template ou une classe de
+composant :
+
+- Un fichier par domaine (même découpage que `src/app/navbar/` :
+  `auth.ts`, `calendar.ts`, `library.ts`, `stats.ts`, `view-profile.ts`,
+  `workout.ts`, `navbar.ts`, `common.ts` pour ce qui est partagé entre plusieurs
+  écrans — ex. les libellés de boutons génériques comme "Annuler"/"Confirmer"), nommé
+  en kebab-case, qui exporte un `const` objet imbriqué (pas de classe) nommé comme le
+  fichier en camelCase suffixé `I18n` (ex. `export const authI18n = { login: { title:
+  'Connexion', ... }, ... }` dans `auth.ts`).
+- `src/app/shared/i18n/i18n.ts` : barrel qui assemble tous ces fichiers dans un seul
+  objet exporté `I18N` (`export const I18N = { auth: authI18n, calendar:
+  calendarI18n, ... }`) — c'est le seul fichier à toucher pour enregistrer un nouveau
+  domaine.
+- Un composant qui a besoin de ces textes importe `I18N` et expose la portion qui le
+  concerne via un champ `protected readonly i18n = I18N.<domaine>` (ou un sous-chemin
+  plus précis si le composant ne couvre qu'une partie d'un domaine), suivant la même
+  règle de visibilité que le reste (voir [Visibilité des membres](#visibilité-des-membres)) ;
+  le template lit ensuite `{{ i18n.title }}` plutôt que le texte en dur.
+- Un texte interpolé (ex. "Supprimer {{ name }} ?") reste un `const` dans le fichier
+  de langue sous forme de **fonction** plutôt qu'une chaîne à concaténer dans le
+  composant : `deleteConfirm: (name: string) => \`Supprimer ${name} ?\`` — appelée
+  depuis le template (`{{ i18n.deleteConfirm(exercise.name) }}`) ou la classe quand le
+  texte sert à un `AlertService`/dialogue plutôt qu'au template.
+- Les valeurs qui ne sont **pas** du texte libre choisi pour l'utilisateur restent en
+  dehors de ce mécanisme : un nom de donnée métier venant du serveur (nom d'exercice,
+  d'élastique), un code d'erreur, une clé de `localStorage`, un sélecteur CSS, ou tout
+  ce qui est déjà couvert par un pipe dédié (`difficultyLabel`, `mechanicLabel`,
+  `restTime`...) n'a pas sa place dans `i18n/` — seul le texte UI statique écrit par
+  le développeur en dur y va.
+- Avant d'ajouter un composant ou d'en modifier un existant, vérifier qu'aucun texte
+  brut n'est resté dans son `.html` ou son `.ts` (y compris les titres de `confirm()`
+  natifs, les options d'un `@switch`, les `title`/`alt`/`aria-label`...) : plus aucun
+  texte utilisateur en dur n'est toléré dans les templates ou les classes à partir de
+  l'introduction de ce mécanisme.
+- Ça reste un objet TypeScript simple, pas une librairie de traduction (pas de
+  `ngx-translate`, pas de pipe `| translate`) : l'app ne vise qu'une seule langue
+  (français), l'objectif est d'avoir un **point d'édition unique** pour tout le texte
+  affiché, pas un système multilingue — ne pas sur-architecturer au-delà de ce besoin.
 
 ## Nommage
 
@@ -366,3 +475,6 @@ ci-dessous, qui n'est plus affaire de goût mais de correction :
   exporté, en **PascalCase** (`Exercise.ts`, pas `exercise.model.ts`).
 - Fonctions utilitaires pures (`src/app/shared/utils/`) : fichier en kebab-case sans
   suffixe (`date-utils.ts`), pas de classe quand une fonction suffit.
+- Fichiers de langue (`src/app/shared/i18n/`) : fichier en kebab-case par domaine
+  (`auth.ts`, `common.ts`...), `const` exporté en camelCase suffixé `I18n`
+  (`authI18n`) — voir [i18n](#i18n--fichier-de-langue-unique).

@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, input, OnDestroy, signal, ViewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HistoryService } from '../../../services/history.service';
 import { ExerciseGraphs } from '../../../../interfaces/ExerciseGraphs';
 import { HistoryPoint } from '../../../../interfaces/HistoryPoint';
+import { I18N } from '../../../shared/i18n/i18n';
 import Chart, { ChartItem } from 'chart.js/auto';
 
 type Period = '1m' | '3m' | '6m' | '1y' | 'all';
@@ -25,18 +26,14 @@ const DEFAULT_PERIOD_POINT_THRESHOLD = 30;
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class GraphsComponent implements OnInit, OnDestroy {
+export class GraphsComponent implements OnDestroy {
 
     exerciseId = input.required<number>();
     protected readonly exerciseGraphs = signal<ExerciseGraphs | undefined>(undefined);
 
-    protected readonly periods: ReadonlyArray<{ key: Period, label: string }> = [
-        { key: '1m', label: '1M' },
-        { key: '3m', label: '3M' },
-        { key: '6m', label: '6M' },
-        { key: '1y', label: '1A' },
-        { key: 'all', label: 'Tout' }
-    ];
+    protected readonly i18n = I18N.stats.graphs;
+
+    protected readonly periods: ReadonlyArray<Period> = ['1m', '3m', '6m', '1y', 'all'];
     protected readonly selectedPeriod = signal<Period>('all');
 
     @ViewChild('barCanvas') barCanvas!: ElementRef<HTMLCanvasElement>;
@@ -46,18 +43,20 @@ export class GraphsComponent implements OnInit, OnDestroy {
     private readonly historyService = inject(HistoryService);
     private readonly router = inject(Router);
 
-    ngOnInit() {
-        this.historyService.getExerciseGraphs(this.exerciseId())
-            .subscribe({
-                next: (exerciseGraphs) => {
-                    this.exerciseGraphs.set(exerciseGraphs);
-                    this.selectedPeriod.set(
-                        exerciseGraphs.historyPoints.length > DEFAULT_PERIOD_POINT_THRESHOLD ? '3m' : 'all'
-                    );
-                    this.renderChart();
-                },
-                error: () => this.router.navigate(['not-found'])
-            });
+    constructor() {
+        effect(() => {
+            this.historyService.getExerciseGraphs(this.exerciseId())
+                .subscribe({
+                    next: (exerciseGraphs) => {
+                        this.exerciseGraphs.set(exerciseGraphs);
+                        this.selectedPeriod.set(
+                            exerciseGraphs.historyPoints.length > DEFAULT_PERIOD_POINT_THRESHOLD ? '3m' : 'all'
+                        );
+                        this.renderChart();
+                    },
+                    error: () => this.router.navigate(['not-found'])
+                });
+        });
     }
 
     ngOnDestroy() {
@@ -119,7 +118,7 @@ export class GraphsComponent implements OnInit, OnDestroy {
             data: {
                 labels,
                 datasets: [{
-                    label: 'Charge utilisée',
+                    label: this.i18n.datasetLabel,
                     data,
                     borderColor: primaryColor,
                     backgroundColor,
@@ -148,7 +147,7 @@ export class GraphsComponent implements OnInit, OnDestroy {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            callback: (value) => `${ value } kg`
+                            callback: (value) => this.i18n.formatWeight(value)
                         }
                     }
                 }

@@ -6,6 +6,7 @@ import { NgClass } from '@angular/common';
 import { CustomError } from "../../../interfaces/CustomError";
 import { RegisterRequest } from "../../../interfaces/RegisterRequest";
 import { applyValidationErrors, getErrorCode, isValidationError } from "../../shared/utils/http-error";
+import { I18N } from '../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-register',
@@ -26,10 +27,12 @@ export class RegisterComponent {
         confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     });
 
+    protected readonly i18n = I18N.auth.register;
+
     private readonly authService = inject(AuthService);
     private readonly router = inject(Router);
 
-    signUp() {
+    protected signUp() {
         const {
             email,
             password,

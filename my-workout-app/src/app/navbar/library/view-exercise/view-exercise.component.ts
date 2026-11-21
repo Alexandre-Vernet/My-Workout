@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
@@ -11,6 +11,7 @@ import { DifficultyLabelPipe } from "../../../shared/pipes/difficulty-label.pipe
 import { MechanicLabelPipe } from "../../../shared/pipes/mechanic-label.pipe";
 import { getErrorMessage } from "../../../shared/utils/http-error";
 import { getMuscleGroupColor } from "../../../shared/utils/muscle-group-color";
+import { I18N } from "../../../shared/i18n/i18n";
 
 type DetailTab = 'info' | 'execution';
 
@@ -28,7 +29,7 @@ const DIFFICULTY_COLOR: Record<DifficultyEnum, string> = {
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class ViewExerciseComponent implements OnInit {
+export class ViewExerciseComponent {
     private readonly exerciseService = inject(ExerciseService);
     private readonly alertService = inject(AlertService);
     private readonly authService = inject(AuthService);
@@ -45,13 +46,16 @@ export class ViewExerciseComponent implements OnInit {
     });
 
     protected readonly activeTab = signal<DetailTab>('info');
+    protected readonly i18n = I18N.library.viewExercise;
 
-    ngOnInit() {
-        this.exerciseService.findExerciseMuscle(this.exerciseId())
-            .subscribe({
-                next: (exerciseMuscle) => this.exerciseMuscle.set(exerciseMuscle),
-                error: () => this.router.navigate(['not-found'])
-            });
+    constructor() {
+        effect(() => {
+            this.exerciseService.findExerciseMuscle(this.exerciseId())
+                .subscribe({
+                    next: (exerciseMuscle) => this.exerciseMuscle.set(exerciseMuscle),
+                    error: () => this.router.navigate(['not-found'])
+                });
+        });
     }
 
     protected get heroColor(): string {
@@ -72,7 +76,7 @@ export class ViewExerciseComponent implements OnInit {
         this.router.navigate(['..'], { relativeTo: this.route });
     }
 
-    toggleExerciseWorkout() {
+    protected toggleExerciseWorkout() {
         this.exerciseService.toggleExerciseWorkout(this.exerciseMuscle()!.exercise!)
             .subscribe({
                 next: () => this.exerciseMuscle.update(exerciseMuscle => ({
@@ -82,13 +86,13 @@ export class ViewExerciseComponent implements OnInit {
                 error: (err: CustomError) => {
                     this.alertService.show({
                         severity: 'error',
-                        message: getErrorMessage(err, 'Impossible d\'enregistrer cet exercice')
+                        message: getErrorMessage(err, this.i18n.toggleWorkoutError)
                     });
                 }
             });
     }
 
-    updateExercise() {
+    protected updateExercise() {
         this.router.navigate(['admin', 'update-exercise', this.exerciseMuscle()!.exercise?.id]);
     }
 }

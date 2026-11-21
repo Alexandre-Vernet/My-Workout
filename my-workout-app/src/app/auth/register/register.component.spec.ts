@@ -40,7 +40,7 @@ describe('RegisterComponent', () => {
     it('rejects mismatched passwords locally, without any HTTP call', () => {
         component.formRegister.controls.confirmPassword.setValue('different');
 
-        component.signUp();
+        component['signUp']();
 
         httpMock.expectNone(`${ authService.authUrl }/register`);
         expect(component.formRegister.controls.password.hasError('passwordNotMatch')).toBe(true);
@@ -49,7 +49,7 @@ describe('RegisterComponent', () => {
     it('navigates home after a successful registration', () => {
         const navigateSpy = vi.spyOn(router, 'navigateByUrl');
 
-        component.signUp();
+        component['signUp']();
 
         httpMock.expectOne(`${ authService.authUrl }/register`).flush({ accessToken: 'a', user: {} });
         httpMock.expectOne(`${ authService.authUrl }/login`).flush({ accessToken: 'a', refreshToken: 'r' });
@@ -58,7 +58,7 @@ describe('RegisterComponent', () => {
     });
 
     it('applies server-side validation errors to the matching controls', () => {
-        component.signUp();
+        component['signUp']();
 
         httpMock.expectOne(`${ authService.authUrl }/register`).flush({
             type: 'VALIDATION',
@@ -69,7 +69,7 @@ describe('RegisterComponent', () => {
     });
 
     it('flags the email field when the server reports it is already in use', () => {
-        component.signUp();
+        component['signUp']();
 
         httpMock.expectOne(`${ authService.authUrl }/register`).flush({
             type: 'BUSINESS', errorCode: 'EMAIL_ALREADY_IN_USE'
@@ -80,7 +80,7 @@ describe('RegisterComponent', () => {
     });
 
     it('flags the password field when the server reports a password mismatch', () => {
-        component.signUp();
+        component['signUp']();
 
         httpMock.expectOne(`${ authService.authUrl }/register`).flush({
             type: 'BUSINESS', errorCode: 'PASSWORD_NOT_MATCH'
@@ -90,7 +90,7 @@ describe('RegisterComponent', () => {
     });
 
     it('falls back to an unknown-error flag on the email field for any other business error', () => {
-        component.signUp();
+        component['signUp']();
 
         httpMock.expectOne(`${ authService.authUrl }/register`).flush({
             type: 'BUSINESS', errorCode: 'SOMETHING_ELSE'

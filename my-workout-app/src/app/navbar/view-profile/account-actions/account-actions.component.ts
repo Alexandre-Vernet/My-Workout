@@ -6,6 +6,7 @@ import { MenuUrls } from '../../../shared/menu-urls';
 import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 import { CustomError } from '../../../../interfaces/CustomError';
 import { getErrorMessage } from '../../../shared/utils/http-error';
+import { I18N } from '../../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-account-actions',
@@ -19,35 +20,36 @@ export class AccountActionsComponent {
 
     showAlert = output<Alert>();
 
+    protected readonly i18n = I18N.viewProfile.accountActions;
     protected readonly confirmDeleteOpen = signal(false);
 
     private readonly authService = inject(AuthService);
     private readonly router = inject(Router);
 
-    signOut() {
+    protected signOut() {
         this.authService.signOut();
         this.router.navigate([MenuUrls.library]);
     }
 
-    openDialogConfirmDeleteAccount() {
+    protected openDialogConfirmDeleteAccount() {
         this.confirmDeleteOpen.set(true);
     }
 
-    onConfirmDelete() {
+    protected onConfirmDelete() {
         this.confirmDeleteOpen.set(false);
         this.deleteAccount();
     }
 
-    onCancelDelete() {
+    protected onCancelDelete() {
         this.confirmDeleteOpen.set(false);
     }
 
-    deleteAccount() {
+    private deleteAccount() {
         this.authService.deleteAccount()
             .subscribe({
                 next: () => {
                     this.showAlert.emit({
-                        message: 'Votre compte a bien été supprimé',
+                        message: this.i18n.deleteSuccess,
                         severity: 'success'
                     });
 
@@ -56,7 +58,7 @@ export class AccountActionsComponent {
                 error: (err: CustomError) => {
                     this.showAlert.emit({
                         severity: 'error',
-                        message: getErrorMessage(err, 'Erreur lors de la suppression de votre compte')
+                        message: getErrorMessage(err, this.i18n.deleteError)
                     });
                 }
             });

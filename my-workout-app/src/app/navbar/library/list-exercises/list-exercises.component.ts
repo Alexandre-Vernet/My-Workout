@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import { AlertService } from '../../../services/alert.service';
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MuscleGroupEnum } from "../../../../interfaces/MuscleGroupEnum";
@@ -9,6 +9,7 @@ import { ActivatedRoute, RouterLink, RouterOutlet } from "@angular/router";
 import { debounceTime, of, switchMap } from "rxjs";
 import { PluralPipe } from "../../../shared/pipes/plural.pipe";
 import { getMuscleGroupColor, getMuscleGroupLabel } from "../../../shared/utils/muscle-group-color";
+import { I18N } from "../../../shared/i18n/i18n";
 
 interface ExerciseGroup {
     readonly label: string;
@@ -24,7 +25,7 @@ interface ExerciseGroup {
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class ListExercisesComponent implements OnInit {
+export class ListExercisesComponent {
 
     // The exercise detail is a nested route rendered as a sliding overlay (see
     // app.routes.ts): these mirror the child <router-outlet>'s activation state so the
@@ -42,6 +43,7 @@ export class ListExercisesComponent implements OnInit {
         }));
     protected readonly selectedMuscleGroup = signal<number | null>(null);
     protected readonly loading = signal(true);
+    protected readonly i18n = I18N.library.listExercises;
 
     searchExercise = new FormControl();
 
@@ -57,45 +59,48 @@ export class ListExercisesComponent implements OnInit {
         inject(DestroyRef).onDestroy(() => {
             document.body.style.overflow = '';
         });
-    }
 
-    ngOnInit() {
-        this.exerciseService.findAll()
-            .subscribe({
-                next: (exercises) => {
-                    this.exercises.set(exercises);
+        // Deferred to the first change detection flush (like the lifecycle hook it
+        // replaces) rather than fired here, so tests that never call
+        // fixture.detectChanges() don't leave an unflushed HTTP request behind.
+        effect(() => {
+            this.exerciseService.findAll()
+                .subscribe({
+                    next: (exercises) => {
+                        this.exercises.set(exercises);
+                        this.filterExercises.set(exercises);
+                        this.loading.set(false);
+                        this.applyMuscleGroupFromQueryParams();
+                    },
+                    error: (err) => {
+                        this.loading.set(false);
+                        this.alertService.show({
+                            severity: 'error',
+                            message: err?.error?.message ?? this.i18n.loadError
+                        });
+                    }
+                });
+
+            this.searchExercise.valueChanges
+                .pipe(
+                    debounceTime(300),
+                    switchMap((value: string) => {
+                        if (!value || value.length === 0) {
+                            return of(this.exercises());
+                        }
+
+                        if (value.length < 3) {
+                            return of(this.filterExercises());
+                        }
+
+                        return this.exerciseService.search(value);
+                    })
+                )
+                .subscribe((exercises) => {
                     this.filterExercises.set(exercises);
-                    this.loading.set(false);
-                    this.applyMuscleGroupFromQueryParams();
-                },
-                error: (err) => {
-                    this.loading.set(false);
-                    this.alertService.show({
-                        severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'afficher la bibliothèque d\'exercices'
-                    });
-                }
-            });
-
-        this.searchExercise.valueChanges
-            .pipe(
-                debounceTime(300),
-                switchMap((value: string) => {
-                    if (!value || value.length === 0) {
-                        return of(this.exercises());
-                    }
-
-                    if (value.length < 3) {
-                        return of(this.filterExercises());
-                    }
-
-                    return this.exerciseService.search(value);
-                })
-            )
-            .subscribe((exercises) => {
-                this.filterExercises.set(exercises);
-                this.selectedMuscleGroup.set(null);
-            })
+                    this.selectedMuscleGroup.set(null);
+                });
+        });
     }
 
     protected filterExercise(muscleGroupEnum: number) {
@@ -111,7 +116,7 @@ export class ListExercisesComponent implements OnInit {
                 error: (err) => {
                     this.alertService.show({
                         severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'afficher la bibliothèque d\'exercices'
+                        message: err?.error?.message ?? this.i18n.loadError
                     });
                 }
             });

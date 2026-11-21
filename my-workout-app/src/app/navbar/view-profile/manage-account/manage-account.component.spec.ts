@@ -51,11 +51,11 @@ describe('ManageAccountComponent', () => {
         fixture.detectChanges();
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
-        component.toggleChangePassword();
+        component['toggleChangePassword']();
         component.formGroup.controls.password.setValue('secret1');
         component.formGroup.controls.confirmPassword.setValue('secret1');
 
-        component.toggleChangePassword();
+        component['toggleChangePassword']();
 
         expect(component.isCheckedChangePassword).toBe(false);
         expect(component.formGroup.controls.password.value).toBeNull();
@@ -67,7 +67,7 @@ describe('ManageAccountComponent', () => {
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
         component.formGroup.controls.email.setValue('new@example.com');
-        component.updateUser();
+        component['updateUser']();
 
         const req = httpMock.expectOne(`${ authService.authUrl }/1`);
         expect(req.request.body).toEqual({ email: 'new@example.com' });
@@ -83,7 +83,7 @@ describe('ManageAccountComponent', () => {
         let emitted: unknown;
         component.showAlert.subscribe(alert => emitted = alert);
 
-        component.updateUser();
+        component['updateUser']();
         httpMock.expectOne(`${ authService.authUrl }/1`).flush({ id: 1, email: 'alex@example.com' });
 
         expect(navigateSpy).toHaveBeenCalledWith(['/auth/login']);
@@ -98,7 +98,7 @@ describe('ManageAccountComponent', () => {
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
         component.formGroup.controls.email.setValue('taken@example.com');
-        component.updateUser();
+        component['updateUser']();
 
         httpMock.expectOne(`${ authService.authUrl }/1`).flush(
             { type: 'BUSINESS', errorCode: 'EMAIL_ALREADY_IN_USE' },

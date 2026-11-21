@@ -9,19 +9,19 @@
                 <span>{{ history.reps }}</span>
             }
             @if (history.reps && history.weight) {
-                <span>x</span>
+                <span>{{ i18n.timesSeparator }}</span>
             }
             @if (history.weight) {
-                <span>{{ history.weight }} kg</span>
+                <span>{{ history.weight }} {{ i18n.weightUnit }}</span>
             }
             @if (!history.weight && history.reps === 1) {
-                <span>répétition</span>
+                <span>{{ i18n.repSingular }}</span>
             }
             @if (!history.weight && (history.reps ?? 0) > 1) {
-                <span>répétitions</span>
+                <span>{{ i18n.repPlural }}</span>
             }
             @if (history.unilateral) {
-                <span class="history-set-unilateral">(unilatéral)</span>
+                <span class="history-set-unilateral">{{ i18n.unilateralMarker }}</span>
             }
             @if (!history.weight && !history.reps && history.duration) {
                 <span>{{ history.duration | convertTime }}</span>

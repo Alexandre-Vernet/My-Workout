@@ -13,7 +13,7 @@
     </div>
 } @else {
     <div class="chip-row">
-        <div class="chip" [class.active]="!activeFilter" (click)="clearMuscleGroupFilter()">Tous</div>
+        <div class="chip" [class.active]="!activeFilter" (click)="clearMuscleGroupFilter()">{{ i18n.allFilter }}</div>
         @for (muscleGroup of muscleGroups(); track muscleGroup.id) {
             <div class="chip" [class.active]="activeFilter?.name === muscleGroup.name"
                  (click)="filterByMuscleGroup(muscleGroup)">
@@ -49,11 +49,11 @@
     </div>
 
     <div class="month-sessions">
-        <h2 class="month-sessions-title">Séances du mois</h2>
+        <h2 class="month-sessions-title">{{ i18n.monthSessionsTitle }}</h2>
         @if (monthSessionDays.length === 0) {
             <div class="month-sessions-empty">
                 <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
-                <p>Aucune séance {{ activeFilter ? 'pour ce groupe ' : '' }}ce mois-ci</p>
+                <p>{{ i18n.noSessions(!!activeFilter) }}</p>
             </div>
         } @else {
             @for (day of monthSessionDays; track day.date.getTime()) {
@@ -82,7 +82,7 @@
     <div class="sheet-handle"></div>
     <header class="sheet-header">
         <strong>{{ sheetDateLabel | firstLetterUppercase }}</strong>
-        <button class="icon-btn" (click)="closeSheet()" aria-label="Fermer">
+        <button class="icon-btn" (click)="closeSheet()" [attr.aria-label]="i18n.closeSheet">
             <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
     </header>
@@ -90,13 +90,13 @@
         @for (workout of sheetWorkouts(); track workout.workoutSummary?.id) {
             <div class="sheet-group">
                 <div class="sheet-group-head">
-                    <small [style.color]="groupColor(workout.muscleGroup?.name)">
-                        <span class="chip-dot" [style.background]="groupColor(workout.muscleGroup?.name)"></span>
-                        {{ workout.muscleGroup?.name | firstLetterUppercase }}
+                    <small [style.color]="groupColor($safeNavigationMigration(workout.muscleGroup?.name))">
+                        <span class="chip-dot" [style.background]="groupColor($safeNavigationMigration(workout.muscleGroup?.name))"></span>
+                        {{ $safeNavigationMigration(workout.muscleGroup?.name) | firstLetterUppercase }}
                     </small>
                     <button class="icon-btn danger small"
                             (click)="openModalDeleteWorkout(workout.workoutSummary!.id!, workout.muscleGroup!.name!, workout.workoutSummary!.date)"
-                            aria-label="Supprimer cette séance">
+                            [attr.aria-label]="i18n.deleteSession">
                         <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
                     </button>
                 </div>
@@ -111,10 +111,10 @@
 
 <app-confirm-dialog
     [open]="!!pendingWorkoutDeletion()"
-    title="Attention"
+    [title]="i18n.deleteConfirmTitle"
     [message]="pendingWorkoutDeletion()?.message ?? ''"
-    confirmLabel="Supprimer"
-    cancelLabel="Annuler"
+    [confirmLabel]="i18n.deleteConfirmLabel"
+    [cancelLabel]="i18n.cancelLabel"
     [danger]="true"
     (confirmed)="confirmDeleteWorkout()"
     (cancelled)="cancelDeleteWorkout()"/>

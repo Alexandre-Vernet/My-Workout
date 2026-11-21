@@ -32,7 +32,7 @@ describe('ForgotPasswordComponent', () => {
     it('shows a success alert once the reset token request completes', () => {
         const alertService = TestBed.inject(AlertService);
 
-        component.forgotPassword();
+        component['forgotPassword']();
 
         httpMock.expectOne(r => r.url === `${ passwordResetTokenService.passwordResetTokenUrl }/forgot-password`)
             .flush(null);
@@ -45,7 +45,7 @@ describe('ForgotPasswordComponent', () => {
     it('shows an error alert and stops loading when the request fails', () => {
         const alertService = TestBed.inject(AlertService);
 
-        component.forgotPassword();
+        component['forgotPassword']();
 
         httpMock.expectOne(r => r.url === `${ passwordResetTokenService.passwordResetTokenUrl }/forgot-password`)
             .flush('error', { status: 500, statusText: 'Server error' });
@@ -57,7 +57,7 @@ describe('ForgotPasswordComponent', () => {
     it('closeModal() closes the dialog', () => {
         component.showDialogForgotPassword.set(true);
 
-        component.closeModal();
+        component['closeModal']();
 
         expect(component.showDialogForgotPassword()).toBe(false);
     });

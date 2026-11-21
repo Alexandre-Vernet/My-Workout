@@ -2,7 +2,7 @@
     <button
         type="button"
         class="stepper-btn"
-        aria-label="Diminuer"
+        [attr.aria-label]="i18n.decrease"
         [disabled]="disabled()"
         (mousedown)="$event.preventDefault()"
         (click)="decrement()">
@@ -26,7 +26,7 @@
     <button
         type="button"
         class="stepper-btn"
-        aria-label="Augmenter"
+        [attr.aria-label]="i18n.increase"
         [disabled]="disabled()"
         (mousedown)="$event.preventDefault()"
         (click)="increment()">

@@ -73,7 +73,7 @@ describe('ViewExerciseComponent', () => {
         });
 
         it('flips the addedToWorkout flag on success', () => {
-            component.toggleExerciseWorkout();
+            component['toggleExerciseWorkout']();
 
             httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/toggle`).flush({ id: 5, name: 'Squat' });
 
@@ -83,7 +83,7 @@ describe('ViewExerciseComponent', () => {
         it('shows an error alert on failure', () => {
             const alertService = TestBed.inject(AlertService);
 
-            component.toggleExerciseWorkout();
+            component['toggleExerciseWorkout']();
 
             httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/toggle`)
                 .flush('error', { status: 500, statusText: 'Server error' });
@@ -101,7 +101,7 @@ describe('ViewExerciseComponent', () => {
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
         httpMock.expectOne(`${ exerciseService.exerciseUrl }/5`).flush(exerciseMuscle);
 
-        component.updateExercise();
+        component['updateExercise']();
 
         expect(navigateSpy).toHaveBeenCalledWith(['admin', 'update-exercise', 5]);
     });

@@ -2,8 +2,8 @@
     <div class="overlay-backdrop" (click)="onHideModal()">
         <div class="overlay-card" (click)="$event.stopPropagation()">
             <div class="overlay-header">
-                <h2>Sélectionner un type d'entraînement</h2>
-                <button type="button" class="overlay-close" aria-label="Fermer" (click)="onHideModal()">
+                <h2>{{ i18n.title }}</h2>
+                <button type="button" class="overlay-close" [attr.aria-label]="i18n.closeLabel" (click)="onHideModal()">
                     <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
                 </button>
             </div>
@@ -22,13 +22,13 @@
 
             @if (selectedExercise()) {
                 <div class="cardio-duration">
-                    <app-number-stepper [(value)]="inputDuration" [min]="1" [max]="999" [step]="1" suffix=" min"/>
+                    <app-number-stepper [(value)]="inputDuration" [min]="1" [max]="999" [step]="1" [suffix]="i18n.durationSuffix"/>
                     <button
                         type="button"
                         class="btn btn-primary btn-block"
                         [disabled]="!inputDuration"
                         (click)="createCardioWorkout()">
-                        Valider
+                        {{ i18n.validateLabel }}
                     </button>
                 </div>
             }

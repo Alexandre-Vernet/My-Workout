@@ -13,7 +13,7 @@ export class ToggleSwitchComponent {
     checked = model(false);
     disabled = input(false);
 
-    toggle() {
+    protected toggle() {
         if (this.disabled()) {
             return;
         }

@@ -152,7 +152,7 @@ describe('WorkoutSessionComponent', () => {
                 histories: [{ id: 10, exercise: squat }]
             };
 
-            component.toggleTimer();
+            component['toggleTimer']();
 
             httpMock.expectOne(workoutService.workoutUrl).flush(createdWorkout);
 
@@ -165,14 +165,14 @@ describe('WorkoutSessionComponent', () => {
             vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'performance'] });
 
             const workoutService = TestBed.inject(WorkoutService);
-            component.toggleTimer();
+            component['toggleTimer']();
             httpMock.expectOne(workoutService.workoutUrl)
                 .flush({ id: 1, date: new Date(), histories: [{ id: 10, exercise: squat }] });
 
             // Let the rest timer tick at least once so it is no longer at its default value.
             vi.advanceTimersByTime(1500);
 
-            component.toggleTimer();
+            component['toggleTimer']();
 
             expect(component.formWorkout.disabled).toBe(false);
             expect(component.exercisesMade()[0].restTime).not.toBe('/');
@@ -184,7 +184,7 @@ describe('WorkoutSessionComponent', () => {
             const alertService = TestBed.inject(AlertService);
             const workoutService = TestBed.inject(WorkoutService);
 
-            component.toggleTimer();
+            component['toggleTimer']();
             httpMock.expectOne(workoutService.workoutUrl).flush('error', { status: 500, statusText: 'Server error' });
 
             expect(alertService.alert()?.severity).toBe('error');

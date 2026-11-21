@@ -23,7 +23,7 @@ describe('DialogSelectCardioExerciseComponent', () => {
         workoutService = TestBed.inject(WorkoutService);
 
         fixture.detectChanges();
-        component.showInputDuration({ id: 1, name: 'Running' });
+        component['showInputDuration']({ id: 1, name: 'Running' });
         component.inputDuration = 30;
     });
 
@@ -32,7 +32,7 @@ describe('DialogSelectCardioExerciseComponent', () => {
     });
 
     it('showInputDuration() selects the exercise to configure', () => {
-        component.showInputDuration({ id: 2, name: 'Cycling' });
+        component['showInputDuration']({ id: 2, name: 'Cycling' });
 
         expect(component['selectedExercise']()).toEqual({ id: 2, name: 'Cycling' });
     });
@@ -40,7 +40,7 @@ describe('DialogSelectCardioExerciseComponent', () => {
     it('onHideModal() resets the selected exercise and duration, and closes the dialog', () => {
         component.openModal.set(true);
 
-        component.onHideModal();
+        component['onHideModal']();
 
         expect(component['selectedExercise']()).toBeNull();
         expect(component.inputDuration).toBeNull();
@@ -55,7 +55,7 @@ describe('DialogSelectCardioExerciseComponent', () => {
             component.showAlert.subscribe(alert => shownAlert = alert);
             component.openModal.set(true);
 
-            component.createCardioWorkout();
+            component['createCardioWorkout']();
 
             const req = httpMock.expectOne(workoutService.workoutUrl);
             expect(req.request.body).toMatchObject({
@@ -76,7 +76,7 @@ describe('DialogSelectCardioExerciseComponent', () => {
             let shownAlert: unknown;
             component.showAlert.subscribe(alert => shownAlert = alert);
 
-            component.createCardioWorkout();
+            component['createCardioWorkout']();
 
             httpMock.expectOne(workoutService.workoutUrl)
                 .flush('error', { status: 500, statusText: 'Server error' });

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UpdateUserRequest } from '../../../../interfaces/UpdateUserRequest';
 import { AuthService } from '../../../auth/auth.service';
@@ -7,6 +7,7 @@ import { Router } from "@angular/router";
 import { CustomError } from "../../../../interfaces/CustomError";
 import { applyValidationErrors, getErrorCode, isValidationError } from "../../../shared/utils/http-error";
 import { ToggleSwitchComponent } from '../../../shared/toggle-switch/toggle-switch.component';
+import { I18N } from '../../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-manage-account',
@@ -16,8 +17,9 @@ import { ToggleSwitchComponent } from '../../../shared/toggle-switch/toggle-swit
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class ManageAccountComponent implements OnInit {
+export class ManageAccountComponent {
 
+    protected readonly i18n = I18N.viewProfile.manageAccount;
     protected readonly currentEmail = signal<string | undefined>(undefined);
     formGroup = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email, Validators.maxLength(255)]),
@@ -33,15 +35,17 @@ export class ManageAccountComponent implements OnInit {
     private readonly authService = inject(AuthService);
     private readonly router = inject(Router);
 
-    ngOnInit() {
-        this.authService.getCurrentUser()
-            .subscribe(user => {
-                this.currentEmail.set(user?.email);
-                this.formGroup.controls.email.setValue(user?.email);
-            });
+    constructor() {
+        effect(() => {
+            this.authService.getCurrentUser()
+                .subscribe(user => {
+                    this.currentEmail.set(user?.email);
+                    this.formGroup.controls.email.setValue(user?.email);
+                });
+        });
     }
 
-    toggleChangePassword() {
+    protected toggleChangePassword() {
         this.isCheckedChangePassword = !this.isCheckedChangePassword;
 
         if (!this.isCheckedChangePassword) {
@@ -50,7 +54,7 @@ export class ManageAccountComponent implements OnInit {
         }
     }
 
-    updateUser() {
+    protected updateUser() {
         const { email, password, confirmPassword } = this.formGroup.value;
         const user: UpdateUserRequest = {};
 
@@ -67,7 +71,7 @@ export class ManageAccountComponent implements OnInit {
                 next: () => {
                     this.router.navigate(['/auth/login']);
                     this.showAlert.emit({
-                        message: 'Votre compte a bien été mis à jour, veuillez vous reconnecter',
+                        message: this.i18n.updateSuccess,
                         severity: 'success'
                     });
                 },

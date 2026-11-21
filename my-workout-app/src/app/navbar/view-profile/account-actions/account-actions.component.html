@@ -8,7 +8,7 @@
                 <circle cx="9" cy="18" r="1.6" fill="currentColor" stroke="none"/>
             </svg>
         </span>
-        Actions
+        {{ i18n.title }}
     </h2>
 
     <div class="actions-row">
@@ -16,22 +16,22 @@
             <svg viewBox="0 0 24 24">
                 <path d="M9 12h12m0 0l-4-4m4 4l-4 4M15 5V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1"/>
             </svg>
-            Déconnexion
+            {{ i18n.signOut }}
         </button>
         <button type="button" class="btn btn-danger" (click)="openDialogConfirmDeleteAccount()">
             <svg viewBox="0 0 24 24">
                 <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
             </svg>
-            Supprimer mon compte
+            {{ i18n.deleteAccount }}
         </button>
     </div>
 </div>
 
 <app-confirm-dialog
     [open]="confirmDeleteOpen()"
-    message="Voulez-vous vraiment supprimer votre compte ainsi que toutes vos données ?"
-    confirmLabel="Supprimer"
-    cancelLabel="Annuler"
+    [message]="i18n.deleteConfirmMessage"
+    [confirmLabel]="i18n.deleteConfirmLabel"
+    [cancelLabel]="i18n.deleteCancelLabel"
     [danger]="true"
     (confirmed)="onConfirmDelete()"
     (cancelled)="onCancelDelete()"/>

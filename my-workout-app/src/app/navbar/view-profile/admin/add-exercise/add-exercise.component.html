@@ -1,53 +1,53 @@
 <div class="add-exercise">
-    <h1>{{ formAddExercise.controls.id.value ? 'Modifier' : 'Ajouter' }} un exercice</h1>
+    <h1>{{ formAddExercise.controls.id.value ? i18n.titleEdit : i18n.titleAdd }}</h1>
 
     <form class="add-exercise-form" [formGroup]="formAddExercise">
         <!--Name-->
         <div class="field">
             <input id="name" formControlName="name" placeholder=" " autocomplete="off"/>
-            <label for="name">Nom de l'exercice</label>
+            <label for="name">{{ i18n.nameLabel }}</label>
         </div>
         @if (formAddExercise.controls.name.touched && formAddExercise.controls.name.hasError('required')) {
-            <p class="field-error">Champs requis</p>
+            <p class="field-error">{{ i18n.requiredError }}</p>
         }
         @if (formAddExercise.controls.name.touched && formAddExercise.controls.name.hasError('minlength')) {
-            <p class="field-error">3 caractères min.</p>
+            <p class="field-error">{{ i18n.nameMinLengthError }}</p>
         }
         @if (formAddExercise.controls.name.touched && formAddExercise.controls.name.hasError('maxlength')) {
-            <p class="field-error">50 caractères max.</p>
+            <p class="field-error">{{ i18n.nameMaxLengthError }}</p>
         }
         @if (formAddExercise.controls.name.hasError('exerciseNameAlreadyExist')) {
-            <p class="field-error">Cet exercice existe déjà</p>
+            <p class="field-error">{{ i18n.nameAlreadyExistError }}</p>
         }
         @if (formAddExercise.controls.name.hasError('exerciseNameError')) {
-            <p class="field-error">la taille doit être comprise entre 0 et 40</p>
+            <p class="field-error">{{ i18n.nameSizeError }}</p>
         }
         @if (formAddExercise.controls.name.hasError('unknownError')) {
-            <p class="field-error">Une erreur s'est produite</p>
+            <p class="field-error">{{ i18n.unknownError }}</p>
         }
 
         <!--Description-->
         <div class="field">
             <textarea id="description" formControlName="description" placeholder=" "></textarea>
-            <label for="description">Description</label>
+            <label for="description">{{ i18n.descriptionLabel }}</label>
         </div>
         @if (formAddExercise.controls.description.touched && formAddExercise.controls.description.hasError('required')) {
-            <p class="field-error">Champs requis</p>
+            <p class="field-error">{{ i18n.requiredError }}</p>
         }
         @if (formAddExercise.controls.description.touched && formAddExercise.controls.description.hasError('minlength')) {
-            <p class="field-error">10 caractères min.</p>
+            <p class="field-error">{{ i18n.descriptionMinLengthError }}</p>
         }
         @if (formAddExercise.controls.description.touched && formAddExercise.controls.description.hasError('maxlength')) {
-            <p class="field-error">500 caractères max.</p>
+            <p class="field-error">{{ i18n.descriptionMaxLengthError }}</p>
         }
         @if (formAddExercise.controls.description.hasError('quotaExceeded')) {
-            <p class="field-error">Limite de requêtes atteinte</p>
+            <p class="field-error">{{ i18n.quotaExceededError }}</p>
         }
         @if (formAddExercise.controls.description.hasError('exerciseNotFound')) {
-            <p class="field-error">Veuillez ajuster le nom de l'exercice</p>
+            <p class="field-error">{{ i18n.exerciseNotFoundError }}</p>
         }
         @if (formAddExercise.controls.description.hasError('unknownError')) {
-            <p class="field-error">Une erreur s'est produite</p>
+            <p class="field-error">{{ i18n.unknownError }}</p>
         }
 
         <button
@@ -60,11 +60,11 @@
                 <path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/>
                 <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>
             </svg>
-            Générer par IA
+            {{ i18n.generateDescription }}
         </button>
 
         <!--Difficulty-->
-        <div class="segmented" role="radiogroup" aria-label="Difficulté">
+        <div class="segmented" role="radiogroup" [attr.aria-label]="i18n.difficultyAriaLabel">
             <input class="segmented-input" type="radio" id="difficulty-beginner" formControlName="difficulty" [value]="DifficultyEnum.BEGINNER"/>
             <label class="segmented-label" for="difficulty-beginner">{{ DifficultyEnum.BEGINNER | difficultyLabel }}</label>
 
@@ -76,7 +76,7 @@
         </div>
 
         <!--Mechanic-->
-        <div class="segmented" role="radiogroup" aria-label="Mécanique">
+        <div class="segmented" role="radiogroup" [attr.aria-label]="i18n.mechanicAriaLabel">
             <input class="segmented-input" type="radio" id="mechanic-isolation" formControlName="mechanic" [value]="MechanicEnum.ISOLATION"/>
             <label class="segmented-label" for="mechanic-isolation">{{ MechanicEnum.ISOLATION | mechanicLabel }}</label>
 
@@ -87,7 +87,7 @@
         <!--Muscles-->
         <div class="muscles-field">
             <button type="button" class="muscles-trigger" (click)="musclesPanelOpen.set(!musclesPanelOpen())">
-                <span>Muscles ciblés</span>
+                <span>{{ i18n.musclesTargeted }}</span>
                 <svg class="muscles-chevron" [class.open]="musclesPanelOpen()" viewBox="0 0 24 24">
                     <path d="M6 9l6 6 6-6"/>
                 </svg>
@@ -98,7 +98,7 @@
                     @for (muscle of formAddExercise.controls.muscles.value; track muscle.id) {
                         <span class="muscle-chip">
                             {{ muscle.name }}
-                            <button type="button" aria-label="Retirer" (click)="toggleMuscle(muscle)">×</button>
+                            <button type="button" [attr.aria-label]="i18n.removeMuscleAriaLabel" (click)="toggleMuscle(muscle)">×</button>
                         </span>
                     }
                 </div>
@@ -125,24 +125,24 @@
             }
 
             @if (formAddExercise.controls.muscles.touched && formAddExercise.controls.muscles.hasError('required')) {
-                <p class="field-error">Champs requis</p>
+                <p class="field-error">{{ i18n.requiredError }}</p>
             }
             @if (formAddExercise.controls.muscles.hasError('duplicatMuscleGroup')) {
-                <p class="field-error">Impossible de sélectionner 2 groupes musculaires différents</p>
+                <p class="field-error">{{ i18n.duplicateMuscleGroupError }}</p>
             }
         </div>
 
         <!--Submit-->
         <button type="button" class="btn btn-primary btn-block" [disabled]="formAddExercise.invalid" (click)="createExercise()">
-            Valider
+            {{ i18n.submit }}
         </button>
     </form>
 </div>
 
 <app-confirm-dialog
     [open]="!!addToWorkoutConfirm()"
-    message="Voulez-vous ajouter cet exercice à vos entraînements ?"
-    confirmLabel="Oui"
-    cancelLabel="Non"
+    [message]="i18n.addToWorkoutMessage"
+    [confirmLabel]="i18n.addToWorkoutConfirmLabel"
+    [cancelLabel]="i18n.addToWorkoutCancelLabel"
     (confirmed)="confirmAddToWorkout()"
     (cancelled)="cancelAddToWorkout()"/>

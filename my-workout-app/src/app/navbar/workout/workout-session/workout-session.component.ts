@@ -4,7 +4,6 @@ import {
     effect,
     inject,
     input,
-    OnInit,
     signal
 } from '@angular/core';
 import { filter, map } from 'rxjs';
@@ -30,6 +29,7 @@ import { SwipeDirective } from '../../../shared/directives/swipe.directive';
 import { NumberStepperComponent } from '../../../shared/number-stepper/number-stepper.component';
 import { ToggleSwitchComponent } from '../../../shared/toggle-switch/toggle-switch.component';
 import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
+import { I18N } from '../../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-workout-session',
@@ -48,8 +48,9 @@ import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-d
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class WorkoutSessionComponent implements OnInit {
+export class WorkoutSessionComponent {
 
+    protected readonly i18n = I18N.workout.workoutSession;
     protected readonly DEFAULT_VALUE_REST_TIME = DEFAULT_VALUE_REST_TIME;
     protected readonly NO_EXERCISES_DIALOG = NO_EXERCISES_DIALOG;
     protected readonly confirmNoExercisesOpen = signal(false);
@@ -97,15 +98,15 @@ export class WorkoutSessionComponent implements OnInit {
             this.currentTab = this.tab() ?? 1;
             this.activeStep.set(this.currentTab);
         });
+
+        effect(() => {
+            this.muscleGroupEnum = this.muscleGroupId();
+            this.workout = null;
+            this.findExercises();
+        });
     }
 
-    ngOnInit() {
-        this.muscleGroupEnum = this.muscleGroupId();
-        this.workout = null;
-        this.findExercises();
-    }
-
-    toggleTimer() {
+    protected toggleTimer() {
         if (this.restTimeService.restTime() !== DEFAULT_VALUE_REST_TIME) {
             this.stopTimer();
         } else {
@@ -118,7 +119,7 @@ export class WorkoutSessionComponent implements OnInit {
         }
     }
 
-    switchPanel(exercise: Exercise, index?: number) {
+    protected switchPanel(exercise: Exercise, index?: number) {
         if (this.currentTab === index) {
             return;
         }
@@ -142,7 +143,7 @@ export class WorkoutSessionComponent implements OnInit {
         this.formWorkout.controls.unilateral.setValue(value);
     }
 
-    resetWorkout() {
+    protected resetWorkout() {
         this.workout = null;
     }
 
@@ -185,7 +186,7 @@ export class WorkoutSessionComponent implements OnInit {
                     }
                     this.alertService.show({
                         severity: 'error',
-                        message: getErrorMessage(err, 'Impossible d\'afficher les exercices')
+                        message: getErrorMessage(err, this.i18n.fetchExercisesErrorMessage)
                     });
                 }
             });
@@ -290,7 +291,7 @@ export class WorkoutSessionComponent implements OnInit {
                 error: () => {
                     this.alertService.show({
                         severity: 'error',
-                        message: 'Erreur lors de l\'enregistrement'
+                        message: this.i18n.saveErrorMessage
                     });
                 }
             });

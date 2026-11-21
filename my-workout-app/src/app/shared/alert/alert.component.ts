@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject } from '@angular/core';
 import { AlertService } from '../../services/alert.service';
 import { Alert } from '../../../interfaces/alert';
+import { I18N } from '../i18n/i18n';
 
 const AUTO_HIDE_DELAY_MS = 4000;
 
@@ -12,6 +13,7 @@ const AUTO_HIDE_DELAY_MS = 4000;
 })
 export class AlertComponent {
     protected readonly alertService = inject(AlertService);
+    protected readonly i18n = I18N.common.alert;
 
     private readonly destroyRef = inject(DestroyRef);
     private hideTimeoutId: ReturnType<typeof setTimeout> | null = null;

@@ -41,7 +41,7 @@ describe('ViewProfileComponent', () => {
         fixture.detectChanges();
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
-        component.displayAlert({ severity: 'success', message: 'Saved' });
+        component['displayAlert']({ severity: 'success', message: 'Saved' });
 
         expect(alertService.alert()).toEqual({ severity: 'success', message: 'Saved' });
     });

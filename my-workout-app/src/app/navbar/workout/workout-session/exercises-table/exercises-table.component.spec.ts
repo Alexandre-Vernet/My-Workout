@@ -52,28 +52,26 @@ describe('ExercisesTableComponent', () => {
         expect(alertService.alert()?.severity).toBe('error');
     });
 
-    it('ngOnChanges() reloads the history only when the exercise actually changes', () => {
+    it('reloads the history when the exerciseId input changes', () => {
         createComponent();
         fixture.detectChanges();
         httpMock.expectOne(`${ historyService.historyUrl }/today/1/5`).flush([]);
 
-        component.ngOnChanges({
-            exerciseId: { currentValue: 6, previousValue: 5, firstChange: false, isFirstChange: () => false }
-        });
+        fixture.componentRef.setInput('exerciseId', 6);
+        fixture.detectChanges();
 
-        httpMock.expectOne(`${ historyService.historyUrl }/today/1/5`).flush([]);
+        httpMock.expectOne(`${ historyService.historyUrl }/today/1/6`).flush([]);
     });
 
-    it('ngOnChanges() does nothing when exerciseId did not change', () => {
+    it('does nothing when muscleGroupId changes without the exercise changing', () => {
         createComponent();
         fixture.detectChanges();
         httpMock.expectOne(`${ historyService.historyUrl }/today/1/5`).flush([]);
 
-        component.ngOnChanges({
-            muscleGroupId: { currentValue: 1, previousValue: 1, firstChange: false, isFirstChange: () => false }
-        });
+        fixture.componentRef.setInput('muscleGroupId', 2);
+        fixture.detectChanges();
 
-        httpMock.expectNone(`${ historyService.historyUrl }/today/1/5`);
+        httpMock.expectNone(`${ historyService.historyUrl }/today/2/5`);
     });
 
     it('onWeightChange() rounds the weight to the nearest half unit without saving', () => {
@@ -82,7 +80,7 @@ describe('ExercisesTableComponent', () => {
         httpMock.expectOne(`${ historyService.historyUrl }/today/1/5`).flush([]);
 
         const history: History = { id: 1 };
-        component.onWeightChange(history, 61.3);
+        component['onWeightChange'](history, 61.3);
 
         expect(history.weight).toBe(61.5);
     });
@@ -93,7 +91,7 @@ describe('ExercisesTableComponent', () => {
         httpMock.expectOne(`${ historyService.historyUrl }/today/1/5`).flush([]);
 
         const history: History = { id: 1 };
-        component.onRepsChange(history, 12);
+        component['onRepsChange'](history, 12);
 
         expect(history.reps).toBe(12);
     });
@@ -108,7 +106,7 @@ describe('ExercisesTableComponent', () => {
         it('flips and saves the unilateral flag', () => {
             const history: History = { id: 1, unilateral: false };
 
-            component.toggleUnilateral(history);
+            component['toggleUnilateral'](history);
 
             expect(history.unilateral).toBe(true);
             httpMock.expectOne(`${ historyService.historyUrl }/1`).flush(history);
@@ -126,7 +124,7 @@ describe('ExercisesTableComponent', () => {
             const alertService = TestBed.inject(AlertService);
             const history: History = { id: 1, weight: 60 };
 
-            component.updateHistory(history, true);
+            component['updateHistory'](history, true);
 
             expect(history.unilateral).toBe(true);
             httpMock.expectOne(`${ historyService.historyUrl }/1`).flush(history);
@@ -137,7 +135,7 @@ describe('ExercisesTableComponent', () => {
         it('shows an error alert when the update fails', () => {
             const alertService = TestBed.inject(AlertService);
 
-            component.updateHistory({ id: 1, weight: 60 });
+            component['updateHistory']({ id: 1, weight: 60 });
 
             httpMock.expectOne(`${ historyService.historyUrl }/1`)
                 .flush('error', { status: 500, statusText: 'Server error' });
@@ -158,7 +156,7 @@ describe('ExercisesTableComponent', () => {
             let resetEmitted = false;
             component.resetWorkout.subscribe(() => resetEmitted = true);
 
-            component.deleteHistory({ id: 1 });
+            component['deleteHistory']({ id: 1 });
 
             httpMock.expectOne(`${ historyService.historyUrl }/1`).flush(null);
 
@@ -170,9 +168,9 @@ describe('ExercisesTableComponent', () => {
             let resetEmitted = false;
             component.resetWorkout.subscribe(() => resetEmitted = true);
 
-            component.deleteHistory({ id: 1 });
+            component['deleteHistory']({ id: 1 });
             httpMock.expectOne(`${ historyService.historyUrl }/1`).flush(null);
-            component.deleteHistory({ id: 2 });
+            component['deleteHistory']({ id: 2 });
             httpMock.expectOne(`${ historyService.historyUrl }/2`).flush(null);
 
             expect(component.exercisesMade()).toEqual([]);
@@ -182,7 +180,7 @@ describe('ExercisesTableComponent', () => {
         it('shows an error alert when the deletion fails', () => {
             const alertService = TestBed.inject(AlertService);
 
-            component.deleteHistory({ id: 1 });
+            component['deleteHistory']({ id: 1 });
 
             httpMock.expectOne(`${ historyService.historyUrl }/1`)
                 .flush('error', { status: 500, statusText: 'Server error' });

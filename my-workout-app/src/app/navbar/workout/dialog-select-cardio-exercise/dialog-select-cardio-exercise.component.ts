@@ -9,6 +9,7 @@ import { MuscleGroupEnum } from '../../../../interfaces/MuscleGroupEnum';
 import { CustomError } from '../../../../interfaces/CustomError';
 import { getErrorMessage } from '../../../shared/utils/http-error';
 import { NumberStepperComponent } from '../../../shared/number-stepper/number-stepper.component';
+import { I18N } from '../../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-dialog-select-cardio-exercise',
@@ -19,6 +20,8 @@ import { NumberStepperComponent } from '../../../shared/number-stepper/number-st
     standalone: true
 })
 export class DialogSelectCardioExerciseComponent {
+
+    protected readonly i18n = I18N.workout.dialogSelectCardioExercise;
 
     openModal = model(false);
     workoutDate = input<Date>();
@@ -33,16 +36,16 @@ export class DialogSelectCardioExerciseComponent {
     private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
 
-    onHideModal() {
+    protected onHideModal() {
         this.resetDuration();
         this.openModal.set(false);
     }
 
-    showInputDuration(exercise: Exercise) {
+    protected showInputDuration(exercise: Exercise) {
         this.selectedExercise.set(exercise);
     }
 
-    createCardioWorkout() {
+    protected createCardioWorkout() {
         const muscleGroup: MuscleGroup = {
             id: MuscleGroupEnum.CARDIO
         };
@@ -71,13 +74,13 @@ export class DialogSelectCardioExerciseComponent {
 
                     this.showAlert.emit({
                         severity: 'success',
-                        message: `L'entraînement ${ this.selectedExercise()?.name } a été créé avec succès`
+                        message: this.i18n.createdSuccessMessage(this.selectedExercise()?.name)
                     });
                 },
                 error: (err: CustomError) => {
                     this.showAlert.emit({
                         severity: 'error',
-                        message: getErrorMessage(err, 'Impossible de créer l\'entraînement')
+                        message: getErrorMessage(err, this.i18n.createErrorMessage)
                     });
                 },
                 complete: () => {

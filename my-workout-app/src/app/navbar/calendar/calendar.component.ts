@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../../interfaces/Workout';
@@ -12,6 +12,7 @@ import { SwipeDirective } from '../../shared/directives/swipe.directive';
 import { CustomError } from '../../../interfaces/CustomError';
 import { getErrorMessage } from '../../shared/utils/http-error';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+import { I18N } from '../../shared/i18n/i18n';
 
 interface CalendarDay {
     readonly day: number;
@@ -27,7 +28,6 @@ interface PendingWorkoutDeletion {
     readonly message: string;
 }
 
-const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 const MAX_VISIBLE_DOTS = 3;
 const SKELETON_DAYS_COUNT = 35;
 
@@ -39,9 +39,10 @@ const SKELETON_DAYS_COUNT = 35;
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class CalendarComponent implements OnInit {
+export class CalendarComponent {
 
-    protected readonly weekdays = WEEKDAYS;
+    protected readonly i18n = I18N.calendar.calendar;
+    protected readonly weekdays = this.i18n.weekdays;
 
     protected displayedMonth = CalendarComponent.startOfMonth(new Date());
     protected readonly calendarDays = signal<(CalendarDay | null)[]>([]);
@@ -64,8 +65,8 @@ export class CalendarComponent implements OnInit {
     private readonly workoutService = inject(WorkoutService);
     private readonly alertService = inject(AlertService);
 
-    ngOnInit() {
-        this.loadMonth();
+    constructor() {
+        effect(() => this.loadMonth());
     }
 
     protected previousMonth() {
@@ -108,7 +109,7 @@ export class CalendarComponent implements OnInit {
         const formattedDate = new Date(date).toLocaleDateString();
         this.pendingWorkoutDeletion.set({
             id,
-            message: `Voulez-vous vraiment supprimer l'entraînement ${ muscleGroupName } du ${ formattedDate } ?`
+            message: this.i18n.deleteConfirm(muscleGroupName, formattedDate)
         });
     }
 
@@ -128,13 +129,13 @@ export class CalendarComponent implements OnInit {
 
                     this.alertService.show({
                         severity: 'success',
-                        message: 'Suppression effectuée'
+                        message: this.i18n.deleteSuccess
                     });
                 },
                 error: (err: CustomError) => {
                     this.alertService.show({
                         severity: 'error',
-                        message: getErrorMessage(err, 'Impossible de supprimer l\'entraînement')
+                        message: getErrorMessage(err, this.i18n.deleteError)
                     });
                 }
             });
@@ -212,7 +213,7 @@ export class CalendarComponent implements OnInit {
                     this.loading.set(false);
                     this.alertService.show({
                         severity: 'error',
-                        message: getErrorMessage(err, 'Impossible d\'afficher le calendrier')
+                        message: getErrorMessage(err, this.i18n.loadError)
                     });
                 }
             });
@@ -263,7 +264,7 @@ export class CalendarComponent implements OnInit {
         }
 
         this.calendarDays.set(days);
-        this.sessionCountLabel.set(`${ daysWithSessions } séance${ daysWithSessions > 1 ? 's' : '' } ce mois-ci`);
+        this.sessionCountLabel.set(this.i18n.sessionCount(daysWithSessions));
     }
 
     private static isSameDay(a: Date, b: Date): boolean {

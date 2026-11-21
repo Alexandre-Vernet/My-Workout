@@ -29,10 +29,10 @@ describe('ToggleSwitchComponent', () => {
     });
 
     it('toggle() flips the checked state', () => {
-        component.toggle();
+        component['toggle']();
         expect(component.checked()).toBe(true);
 
-        component.toggle();
+        component['toggle']();
         expect(component.checked()).toBe(false);
     });
 

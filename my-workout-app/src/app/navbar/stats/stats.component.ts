@@ -8,6 +8,7 @@ import { Exercise } from '../../../interfaces/Exercise';
 import { CustomError } from '../../../interfaces/CustomError';
 import { getErrorMessage } from '../../shared/utils/http-error';
 import { getMuscleGroupColor, getMuscleGroupLabel } from '../../shared/utils/muscle-group-color';
+import { I18N } from '../../shared/i18n/i18n';
 
 interface ExerciseGroup {
     readonly label: string;
@@ -24,6 +25,8 @@ interface ExerciseGroup {
 })
 export class StatsComponent {
 
+    protected readonly i18n = I18N.stats.stats;
+
     private readonly historyService = inject(HistoryService);
     private readonly alertService = inject(AlertService);
 
@@ -32,7 +35,7 @@ export class StatsComponent {
             catchError((err: CustomError) => {
                 this.alertService.show({
                     severity: 'error',
-                    message: getErrorMessage(err, 'Erreur lors de la récupération des statistiques')
+                    message: getErrorMessage(err, this.i18n.statsLoadError)
                 });
                 return EMPTY;
             })

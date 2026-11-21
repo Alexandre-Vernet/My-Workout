@@ -8,19 +8,19 @@
                             <circle cx="12" cy="8" r="4"/>
                             <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/>
                         </svg>
-                        <input formControlName="email" type="text" class="login__input" placeholder="Email">
+                        <input formControlName="email" type="text" class="login__input" [placeholder]="i18n.emailPlaceholder">
                     </div>
                     @if (formRegister.controls.email.touched && formRegister.controls.email.hasError('email')) {
-                        <p class="field-error">L'email n'est pas valide</p>
+                        <p class="field-error">{{ i18n.emailInvalid }}</p>
                     }
                     @if (formRegister.controls.email.hasError('emailAlreadyInUse')) {
-                        <p class="field-error">Cet email est déjà utilisé</p>
+                        <p class="field-error">{{ i18n.emailAlreadyInUse }}</p>
                     }
                     @if (formRegister.controls.email.hasError('validation')) {
                         <p class="field-error">{{ formRegister.controls.email.getError('validation') }}</p>
                     }
                     @if (formRegister.controls.email.hasError('unknownError')) {
-                        <p class="field-error">Une erreur s'est produite</p>
+                        <p class="field-error">{{ i18n.unknownError }}</p>
                     }
                 </div>
 
@@ -31,14 +31,14 @@
                             <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
                         </svg>
                         <input formControlName="password" type="password" class="login__input"
-                               placeholder="Mot de passe">
+                               [placeholder]="i18n.passwordPlaceholder">
                     </div>
                     @if (formRegister.controls.password.touched && formRegister.controls.password.hasError('minlength')) {
-                        <p class="field-error">Le mot de passe doit contenir au moins 6 caractères</p>
+                        <p class="field-error">{{ i18n.passwordTooShort }}</p>
                     }
                     @if (formRegister.controls.password.hasError('passwordNotMatch') ||
                         (formRegister.controls.password.value ?? '').trim() !== (formRegister.controls.confirmPassword.value ?? '').trim()) {
-                        <p class="field-error">Les mots de passe ne correspondent pas</p>
+                        <p class="field-error">{{ i18n.passwordMismatch }}</p>
                     }
                     @if (formRegister.controls.password.hasError('validation')) {
                         <p class="field-error">{{ formRegister.controls.password.getError('validation') }}</p>
@@ -52,10 +52,10 @@
                             <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
                         </svg>
                         <input formControlName="confirmPassword" type="password" class="login__input"
-                               placeholder="Confirmer le mot de passe">
+                               [placeholder]="i18n.confirmPasswordPlaceholder">
                     </div>
                     @if (formRegister.controls.password.hasError('passwordNotMatch')) {
-                        <p class="field-error">Les mots de passe ne correspondent pas</p>
+                        <p class="field-error">{{ i18n.passwordMismatch }}</p>
                     }
                 </div>
 
@@ -63,13 +63,13 @@
                     'disabled': formRegister.invalid || formRegister.controls.password.value !== formRegister.controls.confirmPassword.value
                     }"
                         [disabled]="formRegister.invalid || formRegister.controls.password.value !== formRegister.controls.confirmPassword.value">
-                    <span class="button__text">S'inscrire</span>
+                    <span class="button__text">{{ i18n.submit }}</span>
                     <svg class="button__icon" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
                 </button>
             </form>
             <div class="register">
                 <a routerLink="/auth/login">
-                    <h3>Déjà membre ? Connectez-vous ici</h3>
+                    <h3>{{ i18n.loginLink }}</h3>
                 </a>
             </div>
         </div>

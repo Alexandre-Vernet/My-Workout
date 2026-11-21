@@ -1,7 +1,7 @@
 <div class="library">
     <div class="library-header">
-        <h1>Bibliothèque</h1>
-        <span class="library-count">{{ filterExercises().length }} exercice{{ filterExercises() | plural }}</span>
+        <h1>{{ i18n.title }}</h1>
+        <span class="library-count">{{ filterExercises().length }} {{ i18n.exerciseWord }}{{ filterExercises() | plural }}</span>
     </div>
 
     @if (loading()) {
@@ -13,7 +13,7 @@
     } @else {
         <div class="search-exercise">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-            <input type="text" [formControl]="searchExercise" placeholder="Rechercher un exercice"/>
+            <input type="text" [formControl]="searchExercise" [placeholder]="i18n.searchPlaceholder"/>
         </div>
 
         <div class="chips-container">

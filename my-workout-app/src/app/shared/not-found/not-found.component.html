@@ -25,9 +25,9 @@
 
     <div class="box__description">
         <div class="box__description-container">
-            <div class="box__description-title">Oops !</div>
-            <div class="box__description-text">Il semblerait que la page que vous recherchez n'existe pas</div>
+            <div class="box__description-title">{{ i18n.title }}</div>
+            <div class="box__description-text">{{ i18n.message }}</div>
         </div>
-        <a routerLink="/" class="box__button">Retour</a>
+        <a routerLink="/" class="box__button">{{ i18n.backButton }}</a>
     </div>
 </div>

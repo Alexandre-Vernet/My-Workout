@@ -34,7 +34,7 @@ describe('LoginComponent', () => {
     it('trims the email and logs in', () => {
         component.formLogin.controls.email.setValue('  alex@example.com  ');
 
-        component.signIn();
+        component['signIn']();
 
         const req = httpMock.expectOne(`${ authService.authUrl }/login`);
         expect(req.request.body).toEqual({ email: 'alex@example.com', password: 'secret1' });
@@ -45,14 +45,14 @@ describe('LoginComponent', () => {
         const router = TestBed.inject(Router);
         const navigateSpy = vi.spyOn(router, 'navigateByUrl');
 
-        component.signIn();
+        component['signIn']();
         httpMock.expectOne(`${ authService.authUrl }/login`).flush({ accessToken: 'a', refreshToken: 'r' });
 
         expect(navigateSpy).toHaveBeenCalledWith('/');
     });
 
     it('flags bad credentials on a failed login', () => {
-        component.signIn();
+        component['signIn']();
 
         httpMock.expectOne(`${ authService.authUrl }/login`)
             .flush('unauthorized', { status: 401, statusText: 'Unauthorized' });

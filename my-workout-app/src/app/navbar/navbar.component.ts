@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { MenuUrls } from '../shared/menu-urls';
+import { I18N } from '../shared/i18n/i18n';
 
 interface NavItem {
     readonly route: string;
@@ -21,12 +22,14 @@ interface NavItem {
 })
 export class NavbarComponent {
 
+    protected readonly i18n = I18N.common.navbar;
+
     protected readonly navItems: readonly NavItem[] = [
-        { route: '/library', label: 'Bibliothèque', icon: 'library' },
-        { route: '/calendar', label: 'Calendrier', icon: 'calendar' },
-        { route: '/workout', label: 'Séance', icon: 'workout', isMain: true },
-        { route: '/stats', label: 'Stats', icon: 'stats' },
-        { route: '/user', label: 'Profil', icon: 'profile' }
+        { route: '/library', label: this.i18n.library, icon: 'library' },
+        { route: '/calendar', label: this.i18n.calendar, icon: 'calendar' },
+        { route: '/workout', label: this.i18n.workout, icon: 'workout', isMain: true },
+        { route: '/stats', label: this.i18n.stats, icon: 'stats' },
+        { route: '/user', label: this.i18n.profile, icon: 'profile' }
     ];
 
     private readonly router = inject(Router);

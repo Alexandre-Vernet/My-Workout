@@ -45,32 +45,32 @@ describe('AccountActionsComponent', () => {
         localStorage.setItem('access-token', 'a');
         const navigateSpy = vi.spyOn(router, 'navigate');
 
-        component.signOut();
+        component['signOut']();
 
         expect(authService.hasToken()).toBe(false);
         expect(navigateSpy).toHaveBeenCalledWith([MenuUrls.library]);
     });
 
     it('openDialogConfirmDeleteAccount() opens the confirmation dialog without deleting yet', () => {
-        component.openDialogConfirmDeleteAccount();
+        component['openDialogConfirmDeleteAccount']();
 
         expect(component['confirmDeleteOpen']()).toBe(true);
         httpMock.expectNone(authService.authUrl);
     });
 
     it('onCancelDelete() closes the dialog without deleting', () => {
-        component.openDialogConfirmDeleteAccount();
+        component['openDialogConfirmDeleteAccount']();
 
-        component.onCancelDelete();
+        component['onCancelDelete']();
 
         expect(component['confirmDeleteOpen']()).toBe(false);
         httpMock.expectNone(authService.authUrl);
     });
 
     it('onConfirmDelete() closes the dialog and deletes the account', () => {
-        component.openDialogConfirmDeleteAccount();
+        component['openDialogConfirmDeleteAccount']();
 
-        component.onConfirmDelete();
+        component['onConfirmDelete']();
 
         expect(component['confirmDeleteOpen']()).toBe(false);
         httpMock.expectOne(authService.authUrl).flush(null);
@@ -82,7 +82,7 @@ describe('AccountActionsComponent', () => {
             let emitted: unknown;
             component.showAlert.subscribe(alert => emitted = alert);
 
-            component.deleteAccount();
+            component['deleteAccount']();
 
             httpMock.expectOne(authService.authUrl).flush(null);
 
@@ -94,7 +94,7 @@ describe('AccountActionsComponent', () => {
             let emitted: unknown;
             component.showAlert.subscribe(alert => emitted = alert);
 
-            component.deleteAccount();
+            component['deleteAccount']();
 
             httpMock.expectOne(authService.authUrl).flush('error', { status: 500, statusText: 'Server error' });
 

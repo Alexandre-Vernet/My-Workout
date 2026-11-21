@@ -8,13 +8,13 @@
                             <circle cx="12" cy="8" r="4"/>
                             <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/>
                         </svg>
-                        <input formControlName="email" type="text" class="login__input" placeholder="Email" aria-label="Email">
+                        <input formControlName="email" type="text" class="login__input" [placeholder]="i18n.emailPlaceholder" [attr.aria-label]="i18n.emailAriaLabel">
                     </div>
                     @if (formLogin.controls.email.touched && formLogin.controls.email.hasError('email')) {
-                        <p class="field-error">L'email n'est pas valide</p>
+                        <p class="field-error">{{ i18n.emailInvalid }}</p>
                     }
                     @if (formLogin.hasError('badCredential')) {
-                        <p class="field-error">Email ou mot de passe invalide</p>
+                        <p class="field-error">{{ i18n.badCredential }}</p>
                     }
                 </div>
                 <div class="login__field">
@@ -22,22 +22,22 @@
                         <rect x="5" y="11" width="14" height="10" rx="2"/>
                         <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
                     </svg>
-                    <input formControlName="password" type="password" class="login__input" placeholder="Mot de passe" aria-label="Mot de passe">
+                    <input formControlName="password" type="password" class="login__input" [placeholder]="i18n.passwordPlaceholder" [attr.aria-label]="i18n.passwordAriaLabel">
                 </div>
                 <button class="button login__submit" [ngClass]="{
                     'disabled': formLogin.invalid
                     }"
                         [disabled]="formLogin.invalid">
-                    <span class="button__text">Connexion</span>
+                    <span class="button__text">{{ i18n.submit }}</span>
                     <svg class="button__icon" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
                 </button>
             </form>
             <div class="register">
                 <button type="button" class="link-button" (click)="showDialogForgotPassword = true">
-                    <h3>Mot de passe oublié</h3>
+                    <h3>{{ i18n.forgotPassword }}</h3>
                 </button>
                 <a routerLink="/auth/register">
-                    <h3>Pas encore inscrit ? Créez un compte ici</h3>
+                    <h3>{{ i18n.registerLink }}</h3>
                 </a>
 
             </div>

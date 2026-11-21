@@ -120,7 +120,7 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
     it('openModalCardioExerciseChange() closes the modal and refreshes the recommended groups', () => {
         loadInitialData();
 
-        component.openModalCardioExerciseChange();
+        component['openModalCardioExerciseChange']();
 
         expect(component['isOpenModalExerciseCardio']()).toBe(false);
         httpMock.expectOne(`${ muscleGroupService.muscleGroupUrl }/recommended`).flush(recommended);

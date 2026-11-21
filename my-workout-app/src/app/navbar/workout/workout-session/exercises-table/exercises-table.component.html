@@ -1,9 +1,9 @@
 <div class="exercises-table" [style.visibility]="exercisesMade().length > 0 ? 'visible' : 'hidden'">
     <div class="history-head">
-        <span>Poids</span>
-        <span>Reps</span>
-        <span>Unilat.</span>
-        <span>Repos</span>
+        <span>{{ i18n.weightHeader }}</span>
+        <span>{{ i18n.repsHeader }}</span>
+        <span>{{ i18n.unilateralHeader }}</span>
+        <span>{{ i18n.restHeader }}</span>
         <span></span>
     </div>
 
@@ -12,7 +12,7 @@
             <div class="history-row">
                 <app-number-stepper
                     [compact]="true"
-                    suffix=" kg"
+                    [suffix]="i18n.weightSuffix"
                     [min]="0"
                     [max]="500"
                     [step]="0.5"
@@ -34,13 +34,13 @@
                     class="history-check"
                     [class.checked]="history.unilateral"
                     (click)="toggleUnilateral(history)"
-                    aria-label="Unilatéral">
+                    [attr.aria-label]="i18n.unilateralAriaLabel">
                     <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
                 </button>
 
                 <span class="history-rest">{{ history.restTime }}</span>
 
-                <button type="button" class="history-delete" (click)="deleteHistory(history)" aria-label="Supprimer">
+                <button type="button" class="history-delete" (click)="deleteHistory(history)" [attr.aria-label]="i18n.deleteAriaLabel">
                     <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
                 </button>
             </div>

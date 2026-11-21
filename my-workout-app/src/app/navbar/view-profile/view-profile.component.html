@@ -5,7 +5,7 @@
             <div class="profile-identity">
                 <strong>{{ user()!.email }}</strong>
                 @if (user()!.admin) {
-                    <span class="profile-badge">Admin</span>
+                    <span class="profile-badge">{{ i18n.adminBadge }}</span>
                 }
             </div>
         </header>
@@ -26,7 +26,7 @@
                     <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
                 </svg>
             </span>
-            <span class="profile-admin-label">Administration</span>
+            <span class="profile-admin-label">{{ i18n.adminLink }}</span>
             <svg class="profile-chevron" viewBox="0 0 24 24">
                 <path d="M9 18l6-6-6-6"/>
             </svg>
