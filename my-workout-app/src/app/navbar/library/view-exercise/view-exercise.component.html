@@ -3,7 +3,7 @@
         <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
 
-    @if (!exerciseMuscle) {
+    @if (!exerciseMuscle()) {
         <span class="skeleton-fill skeleton-line skeleton-title"></span>
         <div class="skeleton-tags">
             @for (skeleton of [0, 1, 2]; track skeleton) {
@@ -13,12 +13,12 @@
         <span class="skeleton-fill skeleton-hero"></span>
         <span class="skeleton-fill skeleton-panel"></span>
     } @else {
-        @let exercise = exerciseMuscle.exercise!;
+        @let exercise = exerciseMuscle()!.exercise!;
 
         <div class="exercise-hero" [style.background]="heroColor + '26'">
-            <img [src]="imagePath" [alt]="exercise.name" class="exercise-hero-image"/>
+            <img [src]="imagePath()" [alt]="exercise.name" class="exercise-hero-image"/>
 
-            @if (exerciseMuscle.addedToWorkout) {
+            @if (exerciseMuscle()!.addedToWorkout) {
                 <span class="exercise-hero-badge" title="Dans votre entraînement">
                     <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
                 </span>
@@ -29,7 +29,7 @@
             <h1>{{ exercise.name }}</h1>
 
             <div class="tag-row">
-                @for (muscle of exerciseMuscle.muscles; track muscle.id) {
+                @for (muscle of exerciseMuscle()!.muscles; track muscle.id) {
                     <span class="muscle-tag" [style.background]="heroColor + '1a'" [style.color]="heroColor">
                         {{ muscle.name }}
                     </span>
@@ -68,20 +68,20 @@
                 <button
                     type="button"
                     class="btn btn-block"
-                    [class.btn-danger]="exerciseMuscle.addedToWorkout"
-                    [class.btn-primary]="!exerciseMuscle.addedToWorkout"
+                    [class.btn-danger]="exerciseMuscle()!.addedToWorkout"
+                    [class.btn-primary]="!exerciseMuscle()!.addedToWorkout"
                     (click)="toggleExerciseWorkout()">
                     <svg viewBox="0 0 24 24">
-                        @if (exerciseMuscle.addedToWorkout) {
+                        @if (exerciseMuscle()!.addedToWorkout) {
                             <path d="M6 6l12 12M18 6L6 18"/>
                         } @else {
                             <path d="M12 5v14M5 12h14"/>
                         }
                     </svg>
-                    {{ exerciseMuscle.addedToWorkout ? 'Supprimer de l\'entraînement' : 'Ajouter à l\'entraînement' }}
+                    {{ exerciseMuscle()!.addedToWorkout ? 'Supprimer de l\'entraînement' : 'Ajouter à l\'entraînement' }}
                 </button>
 
-                @if (user?.admin) {
+                @if (user()?.admin) {
                     <button type="button" class="btn btn-secondary btn-block" (click)="updateExercise()">
                         <svg viewBox="0 0 24 24">
                             <path d="M12 20h9M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4z"/>

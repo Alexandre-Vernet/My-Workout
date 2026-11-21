@@ -47,9 +47,9 @@ describe('ViewExerciseComponent', () => {
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
         httpMock.expectOne(`${ exerciseService.exerciseUrl }/5`).flush(exerciseMuscle);
 
-        expect(component.user?.email).toBe('alex@example.com');
-        expect(component.exerciseMuscle).toEqual(exerciseMuscle);
-        expect(component.imagePath).toBe('/assets/images/5.gif');
+        expect(component['user']()?.email).toBe('alex@example.com');
+        expect(component['exerciseMuscle']()).toEqual(exerciseMuscle);
+        expect(component['imagePath']()).toBe('/assets/images/5.gif');
     });
 
     it('redirects to not-found when the exercise cannot be loaded', () => {
@@ -77,7 +77,7 @@ describe('ViewExerciseComponent', () => {
 
             httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/toggle`).flush({ id: 5, name: 'Squat' });
 
-            expect(component.exerciseMuscle.addedToWorkout).toBe(true);
+            expect(component['exerciseMuscle']()!.addedToWorkout).toBe(true);
         });
 
         it('shows an error alert on failure', () => {
@@ -108,6 +108,7 @@ describe('ViewExerciseComponent', () => {
 
     it('defaults to the "info" tab and switches via setActiveTab()', () => {
         createComponent();
+        httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
         expect(component['activeTab']()).toBe('info');
 
@@ -119,6 +120,7 @@ describe('ViewExerciseComponent', () => {
     describe('difficultyColor()', () => {
         it('maps each difficulty to its own color', () => {
             createComponent();
+            httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
             expect(component['difficultyColor'](DifficultyEnum.BEGINNER)).toBe('var(--p-green-500)');
             expect(component['difficultyColor'](DifficultyEnum.INTERMEDIATE)).toBe('var(--p-orange-500)');
@@ -127,6 +129,7 @@ describe('ViewExerciseComponent', () => {
 
         it('falls back to the muted text color for an unknown difficulty', () => {
             createComponent();
+            httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
             expect(component['difficultyColor'](undefined)).toBe('var(--p-text-muted-color)');
         });

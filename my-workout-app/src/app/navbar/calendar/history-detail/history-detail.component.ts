@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { History } from '../../../../interfaces/History';
 import { Exercise } from '../../../../interfaces/Exercise';
 import { RouterLink } from '@angular/router';
@@ -9,6 +9,7 @@ import { ConvertTimePipe } from '../../../shared/pipes/convert-time.pipe';
     imports: [RouterLink, ConvertTimePipe],
     templateUrl: './history-detail.component.html',
     styleUrl: './history-detail.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class HistoryDetailComponent {

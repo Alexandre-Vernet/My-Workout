@@ -1,11 +1,11 @@
 <header class="app-bar">
     <div class="app-bar-title">
         <strong>{{ monthLabel | firstLetterUppercase }}</strong>
-        <small>{{ sessionCountLabel }}</small>
+        <small>{{ sessionCountLabel() }}</small>
     </div>
 </header>
 
-@if (loading) {
+@if (loading()) {
     <div class="skeleton-cal-grid">
         @for (skeleton of skeletonDays; track $index) {
             <span class="skeleton-fill skeleton-cal-day"></span>
@@ -14,7 +14,7 @@
 } @else {
     <div class="chip-row">
         <div class="chip" [class.active]="!activeFilter" (click)="clearMuscleGroupFilter()">Tous</div>
-        @for (muscleGroup of muscleGroups; track muscleGroup.id) {
+        @for (muscleGroup of muscleGroups(); track muscleGroup.id) {
             <div class="chip" [class.active]="activeFilter?.name === muscleGroup.name"
                  (click)="filterByMuscleGroup(muscleGroup)">
                 <span class="chip-dot" [style.background]="groupColor(muscleGroup.name)"></span>
@@ -30,7 +30,7 @@
             @for (weekday of weekdays; track weekday) {
                 <div class="cal-weekday">{{ weekday }}</div>
             }
-            @for (calendarDay of calendarDays; track $index) {
+            @for (calendarDay of calendarDays(); track $index) {
                 @if (calendarDay) {
                     <div class="cal-day" [class.today]="calendarDay.isToday" [class.muted]="calendarDay.muted"
                          (click)="onDayClick(calendarDay)">
@@ -87,7 +87,7 @@
         </button>
     </header>
     <div class="sheet-body">
-        @for (workout of sheetWorkouts; track workout.workoutSummary?.id) {
+        @for (workout of sheetWorkouts(); track workout.workoutSummary?.id) {
             <div class="sheet-group">
                 <div class="sheet-group-head">
                     <small [style.color]="groupColor(workout.muscleGroup?.name)">
@@ -109,4 +109,12 @@
     </div>
 </div>
 
-<p-confirmdialog></p-confirmdialog>
+<app-confirm-dialog
+    [open]="!!pendingWorkoutDeletion()"
+    title="Attention"
+    [message]="pendingWorkoutDeletion()?.message ?? ''"
+    confirmLabel="Supprimer"
+    cancelLabel="Annuler"
+    [danger]="true"
+    (confirmed)="confirmDeleteWorkout()"
+    (cancelled)="cancelDeleteWorkout()"/>

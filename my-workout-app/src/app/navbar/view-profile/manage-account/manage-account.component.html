@@ -74,7 +74,7 @@
           ) ||
           (
             !isCheckedChangePassword &&
-            currentEmail === formGroup.controls.email.value
+            currentEmail() === formGroup.controls.email.value
           )"
             (click)="updateUser()">
             Mettre à jour

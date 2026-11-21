@@ -1,9 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
-import { Message } from 'primeng/message';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 import { LoginRequest } from "../../../interfaces/LoginRequest";
 
@@ -15,9 +14,9 @@ import { LoginRequest } from "../../../interfaces/LoginRequest";
         ReactiveFormsModule,
         RouterLink,
         NgClass,
-        Message,
         ForgotPasswordComponent
-    ]
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent {
 

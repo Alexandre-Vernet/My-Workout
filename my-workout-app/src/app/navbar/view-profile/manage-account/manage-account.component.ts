@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UpdateUserRequest } from '../../../../interfaces/UpdateUserRequest';
 import { AuthService } from '../../../auth/auth.service';
@@ -13,11 +13,12 @@ import { ToggleSwitchComponent } from '../../../shared/toggle-switch/toggle-swit
     imports: [ReactiveFormsModule, ToggleSwitchComponent],
     templateUrl: './manage-account.component.html',
     styleUrl: './manage-account.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class ManageAccountComponent implements OnInit {
 
-    currentEmail: string | undefined;
+    protected readonly currentEmail = signal<string | undefined>(undefined);
     formGroup = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email, Validators.maxLength(255)]),
         password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(255)]),
@@ -35,7 +36,7 @@ export class ManageAccountComponent implements OnInit {
     ngOnInit() {
         this.authService.getCurrentUser()
             .subscribe(user => {
-                this.currentEmail = user?.email;
+                this.currentEmail.set(user?.email);
                 this.formGroup.controls.email.setValue(user?.email);
             });
     }

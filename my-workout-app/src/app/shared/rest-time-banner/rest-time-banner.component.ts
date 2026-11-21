@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DEFAULT_VALUE_REST_TIME, RestTimeService } from "../../services/rest-time.service";
 import { NavigationEnd, Router } from "@angular/router";
@@ -10,6 +10,7 @@ import { RestTimePipe } from "../pipes/rest-time.pipe";
     imports: [RestTimePipe],
     templateUrl: './rest-time-banner.component.html',
     styleUrl: './rest-time-banner.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RestTimeBannerComponent {
     private readonly router = inject(Router);

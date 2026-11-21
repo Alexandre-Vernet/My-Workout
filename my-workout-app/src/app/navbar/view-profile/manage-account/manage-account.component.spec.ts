@@ -1,9 +1,14 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
 import { ManageAccountComponent } from './manage-account.component';
 import { AuthService } from '../../../auth/auth.service';
+
+@Component({ template: '', standalone: true })
+class StubComponent {
+}
 
 describe('ManageAccountComponent', () => {
     let fixture: ComponentFixture<ManageAccountComponent>;
@@ -16,7 +21,11 @@ describe('ManageAccountComponent', () => {
 
         TestBed.configureTestingModule({
             imports: [ManageAccountComponent],
-            providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])]
+            providers: [
+                provideHttpClient(),
+                provideHttpClientTesting(),
+                provideRouter([{ path: '**', component: StubComponent }])
+            ]
         });
 
         fixture = TestBed.createComponent(ManageAccountComponent);
@@ -34,7 +43,7 @@ describe('ManageAccountComponent', () => {
 
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
-        expect(component.currentEmail).toBe('alex@example.com');
+        expect(component['currentEmail']()).toBe('alex@example.com');
         expect(component.formGroup.controls.email.value).toBe('alex@example.com');
     });
 

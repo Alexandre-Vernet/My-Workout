@@ -1,4 +1,4 @@
-import { Component, input, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject, signal } from '@angular/core';
 import { ExerciseService } from '../../../../services/exercise.service';
 import { Exercise } from '../../../../../interfaces/Exercise';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -27,7 +27,8 @@ import { getMuscleGroupColor } from '../../../../shared/utils/muscle-group-color
         DifficultyLabelPipe,
         MechanicLabelPipe,
         ConfirmDialogComponent,
-    ]
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddExerciseComponent implements OnInit {
     private readonly exerciseService = inject(ExerciseService);
@@ -51,16 +52,16 @@ export class AddExerciseComponent implements OnInit {
         mechanic: new FormControl<MechanicEnum>(MechanicEnum.COMPOUND, Validators.required),
     });
 
-    loadingDescription = false;
+    protected readonly loadingDescription = signal(false);
 
-    musclesDropdown: MuscleDropdown[] = [];
+    protected readonly musclesDropdown = signal<MuscleDropdown[]>([]);
     musclesPanelOpen = signal(false);
     addToWorkoutConfirm = signal<Exercise | null>(null);
 
     ngOnInit() {
         this.muscleService.findAllMuscles()
             .pipe(
-                tap(musclesDropdown => this.musclesDropdown = musclesDropdown),
+                tap(musclesDropdown => this.musclesDropdown.set(musclesDropdown)),
                 filter(() => !!this.exerciseId()),
                 switchMap(() => this.exerciseService.findExerciseMuscle(this.exerciseId()!))
             )
@@ -71,7 +72,7 @@ export class AddExerciseComponent implements OnInit {
                         return;
                     }
 
-                    const allMuscles = this.musclesDropdown.flatMap(group => group.items);
+                    const allMuscles = this.musclesDropdown().flatMap(group => group.items);
 
                     const selectedMuscles = allMuscles.filter(dropdownMuscle =>
                         exerciseMuscle.muscles?.some(muscle => muscle.id === dropdownMuscle.id)
@@ -91,16 +92,16 @@ export class AddExerciseComponent implements OnInit {
     }
 
     generateExerciseDescription() {
-        this.loadingDescription = true;
+        this.loadingDescription.set(true);
         const exerciseName = this.formAddExercise.controls.name.value ?? '';
         this.exerciseService.generateExerciseDescription(exerciseName)
             .subscribe({
                 next: ({ description }) => {
-                    this.loadingDescription = false;
+                    this.loadingDescription.set(false);
                     this.formAddExercise.controls.description.setValue(description);
                 },
                 error: (err: CustomError) => {
-                    this.loadingDescription = false;
+                    this.loadingDescription.set(false);
                     const errorCode = getErrorCode(err);
                     if (errorCode === 'QUOTA_EXCEEDED') {
                         this.formAddExercise.controls.description.setErrors({

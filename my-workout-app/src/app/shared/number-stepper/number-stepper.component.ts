@@ -1,9 +1,10 @@
-import { Component, input, model, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
 
 @Component({
     selector: 'app-number-stepper',
     templateUrl: './number-stepper.component.html',
     styleUrl: './number-stepper.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class NumberStepperComponent {

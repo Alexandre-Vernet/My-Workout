@@ -34,7 +34,7 @@ describe('StatsComponent', () => {
         fixture.detectChanges();
         httpMock.expectOne(`${ historyService.historyUrl }/stats`).flush(stats);
 
-        expect(component.userExercisesCountTotalWorkout).toEqual(stats);
+        expect(component['userExercisesCountTotalWorkout']()).toEqual(stats);
     });
 
     it('shows an error alert when the stats fail to load', () => {

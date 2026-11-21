@@ -1,20 +1,15 @@
-import { Component, inject, model } from '@angular/core';
-import { Button } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
-import { FloatLabel } from 'primeng/floatlabel';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
+import { ChangeDetectionStrategy, Component, inject, model, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertService } from '../../services/alert.service';
-import { NgClass } from '@angular/common';
 import { PasswordResetTokenService } from "../password-reset-token.service";
 import { getErrorMessage } from "../../shared/utils/http-error";
 
 @Component({
     selector: 'app-forgot-password',
-    imports: [Button, Dialog, FloatLabel, InputText, Message, ReactiveFormsModule, NgClass],
+    imports: [ReactiveFormsModule],
     templateUrl: './forgot-password.component.html',
     styleUrl: './forgot-password.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class ForgotPasswordComponent {
@@ -23,13 +18,13 @@ export class ForgotPasswordComponent {
 
     email = new FormControl('', Validators.email);
 
-    isLoading = false;
+    protected readonly isLoading = signal(false);
 
     private readonly passwordResetTokenService = inject(PasswordResetTokenService);
     private readonly alertService = inject(AlertService);
 
     forgotPassword() {
-        this.isLoading = true;
+        this.isLoading.set(true);
 
         const email = this.email.value ?? '';
 
@@ -37,7 +32,7 @@ export class ForgotPasswordComponent {
             .subscribe({
                 next: () => {
                     this.closeModal();
-                    this.isLoading = false;
+                    this.isLoading.set(false);
 
                     this.alertService.show({
                         severity: 'success',
@@ -45,7 +40,7 @@ export class ForgotPasswordComponent {
                     });
                 },
                 error: (err) => {
-                    this.isLoading = false;
+                    this.isLoading.set(false);
 
                     this.alertService.show({
                         severity: 'error',

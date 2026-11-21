@@ -1,9 +1,9 @@
 @if (openModal()) {
     <div class="overlay-backdrop" (click)="onHideModal()">
         <div class="overlay-card" (click)="$event.stopPropagation()">
-            <div class="cardio-header">
+            <div class="overlay-header">
                 <h2>Sélectionner un type d'entraînement</h2>
-                <button type="button" class="cardio-close" aria-label="Fermer" (click)="onHideModal()">
+                <button type="button" class="overlay-close" aria-label="Fermer" (click)="onHideModal()">
                     <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
                 </button>
             </div>
@@ -13,14 +13,14 @@
                     <button
                         type="button"
                         class="cardio-option"
-                        [class.selected]="selectedExercise?.id === cardioExercise.id"
+                        [class.selected]="selectedExercise()?.id === cardioExercise.id"
                         (click)="showInputDuration(cardioExercise)">
                         {{ cardioExercise.name }}
                     </button>
                 }
             </div>
 
-            @if (selectedExercise) {
+            @if (selectedExercise()) {
                 <div class="cardio-duration">
                     <app-number-stepper [(value)]="inputDuration" [min]="1" [max]="999" [step]="1" suffix=" min"/>
                     <button

@@ -1,10 +1,10 @@
 <div class="library">
     <div class="library-header">
         <h1>Bibliothèque</h1>
-        <span class="library-count">{{ filterExercises.length }} exercice{{ filterExercises | plural }}</span>
+        <span class="library-count">{{ filterExercises().length }} exercice{{ filterExercises() | plural }}</span>
     </div>
 
-    @if (loading) {
+    @if (loading()) {
         <div class="skeleton-grid">
             @for (skeleton of [1, 2, 3, 4, 5, 6]; track skeleton) {
                 <div class="skeleton-card skeleton-fill"></div>
@@ -19,7 +19,7 @@
         <div class="chips-container">
             <ul>
                 @for (muscleGroup of muscleGroupEnum; track muscleGroup) {
-                    <li [class.active]="selectedMuscleGroup === muscleGroup.id"
+                    <li [class.active]="selectedMuscleGroup() === muscleGroup.id"
                         (click)="filterExercise(muscleGroup.id)">
                         {{ muscleGroup.label | firstLetterUppercase }}
                     </li>
@@ -50,7 +50,7 @@
             </div>
         } @else {
             <div class="exercise-grid">
-                @for (exercise of filterExercises; track exercise.id) {
+                @for (exercise of filterExercises(); track exercise.id) {
                     <a class="exercise-card" [routerLink]="['/', 'library', 'exercise', exercise.id]"
                        [style.background]="cardGradient(exercise)">
                         <img [src]="'/assets/images/' + exercise.id + '.gif'" [alt]="exercise.name"/>

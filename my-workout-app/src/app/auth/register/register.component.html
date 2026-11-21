@@ -4,68 +4,58 @@
             <form [formGroup]="formRegister" (ngSubmit)="signUp()" class="login">
                 <div>
                     <div class="login__field">
-                        <i class="pi pi-user login__icon"></i>
+                        <svg class="login__icon" viewBox="0 0 24 24">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/>
+                        </svg>
                         <input formControlName="email" type="text" class="login__input" placeholder="Email">
                     </div>
                     @if (formRegister.controls.email.touched && formRegister.controls.email.hasError('email')) {
-                        <p-message severity="error" variant="simple" size="small">
-                            L'email n'est pas valide
-                        </p-message>
+                        <p class="field-error">L'email n'est pas valide</p>
                     }
                     @if (formRegister.controls.email.hasError('emailAlreadyInUse')) {
-                        <p-message severity="error" variant="simple" size="small">
-                            Cet email est déjà utilisé
-                        </p-message>
+                        <p class="field-error">Cet email est déjà utilisé</p>
                     }
                     @if (formRegister.controls.email.hasError('validation')) {
-                        <p-message severity="error" variant="simple" size="small">
-                            {{ formRegister.controls.email.getError('validation') }}
-                        </p-message>
+                        <p class="field-error">{{ formRegister.controls.email.getError('validation') }}</p>
                     }
                     @if (formRegister.controls.email.hasError('unknownError')) {
-                        <p-message severity="error" variant="simple" size="small">
-                            Une erreur s'est produite
-                        </p-message>
+                        <p class="field-error">Une erreur s'est produite</p>
                     }
                 </div>
 
                 <div>
                     <div class="login__field">
-                        <i class="pi pi-lock login__icon"></i>
+                        <svg class="login__icon" viewBox="0 0 24 24">
+                            <rect x="5" y="11" width="14" height="10" rx="2"/>
+                            <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                        </svg>
                         <input formControlName="password" type="password" class="login__input"
                                placeholder="Mot de passe">
                     </div>
                     @if (formRegister.controls.password.touched && formRegister.controls.password.hasError('minlength')) {
-                        <p-message
-                            severity="error" variant="simple" size="small">
-                            Le mot de passe doit contenir au moins 6 caractères
-                        </p-message>
+                        <p class="field-error">Le mot de passe doit contenir au moins 6 caractères</p>
                     }
                     @if (formRegister.controls.password.hasError('passwordNotMatch') ||
                         (formRegister.controls.password.value ?? '').trim() !== (formRegister.controls.confirmPassword.value ?? '').trim()) {
-                        <p-message
-                            severity="error" variant="simple" size="small">
-                            Les mots de passe ne correspondent pas
-                        </p-message>
+                        <p class="field-error">Les mots de passe ne correspondent pas</p>
                     }
                     @if (formRegister.controls.password.hasError('validation')) {
-                        <p-message severity="error" variant="simple" size="small">
-                            {{ formRegister.controls.password.getError('validation') }}
-                        </p-message>
+                        <p class="field-error">{{ formRegister.controls.password.getError('validation') }}</p>
                     }
                 </div>
 
                 <div>
                     <div class="login__field">
-                        <i class="pi pi-lock login__icon"></i>
+                        <svg class="login__icon" viewBox="0 0 24 24">
+                            <rect x="5" y="11" width="14" height="10" rx="2"/>
+                            <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                        </svg>
                         <input formControlName="confirmPassword" type="password" class="login__input"
                                placeholder="Confirmer le mot de passe">
                     </div>
                     @if (formRegister.controls.password.hasError('passwordNotMatch')) {
-                        <p-message severity="error" variant="simple"
-                                   size="small">
-                            Les mots de passe ne correspondent pas
-                        </p-message>
+                        <p class="field-error">Les mots de passe ne correspondent pas</p>
                     }
                 </div>
 
@@ -74,7 +64,7 @@
                     }"
                         [disabled]="formRegister.invalid || formRegister.controls.password.value !== formRegister.controls.confirmPassword.value">
                     <span class="button__text">S'inscrire</span>
-                    <i class="button__icon pi pi-chevron-right" style="font-size: 2rem"></i>
+                    <svg class="button__icon" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
                 </button>
             </form>
             <div class="register">

@@ -46,14 +46,14 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
     }
 
     it('starts with no muscle groups loaded, so the skeleton can render', () => {
-        expect(component.muscleGroupExerciseCount).toBeNull();
+        expect(component['muscleGroupExerciseCount']()).toBeNull();
     });
 
     it('loads the recommended muscle groups and cardio exercises on init', () => {
         loadInitialData([{ id: 1, name: 'Running' }]);
 
-        expect(component.muscleGroupExerciseCount).toEqual(recommended);
-        expect(component.cardioExercises).toEqual([{ id: 1, name: 'Running' }]);
+        expect(component['muscleGroupExerciseCount']()).toEqual(recommended);
+        expect(component['cardioExercises']()).toEqual([{ id: 1, name: 'Running' }]);
     });
 
     it('navigates to the workout session for a non-cardio muscle group', () => {
@@ -67,13 +67,13 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
 
     it('opens the cardio dialog when the user already has cardio exercises added', () => {
         loadInitialData();
-        component.muscleGroupExerciseCount = [
+        component['muscleGroupExerciseCount'].set([
             { exerciseCount: 1, muscleGroup: { id: MuscleGroupEnum.CARDIO, name: 'cardio' } }
-        ];
+        ]);
 
         component['clickMuscleGroup']({ id: MuscleGroupEnum.CARDIO, name: 'cardio' });
 
-        expect(component.isOpenModalExerciseCardio).toBe(true);
+        expect(component['isOpenModalExerciseCardio']()).toBe(true);
     });
 
     it('prompts to add exercises when clicking cardio without any cardio exercise added', () => {
@@ -82,7 +82,7 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
         component['clickMuscleGroup']({ id: MuscleGroupEnum.CARDIO, name: 'cardio' });
 
         expect(component['confirmNoExercisesOpen']()).toBe(true);
-        expect(component.isOpenModalExerciseCardio).toBe(false);
+        expect(component['isOpenModalExerciseCardio']()).toBe(false);
     });
 
     it('confirmAddExercises() closes the dialog and navigates to the library for the pending muscle group', () => {
@@ -122,7 +122,7 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
 
         component.openModalCardioExerciseChange();
 
-        expect(component.isOpenModalExerciseCardio).toBe(false);
+        expect(component['isOpenModalExerciseCardio']()).toBe(false);
         httpMock.expectOne(`${ muscleGroupService.muscleGroupUrl }/recommended`).flush(recommended);
     });
 });

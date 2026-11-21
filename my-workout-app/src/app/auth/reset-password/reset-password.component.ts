@@ -1,27 +1,16 @@
-import { Component, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgClass } from '@angular/common';
-import { Button } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
-import { FloatLabel } from 'primeng/floatlabel';
-import { Message } from 'primeng/message';
-import { Password } from 'primeng/password';
+import { CustomError } from "../../../interfaces/CustomError";
+import { getErrorMessage } from "../../shared/utils/http-error";
 import { PasswordResetTokenService } from "../password-reset-token.service";
 
 @Component({
     selector: 'app-reset-password',
     templateUrl: './reset-password.component.html',
     styleUrls: ['./reset-password.component.scss'],
-    imports: [
-        ReactiveFormsModule,
-        NgClass,
-        Button,
-        Dialog,
-        FloatLabel,
-        Message,
-        Password
-    ],
+    imports: [ReactiveFormsModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class ResetPasswordComponent implements OnInit {
@@ -71,7 +60,9 @@ export class ResetPasswordComponent implements OnInit {
         this.passwordResetTokenService.resetPassword(this.token(), password)
             .subscribe({
                 next: () => this.redirectToSignIn(),
-                error: (err) => this.formResetPassword.setErrors({ error: err.error.message ?? 'Une erreur s\'est produite' })
+                error: (err: CustomError) => this.formResetPassword.setErrors({
+                    error: getErrorMessage(err, 'Une erreur s\'est produite')
+                })
             });
     }
 }

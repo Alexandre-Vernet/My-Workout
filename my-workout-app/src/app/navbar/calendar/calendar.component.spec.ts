@@ -35,11 +35,11 @@ describe('CalendarComponent', () => {
     it('shows the loading skeleton until the month data arrives', () => {
         fixture.detectChanges();
 
-        expect(component.loading).toBe(true);
+        expect(component['loading']()).toBe(true);
 
         httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`).flush(workouts);
 
-        expect(component.loading).toBe(false);
+        expect(component['loading']()).toBe(false);
         expect(component.workouts).toEqual(workouts);
     });
 
@@ -50,7 +50,7 @@ describe('CalendarComponent', () => {
         httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`)
             .flush('error', { status: 500, statusText: 'Server error' });
 
-        expect(component.loading).toBe(false);
+        expect(component['loading']()).toBe(false);
         expect(alertService.alert()?.severity).toBe('error');
     });
 
@@ -60,8 +60,59 @@ describe('CalendarComponent', () => {
 
         component['nextMonth']();
 
-        expect(component.loading).toBe(false);
+        expect(component['loading']()).toBe(false);
         httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`).flush([]);
+    });
+
+    describe('openModalDeleteWorkout / confirmDeleteWorkout / cancelDeleteWorkout', () => {
+        beforeEach(() => {
+            fixture.detectChanges();
+            httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`).flush(workouts);
+        });
+
+        it('opens the confirmation with the formatted message and closes the day sheet', () => {
+            component['sheetOpen'].set(true);
+
+            component['openModalDeleteWorkout'](1, 'Pectoraux', new Date(2026, 0, 5));
+
+            expect(component['sheetOpen']()).toBe(false);
+            expect(component['pendingWorkoutDeletion']()?.message)
+                .toContain('Pectoraux');
+        });
+
+        it('cancelDeleteWorkout() clears the pending deletion without calling the API', () => {
+            component['openModalDeleteWorkout'](1, 'Pectoraux', new Date(2026, 0, 5));
+
+            component['cancelDeleteWorkout']();
+
+            expect(component['pendingWorkoutDeletion']()).toBeNull();
+            httpMock.expectNone(workoutService.workoutUrl);
+        });
+
+        it('confirmDeleteWorkout() deletes the workout, refreshes the calendar and shows a success alert', () => {
+            const alertService = TestBed.inject(AlertService);
+            component['openModalDeleteWorkout'](1, 'Pectoraux', new Date(2026, 0, 5));
+
+            component['confirmDeleteWorkout']();
+
+            httpMock.expectOne(`${ workoutService.workoutUrl }/1`).flush(null);
+
+            expect(component['pendingWorkoutDeletion']()).toBeNull();
+            expect(component.workouts).toEqual([]);
+            expect(alertService.alert()?.severity).toBe('success');
+        });
+
+        it('confirmDeleteWorkout() shows an error alert when the deletion fails', () => {
+            const alertService = TestBed.inject(AlertService);
+            component['openModalDeleteWorkout'](1, 'Pectoraux', new Date(2026, 0, 5));
+
+            component['confirmDeleteWorkout']();
+
+            httpMock.expectOne(`${ workoutService.workoutUrl }/1`)
+                .flush('error', { status: 500, statusText: 'Server error' });
+
+            expect(alertService.alert()?.severity).toBe('error');
+        });
     });
 
     describe('monthSessionDays / weekdayLabel / dayGroupsLabel', () => {

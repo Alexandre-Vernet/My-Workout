@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
-import { PrimeNG } from 'primeng/config';
 import { Component } from '@angular/core';
 import { AppComponent } from './app.component';
 import { ThemeService } from './shared/theme/theme.service';
@@ -31,14 +30,12 @@ describe('AppComponent', () => {
         themeService = TestBed.inject(ThemeService);
     });
 
-    it('enables ripple and loads the saved theme and dark mode on init', () => {
+    it('loads the saved theme and dark mode on init', () => {
         const loadThemeSpy = vi.spyOn(themeService, 'loadTheme');
         const loadDarkModeSpy = vi.spyOn(themeService, 'loadDarkMode');
-        const primeng = TestBed.inject(PrimeNG);
 
         fixture.detectChanges();
 
-        expect(primeng.ripple()).toBe(true);
         expect(loadThemeSpy).toHaveBeenCalledOnce();
         expect(loadDarkModeSpy).toHaveBeenCalledOnce();
     });
@@ -48,7 +45,7 @@ describe('AppComponent', () => {
 
         await router.navigateByUrl('/auth/login');
 
-        expect(fixture.componentInstance.hideNavbar).toBe(true);
+        expect(fixture.componentInstance['hideNavbar']()).toBe(true);
     });
 
     it('shows the navbar on regular pages', async () => {
@@ -56,6 +53,6 @@ describe('AppComponent', () => {
 
         await router.navigateByUrl('/calendar');
 
-        expect(fixture.componentInstance.hideNavbar).toBe(false);
+        expect(fixture.componentInstance['hideNavbar']()).toBe(false);
     });
 });

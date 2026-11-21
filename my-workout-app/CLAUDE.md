@@ -55,7 +55,10 @@ projet frontend) ; seuls le thème et les tokens d'authentification vivent dans 
   - `pipes/` : `plural.pipe.ts`, `rest-time.pipe.ts`, `difficulty-label.pipe.ts`,
     `mechanic-label.pipe.ts`, `first-letter-uppercase.pipe.ts`, `convert-time.pipe.ts`.
   - `theme/` : `theme.service.ts` (thème clair/sombre via la classe `.dark-mode` sur
-    `<html>`, 17 presets PrimeNG dans `presets.ts`/`preset-*.ts`).
+    `<html>`, 17 presets `@primeuix/themes` dans `presets.ts`/`preset-*.ts` ;
+    `theme.service.ts` injecte lui-même les variables CSS du thème via
+    `@primeuix/styled` — PrimeNG, qui faisait ce travail avant sa suppression du
+    projet, n'est plus dans la boucle).
   - `utils/` : fonctions pures sans classe — `date-utils.ts` (`toLocalDate` : construit
     la date depuis les composants **locaux**, jamais `toISOString()` qui décale d'un
     jour selon le fuseau), `http-error.ts` (voir
@@ -75,8 +78,7 @@ projet frontend) ; seuls le thème et les tokens d'authentification vivent dans 
   `enum` — ne pas utiliser `class` pour une forme de donnée qui n'est jamais
   construite avec `new`.
 - `src/environments/` — `environment.ts` (dev) / `environment.prod.ts`, builders d'URL
-  d'API (`authUrl()`, `exerciseUrl()`...) et config EmailJS (clé publique, normal pour
-  ce service — pas un secret à cacher).
+  d'API (`authUrl()`, `exerciseUrl()`...).
 - `src/app/app.component.ts` — coquille : navbar + `router-outlet` + bandeau d'alerte
   + bandeau de repos, masque la navbar sur les pages d'auth, charge le thème au
   démarrage. Gère aussi, dans son constructeur, la détection de mise à jour du service
@@ -85,8 +87,8 @@ projet frontend) ; seuls le thème et les tokens d'authentification vivent dans 
   **les paramètres de route et query params sont liés directement aux `input()` du
   composant** (voir [Routing](#routing--withcomponentinputbinding) ci-dessous) ;
   `provideHttpClient(withInterceptors([authInterceptor]))` ; détection de changements
-  **avec Zone.js** (`provideZoneChangeDetection({ eventCoalescing: true })`, pas
-  zoneless) ; `provideServiceWorker(...)`.
+  **zoneless** (`provideZonelessChangeDetection()`, pas de `zone.js`) ;
+  `provideServiceWorker(...)`.
 - `src/global.scss` — reset, classes utilitaires ponctuelles (`.display-none`,
   `.disabled`, `.text-no-wrap`...) et variables CSS de thème (`:root` / `.dark-mode`),
   dont les tokens de la refonte visuelle (`--radius-lg/md/sm`, `--shadow-elevated`,
@@ -154,9 +156,6 @@ réintroduire).
   callback du `setInterval`, pas immédiatement à l'appel : dans un test, soit avancer
   le temps (`vi.useFakeTimers()` + `vi.advanceTimersByTime(...)`), soit appeler
   directement `restTimeService.restTime.set({...})` pour simuler un chrono en cours.
-- EmailJS (`forgot-password.component.ts`) doit être mocké
-  (`vi.mock('@emailjs/browser', () => ({ default: { send: vi.fn() } }))`) — un test ne
-  doit jamais appeler le vrai service EmailJS.
 - Accéder à un membre `private`/`protected` depuis un test (ex. `component['nextStep']()`)
   est acceptable quand il n'y a pas d'alternative publique raisonnable, plutôt que
   d'affaiblir la visibilité du membre juste pour le rendre testable.
@@ -164,19 +163,25 @@ réintroduire).
 ## Stack
 
 - Angular 21, composants **standalone** (pas de `NgModule`).
-- Détection de changements avec **Zone.js** (`provideZoneChangeDetection`) — ce
-  n'est **pas** une app zoneless.
+- Détection de changements **zoneless** (`provideZonelessChangeDetection()`) — pas de
+  `zone.js` dans le projet. Tout composant utilise `ChangeDetectionStrategy.OnPush` ;
+  voir [État : signaux et RxJS](#état--signaux-et-rxjs-où-tracer-la-limite) pour ce
+  que ça implique sur la façon d'écrire l'état rempli depuis un appel HTTP.
 - `withComponentInputBinding()` : les paramètres de route et les query params sont
   liés automatiquement aux `input()` des composants (voir
   [Routing](#routing--withcomponentinputbinding)).
-- PrimeNG (composants UI) + PrimeFlex (utilitaires CSS, chargé en CDN) + un peu de
-  SCSS par composant (`styleUrl`).
+- Composants d'interface **from scratch** (plus de PrimeNG — retiré du projet) :
+  partiels SCSS partagés (`buttons.scss`, `fields.scss`, `overlay.scss`,
+  `skeleton.scss`, `chips.scss`, `sections.scss`) + quelques composants partagés
+  (`ConfirmDialogComponent`, `ToggleSwitchComponent`, `NumberStepperComponent`).
+  `@primeuix/themes`/`@primeuix/styled` restent (c'est le moteur des 17 presets de
+  couleur, indépendant de PrimeNG — voir `shared/theme/theme.service.ts`). PrimeFlex
+  (utilitaires CSS, chargé en CDN) reste disponible pour les écrans pas encore repris.
 - RxJS pour les appels HTTP, guards et intercepteurs ; signaux (`signal`/`computed`/
   `effect`) pour l'état partagé réactif (`AlertService`, `RestTimeService`) et pour
   les `input()`/`output()`/`model()` des composants — voir la limite entre les deux
   dans [État : signaux et RxJS](#état--signaux-et-rxjs-où-tracer-la-limite).
-- FullCalendar (calendrier des séances), Chart.js (graphiques de progression),
-  EmailJS (email de réinitialisation de mot de passe).
+- Chart.js (graphiques de progression).
 - Tests avec Vitest (`*.spec.ts`), exécutés via `ng test` (builder
   `@angular/build:unit-test`, pas Karma/Jasmine).
 - ESLint (`@angular-eslint`) via `ng lint`.
@@ -231,6 +236,8 @@ avec une fonction `transform` pour convertir la chaîne de query param en `numbe
 ## Règles de base Angular
 
 - Composants **standalone**, jamais de `NgModule`.
+- `changeDetection: ChangeDetectionStrategy.OnPush` sur tout composant — cohérent avec
+  l'app zoneless (voir [Stack](#stack)), pas d'exception.
 - Syntaxe de template `@if`/`@for`/`@switch`, jamais `*ngIf`/`*ngFor`.
 - Injection via `inject()`, jamais via le constructeur — y compris dans les guards et
   intercepteurs fonctionnels (`const x = inject(Y)`).
@@ -261,15 +268,40 @@ avec une fonction `transform` pour convertir la chaîne de query param en `numbe
 
 ### État : signaux et RxJS, où tracer la limite
 
+L'app est **zoneless** (voir [Stack](#stack)) : rien ne déclenche plus
+automatiquement un cycle de détection de changement après un callback asynchrone
+quelconque (c'était le rôle de `zone.js`). Angular ne replanifie un rendu que sur un
+signal qui change, un événement DOM lié via un binding de template, le pipe `async`,
+ou un appel explicite à `ChangeDetectorRef.markForCheck()`. Ça fixe la règle
+ci-dessous, qui n'est plus affaire de goût mais de correction :
+
 - État partagé réactif entre composants (alerte courante, chrono de repos en cours) :
   toujours un `signal()` exposé directement par le service (`AlertService.alert`,
   `RestTimeService.restTime`), lu dans le template via l'appel du signal
   (`alertService.alert()`) — jamais réenveloppé dans un champ local mis à jour par un
   `subscribe()` manuel.
-- Les appels HTTP ponctuels (CRUD vers l'API) restent en RxJS/`Observable`. Ne pas les
-  convertir en signal via `toSignal()` par principe : réserver `toSignal()` à une
-  valeur réellement dérivée d'un flux qui vit plus longtemps qu'un composant (ex.
-  `RestTimeBannerComponent.showBanner`, dérivé de `router.events`).
+- Tout champ de classe lu dans le template et rempli/modifié de façon asynchrone
+  (réponse HTTP, `debounceTime`/`switchMap` sur un `FormControl`, etc.) devient un
+  `signal()` plutôt qu'un champ simple réassigné dans un `subscribe()` : sans ça, rien
+  ne notifie Angular que la donnée a changé une fois la réponse arrivée (plus de
+  `zone.js` pour le faire implicitement), et l'écran reste bloqué sur son état
+  précédent. Deux façons de l'écrire selon le cas :
+  - **Passthrough direct** d'un seul flux, sans autre site de mutation : `toSignal()`
+    sur l'Observable. Exemple : `protected readonly user = toSignal(this.authService.getCurrentUser());`.
+  - **État mis à jour depuis plusieurs endroits** (le chargement initial *et* une
+    méthode appelée plus tard, ex. `filterExercise()`) : un `signal()` classique
+    déclaré sur le composant, rempli par `.set()`/`.update()` à chaque site de
+    mutation (y compris dans le `subscribe()` initial) — c'est le même pattern que
+    `detailOpen`/`selectedPeriod` déjà en place, pas un nouveau concept.
+- Un `subscribe()` RxJS classique reste légitime quand l'appel a un **effet de bord**
+  plutôt qu'une donnée à afficher (navigation, `AlertService`, create/update/delete
+  suivi d'un refetch) : dans ce cas, si le callback met quand même à jour un champ lu
+  par le template (ex. remettre `isLoading` à `false`), soit ce drapeau est lui-même un
+  `signal()` (préféré, cohérent avec la règle ci-dessus), soit à défaut injecter
+  `ChangeDetectorRef` et appeler `markForCheck()` dans le callback.
+- `toSignal()` reste aussi le choix pour une valeur dérivée d'un flux qui vit plus
+  longtemps qu'un composant (ex. `RestTimeBannerComponent.showBanner`, dérivé de
+  `router.events`) — ce cas-là ne change pas.
 - `effect()` est réservé aux effets de bord réels réagissant à un signal (ex.
   minuteur d'auto-fermeture de `AlertComponent`), jamais pour calculer une valeur qui
   devrait être un `computed()`.

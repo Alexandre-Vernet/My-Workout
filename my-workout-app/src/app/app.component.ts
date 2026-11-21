@@ -1,14 +1,13 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NavbarComponent } from './navbar/navbar.component';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { PrimeNG } from 'primeng/config';
 import { ThemeService } from './shared/theme/theme.service';
-import { filter } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { AlertComponent } from './shared/alert/alert.component';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { environment } from 'src/environments/environment';
 import { RestTimeBannerComponent } from "./shared/rest-time-banner/rest-time-banner.component";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     selector: 'app-root',
@@ -19,19 +18,23 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
         RouterOutlet,
         RestTimeBannerComponent
     ],
-    styleUrls: ['app.component.scss']
+    styleUrls: ['app.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 
 })
 export class AppComponent implements OnInit {
     private readonly sw = inject(SwPush);
     private readonly swUpdate = inject(SwUpdate);
     private readonly router = inject(Router);
-    private readonly primeng = inject(PrimeNG);
     private readonly themeService = inject(ThemeService);
-    private readonly destroyRef = inject(DestroyRef);
 
-
-    hideNavbar = false;
+    protected readonly hideNavbar = toSignal(
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationEnd),
+            map(event => event.url.includes('auth') || event.url.includes('desktop'))
+        ),
+        { initialValue: false }
+    );
 
     constructor() {
         if (environment.production) {
@@ -60,15 +63,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.primeng.ripple.set(true);
         this.themeService.loadTheme();
         this.themeService.loadDarkMode();
-
-        this.router.events
-            .pipe(
-                filter(event => event instanceof NavigationEnd),
-                takeUntilDestroyed(this.destroyRef)
-            )
-            .subscribe((event: NavigationEnd) => this.hideNavbar = event.url.includes('auth') || event.url.includes('desktop'));
     }
 }

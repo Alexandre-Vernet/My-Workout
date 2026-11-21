@@ -1,9 +1,10 @@
-import { Component, HostListener, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, input, output } from '@angular/core';
 
 @Component({
     selector: 'app-confirm-dialog',
     templateUrl: './confirm-dialog.component.html',
     styleUrl: './confirm-dialog.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class ConfirmDialogComponent {

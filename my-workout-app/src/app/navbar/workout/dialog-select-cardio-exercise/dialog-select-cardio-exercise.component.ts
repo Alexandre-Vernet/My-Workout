@@ -1,4 +1,4 @@
-import { Component, inject, input, model, output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, model, output, signal } from '@angular/core';
 import { Exercise } from '../../../../interfaces/Exercise';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { Workout } from '../../../../interfaces/Workout';
@@ -15,6 +15,7 @@ import { NumberStepperComponent } from '../../../shared/number-stepper/number-st
     imports: [NumberStepperComponent],
     templateUrl: './dialog-select-cardio-exercise.component.html',
     styleUrl: './dialog-select-cardio-exercise.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class DialogSelectCardioExerciseComponent {
@@ -25,10 +26,11 @@ export class DialogSelectCardioExerciseComponent {
     createdWorkout = output<Workout>();
     showAlert = output<Alert>();
 
-    selectedExercise: Exercise | null = null;
+    protected readonly selectedExercise = signal<Exercise | null>(null);
     inputDuration: number | null = null;
 
     private readonly workoutService = inject(WorkoutService);
+    private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
 
     onHideModal() {
@@ -37,7 +39,7 @@ export class DialogSelectCardioExerciseComponent {
     }
 
     showInputDuration(exercise: Exercise) {
-        this.selectedExercise = exercise;
+        this.selectedExercise.set(exercise);
     }
 
     createCardioWorkout() {
@@ -53,7 +55,7 @@ export class DialogSelectCardioExerciseComponent {
         const history: History = {
             duration: Number(this.inputDuration),
             exercise: {
-                id: this.selectedExercise?.id
+                id: this.selectedExercise()?.id
             }
         };
 
@@ -61,7 +63,7 @@ export class DialogSelectCardioExerciseComponent {
             .subscribe({
                 next: (workout) => {
                     const h: History = {
-                        exercise: this.selectedExercise ?? undefined
+                        exercise: this.selectedExercise() ?? undefined
                     };
                     workout.histories = workout.histories ?? [];
                     workout.histories.push(h);
@@ -69,7 +71,7 @@ export class DialogSelectCardioExerciseComponent {
 
                     this.showAlert.emit({
                         severity: 'success',
-                        message: `L'entraînement ${ this.selectedExercise?.name } a été créé avec succès`
+                        message: `L'entraînement ${ this.selectedExercise()?.name } a été créé avec succès`
                     });
                 },
                 error: (err: CustomError) => {
@@ -87,7 +89,8 @@ export class DialogSelectCardioExerciseComponent {
     }
 
     private resetDuration() {
-        this.selectedExercise = null;
+        this.selectedExercise.set(null);
         this.inputDuration = null;
+        this.changeDetectorRef.markForCheck();
     }
 }

@@ -1,4 +1,5 @@
 import {
+    ChangeDetectionStrategy,
     Component,
     ElementRef,
     effect,
@@ -21,7 +22,8 @@ import { NumberStepperComponent } from '../../../../shared/number-stepper/number
     selector: 'app-exercises-table',
     imports: [NumberStepperComponent],
     templateUrl: './exercises-table.component.html',
-    styleUrl: './exercises-table.component.scss'
+    styleUrl: './exercises-table.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExercisesTableComponent implements OnInit, OnChanges {
     muscleGroupId = input.required<number>();

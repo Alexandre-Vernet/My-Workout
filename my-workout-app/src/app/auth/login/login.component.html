@@ -4,24 +4,24 @@
             <form [formGroup]="formLogin" (ngSubmit)="signIn()" class="login">
                 <div>
                     <div class="login__field">
-                        <i class="pi pi-user login__icon"></i>
+                        <svg class="login__icon" viewBox="0 0 24 24">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/>
+                        </svg>
                         <input formControlName="email" type="text" class="login__input" placeholder="Email" aria-label="Email">
                     </div>
                     @if (formLogin.controls.email.touched && formLogin.controls.email.hasError('email')) {
-                        <p-message
-                            severity="error" variant="simple" size="small">
-                            L'email n'est pas valide
-                        </p-message>
+                        <p class="field-error">L'email n'est pas valide</p>
                     }
                     @if (formLogin.hasError('badCredential')) {
-                        <p-message severity="error" variant="simple"
-                                   size="small">
-                            Email ou mot de passe invalide
-                        </p-message>
+                        <p class="field-error">Email ou mot de passe invalide</p>
                     }
                 </div>
                 <div class="login__field">
-                    <i class="pi pi-lock login__icon"></i>
+                    <svg class="login__icon" viewBox="0 0 24 24">
+                        <rect x="5" y="11" width="14" height="10" rx="2"/>
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                    </svg>
                     <input formControlName="password" type="password" class="login__input" placeholder="Mot de passe" aria-label="Mot de passe">
                 </div>
                 <button class="button login__submit" [ngClass]="{
@@ -29,7 +29,7 @@
                     }"
                         [disabled]="formLogin.invalid">
                     <span class="button__text">Connexion</span>
-                    <i class="button__icon pi pi-chevron-right" style="font-size: 2rem"></i>
+                    <svg class="button__icon" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
                 </button>
             </form>
             <div class="register">

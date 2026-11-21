@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HistoryService } from '../../../services/history.service';
 import { ExerciseGraphs } from '../../../../interfaces/ExerciseGraphs';
@@ -22,12 +22,13 @@ const DEFAULT_PERIOD_POINT_THRESHOLD = 30;
     templateUrl: './graphs.component.html',
     styleUrl: './graphs.component.scss',
     imports: [RouterLink],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class GraphsComponent implements OnInit, OnDestroy {
 
     exerciseId = input.required<number>();
-    exerciseGraphs!: ExerciseGraphs;
+    protected readonly exerciseGraphs = signal<ExerciseGraphs | undefined>(undefined);
 
     protected readonly periods: ReadonlyArray<{ key: Period, label: string }> = [
         { key: '1m', label: '1M' },
@@ -49,7 +50,7 @@ export class GraphsComponent implements OnInit, OnDestroy {
         this.historyService.getExerciseGraphs(this.exerciseId())
             .subscribe({
                 next: (exerciseGraphs) => {
-                    this.exerciseGraphs = exerciseGraphs;
+                    this.exerciseGraphs.set(exerciseGraphs);
                     this.selectedPeriod.set(
                         exerciseGraphs.historyPoints.length > DEFAULT_PERIOD_POINT_THRESHOLD ? '3m' : 'all'
                     );
@@ -69,15 +70,16 @@ export class GraphsComponent implements OnInit, OnDestroy {
     }
 
     protected filteredHistoryPoints(): HistoryPoint[] {
+        const historyPoints = this.exerciseGraphs()!.historyPoints;
         const period = this.selectedPeriod();
         if (period === 'all') {
-            return this.exerciseGraphs.historyPoints;
+            return historyPoints;
         }
 
         const threshold = new Date();
         threshold.setMonth(threshold.getMonth() - PERIOD_MONTHS[period]);
 
-        return this.exerciseGraphs.historyPoints.filter(point => new Date(point.date) >= threshold);
+        return historyPoints.filter(point => new Date(point.date) >= threshold);
     }
 
     private renderChart() {

@@ -1,6 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../../interfaces/Workout';
@@ -11,6 +9,9 @@ import { HistoryDetailComponent } from './history-detail/history-detail.componen
 import { WorkoutGroupedHistories } from '../../../interfaces/WorkoutGroupedHistories';
 import { FirstLetterUppercasePipe } from '../../shared/pipes/first-letter-uppercase.pipe';
 import { SwipeDirective } from '../../shared/directives/swipe.directive';
+import { CustomError } from '../../../interfaces/CustomError';
+import { getErrorMessage } from '../../shared/utils/http-error';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 
 interface CalendarDay {
     readonly day: number;
@@ -21,41 +22,46 @@ interface CalendarDay {
     readonly muted: boolean;
 }
 
+interface PendingWorkoutDeletion {
+    readonly id: number;
+    readonly message: string;
+}
+
 const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 const MAX_VISIBLE_DOTS = 3;
 const SKELETON_DAYS_COUNT = 35;
 
 @Component({
     selector: 'app-calendar',
-    imports: [ConfirmDialog, HistoryDetailComponent, FirstLetterUppercasePipe, SwipeDirective],
+    imports: [HistoryDetailComponent, FirstLetterUppercasePipe, SwipeDirective, ConfirmDialogComponent],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
-    standalone: true,
-    providers: [ConfirmationService]
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class CalendarComponent implements OnInit {
 
     protected readonly weekdays = WEEKDAYS;
 
     protected displayedMonth = CalendarComponent.startOfMonth(new Date());
-    protected calendarDays: (CalendarDay | null)[] = [];
+    protected readonly calendarDays = signal<(CalendarDay | null)[]>([]);
     protected monthLabel = '';
-    protected sessionCountLabel = '';
+    protected readonly sessionCountLabel = signal('');
     protected readonly transitionClass = signal<'' | 'slide-prev' | 'slide-next'>('');
 
     protected readonly sheetOpen = signal(false);
     protected sheetDateLabel = '';
-    protected sheetWorkouts: WorkoutGroupedHistories[] = [];
+    protected readonly sheetWorkouts = signal<WorkoutGroupedHistories[]>([]);
 
     workouts: Workout[] = [];
     activeFilter: MuscleGroup | null = null;
-    muscleGroups: MuscleGroup[] = [];
-    loading = true;
+    protected readonly muscleGroups = signal<MuscleGroup[]>([]);
+    protected readonly loading = signal(true);
 
     protected readonly skeletonDays = Array.from({ length: SKELETON_DAYS_COUNT });
+    protected readonly pendingWorkoutDeletion = signal<PendingWorkoutDeletion | null>(null);
 
     private readonly workoutService = inject(WorkoutService);
-    private readonly confirmationService = inject(ConfirmationService);
     private readonly alertService = inject(AlertService);
 
     ngOnInit() {
@@ -99,44 +105,43 @@ export class CalendarComponent implements OnInit {
 
     protected openModalDeleteWorkout(id: number, muscleGroupName: string, date: Date) {
         this.sheetOpen.set(false);
-        const formattedDate = new Date(date);
-        this.confirmationService.confirm({
-            header: 'Attention',
-            message: `Voulez-vous vraiment supprimer l'entraînement ${ muscleGroupName } du ${ formattedDate.toLocaleDateString() } ?`,
-            closable: true,
-            closeOnEscape: true,
-            dismissableMask: true,
-            icon: 'pi pi-exclamation-triangle',
-            acceptButtonProps: {
-                label: 'Supprimer'
-            },
-            rejectButtonProps: {
-                label: 'Annuler',
-                severity: 'secondary',
-                outlined: true
-            },
-            accept: () => {
-                this.workoutService.delete(id)
-                    .subscribe({
-                        next: () => {
-                            this.workouts = this.workouts.filter(w => w.id !== id);
-                            this.getMuscleGroups();
-                            this.buildCalendarDays();
-
-                            this.alertService.show({
-                                severity: 'success',
-                                message: 'Suppression effectuée'
-                            });
-                        },
-                        error: (err) => {
-                            this.alertService.show({
-                                severity: 'error',
-                                message: err?.error?.message ?? 'Impossible de supprimer l\'entraînement'
-                            });
-                        }
-                    });
-            }
+        const formattedDate = new Date(date).toLocaleDateString();
+        this.pendingWorkoutDeletion.set({
+            id,
+            message: `Voulez-vous vraiment supprimer l'entraînement ${ muscleGroupName } du ${ formattedDate } ?`
         });
+    }
+
+    protected confirmDeleteWorkout() {
+        const pending = this.pendingWorkoutDeletion();
+        this.pendingWorkoutDeletion.set(null);
+        if (!pending) {
+            return;
+        }
+
+        this.workoutService.delete(pending.id)
+            .subscribe({
+                next: () => {
+                    this.workouts = this.workouts.filter(w => w.id !== pending.id);
+                    this.getMuscleGroups();
+                    this.buildCalendarDays();
+
+                    this.alertService.show({
+                        severity: 'success',
+                        message: 'Suppression effectuée'
+                    });
+                },
+                error: (err: CustomError) => {
+                    this.alertService.show({
+                        severity: 'error',
+                        message: getErrorMessage(err, 'Impossible de supprimer l\'entraînement')
+                    });
+                }
+            });
+    }
+
+    protected cancelDeleteWorkout() {
+        this.pendingWorkoutDeletion.set(null);
     }
 
     protected groupColor(muscleGroupName: string | null | undefined): string {
@@ -146,7 +151,7 @@ export class CalendarComponent implements OnInit {
     // Days with a session, most recent first, respecting the active muscle group filter
     // (a day fully filtered out by `buildCalendarDays()` is flagged `muted`).
     protected get monthSessionDays(): CalendarDay[] {
-        return this.calendarDays
+        return this.calendarDays()
             .filter((day): day is CalendarDay => day !== null && day.workouts.length > 0 && !day.muted)
             .slice()
             .reverse();
@@ -181,7 +186,7 @@ export class CalendarComponent implements OnInit {
 
         forkJoin(calendarDay.workouts.map(w => this.workoutService.findById(w.id!)))
             .subscribe(groupedHistories => {
-                this.sheetWorkouts = groupedHistories;
+                this.sheetWorkouts.set(groupedHistories);
                 this.sheetOpen.set(true);
             });
     }
@@ -201,28 +206,29 @@ export class CalendarComponent implements OnInit {
                     this.workouts = workouts;
                     this.getMuscleGroups();
                     this.buildCalendarDays();
-                    this.loading = false;
+                    this.loading.set(false);
                 },
-                error: (err) => {
-                    this.loading = false;
+                error: (err: CustomError) => {
+                    this.loading.set(false);
                     this.alertService.show({
                         severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'afficher le calendrier'
+                        message: getErrorMessage(err, 'Impossible d\'afficher le calendrier')
                     });
                 }
             });
     }
 
     private getMuscleGroups() {
-        this.muscleGroups = [];
+        const muscleGroups: MuscleGroup[] = [];
         // Filter by name because all cardio exercises has the same id
         this.workouts.forEach(w => {
-            if (w.muscleGroup && !this.muscleGroups.some(mg => mg.name === w.muscleGroup?.name)) {
-                this.muscleGroups.push(w.muscleGroup);
+            if (w.muscleGroup && !muscleGroups.some(mg => mg.name === w.muscleGroup?.name)) {
+                muscleGroups.push(w.muscleGroup);
             }
         });
 
-        this.muscleGroups.sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
+        muscleGroups.sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
+        this.muscleGroups.set(muscleGroups);
     }
 
     private buildCalendarDays() {
@@ -256,8 +262,8 @@ export class CalendarComponent implements OnInit {
             });
         }
 
-        this.calendarDays = days;
-        this.sessionCountLabel = `${ daysWithSessions } séance${ daysWithSessions > 1 ? 's' : '' } ce mois-ci`;
+        this.calendarDays.set(days);
+        this.sessionCountLabel.set(`${ daysWithSessions } séance${ daysWithSessions > 1 ? 's' : '' } ce mois-ci`);
     }
 
     private static isSameDay(a: Date, b: Date): boolean {

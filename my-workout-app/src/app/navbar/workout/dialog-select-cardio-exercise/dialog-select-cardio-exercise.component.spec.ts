@@ -34,7 +34,7 @@ describe('DialogSelectCardioExerciseComponent', () => {
     it('showInputDuration() selects the exercise to configure', () => {
         component.showInputDuration({ id: 2, name: 'Cycling' });
 
-        expect(component.selectedExercise).toEqual({ id: 2, name: 'Cycling' });
+        expect(component['selectedExercise']()).toEqual({ id: 2, name: 'Cycling' });
     });
 
     it('onHideModal() resets the selected exercise and duration, and closes the dialog', () => {
@@ -42,7 +42,7 @@ describe('DialogSelectCardioExerciseComponent', () => {
 
         component.onHideModal();
 
-        expect(component.selectedExercise).toBeNull();
+        expect(component['selectedExercise']()).toBeNull();
         expect(component.inputDuration).toBeNull();
         expect(component.openModal()).toBe(false);
     });
@@ -69,7 +69,7 @@ describe('DialogSelectCardioExerciseComponent', () => {
             expect(created?.histories?.[0].exercise).toEqual({ id: 1, name: 'Running' });
             expect(shownAlert).toEqual(expect.objectContaining({ severity: 'success' }));
             expect(component.openModal()).toBe(false);
-            expect(component.selectedExercise).toBeNull();
+            expect(component['selectedExercise']()).toBeNull();
         });
 
         it('shows an error alert when creating the workout fails', () => {

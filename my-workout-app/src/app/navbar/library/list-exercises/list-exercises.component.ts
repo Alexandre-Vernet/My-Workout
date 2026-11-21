@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { AlertService } from '../../../services/alert.service';
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MuscleGroupEnum } from "../../../../interfaces/MuscleGroupEnum";
@@ -21,6 +21,7 @@ interface ExerciseGroup {
     imports: [FirstLetterUppercasePipe, RouterLink, RouterOutlet, ReactiveFormsModule, PluralPipe],
     templateUrl: './list-exercises.component.html',
     styleUrl: './list-exercises.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class ListExercisesComponent implements OnInit {
@@ -30,8 +31,8 @@ export class ListExercisesComponent implements OnInit {
     // overlay's visibility/animation and the body scroll lock stay in sync with it.
     protected readonly detailOpen = signal(false);
 
-    exercises: Exercise[] = [];
-    filterExercises: Exercise[] = [];
+    protected readonly exercises = signal<Exercise[]>([]);
+    protected readonly filterExercises = signal<Exercise[]>([]);
     muscleGroupEnum = Object.entries(MuscleGroupEnum)
         .filter(([key]) => isNaN(Number(key)))
         .sort()
@@ -39,8 +40,8 @@ export class ListExercisesComponent implements OnInit {
             label,
             id: value as MuscleGroupEnum
         }));
-    selectedMuscleGroup: number | null = null;
-    loading = true;
+    protected readonly selectedMuscleGroup = signal<number | null>(null);
+    protected readonly loading = signal(true);
 
     searchExercise = new FormControl();
 
@@ -62,13 +63,13 @@ export class ListExercisesComponent implements OnInit {
         this.exerciseService.findAll()
             .subscribe({
                 next: (exercises) => {
-                    this.exercises = exercises;
-                    this.filterExercises = exercises;
-                    this.loading = false;
+                    this.exercises.set(exercises);
+                    this.filterExercises.set(exercises);
+                    this.loading.set(false);
                     this.applyMuscleGroupFromQueryParams();
                 },
                 error: (err) => {
-                    this.loading = false;
+                    this.loading.set(false);
                     this.alertService.show({
                         severity: 'error',
                         message: err?.error?.message ?? 'Impossible d\'afficher la bibliothèque d\'exercices'
@@ -81,32 +82,32 @@ export class ListExercisesComponent implements OnInit {
                 debounceTime(300),
                 switchMap((value: string) => {
                     if (!value || value.length === 0) {
-                        return of(this.exercises);
+                        return of(this.exercises());
                     }
 
                     if (value.length < 3) {
-                        return of(this.filterExercises);
+                        return of(this.filterExercises());
                     }
 
                     return this.exerciseService.search(value);
                 })
             )
             .subscribe((exercises) => {
-                this.filterExercises = exercises;
-                this.selectedMuscleGroup = null;
+                this.filterExercises.set(exercises);
+                this.selectedMuscleGroup.set(null);
             })
     }
 
     protected filterExercise(muscleGroupEnum: number) {
-        if (this.selectedMuscleGroup === muscleGroupEnum) {
-            this.filterExercises = this.exercises;
-            this.selectedMuscleGroup = null;
+        if (this.selectedMuscleGroup() === muscleGroupEnum) {
+            this.filterExercises.set(this.exercises());
+            this.selectedMuscleGroup.set(null);
             return;
         }
-        this.selectedMuscleGroup = muscleGroupEnum;
+        this.selectedMuscleGroup.set(muscleGroupEnum);
         this.exerciseService.findExercisesByMuscleGroup(muscleGroupEnum)
             .subscribe({
-                next: (exercises) => this.filterExercises = exercises,
+                next: (exercises) => this.filterExercises.set(exercises),
                 error: (err) => {
                     this.alertService.show({
                         severity: 'error',
@@ -119,13 +120,13 @@ export class ListExercisesComponent implements OnInit {
     // Groups exercises by muscle group for the default browsing view (carousels per
     // group). Only used when neither a search nor a muscle group filter is active.
     protected get isBrowsing(): boolean {
-        return this.selectedMuscleGroup === null && !this.searchExercise.value;
+        return this.selectedMuscleGroup() === null && !this.searchExercise.value;
     }
 
     protected get groupedExercises(): ExerciseGroup[] {
         const exercisesByGroupName = new Map<string, Exercise[]>();
 
-        for (const exercise of this.filterExercises) {
+        for (const exercise of this.filterExercises()) {
             const muscleGroupName = exercise.muscles?.[0]?.muscleGroup?.name ?? '';
             const exercisesInGroup = exercisesByGroupName.get(muscleGroupName) ?? [];
             exercisesInGroup.push(exercise);

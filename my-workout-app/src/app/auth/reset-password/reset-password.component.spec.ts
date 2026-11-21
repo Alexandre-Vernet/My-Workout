@@ -97,5 +97,17 @@ describe('ResetPasswordComponent', () => {
 
             httpMock.expectNone(r => r.url === `${ passwordResetTokenService.passwordResetTokenUrl }/reset-password`);
         });
+
+        it('shows the server error message in the template when the reset fails', () => {
+            component.formResetPassword.setValue({ newPassword: 'secret1', confirmPassword: 'secret1' });
+
+            component.submitForm();
+
+            httpMock.expectOne(`${ passwordResetTokenService.passwordResetTokenUrl }/reset-password`)
+                .flush({ message: 'Le lien a expiré' }, { status: 400, statusText: 'Bad Request' });
+            fixture.detectChanges();
+
+            expect(fixture.nativeElement.textContent).toContain('Le lien a expiré');
+        });
     });
 });

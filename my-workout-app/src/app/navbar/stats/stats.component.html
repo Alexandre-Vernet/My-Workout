@@ -1,5 +1,5 @@
 <div class="stats">
-    @if (!userExercisesCountTotalWorkout) {
+    @if (!userExercisesCountTotalWorkout()) {
         <div class="stats-summary">
             <span class="stat-tile skeleton-fill"></span>
             <span class="stat-tile skeleton-fill"></span>
@@ -20,8 +20,8 @@
                         <path d="M3 9h18M8 3v4M16 3v4"/>
                     </svg>
                 </span>
-                <strong>{{ userExercisesCountTotalWorkout.countTotalDaysWorkout }}</strong>
-                <span>séance{{ userExercisesCountTotalWorkout.countTotalDaysWorkout === 1 ? '' : 's' }} d'entraînement</span>
+                <strong>{{ userExercisesCountTotalWorkout()!.countTotalDaysWorkout }}</strong>
+                <span>séance{{ userExercisesCountTotalWorkout()!.countTotalDaysWorkout === 1 ? '' : 's' }} d'entraînement</span>
             </div>
             <div class="stat-tile">
                 <span class="stat-tile-icon">
@@ -29,12 +29,12 @@
                         <path d="M4 9v6M20 9v6M7 7v10M17 7v10M7 12h10"/>
                     </svg>
                 </span>
-                <strong>{{ userExercisesCountTotalWorkout.exercises.length }}</strong>
-                <span>exercice{{ userExercisesCountTotalWorkout.exercises.length === 1 ? '' : 's' }} suivi{{ userExercisesCountTotalWorkout.exercises.length === 1 ? '' : 's' }}</span>
+                <strong>{{ userExercisesCountTotalWorkout()!.exercises.length }}</strong>
+                <span>exercice{{ userExercisesCountTotalWorkout()!.exercises.length === 1 ? '' : 's' }} suivi{{ userExercisesCountTotalWorkout()!.exercises.length === 1 ? '' : 's' }}</span>
             </div>
         </div>
 
-        @if (userExercisesCountTotalWorkout.exercises.length === 0) {
+        @if (userExercisesCountTotalWorkout()!.exercises.length === 0) {
             <div class="stats-empty">
                 <svg viewBox="0 0 24 24">
                     <path d="M4 20V10M12 20V4M20 20v-7"/>
@@ -46,7 +46,7 @@
             <h2>Statistiques par exercice</h2>
 
             <div class="stats-groups">
-                @for (group of groupedExercises; track group.label) {
+                @for (group of groupedExercises(); track group.label) {
                     <section class="stats-group">
                         <div class="stats-group-head">
                             <span class="stats-group-dot" [style.background-color]="group.color"></span>

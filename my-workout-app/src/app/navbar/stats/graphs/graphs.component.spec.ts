@@ -49,7 +49,7 @@ describe('GraphsComponent', () => {
         fixture.detectChanges();
         httpMock.expectOne(`${ historyService.historyUrl }/exercise-graph/5`).flush(exerciseGraphs);
 
-        expect(component.exerciseGraphs).toEqual(exerciseGraphs);
+        expect(component['exerciseGraphs']()).toEqual(exerciseGraphs);
     });
 
     it('redirects to not-found when the graph data cannot be loaded', () => {

@@ -33,7 +33,7 @@ describe('ViewProfileComponent', () => {
 
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com', admin: true });
 
-        expect(component.user?.email).toBe('alex@example.com');
+        expect(component['user']()?.email).toBe('alex@example.com');
     });
 
     it('displayAlert() forwards the alert to the AlertService', () => {

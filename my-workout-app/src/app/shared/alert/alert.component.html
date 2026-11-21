@@ -1,7 +1,27 @@
 @if (alertService.alert(); as alert) {
-    <p-message closable="true"
-               (onClose)="alertService.show(null)"
-               [severity]="alert.severity">{{ alert.message }}
-    </p-message>
-
+    <div class="alert-banner" [style.--accent]="severityAccent(alert.severity)">
+        <span class="alert-icon">
+            @switch (alert.severity) {
+                @case ('success') {
+                    <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+                }
+                @case ('error') {
+                    <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                }
+                @case ('warn') {
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 9v4M12 17h.01"/>
+                        <path d="M10.3 3.9L2.5 17a1.5 1.5 0 0 0 1.3 2.2h16.4a1.5 1.5 0 0 0 1.3-2.2L13.7 3.9a1.5 1.5 0 0 0-2.6 0"/>
+                    </svg>
+                }
+                @default {
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+                }
+            }
+        </span>
+        <span class="alert-message">{{ alert.message }}</span>
+        <button type="button" class="alert-close" aria-label="Fermer" (click)="alertService.show(null)">
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+    </div>
 }

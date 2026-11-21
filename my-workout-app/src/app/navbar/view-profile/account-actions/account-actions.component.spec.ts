@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -5,6 +6,10 @@ import { provideRouter, Router } from '@angular/router';
 import { AccountActionsComponent } from './account-actions.component';
 import { AuthService } from '../../../auth/auth.service';
 import { MenuUrls } from '../../../shared/menu-urls';
+
+@Component({ template: '', standalone: true })
+class StubComponent {
+}
 
 describe('AccountActionsComponent', () => {
     let fixture: ComponentFixture<AccountActionsComponent>;
@@ -18,7 +23,11 @@ describe('AccountActionsComponent', () => {
 
         TestBed.configureTestingModule({
             imports: [AccountActionsComponent],
-            providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])]
+            providers: [
+                provideHttpClient(),
+                provideHttpClientTesting(),
+                provideRouter([{ path: '**', component: StubComponent }])
+            ]
         });
 
         fixture = TestBed.createComponent(AccountActionsComponent);

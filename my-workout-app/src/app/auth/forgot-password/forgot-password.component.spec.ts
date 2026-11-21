@@ -38,7 +38,7 @@ describe('ForgotPasswordComponent', () => {
             .flush(null);
 
         expect(component.showDialogForgotPassword()).toBe(false);
-        expect(component.isLoading).toBe(false);
+        expect(component['isLoading']()).toBe(false);
         expect(alertService.alert()?.severity).toBe('success');
     });
 
@@ -50,7 +50,7 @@ describe('ForgotPasswordComponent', () => {
         httpMock.expectOne(r => r.url === `${ passwordResetTokenService.passwordResetTokenUrl }/forgot-password`)
             .flush('error', { status: 500, statusText: 'Server error' });
 
-        expect(component.isLoading).toBe(false);
+        expect(component['isLoading']()).toBe(false);
         expect(alertService.alert()?.severity).toBe('error');
     });
 

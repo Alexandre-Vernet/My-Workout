@@ -1,9 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
-import { Message } from 'primeng/message';
 import { CustomError } from "../../../interfaces/CustomError";
 import { RegisterRequest } from "../../../interfaces/RegisterRequest";
 import { applyValidationErrors, getErrorCode, isValidationError } from "../../shared/utils/http-error";
@@ -15,9 +14,9 @@ import { applyValidationErrors, getErrorCode, isValidationError } from "../../sh
     imports: [
         ReactiveFormsModule,
         RouterLink,
-        NgClass,
-        Message
-    ]
+        NgClass
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent {
 

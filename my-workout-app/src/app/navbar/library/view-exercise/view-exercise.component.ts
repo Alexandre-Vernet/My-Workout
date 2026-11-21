@@ -1,9 +1,9 @@
-import { Component, input, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnInit, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { AlertService } from '../../../services/alert.service';
 import { AuthService } from '../../../auth/auth.service';
-import { User } from '../../../../interfaces/User';
 import { ExerciseMuscle } from '../../../../interfaces/ExerciseMuscle';
 import { CustomError } from '../../../../interfaces/CustomError';
 import { DifficultyEnum } from '../../../../interfaces/DifficultyEnum';
@@ -25,6 +25,7 @@ const DIFFICULTY_COLOR: Record<DifficultyEnum, string> = {
     imports: [DifficultyLabelPipe, MechanicLabelPipe],
     templateUrl: './view-exercise.component.html',
     styleUrl: './view-exercise.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class ViewExerciseComponent implements OnInit {
@@ -36,28 +37,25 @@ export class ViewExerciseComponent implements OnInit {
 
 
     exerciseId = input.required<number>();
-    exerciseMuscle!: ExerciseMuscle;
-    user: User | undefined;
-    imagePath = '';
+    protected readonly exerciseMuscle = signal<ExerciseMuscle | undefined>(undefined);
+    protected readonly user = toSignal(this.authService.getCurrentUser());
+    protected readonly imagePath = computed(() => {
+        const exerciseMuscle = this.exerciseMuscle();
+        return exerciseMuscle ? `/assets/images/${ exerciseMuscle.exercise?.id }.gif` : '';
+    });
 
     protected readonly activeTab = signal<DetailTab>('info');
 
     ngOnInit() {
-        this.authService.getCurrentUser()
-            .subscribe(user => this.user = user);
-
         this.exerciseService.findExerciseMuscle(this.exerciseId())
             .subscribe({
-                next: (exerciseMuscle) => {
-                    this.exerciseMuscle = exerciseMuscle;
-                    this.imagePath = `/assets/images/${ exerciseMuscle.exercise?.id }.gif`;
-                },
+                next: (exerciseMuscle) => this.exerciseMuscle.set(exerciseMuscle),
                 error: () => this.router.navigate(['not-found'])
             });
     }
 
     protected get heroColor(): string {
-        return getMuscleGroupColor(this.exerciseMuscle.muscles?.[0]?.muscleGroup?.name);
+        return getMuscleGroupColor(this.exerciseMuscle()!.muscles?.[0]?.muscleGroup?.name);
     }
 
     protected difficultyColor(difficulty: string | undefined): string {
@@ -75,9 +73,12 @@ export class ViewExerciseComponent implements OnInit {
     }
 
     toggleExerciseWorkout() {
-        this.exerciseService.toggleExerciseWorkout(this.exerciseMuscle.exercise!)
+        this.exerciseService.toggleExerciseWorkout(this.exerciseMuscle()!.exercise!)
             .subscribe({
-                next: () => this.exerciseMuscle.addedToWorkout = !this.exerciseMuscle.addedToWorkout,
+                next: () => this.exerciseMuscle.update(exerciseMuscle => ({
+                    ...exerciseMuscle!,
+                    addedToWorkout: !exerciseMuscle!.addedToWorkout
+                })),
                 error: (err: CustomError) => {
                     this.alertService.show({
                         severity: 'error',
@@ -88,6 +89,6 @@ export class ViewExerciseComponent implements OnInit {
     }
 
     updateExercise() {
-        this.router.navigate(['admin', 'update-exercise', this.exerciseMuscle.exercise?.id]);
+        this.router.navigate(['admin', 'update-exercise', this.exerciseMuscle()!.exercise?.id]);
     }
 }

@@ -45,13 +45,13 @@ describe('ListExercisesComponent', () => {
         setup();
         fixture.detectChanges();
 
-        expect(component.loading).toBe(true);
+        expect(component['loading']()).toBe(true);
 
         httpMock.expectOne(exerciseService.exerciseUrl).flush(exercises);
 
-        expect(component.exercises).toEqual(exercises);
-        expect(component.filterExercises).toEqual(exercises);
-        expect(component.loading).toBe(false);
+        expect(component['exercises']()).toEqual(exercises);
+        expect(component['filterExercises']()).toEqual(exercises);
+        expect(component['loading']()).toBe(false);
     });
 
     it('shows an error alert when the exercise list fails to load', () => {
@@ -63,7 +63,7 @@ describe('ListExercisesComponent', () => {
             .flush('error', { status: 500, statusText: 'Server error' });
 
         expect(alertService.alert()?.severity).toBe('error');
-        expect(component.loading).toBe(false);
+        expect(component['loading']()).toBe(false);
     });
 
     it('applies the muscleGroup query param by filtering the library on load', () => {
@@ -73,8 +73,8 @@ describe('ListExercisesComponent', () => {
         httpMock.expectOne(exerciseService.exerciseUrl).flush(exercises);
         httpMock.expectOne(`${ exerciseService.exerciseUrl }/muscle-group/2`).flush([exercises[1]]);
 
-        expect(component.selectedMuscleGroup).toBe(2);
-        expect(component.filterExercises).toEqual([exercises[1]]);
+        expect(component['selectedMuscleGroup']()).toBe(2);
+        expect(component['filterExercises']()).toEqual([exercises[1]]);
     });
 
     describe('filterExercise()', () => {
@@ -89,8 +89,8 @@ describe('ListExercisesComponent', () => {
 
             httpMock.expectOne(`${ exerciseService.exerciseUrl }/muscle-group/3`).flush([exercises[0]]);
 
-            expect(component.selectedMuscleGroup).toBe(3);
-            expect(component.filterExercises).toEqual([exercises[0]]);
+            expect(component['selectedMuscleGroup']()).toBe(3);
+            expect(component['filterExercises']()).toEqual([exercises[0]]);
         });
 
         it('clicking the already-selected muscle group clears the filter without a new HTTP call', () => {
@@ -100,8 +100,8 @@ describe('ListExercisesComponent', () => {
             component['filterExercise'](3);
 
             httpMock.expectNone(`${ exerciseService.exerciseUrl }/muscle-group/3`);
-            expect(component.selectedMuscleGroup).toBeNull();
-            expect(component.filterExercises).toEqual(exercises);
+            expect(component['selectedMuscleGroup']()).toBeNull();
+            expect(component['filterExercises']()).toEqual(exercises);
         });
     });
 
@@ -121,7 +121,7 @@ describe('ListExercisesComponent', () => {
             component.searchExercise.setValue('');
             vi.advanceTimersByTime(300);
 
-            expect(component.filterExercises).toEqual(exercises);
+            expect(component['filterExercises']()).toEqual(exercises);
         });
 
         it('filters locally without a server call for a query under 3 characters', () => {
@@ -132,11 +132,11 @@ describe('ListExercisesComponent', () => {
             vi.advanceTimersByTime(300);
 
             httpMock.expectNone(`${ exerciseService.exerciseUrl }/search`);
-            expect(component.filterExercises).toEqual([exercises[0]]);
+            expect(component['filterExercises']()).toEqual([exercises[0]]);
         });
 
         it('calls the search endpoint for a query of 3+ characters and clears the muscle group filter', () => {
-            component.selectedMuscleGroup = 3;
+            component['selectedMuscleGroup'].set(3);
 
             component.searchExercise.setValue('squ');
             vi.advanceTimersByTime(300);
@@ -145,8 +145,8 @@ describe('ListExercisesComponent', () => {
             expect(req.request.params.get('search')).toBe('squ');
             req.flush([exercises[0]]);
 
-            expect(component.filterExercises).toEqual([exercises[0]]);
-            expect(component.selectedMuscleGroup).toBeNull();
+            expect(component['filterExercises']()).toEqual([exercises[0]]);
+            expect(component['selectedMuscleGroup']()).toBeNull();
         });
     });
 

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { Router } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
@@ -23,14 +23,15 @@ import { getMuscleGroupColor } from '../../../shared/utils/muscle-group-color';
     imports: [DialogSelectCardioExerciseComponent, FirstLetterUppercasePipe, ConfirmDialogComponent],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
-    muscleGroupExerciseCount: MuscleGroupExerciseCount[] | null = null;
-    cardioExercises: Exercise[] = [];
+    protected readonly muscleGroupExerciseCount = signal<MuscleGroupExerciseCount[] | null>(null);
+    protected readonly cardioExercises = signal<Exercise[]>([]);
 
-    isOpenModalExerciseCardio = false;
+    protected readonly isOpenModalExerciseCardio = signal(false);
 
     protected readonly NO_EXERCISES_DIALOG = NO_EXERCISES_DIALOG;
     protected readonly confirmNoExercisesOpen = signal(false);
@@ -49,15 +50,15 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
             this.exerciseService.findCardioExercises()
         ])
             .subscribe(([muscleGroupExerciseCount, cardioExercises]) => {
-                this.muscleGroupExerciseCount = muscleGroupExerciseCount;
-                this.cardioExercises = cardioExercises;
+                this.muscleGroupExerciseCount.set(muscleGroupExerciseCount);
+                this.cardioExercises.set(cardioExercises);
             });
     }
 
     openModalCardioExerciseChange() {
-        this.isOpenModalExerciseCardio = false;
+        this.isOpenModalExerciseCardio.set(false);
         this.muscleGroupService.findAllRecommendedMuscleGroup()
-            .subscribe(muscleGroupExerciseCount => this.muscleGroupExerciseCount = muscleGroupExerciseCount);
+            .subscribe(muscleGroupExerciseCount => this.muscleGroupExerciseCount.set(muscleGroupExerciseCount));
     }
 
     protected clickMuscleGroup(muscleGroup: MuscleGroup) {
@@ -87,13 +88,13 @@ export class SelectMuscleGroupWorkoutComponent implements OnInit {
 
     private openModalExerciseCardio(muscleGroup: MuscleGroup) {
         // If user has no exercise cardio, show dialog to add these exercises
-        const cardioExercise = this.muscleGroupExerciseCount?.some(m => m.muscleGroup.id === MuscleGroupEnum.CARDIO);
+        const cardioExercise = this.muscleGroupExerciseCount()?.some(m => m.muscleGroup.id === MuscleGroupEnum.CARDIO);
         if (!cardioExercise) {
             this.pendingMuscleGroup = muscleGroup;
             this.confirmNoExercisesOpen.set(true);
             return;
         }
 
-        this.isOpenModalExerciseCardio = true;
+        this.isOpenModalExerciseCardio.set(true);
     }
 }

@@ -1,3 +1,5 @@
+@use "../../fields";
+
 @import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
 
 $primary: var(--p-primary-color);
@@ -103,6 +105,13 @@ $input-border: #D4D3E8;
 .login__icon {
     position: absolute;
     top: 30px;
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
     color: $primary;
 }
 
@@ -151,8 +160,14 @@ $input-border: #D4D3E8;
 }
 
 .button__icon {
-    font-size: 24px;
+    width: 22px;
+    height: 22px;
     margin-left: auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
     color: $primary;
 }
 

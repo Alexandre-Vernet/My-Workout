@@ -53,7 +53,7 @@
         <button
             type="button"
             class="btn btn-secondary ai-button"
-            [class.loading]="loadingDescription"
+            [class.loading]="loadingDescription()"
             [disabled]="formAddExercise.controls.name.invalid || (formAddExercise.controls.name.value ?? '').trim() === ''"
             (click)="generateExerciseDescription()">
             <svg viewBox="0 0 24 24">
@@ -107,7 +107,7 @@
             @if (musclesPanelOpen()) {
                 <div class="muscles-backdrop" (click)="musclesPanelOpen.set(false)"></div>
                 <div class="muscles-panel">
-                    @for (group of musclesDropdown; track group.value) {
+                    @for (group of musclesDropdown(); track group.value) {
                         <div class="muscle-group">
                             <div class="muscle-group-label">
                                 <span class="muscle-group-dot" [style.background-color]="getMuscleGroupColor(group.label)"></span>

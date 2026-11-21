@@ -45,7 +45,7 @@ describe('AddExerciseComponent', () => {
 
             httpMock.expectOne(muscleService.muscleUrl).flush(musclesDropdown);
 
-            expect(component.musclesDropdown).toEqual(musclesDropdown);
+            expect(component['musclesDropdown']()).toEqual(musclesDropdown);
             httpMock.expectNone(r => r.url.startsWith(exerciseService.exerciseUrl));
         });
 
@@ -128,7 +128,7 @@ describe('AddExerciseComponent', () => {
                 .flush({ description: 'A compound leg exercise.' });
 
             expect(component.formAddExercise.controls.description.value).toBe('A compound leg exercise.');
-            expect(component.loadingDescription).toBe(false);
+            expect(component['loadingDescription']()).toBe(false);
         });
 
         it('flags a quota-exceeded error on the description field', () => {

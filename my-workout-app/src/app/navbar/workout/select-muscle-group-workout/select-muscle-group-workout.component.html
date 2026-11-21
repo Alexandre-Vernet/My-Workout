@@ -1,7 +1,7 @@
 <div class="select-workout">
     <h1>Sélectionner une séance</h1>
 
-    @if (!muscleGroupExerciseCount) {
+    @if (!muscleGroupExerciseCount()) {
         <div class="muscle-group-list">
             @for (skeleton of [1, 2, 3, 4, 5, 6, 7]; track skeleton) {
                 <span class="muscle-group-card skeleton-fill"></span>
@@ -9,7 +9,7 @@
         </div>
     } @else {
         <div class="muscle-group-list">
-            @for (entry of muscleGroupExerciseCount; track entry.muscleGroup.id; let first = $first) {
+            @for (entry of muscleGroupExerciseCount()!; track entry.muscleGroup.id; let first = $first) {
                 <button
                     type="button"
                     class="muscle-group-card"
@@ -34,8 +34,8 @@
 </div>
 
 <app-dialog-select-cardio-exercise
-    [cardioExercises]="cardioExercises"
-    [openModal]="isOpenModalExerciseCardio"
+    [cardioExercises]="cardioExercises()"
+    [openModal]="isOpenModalExerciseCardio()"
     (openModalChange)="openModalCardioExerciseChange()"
     (showAlert)="showAlert($event)"/>
 

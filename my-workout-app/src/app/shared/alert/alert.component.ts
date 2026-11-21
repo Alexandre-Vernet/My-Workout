@@ -1,15 +1,14 @@
-import { Component, DestroyRef, effect, inject, ViewEncapsulation } from '@angular/core';
-import { Message } from 'primeng/message';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject } from '@angular/core';
 import { AlertService } from '../../services/alert.service';
+import { Alert } from '../../../interfaces/alert';
 
 const AUTO_HIDE_DELAY_MS = 4000;
 
 @Component({
     selector: 'app-alert',
-    imports: [Message],
     templateUrl: './alert.component.html',
     styleUrl: './alert.component.scss',
-    encapsulation: ViewEncapsulation.None
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AlertComponent {
     protected readonly alertService = inject(AlertService);
@@ -36,5 +35,20 @@ export class AlertComponent {
                 clearTimeout(this.hideTimeoutId);
             }
         });
+    }
+
+    protected severityAccent(severity: Alert['severity']): string {
+        switch (severity) {
+            case 'success':
+                return 'var(--p-green-500)';
+            case 'error':
+                return 'var(--p-red-500)';
+            case 'warn':
+                return 'var(--p-orange-500)';
+            case 'info':
+                return 'var(--p-blue-500)';
+            default:
+                return 'var(--p-text-muted-color)';
+        }
     }
 }

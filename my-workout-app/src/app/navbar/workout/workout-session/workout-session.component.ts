@@ -1,4 +1,5 @@
 import {
+    ChangeDetectionStrategy,
     Component,
     effect,
     inject,
@@ -44,6 +45,7 @@ import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-d
     ],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class WorkoutSessionComponent implements OnInit {
@@ -58,12 +60,12 @@ export class WorkoutSessionComponent implements OnInit {
     });
 
     workout: Workout | null = null;
-    exercises: Exercise[] = [];
+    protected readonly exercises = signal<Exercise[]>([]);
     exercisesMade = signal<History[]>([]);
-    currentExercise!: Exercise;
+    protected readonly currentExercise = signal<Exercise | undefined>(undefined);
     muscleGroupEnum!: MuscleGroupEnum;
 
-    activeStep: number = 1;
+    protected readonly activeStep = signal(1);
 
     formWorkout = new FormGroup({
         weight: new FormControl<number | null>({ value: null, disabled: false },
@@ -75,8 +77,8 @@ export class WorkoutSessionComponent implements OnInit {
         unilateral: new FormControl<boolean>(false, [Validators.required])
     });
 
-    animationDirection: 'left' | 'right' = 'right';
-    animationId = 0;
+    protected readonly animationDirection = signal<'left' | 'right'>('right');
+    protected readonly animationId = signal(0);
     private currentTab!: number;
 
     private readonly activatedRoute = inject(ActivatedRoute);
@@ -93,7 +95,7 @@ export class WorkoutSessionComponent implements OnInit {
                 this.setTabUrl(1);
             }
             this.currentTab = this.tab() ?? 1;
-            this.activeStep = this.currentTab;
+            this.activeStep.set(this.currentTab);
         });
     }
 
@@ -120,8 +122,8 @@ export class WorkoutSessionComponent implements OnInit {
         if (this.currentTab === index) {
             return;
         }
-        this.animationId++;
-        this.currentExercise = exercise;
+        this.animationId.update(id => id + 1);
+        this.currentExercise.set(exercise);
         this.fillInputWeightRepsLastSavedValue();
         this.exercisesMade.set([]);
         this.stopTimer();
@@ -169,11 +171,11 @@ export class WorkoutSessionComponent implements OnInit {
             )
             .subscribe({
                 next: (exercises) => {
-                    this.exercises = exercises;
-                    this.currentExercise = exercises[this.activeStep - 1];
-                    if (!this.currentExercise) {
-                        this.currentExercise = this.exercises[0];
-                        this.switchPanel(this.currentExercise);
+                    this.exercises.set(exercises);
+                    const initialExercise = exercises[this.activeStep() - 1] ?? exercises[0];
+                    this.currentExercise.set(initialExercise);
+                    if (!exercises[this.activeStep() - 1]) {
+                        this.switchPanel(initialExercise);
                     }
                     this.fillInputWeightRepsLastSavedValue();
                 },
@@ -191,26 +193,22 @@ export class WorkoutSessionComponent implements OnInit {
 
 
     protected nextStep() {
-        if (this.activeStep < this.exercises.length) {
-            const oldStep = this.activeStep;
-            this.activeStep++;
-            this.animationDirection = this.activeStep > oldStep ? 'right' : 'left';
+        if (this.activeStep() < this.exercises().length) {
+            this.activeStep.update(step => step + 1);
+            this.animationDirection.set('right');
 
-            const nextExercise = this.exercises[this.activeStep - 1];
-            this.switchPanel(nextExercise, this.activeStep);
-            this.animationDirection = 'right';
+            const nextExercise = this.exercises()[this.activeStep() - 1];
+            this.switchPanel(nextExercise, this.activeStep());
         }
     }
 
     protected previousStep() {
-        if (this.activeStep > 1) {
-            const oldStep = this.activeStep;
-            this.activeStep--;
-            this.animationDirection = this.activeStep < oldStep ? 'left' : 'right';
+        if (this.activeStep() > 1) {
+            this.activeStep.update(step => step - 1);
+            this.animationDirection.set('left');
 
-            const previousExercise = this.exercises[this.activeStep - 1];
-            this.switchPanel(previousExercise, this.activeStep);
-            this.animationDirection = 'left';
+            const previousExercise = this.exercises()[this.activeStep() - 1];
+            this.switchPanel(previousExercise, this.activeStep());
         }
     }
 
@@ -225,7 +223,7 @@ export class WorkoutSessionComponent implements OnInit {
     }
 
     private fillInputWeightRepsLastSavedValue() {
-        this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise.id!)
+        this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise()!.id!)
             .subscribe(history => {
                 this.formWorkout.patchValue({
                     weight: history?.weight,
@@ -258,7 +256,7 @@ export class WorkoutSessionComponent implements OnInit {
     private createWorkout() {
         const { weight, reps, unilateral } = this.formWorkout.getRawValue();
         const history: History = {
-            exercise: this.currentExercise,
+            exercise: this.currentExercise()!,
             weight: weight ?? undefined,
             reps: reps ?? undefined,
             unilateral: unilateral ?? undefined

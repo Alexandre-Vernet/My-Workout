@@ -1,4 +1,4 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { AuthService } from '../../../auth/auth.service';
 import { Router } from '@angular/router';
 import { Alert } from '../../../../interfaces/alert';
@@ -12,6 +12,7 @@ import { getErrorMessage } from '../../../shared/utils/http-error';
     imports: [ConfirmDialogComponent],
     templateUrl: './account-actions.component.html',
     styleUrl: './account-actions.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class AccountActionsComponent {

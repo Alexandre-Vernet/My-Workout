@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { ThemeService } from '../../../shared/theme/theme.service';
 import { presets, PresetName } from '../../../shared/theme/presets';
 import { ToggleSwitchComponent } from '../../../shared/toggle-switch/toggle-switch.component';
@@ -8,6 +8,7 @@ import { ToggleSwitchComponent } from '../../../shared/toggle-switch/toggle-swit
     imports: [ToggleSwitchComponent],
     templateUrl: './change-theme.component.html',
     styleUrl: './change-theme.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class ChangeThemeComponent implements OnInit {

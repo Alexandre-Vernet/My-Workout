@@ -5,7 +5,7 @@
     excludeSelector=".swipe-exclude"
     (swipeLeft)="nextStep()"
     (swipeRight)="previousStep()">
-    @if (!exercises || exercises.length === 0) {
+    @if (exercises().length === 0) {
         <div class="session-skeleton">
             <div class="skeleton-dots">
                 @for (skeleton of [0, 1, 2, 3]; track skeleton) {
@@ -19,12 +19,12 @@
         </div>
     } @else {
         <div class="step-dots swipe-exclude">
-            @for (exercise of exercises; track exercise.id; let index = $index) {
+            @for (exercise of exercises(); track exercise.id; let index = $index) {
                 <button
                     type="button"
                     class="step-dot"
-                    [class.active]="activeStep === index + 1"
-                    [class.done]="index + 1 < activeStep"
+                    [class.active]="activeStep() === index + 1"
+                    [class.done]="index + 1 < activeStep()"
                     (click)="switchPanel(exercise, index + 1)">
                     {{ index + 1 }}
                 </button>
@@ -33,13 +33,13 @@
 
         <div class="panel-container">
             <!--The for forces Angular to refresh the DOM and animate on swipe-->
-            @for (_ of [exercises[0]]; track animationId) {
+            @for (_ of [exercises()[0]]; track animationId()) {
                 <div
                     class="panel"
-                    [class.slide-from-right]="animationDirection === 'right'"
-                    [class.slide-from-left]="animationDirection === 'left'">
-                    <h3 [routerLink]="['/', 'library', 'exercise', currentExercise.id]">
-                        {{ currentExercise.name | uppercase }}
+                    [class.slide-from-right]="animationDirection() === 'right'"
+                    [class.slide-from-left]="animationDirection() === 'left'">
+                    <h3 [routerLink]="['/', 'library', 'exercise', currentExercise()!.id]">
+                        {{ currentExercise()!.name | uppercase }}
                     </h3>
 
                     <div class="session-field">
@@ -79,7 +79,7 @@
         <app-exercises-table
             [muscleGroupId]="muscleGroupEnum"
             [(exercisesMade)]="exercisesMade"
-            [exerciseId]="currentExercise.id!"
+            [exerciseId]="currentExercise()!.id!"
             (resetWorkout)="resetWorkout()"/>
 
         <div class="bottom-page">

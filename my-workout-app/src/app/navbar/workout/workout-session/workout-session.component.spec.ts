@@ -51,8 +51,8 @@ describe('WorkoutSessionComponent', () => {
             createComponent();
             loadWithExercises();
 
-            expect(component.exercises).toEqual([squat, legPress]);
-            expect(component.currentExercise).toEqual(squat);
+            expect(component['exercises']()).toEqual([squat, legPress]);
+            expect(component['currentExercise']()).toEqual(squat);
         });
 
         it('prompts to add exercises when the muscle group is empty', () => {
@@ -117,9 +117,9 @@ describe('WorkoutSessionComponent', () => {
             component['nextStep']();
             httpMock.expectOne(`${ historyService.historyUrl }/last/${ legPress.id }`).flush(null);
 
-            expect(component.activeStep).toBe(2);
-            expect(component.currentExercise).toEqual(legPress);
-            expect(component.animationDirection).toBe('right');
+            expect(component['activeStep']()).toBe(2);
+            expect(component['currentExercise']()).toEqual(legPress);
+            expect(component['animationDirection']()).toBe('right');
         });
 
         it('nextStep() does nothing past the last exercise', () => {
@@ -128,13 +128,13 @@ describe('WorkoutSessionComponent', () => {
 
             component['nextStep']();
 
-            expect(component.activeStep).toBe(2);
+            expect(component['activeStep']()).toBe(2);
         });
 
         it('previousStep() does nothing before the first exercise', () => {
             component['previousStep']();
 
-            expect(component.activeStep).toBe(1);
+            expect(component['activeStep']()).toBe(1);
         });
     });
 

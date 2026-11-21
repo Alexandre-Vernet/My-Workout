@@ -1,88 +1,72 @@
-import { presetEmerald } from './preset-emerald';
-import { presetGreen } from './preset-green';
-import { presetLime } from './preset-lime';
-import { presetRed } from './preset-red';
-import { presetOrange } from './preset-orange';
-import { presetAmber } from './preset-amber';
-import { presetYellow } from './preset-yellow';
-import { presetTeal } from './preset-teal';
-import { presetCyan } from './preset-cyan';
-import { presetSky } from './preset-sky';
-import { presetBlue } from './preset-blue';
-import { presetIndigo } from './preset-indigo';
-import { presetViolet } from './preset-violet';
-import { presetPurple } from './preset-purple';
-import { presetFuchsia } from './preset-fuchsia';
-import { presetPink } from './preset-pink';
-import { presetRose } from './preset-rose';
+import { createPreset } from './preset-factory';
 
 export const presets = {
     emerald: {
-        preset: presetEmerald,
+        preset: createPreset('emerald'),
         color: '#10B981'
     },
     green: {
-        preset: presetGreen,
+        preset: createPreset('green'),
         color: '#34D399'
     },
     lime: {
-        preset: presetLime,
+        preset: createPreset('lime'),
         color: '#A3E635'
     },
     red: {
-        preset: presetRed,
+        preset: createPreset('red'),
         color: '#F87171'
     },
     orange: {
-        preset: presetOrange,
+        preset: createPreset('orange'),
         color: '#FB923C'
     },
     amber: {
-        preset: presetAmber,
+        preset: createPreset('amber'),
         color: '#FBBF24'
     },
     yellow: {
-        preset: presetYellow,
+        preset: createPreset('yellow'),
         color: '#FCD34D'
     },
     teal: {
-        preset: presetTeal,
+        preset: createPreset('teal'),
         color: '#14B8A6'
     },
     cyan: {
-        preset: presetCyan,
+        preset: createPreset('cyan'),
         color: '#22D3EE'
     },
     sky: {
-        preset: presetSky,
+        preset: createPreset('sky'),
         color: '#38BDF8'
     },
     blue: {
-        preset: presetBlue,
+        preset: createPreset('blue'),
         color: '#3B82F6'
     },
     indigo: {
-        preset: presetIndigo,
+        preset: createPreset('indigo'),
         color: '#6366F1'
     },
     violet: {
-        preset: presetViolet,
+        preset: createPreset('violet'),
         color: '#8B5CF6'
     },
     purple: {
-        preset: presetPurple,
+        preset: createPreset('purple'),
         color: '#A855F7'
     },
     fuchsia: {
-        preset: presetFuchsia,
+        preset: createPreset('fuchsia'),
         color: '#D946EF'
     },
     pink: {
-        preset: presetPink,
+        preset: createPreset('pink'),
         color: '#EC4899'
     },
     rose: {
-        preset: presetRose,
+        preset: createPreset('rose'),
         color: '#F43F5E'
     }
 };
