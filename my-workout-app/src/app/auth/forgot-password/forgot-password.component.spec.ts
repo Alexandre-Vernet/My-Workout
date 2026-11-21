@@ -22,7 +22,7 @@ describe('ForgotPasswordComponent', () => {
         httpMock = TestBed.inject(HttpTestingController);
         passwordResetTokenService = TestBed.inject(PasswordResetTokenService);
 
-        component.email.setValue('alex@example.com');
+        component['email'].setValue('alex@example.com');
     });
 
     afterEach(() => {

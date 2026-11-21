@@ -30,7 +30,7 @@ export class DialogSelectCardioExerciseComponent {
     showAlert = output<Alert>();
 
     protected readonly selectedExercise = signal<Exercise | null>(null);
-    inputDuration: number | null = null;
+    protected inputDuration: number | null = null;
 
     private readonly workoutService = inject(WorkoutService);
     private readonly changeDetectorRef = inject(ChangeDetectorRef);

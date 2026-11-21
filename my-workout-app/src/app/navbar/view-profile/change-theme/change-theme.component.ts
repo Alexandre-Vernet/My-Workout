@@ -16,14 +16,14 @@ export class ChangeThemeComponent {
 
     protected readonly i18n = I18N.viewProfile.changeTheme;
 
-    presets = presets;
-    presetsArray = Object.entries(this.presets).map(([key, value]) => ({
+    protected readonly presets = presets;
+    protected readonly presetsArray = Object.entries(this.presets).map(([key, value]) => ({
         key,
         value
     }));
 
-    selectedTheme: string | null = null;
-    isCheckedDarkMode = false;
+    protected selectedTheme: string | null = null;
+    protected isCheckedDarkMode = false;
 
     private readonly themeService = inject(ThemeService);
 

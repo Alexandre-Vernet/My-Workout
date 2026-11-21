@@ -45,7 +45,7 @@ export class AddExerciseComponent {
     protected readonly DifficultyEnum = DifficultyEnum;
     protected readonly getMuscleGroupColor = getMuscleGroupColor;
 
-    formAddExercise = new FormGroup({
+    protected readonly formAddExercise = new FormGroup({
         id: new FormControl<number | null>(null),
         name: new FormControl<string | null>(null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
         description: new FormControl<string | null>(null, [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]),
@@ -57,8 +57,8 @@ export class AddExerciseComponent {
     protected readonly loadingDescription = signal(false);
 
     protected readonly musclesDropdown = signal<MuscleDropdown[]>([]);
-    musclesPanelOpen = signal(false);
-    addToWorkoutConfirm = signal<Exercise | null>(null);
+    protected readonly musclesPanelOpen = signal(false);
+    protected readonly addToWorkoutConfirm = signal<Exercise | null>(null);
 
     constructor() {
         effect(() => {

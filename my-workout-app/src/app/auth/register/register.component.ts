@@ -21,7 +21,7 @@ import { I18N } from '../../shared/i18n/i18n';
 })
 export class RegisterComponent {
 
-    formRegister = new FormGroup({
+    protected readonly formRegister = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email]),
         password: new FormControl('', [Validators.required, Validators.minLength(6)]),
         confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])

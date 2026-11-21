@@ -21,12 +21,12 @@ import { I18N } from '../../shared/i18n/i18n';
 })
 export class LoginComponent {
 
-    formLogin = new FormGroup({
+    protected readonly formLogin = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email]),
         password: new FormControl('', [Validators.required])
     });
 
-    showDialogForgotPassword = false;
+    protected showDialogForgotPassword = false;
 
     protected readonly i18n = I18N.auth.login;
 

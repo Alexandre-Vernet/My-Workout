@@ -24,7 +24,7 @@ describe('DialogSelectCardioExerciseComponent', () => {
 
         fixture.detectChanges();
         component['showInputDuration']({ id: 1, name: 'Running' });
-        component.inputDuration = 30;
+        component['inputDuration'] = 30;
     });
 
     afterEach(() => {
@@ -43,7 +43,7 @@ describe('DialogSelectCardioExerciseComponent', () => {
         component['onHideModal']();
 
         expect(component['selectedExercise']()).toBeNull();
-        expect(component.inputDuration).toBeNull();
+        expect(component['inputDuration']).toBeNull();
         expect(component.openModal()).toBe(false);
     });
 

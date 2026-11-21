@@ -1,7 +1,8 @@
 export const viewProfileI18n = {
     viewProfile: {
         adminBadge: 'Admin',
-        adminLink: 'Administration'
+        adminLink: 'Administration',
+        gymLink: 'Salles',
     },
     accountActions: {
         title: 'Actions',

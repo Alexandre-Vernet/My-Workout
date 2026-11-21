@@ -40,7 +40,7 @@ describe('CalendarComponent', () => {
         httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`).flush(workouts);
 
         expect(component['loading']()).toBe(false);
-        expect(component.workouts).toEqual(workouts);
+        expect(component['workouts']).toEqual(workouts);
     });
 
     it('stops showing the loading skeleton when the month data fails to load', () => {
@@ -98,7 +98,7 @@ describe('CalendarComponent', () => {
             httpMock.expectOne(`${ workoutService.workoutUrl }/1`).flush(null);
 
             expect(component['pendingWorkoutDeletion']()).toBeNull();
-            expect(component.workouts).toEqual([]);
+            expect(component['workouts']).toEqual([]);
             expect(alertService.alert()?.severity).toBe('success');
         });
 

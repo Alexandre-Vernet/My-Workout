@@ -69,16 +69,16 @@ describe('ResetPasswordComponent', () => {
         });
 
         it('rejects mismatched passwords without calling the API', () => {
-            component.formResetPassword.setValue({ newPassword: 'secret1', confirmPassword: 'secret2' });
+            component['formResetPassword'].setValue({ newPassword: 'secret1', confirmPassword: 'secret2' });
 
             component['submitForm']();
 
             httpMock.expectNone(r => r.url === `${ passwordResetTokenService.passwordResetTokenUrl }/reset-password`);
-            expect(component.formResetPassword.hasError('error')).toBe(true);
+            expect(component['formResetPassword'].hasError('error')).toBe(true);
         });
 
         it('resets the password and redirects to login on success', () => {
-            component.formResetPassword.setValue({ newPassword: 'secret1', confirmPassword: 'secret1' });
+            component['formResetPassword'].setValue({ newPassword: 'secret1', confirmPassword: 'secret1' });
             const navigateSpy = vi.spyOn(router, 'navigate');
 
             component['submitForm']();
@@ -91,7 +91,7 @@ describe('ResetPasswordComponent', () => {
         });
 
         it('does nothing when the form is invalid', () => {
-            component.formResetPassword.setValue({ newPassword: '', confirmPassword: '' });
+            component['formResetPassword'].setValue({ newPassword: '', confirmPassword: '' });
 
             component['submitForm']();
 
@@ -99,7 +99,7 @@ describe('ResetPasswordComponent', () => {
         });
 
         it('shows the server error message in the template when the reset fails', () => {
-            component.formResetPassword.setValue({ newPassword: 'secret1', confirmPassword: 'secret1' });
+            component['formResetPassword'].setValue({ newPassword: 'secret1', confirmPassword: 'secret1' });
 
             component['submitForm']();
 

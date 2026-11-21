@@ -20,7 +20,7 @@ export class ResetPasswordComponent {
 
     token = input.required<string>();
 
-    formResetPassword = new FormGroup({
+    protected readonly formResetPassword = new FormGroup({
         newPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
         confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     });

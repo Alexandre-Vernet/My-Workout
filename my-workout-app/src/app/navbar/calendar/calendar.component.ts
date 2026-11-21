@@ -54,8 +54,8 @@ export class CalendarComponent {
     protected sheetDateLabel = '';
     protected readonly sheetWorkouts = signal<WorkoutGroupedHistories[]>([]);
 
-    workouts: Workout[] = [];
-    activeFilter: MuscleGroup | null = null;
+    private workouts: Workout[] = [];
+    protected activeFilter: MuscleGroup | null = null;
     protected readonly muscleGroups = signal<MuscleGroup[]>([]);
     protected readonly loading = signal(true);
 

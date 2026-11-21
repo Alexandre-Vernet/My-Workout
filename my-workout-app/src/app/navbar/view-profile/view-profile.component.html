@@ -33,6 +33,19 @@
         </a>
     }
 
+    <a routerLink="/user/gym" class="profile-card profile-admin-link">
+            <span class="profile-section-icon">
+                <svg viewBox="0 0 24 24">
+                    <rect x="5" y="11" width="14" height="10" rx="2"/>
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                </svg>
+            </span>
+        <span class="profile-admin-label">{{ i18n.gymLink }}</span>
+        <svg class="profile-chevron" viewBox="0 0 24 24">
+            <path d="M9 18l6-6-6-6"/>
+        </svg>
+    </a>
+
     <section class="profile-card">
         <app-manage-account (showAlert)="displayAlert($event)"/>
     </section>

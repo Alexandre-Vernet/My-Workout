@@ -60,15 +60,14 @@ export class WorkoutSessionComponent {
         transform: (value: string) => value !== null ? Number(value) : 1
     });
 
-    workout: Workout | null = null;
     protected readonly exercises = signal<Exercise[]>([]);
-    exercisesMade = signal<History[]>([]);
+    protected readonly exercisesMade = signal<History[]>([]);
     protected readonly currentExercise = signal<Exercise | undefined>(undefined);
-    muscleGroupEnum!: MuscleGroupEnum;
+    protected muscleGroupEnum!: MuscleGroupEnum;
 
     protected readonly activeStep = signal(1);
 
-    formWorkout = new FormGroup({
+    protected readonly formWorkout = new FormGroup({
         weight: new FormControl<number | null>({ value: null, disabled: false },
             [Validators.min(0), Validators.max(1000)]
         ),
@@ -101,7 +100,6 @@ export class WorkoutSessionComponent {
 
         effect(() => {
             this.muscleGroupEnum = this.muscleGroupId();
-            this.workout = null;
             this.findExercises();
         });
     }
@@ -144,7 +142,6 @@ export class WorkoutSessionComponent {
     }
 
     protected resetWorkout() {
-        this.workout = null;
     }
 
     protected confirmAddExercises() {
@@ -275,7 +272,6 @@ export class WorkoutSessionComponent {
         this.workoutService.create(workout, history)
             .subscribe({
                 next: (workout) => {
-                    this.workout = workout;
                     const histories = workout.histories ?? [];
                     const lastHistoryId = histories[histories.length - 1].id;
                     const exerciseMade: History = {

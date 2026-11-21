@@ -17,7 +17,7 @@ export class ForgotPasswordComponent {
 
     showDialogForgotPassword = model(false);
 
-    email = new FormControl('', Validators.email);
+    protected readonly email = new FormControl('', Validators.email);
 
     protected readonly isLoading = signal(false);
     protected readonly i18n = I18N.auth.forgotPassword;

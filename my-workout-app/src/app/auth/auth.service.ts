@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, shareReplay, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -8,9 +8,7 @@ import { LoginRequest } from "../../interfaces/LoginRequest";
 import { RegisterRequest } from "../../interfaces/RegisterRequest";
 import { UpdateUserRequest } from "../../interfaces/UpdateUserRequest";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Service()
 export class AuthService {
     private readonly http = inject(HttpClient);
 

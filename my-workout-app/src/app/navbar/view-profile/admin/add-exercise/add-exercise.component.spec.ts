@@ -66,14 +66,14 @@ describe('AddExerciseComponent', () => {
                 muscles: [{ id: 1, name: 'Grand pectoral' }]
             });
 
-            expect(component.formAddExercise.value).toMatchObject({
+            expect(component['formAddExercise'].value).toMatchObject({
                 id: 7,
                 name: 'Bench press',
                 description: 'A compound chest exercise.',
                 difficulty: DifficultyEnum.INTERMEDIATE,
                 mechanic: MechanicEnum.COMPOUND
             });
-            expect(component.formAddExercise.controls.muscles.value).toEqual(musclesDropdown[0].items);
+            expect(component['formAddExercise'].controls.muscles.value).toEqual(musclesDropdown[0].items);
         });
 
         it('redirects to not-found when the exercise to edit does not exist', () => {
@@ -104,12 +104,12 @@ describe('AddExerciseComponent', () => {
 
             component['toggleMuscle'](muscle);
             expect(component['isMuscleSelected'](muscle)).toBe(true);
-            expect(component.formAddExercise.controls.muscles.value).toEqual([muscle]);
-            expect(component.formAddExercise.controls.muscles.touched).toBe(true);
+            expect(component['formAddExercise'].controls.muscles.value).toEqual([muscle]);
+            expect(component['formAddExercise'].controls.muscles.touched).toBe(true);
 
             component['toggleMuscle'](muscle);
             expect(component['isMuscleSelected'](muscle)).toBe(false);
-            expect(component.formAddExercise.controls.muscles.value).toEqual([]);
+            expect(component['formAddExercise'].controls.muscles.value).toEqual([]);
         });
     });
 
@@ -118,7 +118,7 @@ describe('AddExerciseComponent', () => {
             createComponent();
             fixture.detectChanges();
             httpMock.expectOne(muscleService.muscleUrl).flush(musclesDropdown);
-            component.formAddExercise.controls.name.setValue('Squat');
+            component['formAddExercise'].controls.name.setValue('Squat');
         });
 
         it('fills the description field on success', () => {
@@ -127,7 +127,7 @@ describe('AddExerciseComponent', () => {
             httpMock.expectOne(r => r.url === `${ exerciseService.exerciseUrl }/description`)
                 .flush({ description: 'A compound leg exercise.' });
 
-            expect(component.formAddExercise.controls.description.value).toBe('A compound leg exercise.');
+            expect(component['formAddExercise'].controls.description.value).toBe('A compound leg exercise.');
             expect(component['loadingDescription']()).toBe(false);
         });
 
@@ -137,7 +137,7 @@ describe('AddExerciseComponent', () => {
             httpMock.expectOne(r => r.url === `${ exerciseService.exerciseUrl }/description`)
                 .flush({ errorCode: 'QUOTA_EXCEEDED' }, { status: 429, statusText: 'Too Many Requests' });
 
-            expect(component.formAddExercise.controls.description.hasError('quotaExceeded')).toBe(true);
+            expect(component['formAddExercise'].controls.description.hasError('quotaExceeded')).toBe(true);
         });
     });
 
@@ -147,7 +147,7 @@ describe('AddExerciseComponent', () => {
             fixture.detectChanges();
             httpMock.expectOne(muscleService.muscleUrl).flush(musclesDropdown);
 
-            component.formAddExercise.setValue({
+            component['formAddExercise'].setValue({
                 id: null,
                 name: 'Squat',
                 description: 'A compound leg exercise.',
@@ -165,17 +165,17 @@ describe('AddExerciseComponent', () => {
             httpMock.expectOne(exerciseService.exerciseUrl).flush({ id: 1, name: 'Squat' });
 
             expect(alertService.alert()?.severity).toBe('success');
-            expect(component.addToWorkoutConfirm()).toEqual({ id: 1, name: 'Squat' });
+            expect(component['addToWorkoutConfirm']()).toEqual({ id: 1, name: 'Squat' });
         });
 
         it('does not prompt to add to the workout when updating an existing exercise', () => {
-            component.formAddExercise.controls.id.setValue(1);
+            component['formAddExercise'].controls.id.setValue(1);
 
             component['createExercise']();
 
             httpMock.expectOne(exerciseService.exerciseUrl).flush({ id: 1, name: 'Squat' });
 
-            expect(component.addToWorkoutConfirm()).toBeNull();
+            expect(component['addToWorkoutConfirm']()).toBeNull();
         });
 
         it('flags a duplicate exercise name on the name field', () => {
@@ -184,7 +184,7 @@ describe('AddExerciseComponent', () => {
             httpMock.expectOne(exerciseService.exerciseUrl)
                 .flush({ errorCode: 'EXERCISE_NAME_ALREADY_EXIST' }, { status: 409, statusText: 'Conflict' });
 
-            expect(component.formAddExercise.controls.name.hasError('exerciseNameAlreadyExist')).toBe(true);
+            expect(component['formAddExercise'].controls.name.hasError('exerciseNameAlreadyExist')).toBe(true);
         });
 
         it('flags a duplicate muscle group on the muscles field', () => {
@@ -193,7 +193,7 @@ describe('AddExerciseComponent', () => {
             httpMock.expectOne(exerciseService.exerciseUrl)
                 .flush({ errorCode: 'DOUBLE_MUSCLE_GROUP' }, { status: 409, statusText: 'Conflict' });
 
-            expect(component.formAddExercise.controls.muscles.hasError('duplicatMuscleGroup')).toBe(true);
+            expect(component['formAddExercise'].controls.muscles.hasError('duplicatMuscleGroup')).toBe(true);
         });
 
         it('confirmAddToWorkout() adds the pending exercise to the workout', () => {
@@ -207,7 +207,7 @@ describe('AddExerciseComponent', () => {
             httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/toggle`).flush({ id: 1, name: 'Squat' });
 
             expect(alertService.alert()?.message).toBe('Exercice ajouté à vos entraînements');
-            expect(component.addToWorkoutConfirm()).toBeNull();
+            expect(component['addToWorkoutConfirm']()).toBeNull();
         });
 
         it('cancelAddToWorkout() clears the pending confirmation without calling the API', () => {
@@ -216,7 +216,7 @@ describe('AddExerciseComponent', () => {
 
             component['cancelAddToWorkout']();
 
-            expect(component.addToWorkoutConfirm()).toBeNull();
+            expect(component['addToWorkoutConfirm']()).toBeNull();
             httpMock.expectNone(`${ exerciseService.exerciseUrl }/user/toggle`);
         });
     });

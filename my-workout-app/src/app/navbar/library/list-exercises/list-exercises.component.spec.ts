@@ -118,7 +118,7 @@ describe('ListExercisesComponent', () => {
         });
 
         it('restores the full list when the search is cleared', () => {
-            component.searchExercise.setValue('');
+            component['searchExercise'].setValue('');
             vi.advanceTimersByTime(300);
 
             expect(component['filterExercises']()).toEqual(exercises);
@@ -128,7 +128,7 @@ describe('ListExercisesComponent', () => {
             component['filterExercise'](3);
             httpMock.expectOne(`${ exerciseService.exerciseUrl }/muscle-group/3`).flush([exercises[0]]);
 
-            component.searchExercise.setValue('sq');
+            component['searchExercise'].setValue('sq');
             vi.advanceTimersByTime(300);
 
             httpMock.expectNone(`${ exerciseService.exerciseUrl }/search`);
@@ -138,7 +138,7 @@ describe('ListExercisesComponent', () => {
         it('calls the search endpoint for a query of 3+ characters and clears the muscle group filter', () => {
             component['selectedMuscleGroup'].set(3);
 
-            component.searchExercise.setValue('squ');
+            component['searchExercise'].setValue('squ');
             vi.advanceTimersByTime(300);
 
             const req = httpMock.expectOne(r => r.url === `${ exerciseService.exerciseUrl }/search`);
@@ -197,7 +197,7 @@ describe('ListExercisesComponent', () => {
         });
 
         it('is false once a search term is entered', () => {
-            component.searchExercise.setValue('squ');
+            component['searchExercise'].setValue('squ');
 
             expect(component['isBrowsing']).toBe(false);
         });

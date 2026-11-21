@@ -24,7 +24,7 @@ describe('LoginComponent', () => {
         httpMock = TestBed.inject(HttpTestingController);
         authService = TestBed.inject(AuthService);
 
-        component.formLogin.setValue({ email: 'alex@example.com', password: 'secret1' });
+        component['formLogin'].setValue({ email: 'alex@example.com', password: 'secret1' });
     });
 
     afterEach(() => {
@@ -32,7 +32,7 @@ describe('LoginComponent', () => {
     });
 
     it('trims the email and logs in', () => {
-        component.formLogin.controls.email.setValue('  alex@example.com  ');
+        component['formLogin'].controls.email.setValue('  alex@example.com  ');
 
         component['signIn']();
 
@@ -57,6 +57,6 @@ describe('LoginComponent', () => {
         httpMock.expectOne(`${ authService.authUrl }/login`)
             .flush('unauthorized', { status: 401, statusText: 'Unauthorized' });
 
-        expect(component.formLogin.hasError('badCredential')).toBe(true);
+        expect(component['formLogin'].hasError('badCredential')).toBe(true);
     });
 });

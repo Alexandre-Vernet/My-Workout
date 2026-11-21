@@ -22,7 +22,7 @@ interface NavItem {
 })
 export class NavbarComponent {
 
-    protected readonly i18n = I18N.common.navbar;
+    protected readonly i18n = I18N.navbar;
 
     protected readonly navItems: readonly NavItem[] = [
         { route: '/library', label: this.i18n.library, icon: 'library' },

@@ -21,7 +21,7 @@ export class ConfirmDialogComponent {
     cancelled = output<void>();
 
     @HostListener('document:keydown.escape')
-    onEscape() {
+    protected onEscape() {
         if (this.open()) {
             this.cancelled.emit();
         }

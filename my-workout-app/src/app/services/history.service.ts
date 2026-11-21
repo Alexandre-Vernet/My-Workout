@@ -1,13 +1,11 @@
-import { Injectable, inject } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { History } from '../../interfaces/History';
 import { HttpClient } from '@angular/common/http';
 import { ExerciseGraphs } from '../../interfaces/ExerciseGraphs';
 import { UserExercisesCountTotalWorkout } from '../../interfaces/UserExercisesCountTotalWorkout';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Service()
 export class HistoryService {
     private readonly http = inject(HttpClient);
 

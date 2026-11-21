@@ -1,12 +1,10 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 import { RestTimeInfo } from "../../interfaces/RestTimeInfo";
 import { RestTimeValue } from "../../interfaces/RestTimeValue";
 
 export const DEFAULT_VALUE_REST_TIME: RestTimeValue = { minutes: 0, seconds: 0, centiseconds: 0 };
 
-@Injectable({
-    providedIn: 'root',
-})
+@Service()
 export class RestTimeService {
 
     readonly DEFAULT_VALUE_REST_TIME = DEFAULT_VALUE_REST_TIME;

@@ -34,7 +34,7 @@ export class ListExercisesComponent {
 
     protected readonly exercises = signal<Exercise[]>([]);
     protected readonly filterExercises = signal<Exercise[]>([]);
-    muscleGroupEnum = Object.entries(MuscleGroupEnum)
+    protected readonly muscleGroupEnum = Object.entries(MuscleGroupEnum)
         .filter(([key]) => isNaN(Number(key)))
         .sort()
         .map(([label, value]) => ({
@@ -45,7 +45,7 @@ export class ListExercisesComponent {
     protected readonly loading = signal(true);
     protected readonly i18n = I18N.library.listExercises;
 
-    searchExercise = new FormControl();
+    protected readonly searchExercise = new FormControl();
 
     private readonly exerciseService = inject(ExerciseService);
     private readonly alertService = inject(AlertService);

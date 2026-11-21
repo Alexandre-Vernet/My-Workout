@@ -44,7 +44,7 @@ describe('ManageAccountComponent', () => {
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
         expect(component['currentEmail']()).toBe('alex@example.com');
-        expect(component.formGroup.controls.email.value).toBe('alex@example.com');
+        expect(component['formGroup'].controls.email.value).toBe('alex@example.com');
     });
 
     it('toggleChangePassword() resets the password fields when turned back off', () => {
@@ -52,21 +52,21 @@ describe('ManageAccountComponent', () => {
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
         component['toggleChangePassword']();
-        component.formGroup.controls.password.setValue('secret1');
-        component.formGroup.controls.confirmPassword.setValue('secret1');
+        component['formGroup'].controls.password.setValue('secret1');
+        component['formGroup'].controls.confirmPassword.setValue('secret1');
 
         component['toggleChangePassword']();
 
-        expect(component.isCheckedChangePassword).toBe(false);
-        expect(component.formGroup.controls.password.value).toBeNull();
-        expect(component.formGroup.controls.confirmPassword.value).toBeNull();
+        expect(component['isCheckedChangePassword']).toBe(false);
+        expect(component['formGroup'].controls.password.value).toBeNull();
+        expect(component['formGroup'].controls.confirmPassword.value).toBeNull();
     });
 
     it('updateUser() only sends the email when the password fields are untouched', () => {
         fixture.detectChanges();
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
-        component.formGroup.controls.email.setValue('new@example.com');
+        component['formGroup'].controls.email.setValue('new@example.com');
         component['updateUser']();
 
         const req = httpMock.expectOne(`${ authService.authUrl }/1`);
@@ -97,7 +97,7 @@ describe('ManageAccountComponent', () => {
         fixture.detectChanges();
         httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
 
-        component.formGroup.controls.email.setValue('taken@example.com');
+        component['formGroup'].controls.email.setValue('taken@example.com');
         component['updateUser']();
 
         httpMock.expectOne(`${ authService.authUrl }/1`).flush(
@@ -105,6 +105,6 @@ describe('ManageAccountComponent', () => {
             { status: 409, statusText: 'Conflict' }
         );
 
-        expect(component.formGroup.controls.email.hasError('emailAlreadyInUse')).toBe(true);
+        expect(component['formGroup'].controls.email.hasError('emailAlreadyInUse')).toBe(true);
     });
 });

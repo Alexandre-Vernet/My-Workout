@@ -8,10 +8,11 @@ import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { I18N } from '../../shared/i18n/i18n';
+import { ListGymComponent } from './list-gym/list-gym.component';
 
 @Component({
     selector: 'app-view-profile',
-    imports: [ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink],
+    imports: [ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink, ListGymComponent],
     templateUrl: './view-profile.component.html',
     styleUrl: './view-profile.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

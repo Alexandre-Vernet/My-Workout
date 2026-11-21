@@ -4,6 +4,7 @@ import { libraryI18n } from './library';
 import { statsI18n } from './stats';
 import { viewProfileI18n } from './view-profile';
 import { workoutI18n } from './workout';
+import { navbarI18n } from './navbar';
 import { commonI18n } from './common';
 
 export const I18N = {
@@ -13,5 +14,6 @@ export const I18N = {
     stats: statsI18n,
     viewProfile: viewProfileI18n,
     workout: workoutI18n,
+    navbar: navbarI18n,
     common: commonI18n
 };

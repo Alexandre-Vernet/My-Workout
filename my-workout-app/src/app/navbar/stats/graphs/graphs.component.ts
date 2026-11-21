@@ -36,7 +36,7 @@ export class GraphsComponent implements OnDestroy {
     protected readonly periods: ReadonlyArray<Period> = ['1m', '3m', '6m', '1y', 'all'];
     protected readonly selectedPeriod = signal<Period>('all');
 
-    @ViewChild('barCanvas') barCanvas!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('barCanvas') private barCanvas!: ElementRef<HTMLCanvasElement>;
 
     private chart: Chart<'line', (number | null)[], string> | null = null;
 

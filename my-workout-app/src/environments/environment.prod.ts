@@ -10,5 +10,6 @@ export const environment = {
     exerciseUrl: () => `${ environment.API_URL }/exercises`,
     historyUrl: () => `${ environment.API_URL }/history`,
     workoutUrl: () => `${ environment.API_URL }/workout`,
-    passwordResetTokenUrl: () => `${ environment.API_URL }/password-reset-token`
+    passwordResetTokenUrl: () => `${ environment.API_URL }/password-reset-token`,
+    gymUrl: () => `${ environment.API_URL }/gym`,
 };

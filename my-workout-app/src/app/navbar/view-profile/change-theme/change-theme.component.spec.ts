@@ -18,8 +18,8 @@ describe('ChangeThemeComponent', () => {
     });
 
     it('lists every available preset for the theme picker', () => {
-        expect(component.presetsArray.length).toBeGreaterThan(0);
-        expect(component.presetsArray.map(p => p.key)).toContain('cyan');
+        expect(component['presetsArray'].length).toBeGreaterThan(0);
+        expect(component['presetsArray'].map(p => p.key)).toContain('cyan');
     });
 
     it('reads the current theme and dark mode state from localStorage on init', () => {
@@ -28,21 +28,21 @@ describe('ChangeThemeComponent', () => {
 
         fixture.detectChanges();
 
-        expect(component.selectedTheme).toBe('emerald');
-        expect(component.isCheckedDarkMode).toBe(true);
+        expect(component['selectedTheme']).toBe('emerald');
+        expect(component['isCheckedDarkMode']).toBe(true);
     });
 
     it('updatePreset() persists the chosen theme name and updates selectedTheme', () => {
         component['updatePreset']('emerald');
 
         expect(localStorage.getItem('theme')).toBe('emerald');
-        expect(component.selectedTheme).toBe('emerald');
+        expect(component['selectedTheme']).toBe('emerald');
     });
 
     it('toggleDarkMode() toggles the dark-mode class and persists the state', () => {
         component['toggleDarkMode'](true);
 
-        expect(component.isCheckedDarkMode).toBe(true);
+        expect(component['isCheckedDarkMode']).toBe(true);
         expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
         expect(localStorage.getItem('dark-mode')).toBe('true');
     });

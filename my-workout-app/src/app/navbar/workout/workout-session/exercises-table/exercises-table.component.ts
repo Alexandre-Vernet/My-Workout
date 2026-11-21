@@ -32,7 +32,7 @@ export class ExercisesTableComponent {
     exercisesMade = model.required<History[]>();
     resetWorkout = output<void>();
 
-    @ViewChild('historyScroll') historyScroll!: ElementRef<HTMLElement>;
+    @ViewChild('historyScroll') private historyScroll!: ElementRef<HTMLElement>;
 
     private readonly historyService = inject(HistoryService);
     private readonly alertService = inject(AlertService);

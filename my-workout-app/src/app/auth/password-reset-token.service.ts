@@ -1,10 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 
-@Injectable({
-    providedIn: 'root',
-})
+@Service()
 export class PasswordResetTokenService {
     private readonly http = inject(HttpClient);
 

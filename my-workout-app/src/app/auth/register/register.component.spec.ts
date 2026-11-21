@@ -26,7 +26,7 @@ describe('RegisterComponent', () => {
         authService = TestBed.inject(AuthService);
         router = TestBed.inject(Router);
 
-        component.formRegister.setValue({
+        component['formRegister'].setValue({
             email: 'alex@example.com',
             password: 'secret1',
             confirmPassword: 'secret1'
@@ -38,12 +38,12 @@ describe('RegisterComponent', () => {
     });
 
     it('rejects mismatched passwords locally, without any HTTP call', () => {
-        component.formRegister.controls.confirmPassword.setValue('different');
+        component['formRegister'].controls.confirmPassword.setValue('different');
 
         component['signUp']();
 
         httpMock.expectNone(`${ authService.authUrl }/register`);
-        expect(component.formRegister.controls.password.hasError('passwordNotMatch')).toBe(true);
+        expect(component['formRegister'].controls.password.hasError('passwordNotMatch')).toBe(true);
     });
 
     it('navigates home after a successful registration', () => {
@@ -65,7 +65,7 @@ describe('RegisterComponent', () => {
             errors: [{ field: 'email', message: 'Email already taken' }]
         }, { status: 400, statusText: 'Bad Request' });
 
-        expect(component.formRegister.controls.email.errors).toEqual({ validation: 'Email already taken' });
+        expect(component['formRegister'].controls.email.errors).toEqual({ validation: 'Email already taken' });
     });
 
     it('flags the email field when the server reports it is already in use', () => {
@@ -75,8 +75,8 @@ describe('RegisterComponent', () => {
             type: 'BUSINESS', errorCode: 'EMAIL_ALREADY_IN_USE'
         }, { status: 409, statusText: 'Conflict' });
 
-        expect(component.formRegister.controls.email.hasError('emailAlreadyInUse')).toBe(true);
-        expect(component.formRegister.controls.email.hasError('unknownError')).toBe(false);
+        expect(component['formRegister'].controls.email.hasError('emailAlreadyInUse')).toBe(true);
+        expect(component['formRegister'].controls.email.hasError('unknownError')).toBe(false);
     });
 
     it('flags the password field when the server reports a password mismatch', () => {
@@ -86,7 +86,7 @@ describe('RegisterComponent', () => {
             type: 'BUSINESS', errorCode: 'PASSWORD_NOT_MATCH'
         }, { status: 400, statusText: 'Bad Request' });
 
-        expect(component.formRegister.controls.password.hasError('passwordNotMatch')).toBe(true);
+        expect(component['formRegister'].controls.password.hasError('passwordNotMatch')).toBe(true);
     });
 
     it('falls back to an unknown-error flag on the email field for any other business error', () => {
@@ -96,6 +96,6 @@ describe('RegisterComponent', () => {
             type: 'BUSINESS', errorCode: 'SOMETHING_ELSE'
         }, { status: 500, statusText: 'Server Error' });
 
-        expect(component.formRegister.controls.email.hasError('unknownError')).toBe(true);
+        expect(component['formRegister'].controls.email.hasError('unknownError')).toBe(true);
     });
 });

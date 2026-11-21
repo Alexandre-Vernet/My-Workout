@@ -1,9 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 import { Alert } from '../../interfaces/alert';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Service()
 export class AlertService {
 
     readonly alert = signal<Alert | null>(null);

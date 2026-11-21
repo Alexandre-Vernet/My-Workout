@@ -269,10 +269,13 @@ avec une fonction `transform` pour convertir la chaîne de query param en `numbe
   parent/enfant, jamais `@Input()`/`@Output()` ni `EventEmitter` direct. Un `model()`
   pour une valeur liée en two-way (`[(ouvert)]`), pas une paire manuelle
   `@Input()`/`@Output() xChange`.
-- Un service HTTP par domaine métier, suffixé `Service`, annoté
-  `@Injectable({ providedIn: 'root' })` : construit l'URL/les params et renvoie
-  l'`Observable`, sans logique métier dans le service — celle-ci reste dans le
-  composant appelant.
+- Un service HTTP par domaine métier, suffixé `Service`, annoté `@Service()`
+  (Angular 22, `import { Service } from '@angular/core'` — remplace
+  `@Injectable({ providedIn: 'root' })`, déprécié d'usage depuis que `@Service()`
+  fournit le même comportement `autoProvided` par défaut avec une syntaxe plus
+  simple ; c'est ce que génère `ng generate service` dans cette version) : construit
+  l'URL/les params et renvoie l'`Observable`, sans logique métier dans le service —
+  celle-ci reste dans le composant appelant.
 - Un composant ne doit pas connaître les détails d'implémentation d'un autre : il
   passe par les `input`/`output` exposés, jamais par un accès direct à l'état interne.
 

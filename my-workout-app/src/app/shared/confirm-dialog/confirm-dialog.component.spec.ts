@@ -58,12 +58,12 @@ describe('ConfirmDialogComponent', () => {
 
         fixture.componentRef.setInput('open', false);
         fixture.detectChanges();
-        component.onEscape();
+        component['onEscape']();
         expect(cancelled).toBe(false);
 
         fixture.componentRef.setInput('open', true);
         fixture.detectChanges();
-        component.onEscape();
+        component['onEscape']();
         expect(cancelled).toBe(true);
     });
 });

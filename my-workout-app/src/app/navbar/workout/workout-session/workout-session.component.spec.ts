@@ -156,9 +156,8 @@ describe('WorkoutSessionComponent', () => {
 
             httpMock.expectOne(workoutService.workoutUrl).flush(createdWorkout);
 
-            expect(component.workout).toEqual(createdWorkout);
-            expect(component.exercisesMade()).toHaveLength(1);
-            expect(component.formWorkout.disabled).toBe(true);
+            expect(component['exercisesMade']()).toHaveLength(1);
+            expect(component['formWorkout'].disabled).toBe(true);
         });
 
         it('toggleTimer() stops the timer and re-enables the form on the second click', () => {
@@ -174,8 +173,8 @@ describe('WorkoutSessionComponent', () => {
 
             component['toggleTimer']();
 
-            expect(component.formWorkout.disabled).toBe(false);
-            expect(component.exercisesMade()[0].restTime).not.toBe('/');
+            expect(component['formWorkout'].disabled).toBe(false);
+            expect(component['exercisesMade']()[0].restTime).not.toBe('/');
 
             vi.useRealTimers();
         });
@@ -200,19 +199,19 @@ describe('WorkoutSessionComponent', () => {
         it('onWeightChange() updates the form control', () => {
             component['onWeightChange'](15);
 
-            expect(component.formWorkout.controls.weight.value).toBe(15);
+            expect(component['formWorkout'].controls.weight.value).toBe(15);
         });
 
         it('onRepsChange() updates the form control', () => {
             component['onRepsChange'](12);
 
-            expect(component.formWorkout.controls.reps.value).toBe(12);
+            expect(component['formWorkout'].controls.reps.value).toBe(12);
         });
 
         it('onUnilateralChange() updates the form control', () => {
             component['onUnilateralChange'](true);
 
-            expect(component.formWorkout.controls.unilateral.value).toBe(true);
+            expect(component['formWorkout'].controls.unilateral.value).toBe(true);
         });
     });
 });

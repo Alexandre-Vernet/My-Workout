@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { Theme, updatePreset } from '@primeuix/styled';
 import { presets, PresetName } from './presets';
 
@@ -9,9 +9,7 @@ type Preset = (typeof presets)[PresetName]['preset'];
 // the library — see @primeuix/styled.Theme, which is what PrimeNG called internally).
 const THEME_STYLE_ID = 'app-theme-vars';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Service()
 export class ThemeService {
 
     isDarkMode() {

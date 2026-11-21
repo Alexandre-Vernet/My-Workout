@@ -3,13 +3,6 @@ export const commonI18n = {
         serviceWorkerNotSupported: 'Service workers are not supported in this browser',
         serviceWorkerNotEnabled: 'Service workers are not enabled'
     },
-    navbar: {
-        library: 'Bibliothèque',
-        calendar: 'Calendrier',
-        workout: 'Séance',
-        stats: 'Stats',
-        profile: 'Profil'
-    },
     alert: {
         close: 'Fermer'
     },

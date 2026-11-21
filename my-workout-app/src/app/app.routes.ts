@@ -17,6 +17,7 @@ import { StatsComponent } from './navbar/stats/stats.component';
 import { AddExerciseComponent } from './navbar/view-profile/admin/add-exercise/add-exercise.component';
 import { defaultHomePageGuard } from './auth/default-home-page.guard';
 import { NotFoundComponent } from "./shared/not-found/not-found.component";
+import { ListGymComponent } from './navbar/view-profile/list-gym/list-gym.component';
 
 
 export const appRoutes: Route[] = [
@@ -85,6 +86,10 @@ export const appRoutes: Route[] = [
             {
                 path: 'view-profile',
                 component: ViewProfileComponent
+            },
+            {
+                path: 'gym',
+                component: ListGymComponent
             },
             {
                 path: '**',
