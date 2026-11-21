@@ -1,8 +1,9 @@
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
+const { defineConfig } = require('eslint/config');
 
-module.exports = tseslint.config(
+module.exports = defineConfig(
     {
         ignores: ['projects/**/*', 'www/**/*']
     },
@@ -14,7 +15,14 @@ module.exports = tseslint.config(
             ...angular.configs.tsRecommended
         ],
         processor: angular.processInlineTemplates,
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: __dirname
+            }
+        },
         rules: {
+            '@typescript-eslint/no-deprecated': 'error',
             '@angular-eslint/prefer-standalone': 'off',
             '@angular-eslint/component-class-suffix': [
                 'error',

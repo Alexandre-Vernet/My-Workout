@@ -90,9 +90,9 @@
         @for (workout of sheetWorkouts(); track workout.workoutSummary?.id) {
             <div class="sheet-group">
                 <div class="sheet-group-head">
-                    <small [style.color]="groupColor($safeNavigationMigration(workout.muscleGroup?.name))">
-                        <span class="chip-dot" [style.background]="groupColor($safeNavigationMigration(workout.muscleGroup?.name))"></span>
-                        {{ $safeNavigationMigration(workout.muscleGroup?.name) | firstLetterUppercase }}
+                    <small [style.color]="groupColor(workout.muscleGroup?.name)">
+                        <span class="chip-dot" [style.background]="groupColor(workout.muscleGroup?.name)"></span>
+                        {{ workout.muscleGroup?.name | firstLetterUppercase }}
                     </small>
                     <button class="icon-btn danger small"
                             (click)="openModalDeleteWorkout(workout.workoutSummary!.id!, workout.muscleGroup!.name!, workout.workoutSummary!.date)"

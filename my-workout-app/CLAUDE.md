@@ -234,6 +234,29 @@ avec une fonction `transform` pour convertir la chaîne de query param en `numbe
   `AUTO_HIDE_DELAY_MS` dans `alert.component.ts`).
 - Une fonction = une responsabilité.
 
+## Fraîcheur du projet : rien de deprecated, rien d'ancien
+
+- Dépendances (`package.json`) : toujours la dernière version stable compatible,
+  pas seulement celle qui satisfait un `npm audit` propre. Lancer `npm outdated`
+  périodiquement (et avant toute session de mise à jour de dépendances) et monter
+  chaque paquet au plus près de `Latest`, via `ng update` pour l'écosystème Angular
+  (gère les migrations automatiques) et `npm install <pkg>@latest` pour le reste —
+  pas seulement un `npm audit fix` qui ne corrige que ce qui a une CVE ouverte.
+- Code : ne jamais utiliser une API, une option de config ou un pattern marqué
+  `@deprecated` (JSDoc), documenté comme deprecated dans la doc officielle, ou
+  remplacé par une alternative plus récente que le projet pourrait adopter (ex.
+  `withXhr()`/`withFetch()` d'`@angular/common/http`, devenus inutiles depuis que
+  `FetchBackend` est le défaut — voir leur JSDoc `@deprecated` respectif). En cas de
+  doute sur le statut d'une API, vérifier son JSDoc/sa doc officielle avant de
+  l'utiliser plutôt que de copier un pattern déjà présent ailleurs dans le projet
+  sans le revérifier.
+- Après une montée de version majeure (Angular, TypeScript...), relire les warnings
+  de build/lint/test et la doc de migration associée : une dépréciation silencieuse
+  ne casse rien dans l'immédiat mais doit être traitée tout de suite, pas reportée.
+- Objectif : du code qui utilise systématiquement l'idiome le plus récent et le
+  plus propre disponible dans la version courante des outils du projet, jamais un
+  pattern qui ne survit que par compatibilité historique.
+
 ## Règles de base Angular
 
 - Composants **standalone**, jamais de `NgModule`.
