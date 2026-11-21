@@ -1,7 +1,7 @@
 import { ApplicationConfig, isDevMode, LOCALE_ID, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { appRoutes } from './app.routes';
-import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './auth/auth.interceptor';
 import { provideServiceWorker } from '@angular/service-worker';
 
@@ -13,7 +13,7 @@ export const appConfig: ApplicationConfig = {
                 anchorScrolling: 'enabled'
             }),
             withComponentInputBinding()),
-        provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
+        provideHttpClient(withInterceptors([authInterceptor])),
 
         { provide: LOCALE_ID, useValue: 'fr-FR' }, provideServiceWorker('ngsw-worker.js', {
             enabled: !isDevMode(),
