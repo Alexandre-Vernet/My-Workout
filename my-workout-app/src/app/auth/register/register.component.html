@@ -1,83 +1,76 @@
-<div class="auth-container">
-    <div class="screen">
-        <div class="screen__content">
-            <form [formGroup]="formRegister" (ngSubmit)="signUp()" class="login">
-                <div>
-                    <div class="login__field">
-                        <svg class="login__icon" viewBox="0 0 24 24">
-                            <circle cx="12" cy="8" r="4"/>
-                            <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/>
-                        </svg>
-                        <input formControlName="email" type="text" class="login__input" [placeholder]="i18n.emailPlaceholder">
-                    </div>
-                    @if (formRegister.controls.email.touched && formRegister.controls.email.hasError('email')) {
-                        <p class="field-error">{{ i18n.emailInvalid }}</p>
-                    }
-                    @if (formRegister.controls.email.hasError('emailAlreadyInUse')) {
-                        <p class="field-error">{{ i18n.emailAlreadyInUse }}</p>
-                    }
-                    @if (formRegister.controls.email.hasError('validation')) {
-                        <p class="field-error">{{ formRegister.controls.email.getError('validation') }}</p>
-                    }
-                    @if (formRegister.controls.email.hasError('unknownError')) {
-                        <p class="field-error">{{ i18n.unknownError }}</p>
-                    }
-                </div>
+<div class="auth-page">
+    <div class="auth-blobs" aria-hidden="true">
+        <span class="auth-blob auth-blob-1"></span>
+        <span class="auth-blob auth-blob-2"></span>
+        <span class="auth-blob auth-blob-3"></span>
+    </div>
 
-                <div>
-                    <div class="login__field">
-                        <svg class="login__icon" viewBox="0 0 24 24">
-                            <rect x="5" y="11" width="14" height="10" rx="2"/>
-                            <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
-                        </svg>
-                        <input formControlName="password" type="password" class="login__input"
-                               [placeholder]="i18n.passwordPlaceholder">
-                    </div>
-                    @if (formRegister.controls.password.touched && formRegister.controls.password.hasError('minlength')) {
-                        <p class="field-error">{{ i18n.passwordTooShort }}</p>
-                    }
-                    @if (formRegister.controls.password.hasError('passwordNotMatch') ||
-                        (formRegister.controls.password.value ?? '').trim() !== (formRegister.controls.confirmPassword.value ?? '').trim()) {
-                        <p class="field-error">{{ i18n.passwordMismatch }}</p>
-                    }
-                    @if (formRegister.controls.password.hasError('validation')) {
-                        <p class="field-error">{{ formRegister.controls.password.getError('validation') }}</p>
-                    }
-                </div>
-
-                <div>
-                    <div class="login__field">
-                        <svg class="login__icon" viewBox="0 0 24 24">
-                            <rect x="5" y="11" width="14" height="10" rx="2"/>
-                            <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
-                        </svg>
-                        <input formControlName="confirmPassword" type="password" class="login__input"
-                               [placeholder]="i18n.confirmPasswordPlaceholder">
-                    </div>
-                    @if (formRegister.controls.password.hasError('passwordNotMatch')) {
-                        <p class="field-error">{{ i18n.passwordMismatch }}</p>
-                    }
-                </div>
-
-                <button type="submit" class="button login__submit" [ngClass]="{
-                    'disabled': formRegister.invalid || formRegister.controls.password.value !== formRegister.controls.confirmPassword.value
-                    }"
-                        [disabled]="formRegister.invalid || formRegister.controls.password.value !== formRegister.controls.confirmPassword.value">
-                    <span class="button__text">{{ i18n.submit }}</span>
-                    <svg class="button__icon" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-                </button>
-            </form>
-            <div class="register">
-                <a routerLink="/auth/login">
-                    <h3>{{ i18n.loginLink }}</h3>
-                </a>
-            </div>
+    <div class="auth-card">
+        <div class="auth-brand">
+            <span class="auth-brand-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/>
+                </svg>
+            </span>
+            <h1>{{ i18n.title }}</h1>
         </div>
-        <div class="screen__background">
-            <span class="screen__background__shape screen__background__shape4"></span>
-            <span class="screen__background__shape screen__background__shape3"></span>
-            <span class="screen__background__shape screen__background__shape2"></span>
-            <span class="screen__background__shape screen__background__shape1"></span>
+
+        <form [formGroup]="formRegister" (ngSubmit)="signUp()" class="auth-form">
+            <div>
+                <div class="field">
+                    <input id="register-email" formControlName="email" type="email" placeholder=" " autocomplete="email">
+                    <label for="register-email">{{ i18n.emailPlaceholder }}</label>
+                </div>
+                @if (formRegister.controls.email.touched && formRegister.controls.email.hasError('email')) {
+                    <p class="field-error">{{ i18n.emailInvalid }}</p>
+                }
+                @if (formRegister.controls.email.hasError('emailAlreadyInUse')) {
+                    <p class="field-error">{{ i18n.emailAlreadyInUse }}</p>
+                }
+                @if (formRegister.controls.email.hasError('validation')) {
+                    <p class="field-error">{{ formRegister.controls.email.getError('validation') }}</p>
+                }
+                @if (formRegister.controls.email.hasError('unknownError')) {
+                    <p class="field-error">{{ i18n.unknownError }}</p>
+                }
+            </div>
+
+            <div>
+                <div class="field">
+                    <input id="register-password" formControlName="password" type="password" placeholder=" " autocomplete="new-password">
+                    <label for="register-password">{{ i18n.passwordPlaceholder }}</label>
+                </div>
+                @if (formRegister.controls.password.touched && formRegister.controls.password.hasError('minlength')) {
+                    <p class="field-error">{{ i18n.passwordTooShort }}</p>
+                }
+                @if (formRegister.controls.password.hasError('passwordNotMatch') ||
+                    (formRegister.controls.password.value ?? '').trim() !== (formRegister.controls.confirmPassword.value ?? '').trim()) {
+                    <p class="field-error">{{ i18n.passwordMismatch }}</p>
+                }
+                @if (formRegister.controls.password.hasError('validation')) {
+                    <p class="field-error">{{ formRegister.controls.password.getError('validation') }}</p>
+                }
+            </div>
+
+            <div>
+                <div class="field">
+                    <input id="register-confirm-password" formControlName="confirmPassword" type="password" placeholder=" " autocomplete="new-password">
+                    <label for="register-confirm-password">{{ i18n.confirmPasswordPlaceholder }}</label>
+                </div>
+                @if (formRegister.controls.password.hasError('passwordNotMatch')) {
+                    <p class="field-error">{{ i18n.passwordMismatch }}</p>
+                }
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block auth-submit" [disabled]="formRegister.invalid || formRegister.controls.password.value !== formRegister.controls.confirmPassword.value">
+                <span>{{ i18n.submit }}</span>
+                <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <a routerLink="/auth/login" class="link-button-accent">{{ i18n.loginLink }}</a>
         </div>
     </div>
 </div>

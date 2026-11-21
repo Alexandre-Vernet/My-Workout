@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
-import { NgClass } from '@angular/common';
 import { CustomError } from "../../../interfaces/CustomError";
 import { RegisterRequest } from "../../../interfaces/RegisterRequest";
 import { applyValidationErrors, getErrorCode, isValidationError } from "../../shared/utils/http-error";
@@ -14,8 +13,7 @@ import { I18N } from '../../shared/i18n/i18n';
     styleUrls: ['../auth.component.scss'],
     imports: [
         ReactiveFormsModule,
-        RouterLink,
-        NgClass
+        RouterLink
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

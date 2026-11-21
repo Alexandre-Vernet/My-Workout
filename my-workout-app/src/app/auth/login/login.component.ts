@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router, RouterLink } from '@angular/router';
-import { NgClass } from '@angular/common';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 import { LoginRequest } from "../../../interfaces/LoginRequest";
 import { I18N } from '../../shared/i18n/i18n';
@@ -14,7 +13,6 @@ import { I18N } from '../../shared/i18n/i18n';
     imports: [
         ReactiveFormsModule,
         RouterLink,
-        NgClass,
         ForgotPasswordComponent
     ],
     changeDetection: ChangeDetectionStrategy.OnPush

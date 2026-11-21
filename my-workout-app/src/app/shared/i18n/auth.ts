@@ -3,17 +3,17 @@ export const authI18n = {
         accessDenied: 'Vous devez être connecté pour accéder à cette page'
     },
     login: {
+        title: 'Connexion',
         emailPlaceholder: 'Email',
-        emailAriaLabel: 'Email',
         emailInvalid: 'L\'email n\'est pas valide',
         badCredential: 'Email ou mot de passe invalide',
         passwordPlaceholder: 'Mot de passe',
-        passwordAriaLabel: 'Mot de passe',
         submit: 'Connexion',
         forgotPassword: 'Mot de passe oublié',
         registerLink: 'Pas encore inscrit ? Créez un compte ici'
     },
     register: {
+        title: 'Créer un compte',
         emailPlaceholder: 'Email',
         emailInvalid: 'L\'email n\'est pas valide',
         emailAlreadyInUse: 'Cet email est déjà utilisé',
