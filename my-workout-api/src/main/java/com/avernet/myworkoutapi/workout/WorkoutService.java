@@ -2,6 +2,9 @@ package com.avernet.myworkoutapi.workout;
 
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exception.ApiException;
+import com.avernet.myworkoutapi.gym.Gym;
+import com.avernet.myworkoutapi.gym.GymEntity;
+import com.avernet.myworkoutapi.gym.GymRepository;
 import com.avernet.myworkoutapi.history.History;
 import com.avernet.myworkoutapi.history.HistoryEntity;
 import com.avernet.myworkoutapi.history.HistoryGroup;
@@ -32,6 +35,9 @@ public class WorkoutService {
 
     @Resource
     HistoryMapper historyMapper;
+
+    @Resource
+    GymRepository gymRepository;
 
 
     @Transactional
@@ -76,6 +82,7 @@ public class WorkoutService {
             .workoutSummary(new WorkoutSummary(workout.getId(), workout.getDate()))
             .historyGroups(historyGroupList)
             .muscleGroup(workout.getMuscleGroup())
+            .gym(workout.getGym())
             .build();
     }
 
@@ -106,11 +113,14 @@ public class WorkoutService {
         WorkoutEntity workoutEntity = workoutMapper.toEntity(request.workout());
         workoutEntity.setUser(user);
 
+        GymEntity gymEntity = resolveGym(user, request.workout().getGym());
+        workoutEntity.setGym(gymEntity);
+
         LocalDate today = LocalDate.now();
         LocalDateTime start = today.atStartOfDay();
         LocalDateTime end = today.plusDays(1).atStartOfDay();
 
-        return workoutRepository
+        WorkoutEntity existingOrNewWorkout = workoutRepository
             .findByUserIdAndMuscleGroupIdAndDateGreaterThanEqualAndDateLessThan(
                 user.getId(),
                 request.workout().getMuscleGroup().id(),
@@ -118,6 +128,25 @@ public class WorkoutService {
                 end
             )
             .orElse(workoutEntity);
+
+        existingOrNewWorkout.setGym(gymEntity);
+
+        return existingOrNewWorkout;
+    }
+
+    // Never trust the nested Gym object straight from the request: it only carries an id,
+    // and the gym table is per-user, so a client could otherwise link a workout to any
+    // other user's gym by guessing its id. gym_id is NOT NULL on workout, so a missing
+    // gym must be rejected cleanly here rather than surfacing as a raw DB constraint
+    // violation (the frontend is expected to block starting a workout before this point
+    // when the user has no gym, but this stays the real guarantee).
+    private GymEntity resolveGym(UserEntity user, Gym gym) {
+        if (gym == null || gym.id() == null) {
+            throw new ApiException(ErrorCodeEnum.GYM_REQUIRED, "Vous devez créer une salle avant de commencer un entraînement", HttpStatus.BAD_REQUEST);
+        }
+
+        return gymRepository.findByIdAndUser(gym.id(), user)
+            .orElseThrow(() -> new ApiException(ErrorCodeEnum.GYM_NOT_FOUND, "Cette salle n'existe pas", HttpStatus.NOT_FOUND));
     }
 
     private HistoryEntity createHistory(WorkoutRequest request, WorkoutEntity workout) {

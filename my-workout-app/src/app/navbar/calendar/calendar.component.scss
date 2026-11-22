@@ -398,3 +398,20 @@
         letter-spacing: .04em;
     }
 }
+
+.sheet-group-labels {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.sheet-group-gym {
+    color: var(--p-text-muted-color);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

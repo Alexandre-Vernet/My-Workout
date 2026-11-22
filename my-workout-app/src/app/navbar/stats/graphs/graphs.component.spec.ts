@@ -4,20 +4,28 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideRouter, Router } from '@angular/router';
 import { GraphsComponent } from './graphs.component';
 import { HistoryService } from '../../../services/history.service';
+import { GymService } from '../../../services/gym.service';
 import { ExerciseGraphs } from '../../../../interfaces/ExerciseGraphs';
 import { HistoryPoint } from '../../../../interfaces/HistoryPoint';
+import { Gym } from '../../../../interfaces/gym';
 
 describe('GraphsComponent', () => {
     let fixture: ComponentFixture<GraphsComponent>;
     let component: GraphsComponent;
     let httpMock: HttpTestingController;
     let historyService: HistoryService;
+    let gymService: GymService;
 
     function manyPoints(count: number): HistoryPoint[] {
         return Array.from({ length: count }, (_, i) => ({
             date: new Date(2020, 0, i + 1),
             weight: 50 + i
         }));
+    }
+
+    function detectChangesAndFlushGyms(gyms: Gym[] = []) {
+        fixture.detectChanges();
+        httpMock.expectOne(r => r.url === gymService.gymUrl).flush(gyms);
     }
 
     beforeEach(() => {
@@ -31,6 +39,7 @@ describe('GraphsComponent', () => {
         component = fixture.componentInstance;
         httpMock = TestBed.inject(HttpTestingController);
         historyService = TestBed.inject(HistoryService);
+        gymService = TestBed.inject(GymService);
     });
 
     afterEach(() => {
@@ -46,7 +55,7 @@ describe('GraphsComponent', () => {
             totalReps: 50
         };
 
-        fixture.detectChanges();
+        detectChangesAndFlushGyms();
         httpMock.expectOne(`${ historyService.historyUrl }/exercise-graph/5`).flush(exerciseGraphs);
 
         expect(component['exerciseGraphs']()).toEqual(exerciseGraphs);
@@ -56,7 +65,7 @@ describe('GraphsComponent', () => {
         const router = TestBed.inject(Router);
         const navigateSpy = vi.spyOn(router, 'navigate');
 
-        fixture.detectChanges();
+        detectChangesAndFlushGyms();
         httpMock.expectOne(`${ historyService.historyUrl }/exercise-graph/5`)
             .flush('not found', { status: 404, statusText: 'Not Found' });
 
@@ -64,7 +73,7 @@ describe('GraphsComponent', () => {
     });
 
     it('destroys the chart on component destruction', () => {
-        fixture.detectChanges();
+        detectChangesAndFlushGyms();
         httpMock.expectOne(`${ historyService.historyUrl }/exercise-graph/5`).flush({
             exercise: { id: 5, name: 'Squat' },
             historyPoints: [],
@@ -82,7 +91,7 @@ describe('GraphsComponent', () => {
     });
 
     it('defaults to the "all" period when there are few history points', () => {
-        fixture.detectChanges();
+        detectChangesAndFlushGyms();
         httpMock.expectOne(`${ historyService.historyUrl }/exercise-graph/5`).flush({
             exercise: { id: 5, name: 'Squat' },
             historyPoints: manyPoints(5),
@@ -95,7 +104,7 @@ describe('GraphsComponent', () => {
     });
 
     it('defaults to the "3m" period when there are many history points', () => {
-        fixture.detectChanges();
+        detectChangesAndFlushGyms();
         httpMock.expectOne(`${ historyService.historyUrl }/exercise-graph/5`).flush({
             exercise: { id: 5, name: 'Squat' },
             historyPoints: manyPoints(31),
@@ -111,7 +120,7 @@ describe('GraphsComponent', () => {
         const oldPoint: HistoryPoint = { date: new Date(Date.now() - 400 * 24 * 60 * 60 * 1000), weight: 40 };
         const recentPoint: HistoryPoint = { date: new Date(), weight: 60 };
 
-        fixture.detectChanges();
+        detectChangesAndFlushGyms();
         httpMock.expectOne(`${ historyService.historyUrl }/exercise-graph/5`).flush({
             exercise: { id: 5, name: 'Squat' },
             historyPoints: [oldPoint, recentPoint],
@@ -128,5 +137,31 @@ describe('GraphsComponent', () => {
         component['selectedPeriod'].set('1m');
 
         expect(component['filteredHistoryPoints']()).toEqual([recentPoint]);
+    });
+
+    it('setGym() re-fetches the graph data filtered by the selected gym', () => {
+        detectChangesAndFlushGyms([{ id: 1, name: 'Salle A' }, { id: 2, name: 'Salle B' }]);
+        httpMock.expectOne(r => r.url === `${ historyService.historyUrl }/exercise-graph/5`).flush({
+            exercise: { id: 5, name: 'Squat' },
+            historyPoints: [],
+            totalWeight: 0,
+            maxWeight: 0,
+            totalReps: 0
+        });
+
+        component['setGym'](2);
+        fixture.detectChanges();
+
+        const req = httpMock.expectOne(r => r.url === `${ historyService.historyUrl }/exercise-graph/5`);
+        expect(req.request.params.get('gymId')).toBe('2');
+        req.flush({
+            exercise: { id: 5, name: 'Squat' },
+            historyPoints: [],
+            totalWeight: 0,
+            maxWeight: 0,
+            totalReps: 0
+        });
+
+        expect(component['selectedGymId']()).toBe(2);
     });
 });

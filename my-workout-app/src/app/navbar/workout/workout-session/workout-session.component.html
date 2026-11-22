@@ -38,7 +38,9 @@
                     class="panel"
                     [class.slide-from-right]="animationDirection() === 'right'"
                     [class.slide-from-left]="animationDirection() === 'left'">
-                    <h3 [routerLink]="['/', 'library', 'exercise', currentExercise()!.id]">
+                    <h3
+                        [routerLink]="['/', 'library', 'exercise', currentExercise()!.id]"
+                        [queryParams]="{ returnTo: currentSessionUrl() }">
                         {{ currentExercise()!.name | uppercase }}
                     </h3>
 

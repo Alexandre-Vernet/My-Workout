@@ -26,6 +26,7 @@ export class DialogSelectCardioExerciseComponent {
     openModal = model(false);
     workoutDate = input<Date>();
     cardioExercises = input<Exercise[]>([]);
+    gymId = input<number>();
     createdWorkout = output<Workout>();
     showAlert = output<Alert>();
 
@@ -50,9 +51,11 @@ export class DialogSelectCardioExerciseComponent {
             id: MuscleGroupEnum.CARDIO
         };
 
+        const gymId = this.gymId();
         const workout: Workout = {
             muscleGroup,
             date: this.workoutDate() ?? new Date(),
+            gym: gymId !== undefined ? { id: gymId } : undefined
         };
 
         const history: History = {

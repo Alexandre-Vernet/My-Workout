@@ -3,6 +3,8 @@ package com.avernet.myworkoutapi;
 import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
+import com.avernet.myworkoutapi.gym.GymEntity;
+import com.avernet.myworkoutapi.gym.GymRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
 import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
@@ -70,16 +72,22 @@ public class HistoryServiceTest {
     @Resource
     private HistoryMapper historyMapper;
 
+    @Resource
+    private GymRepository gymRepository;
+
 
     UserEntity userEntity;
     ExerciseEntity exerciseEntity;
     MuscleGroupEntity muscleGroupEntity;
+    GymEntity gymEntity;
 
     @BeforeEach
     void setup() {
         userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
         exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
         muscleGroupEntity = muscleGroupRepository.findById(1L).orElseThrow(MuscleGroupNotFoundException::new);
+        // gym_id is NOT NULL on workout: every test needs one to attach, by default.
+        gymEntity = gymRepository.save(GymEntity.builder().name("Salle par défaut").active(true).user(userEntity).build());
     }
 
 
@@ -89,6 +97,7 @@ public class HistoryServiceTest {
             WorkoutEntity w = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
+                .gym(gymEntity)
                 .date(LocalDateTime.of(2026, 1, i, 0, 0))
                 .build();
             WorkoutEntity workoutEntity = workoutRepository.save(w);
@@ -105,9 +114,83 @@ public class HistoryServiceTest {
             }
         }
 
-        History history = service.findLastHistoryWeightByExerciseId(userEntity, exerciseEntity.getId());
+        History history = service.findLastHistoryWeightByExerciseId(userEntity, exerciseEntity.getId(), null);
         assertNotNull(history);
         assertEquals(54F, history.getWeight());
+    }
+
+    @Test
+    void shouldPreferLastHistoryForTheSameGym() {
+        GymEntity gymA = gymRepository.save(GymEntity.builder().name("Salle A").active(true).user(userEntity).build());
+        GymEntity gymB = gymRepository.save(GymEntity.builder().name("Salle B").active(true).user(userEntity).build());
+
+        WorkoutEntity workoutGymA = workoutRepository.save(WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .gym(gymA)
+            .date(LocalDateTime.of(2026, 1, 1, 0, 0))
+            .build());
+        historyRepository.save(HistoryEntity.builder()
+            .exercise(exerciseEntity)
+            .reps((short) 10)
+            .weight(40F)
+            .unilateral(true)
+            .workout(workoutGymA)
+            .build());
+
+        WorkoutEntity workoutGymB = workoutRepository.save(WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .gym(gymB)
+            .date(LocalDateTime.of(2026, 1, 2, 0, 0))
+            .build());
+        historyRepository.save(HistoryEntity.builder()
+            .exercise(exerciseEntity)
+            .reps((short) 10)
+            .weight(60F)
+            .unilateral(true)
+            .workout(workoutGymB)
+            .build());
+
+        History lastForGymA = service.findLastHistoryWeightByExerciseId(userEntity, exerciseEntity.getId(), gymA.getId());
+        assertNotNull(lastForGymA);
+        assertEquals(40F, lastForGymA.getWeight());
+
+        History lastForGymB = service.findLastHistoryWeightByExerciseId(userEntity, exerciseEntity.getId(), gymB.getId());
+        assertNotNull(lastForGymB);
+        assertEquals(60F, lastForGymB.getWeight());
+
+        History lastAnyGym = service.findLastHistoryWeightByExerciseId(userEntity, exerciseEntity.getId(), null);
+        assertNotNull(lastAnyGym);
+        assertEquals(60F, lastAnyGym.getWeight());
+    }
+
+    @Test
+    void shouldFallBackToAnyGymWhenNoneForTheSelectedGym() {
+        // Reproduces the real bug: a lot of history recorded under one gym (e.g. the
+        // "Salle 1" the migration auto-created), and a brand new second gym with no
+        // history yet. Selecting that new gym must still suggest the last weight/reps
+        // instead of leaving the pre-fill empty.
+        GymEntity gymWithHistory = gymRepository.save(GymEntity.builder().name("Salle 1").active(true).user(userEntity).build());
+        GymEntity emptyGym = gymRepository.save(GymEntity.builder().name("Salle 2").active(true).user(userEntity).build());
+
+        WorkoutEntity workoutEntity = workoutRepository.save(WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .gym(gymWithHistory)
+            .date(LocalDateTime.of(2026, 1, 1, 0, 0))
+            .build());
+        historyRepository.save(HistoryEntity.builder()
+            .exercise(exerciseEntity)
+            .reps((short) 10)
+            .weight(70F)
+            .unilateral(true)
+            .workout(workoutEntity)
+            .build());
+
+        History lastForEmptyGym = service.findLastHistoryWeightByExerciseId(userEntity, exerciseEntity.getId(), emptyGym.getId());
+        assertNotNull(lastForEmptyGym);
+        assertEquals(70F, lastForEmptyGym.getWeight());
     }
 
     @Test
@@ -115,6 +198,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
@@ -139,6 +223,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.of(2026, 1, 1, 0, 0))
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
@@ -171,6 +256,7 @@ public class HistoryServiceTest {
             WorkoutEntity workoutEntity = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
+                .gym(gymEntity)
                 .date(LocalDateTime.of(2026, 1, i, 0, 0))
                 .build();
             workoutRepository.save(workoutEntity);
@@ -190,6 +276,7 @@ public class HistoryServiceTest {
             WorkoutEntity w = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
+                .gym(gymEntity)
                 .date(LocalDateTime.of(20226, 1, i, 0, 0))
                 .build();
             WorkoutEntity workoutEntity = workoutRepository.save(w);
@@ -206,7 +293,7 @@ public class HistoryServiceTest {
             }
         }
 
-        ExerciseGraphs exerciseGraphs = service.getExerciseGraphs(userEntity, exerciseEntity.getId());
+        ExerciseGraphs exerciseGraphs = service.getExerciseGraphs(userEntity, exerciseEntity.getId(), null);
         assertNotNull(exerciseGraphs);
         assertEquals(55F, exerciseGraphs.maxWeight());
         assertEquals(795, exerciseGraphs.totalWeight());
@@ -214,10 +301,57 @@ public class HistoryServiceTest {
     }
 
     @Test
+    void shouldFindDataForGraphFilteredByGym() {
+        GymEntity gymA = gymRepository.save(GymEntity.builder().name("Salle A").active(true).user(userEntity).build());
+        GymEntity gymB = gymRepository.save(GymEntity.builder().name("Salle B").active(true).user(userEntity).build());
+
+        WorkoutEntity workoutGymA = workoutRepository.save(WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .gym(gymA)
+            .date(LocalDateTime.of(2026, 1, 1, 0, 0))
+            .build());
+        historyRepository.save(HistoryEntity.builder()
+            .exercise(exerciseEntity)
+            .reps((short) 10)
+            .weight(50F)
+            .unilateral(true)
+            .workout(workoutGymA)
+            .build());
+
+        WorkoutEntity workoutGymB = workoutRepository.save(WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .gym(gymB)
+            .date(LocalDateTime.of(2026, 1, 2, 0, 0))
+            .build());
+        historyRepository.save(HistoryEntity.builder()
+            .exercise(exerciseEntity)
+            .reps((short) 20)
+            .weight(80F)
+            .unilateral(true)
+            .workout(workoutGymB)
+            .build());
+
+        ExerciseGraphs graphsGymA = service.getExerciseGraphs(userEntity, exerciseEntity.getId(), gymA.getId());
+        assertEquals(50F, graphsGymA.maxWeight());
+        assertEquals(10, graphsGymA.totalReps());
+
+        ExerciseGraphs graphsGymB = service.getExerciseGraphs(userEntity, exerciseEntity.getId(), gymB.getId());
+        assertEquals(80F, graphsGymB.maxWeight());
+        assertEquals(20, graphsGymB.totalReps());
+
+        ExerciseGraphs graphsAnyGym = service.getExerciseGraphs(userEntity, exerciseEntity.getId(), null);
+        assertEquals(80F, graphsAnyGym.maxWeight());
+        assertEquals(30, graphsAnyGym.totalReps());
+    }
+
+    @Test
     void shouldAggregateOneHistoryPointPerDay() {
         WorkoutEntity day1 = workoutRepository.save(WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.of(2026, 1, 1, 0, 0))
             .build());
 
@@ -234,6 +368,7 @@ public class HistoryServiceTest {
         WorkoutEntity day2 = workoutRepository.save(WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.of(2026, 1, 2, 0, 0))
             .build());
 
@@ -245,7 +380,7 @@ public class HistoryServiceTest {
             .workout(day2)
             .build());
 
-        ExerciseGraphs exerciseGraphs = service.getExerciseGraphs(userEntity, exerciseEntity.getId());
+        ExerciseGraphs exerciseGraphs = service.getExerciseGraphs(userEntity, exerciseEntity.getId(), null);
 
         assertEquals(2, exerciseGraphs.historyPoints().size());
         assertEquals(52F, exerciseGraphs.historyPoints().get(0).weight());
@@ -257,6 +392,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
@@ -293,6 +429,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
@@ -323,6 +460,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
@@ -350,6 +488,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
@@ -382,6 +521,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);
@@ -422,6 +562,7 @@ public class HistoryServiceTest {
         WorkoutEntity w = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.now())
             .build();
         WorkoutEntity workoutEntity = workoutRepository.save(w);

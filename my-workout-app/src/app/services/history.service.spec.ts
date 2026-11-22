@@ -24,7 +24,17 @@ describe('HistoryService', () => {
     it('findLastHistoryWeightByExerciseId() GETs the last weight for an exercise', () => {
         service.findLastHistoryWeightByExerciseId(5).subscribe();
 
-        httpMock.expectOne(`${ service.historyUrl }/last/5`).flush({ weight: 60 });
+        const req = httpMock.expectOne(r => r.url === `${ service.historyUrl }/last/5`);
+        expect(req.request.params.keys().length).toBe(0);
+        req.flush({ weight: 60 });
+    });
+
+    it('findLastHistoryWeightByExerciseId() passes gymId as a query param when provided', () => {
+        service.findLastHistoryWeightByExerciseId(5, 2).subscribe();
+
+        const req = httpMock.expectOne(r => r.url === `${ service.historyUrl }/last/5`);
+        expect(req.request.params.get('gymId')).toBe('2');
+        req.flush({ weight: 60 });
     });
 
     it('findTodayExercicesHistory() GETs today\'s history for a muscle group and exercise', () => {
@@ -42,7 +52,23 @@ describe('HistoryService', () => {
     it('getExerciseGraphs() GETs the graph data for an exercise', () => {
         service.getExerciseGraphs(5).subscribe();
 
-        httpMock.expectOne(`${ service.historyUrl }/exercise-graph/5`).flush({
+        const req = httpMock.expectOne(r => r.url === `${ service.historyUrl }/exercise-graph/5`);
+        expect(req.request.params.keys().length).toBe(0);
+        req.flush({
+            exercise: { id: 5 },
+            historyPoints: [],
+            totalWeight: 0,
+            maxWeight: 0,
+            totalReps: 0
+        });
+    });
+
+    it('getExerciseGraphs() passes gymId as a query param when provided', () => {
+        service.getExerciseGraphs(5, 3).subscribe();
+
+        const req = httpMock.expectOne(r => r.url === `${ service.historyUrl }/exercise-graph/5`);
+        expect(req.request.params.get('gymId')).toBe('3');
+        req.flush({
             exercise: { id: 5 },
             historyPoints: [],
             totalWeight: 0,

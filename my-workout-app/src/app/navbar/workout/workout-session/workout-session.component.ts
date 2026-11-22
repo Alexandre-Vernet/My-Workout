@@ -1,5 +1,6 @@
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     effect,
     inject,
@@ -59,6 +60,9 @@ export class WorkoutSessionComponent {
     tab = input<number, string>(1, {
         transform: (value: string) => value !== null ? Number(value) : 1
     });
+    gymId = input<number | undefined, string | undefined>(undefined, {
+        transform: (value: string | undefined) => value !== undefined && value !== null ? Number(value) : undefined
+    });
 
     protected readonly exercises = signal<Exercise[]>([]);
     protected readonly exercisesMade = signal<History[]>([]);
@@ -87,6 +91,7 @@ export class WorkoutSessionComponent {
     private readonly historyService = inject(HistoryService);
     private readonly alertService = inject(AlertService);
     private readonly router = inject(Router);
+    private readonly changeDetectorRef = inject(ChangeDetectorRef);
     protected readonly restTimeService = inject(RestTimeService);
 
     constructor() {
@@ -127,6 +132,12 @@ export class WorkoutSessionComponent {
         this.exercisesMade.set([]);
         this.stopTimer();
         this.setTabUrl(index);
+    }
+
+    // Read at click time (via the template method call) rather than cached, so it
+    // always reflects the tab query param set by setTabUrl() for the step currently shown.
+    protected currentSessionUrl(): string {
+        return this.router.url;
     }
 
     protected onWeightChange(value: number | null) {
@@ -221,13 +232,18 @@ export class WorkoutSessionComponent {
     }
 
     private fillInputWeightRepsLastSavedValue() {
-        this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise()!.id!)
+        this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise()!.id!, this.gymId())
             .subscribe(history => {
                 this.formWorkout.patchValue({
                     weight: history?.weight,
                     reps: history?.reps ?? 8,
                     unilateral: history?.unilateral ?? false
                 });
+                // formWorkout is a plain FormGroup, not a signal: in this zoneless app,
+                // nothing else guarantees a render after this async response lands, so
+                // the pre-filled value can silently stay invisible until some unrelated
+                // signal write happens to trigger one (see CLAUDE.md on signals vs RxJS).
+                this.changeDetectorRef.markForCheck();
             });
     }
 
@@ -264,9 +280,11 @@ export class WorkoutSessionComponent {
             id: this.muscleGroupEnum
         };
 
+        const gymId = this.gymId();
         const workout: Workout = {
             muscleGroup,
-            date: new Date()
+            date: new Date(),
+            gym: gymId !== undefined ? { id: gymId } : undefined
         };
 
         this.workoutService.create(workout, history)
@@ -284,10 +302,10 @@ export class WorkoutSessionComponent {
 
                     this.exercisesMade.update(list => [...list, exerciseMade]);
                 },
-                error: () => {
+                error: (err: CustomError) => {
                     this.alertService.show({
                         severity: 'error',
-                        message: this.i18n.saveErrorMessage
+                        message: getErrorMessage(err, this.i18n.saveErrorMessage)
                     });
                 }
             });

@@ -5,9 +5,11 @@ import { provideRouter, Router } from '@angular/router';
 import { SelectMuscleGroupWorkoutComponent } from './select-muscle-group-workout.component';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
 import { ExerciseService } from '../../../services/exercise.service';
+import { GymService } from '../../../services/gym.service';
 import { AlertService } from '../../../services/alert.service';
 import { MuscleGroupEnum } from '../../../../interfaces/MuscleGroupEnum';
 import { MuscleGroupExerciseCount } from '../../../../interfaces/MuscleGroupExerciseCount';
+import { Gym } from '../../../../interfaces/gym';
 
 describe('SelectMuscleGroupWorkoutComponent', () => {
     let fixture: ComponentFixture<SelectMuscleGroupWorkoutComponent>;
@@ -15,6 +17,7 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
     let httpMock: HttpTestingController;
     let muscleGroupService: MuscleGroupService;
     let exerciseService: ExerciseService;
+    let gymService: GymService;
     let router: Router;
 
     const recommended: MuscleGroupExerciseCount[] = [
@@ -32,6 +35,7 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
         httpMock = TestBed.inject(HttpTestingController);
         muscleGroupService = TestBed.inject(MuscleGroupService);
         exerciseService = TestBed.inject(ExerciseService);
+        gymService = TestBed.inject(GymService);
         router = TestBed.inject(Router);
     });
 
@@ -39,10 +43,11 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
         httpMock.verify();
     });
 
-    function loadInitialData(cardioExercises: unknown[] = []) {
+    function loadInitialData(cardioExercises: unknown[] = [], gyms: Gym[] = []) {
         fixture.detectChanges();
         httpMock.expectOne(`${ muscleGroupService.muscleGroupUrl }/recommended`).flush(recommended);
         httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/cardio`).flush(cardioExercises);
+        httpMock.expectOne(gymService.gymUrl).flush(gyms);
     }
 
     it('starts with no muscle groups loaded, so the skeleton can render', () => {
@@ -56,13 +61,74 @@ describe('SelectMuscleGroupWorkoutComponent', () => {
         expect(component['cardioExercises']()).toEqual([{ id: 1, name: 'Running' }]);
     });
 
-    it('navigates to the workout session for a non-cardio muscle group', () => {
+    it('blocks access to the muscle group list and shows the no-gym state when the user has no gym', () => {
+        loadInitialData();
+        fixture.detectChanges();
+
+        const cards = fixture.nativeElement.querySelectorAll('.muscle-group-card');
+        const noGymState = fixture.nativeElement.querySelector('.no-gym-state');
+        expect(cards.length).toBe(0);
+        expect(noGymState).toBeTruthy();
+    });
+
+    it('navigates to the workout session for a non-cardio muscle group, with no gym when the user has none', () => {
         loadInitialData();
         const navigateSpy = vi.spyOn(router, 'navigate');
 
         component['clickMuscleGroup']({ id: MuscleGroupEnum.PECTORAUX, name: 'pectoraux' });
 
-        expect(navigateSpy).toHaveBeenCalledWith(['/', 'workout', 'workout-session', MuscleGroupEnum.PECTORAUX]);
+        expect(navigateSpy).toHaveBeenCalledWith(
+            ['/', 'workout', 'workout-session', MuscleGroupEnum.PECTORAUX],
+            { queryParams: {} }
+        );
+    });
+
+    it('navigates with the gym pre-selected when the user has exactly one, without prompting', () => {
+        loadInitialData([], [{ id: 1, name: 'Salle unique' }]);
+        const navigateSpy = vi.spyOn(router, 'navigate');
+
+        component['clickMuscleGroup']({ id: MuscleGroupEnum.PECTORAUX, name: 'pectoraux' });
+
+        expect(component['gymPickerOpen']()).toBe(false);
+        expect(navigateSpy).toHaveBeenCalledWith(
+            ['/', 'workout', 'workout-session', MuscleGroupEnum.PECTORAUX],
+            { queryParams: { gymId: 1 } }
+        );
+    });
+
+    it('opens the gym picker when the user has several gyms, instead of navigating right away', () => {
+        loadInitialData([], [{ id: 1, name: 'Salle A' }, { id: 2, name: 'Salle B' }]);
+        const navigateSpy = vi.spyOn(router, 'navigate');
+
+        component['clickMuscleGroup']({ id: MuscleGroupEnum.PECTORAUX, name: 'pectoraux' });
+
+        expect(component['gymPickerOpen']()).toBe(true);
+        expect(navigateSpy).not.toHaveBeenCalled();
+    });
+
+    it('selectGym() closes the picker and navigates with the chosen gym', () => {
+        loadInitialData([], [{ id: 1, name: 'Salle A' }, { id: 2, name: 'Salle B' }]);
+        const navigateSpy = vi.spyOn(router, 'navigate');
+
+        component['clickMuscleGroup']({ id: MuscleGroupEnum.PECTORAUX, name: 'pectoraux' });
+        component['selectGym']({ id: 2, name: 'Salle B' });
+
+        expect(component['gymPickerOpen']()).toBe(false);
+        expect(navigateSpy).toHaveBeenCalledWith(
+            ['/', 'workout', 'workout-session', MuscleGroupEnum.PECTORAUX],
+            { queryParams: { gymId: 2 } }
+        );
+    });
+
+    it('cancelGymPicker() closes the picker without navigating', () => {
+        loadInitialData([], [{ id: 1, name: 'Salle A' }, { id: 2, name: 'Salle B' }]);
+        const navigateSpy = vi.spyOn(router, 'navigate');
+
+        component['clickMuscleGroup']({ id: MuscleGroupEnum.PECTORAUX, name: 'pectoraux' });
+        component['cancelGymPicker']();
+
+        expect(component['gymPickerOpen']()).toBe(false);
+        expect(navigateSpy).not.toHaveBeenCalled();
     });
 
     it('opens the cardio dialog when the user already has cardio exercises added', () => {

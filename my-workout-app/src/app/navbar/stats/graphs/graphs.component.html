@@ -20,6 +20,21 @@
                 }
             </ul>
         </div>
+
+        @if (gyms().length > 1) {
+            <div class="chips-container">
+                <ul>
+                    <li [class.active]="selectedGymId() === undefined" (click)="setGym(undefined)">
+                        {{ i18n.allGymsFilter }}
+                    </li>
+                    @for (gym of gyms(); track gym.id) {
+                        <li [class.active]="selectedGymId() === gym.id" (click)="setGym(gym.id)">
+                            {{ gym.name }}
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
     }
 
     <div class="chart-card">

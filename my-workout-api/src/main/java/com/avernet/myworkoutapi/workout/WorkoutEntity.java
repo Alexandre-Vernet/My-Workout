@@ -1,5 +1,6 @@
 package com.avernet.myworkoutapi.workout;
 
+import com.avernet.myworkoutapi.gym.GymEntity;
 import com.avernet.myworkoutapi.history.HistoryEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.user.UserEntity;
@@ -46,6 +47,10 @@ public class WorkoutEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "muscle_group_id")
     MuscleGroupEntity muscleGroup;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gym_id")
+    GymEntity gym;
 
 
     @OneToMany(mappedBy = "workout", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

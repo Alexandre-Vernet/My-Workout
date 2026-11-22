@@ -12,8 +12,10 @@ export class HistoryService {
 
     historyUrl = environment.historyUrl();
 
-    findLastHistoryWeightByExerciseId(exerciseId: number) {
-        return this.http.get<History>(`${ this.historyUrl }/last/${ exerciseId }`);
+    findLastHistoryWeightByExerciseId(exerciseId: number, gymId?: number) {
+        return this.http.get<History>(`${ this.historyUrl }/last/${ exerciseId }`, {
+            params: gymId !== undefined ? { gymId } : {}
+        });
     }
 
     findTodayExercicesHistory(muscleGroupId: number, exerciseId: number) {
@@ -25,8 +27,10 @@ export class HistoryService {
         return this.http.get<UserExercisesCountTotalWorkout>(`${ this.historyUrl }/stats`);
     }
 
-    getExerciseGraphs(exerciseId: number) {
-        return this.http.get<ExerciseGraphs>(`${ this.historyUrl }/exercise-graph/${ exerciseId }`);
+    getExerciseGraphs(exerciseId: number, gymId?: number) {
+        return this.http.get<ExerciseGraphs>(`${ this.historyUrl }/exercise-graph/${ exerciseId }`, {
+            params: gymId !== undefined ? { gymId } : {}
+        });
     }
 
     update(history: History) {

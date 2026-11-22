@@ -7,6 +7,13 @@
                 <span class="muscle-group-card skeleton-fill"></span>
             }
         </div>
+    } @else if (gyms().length === 0) {
+        <div class="no-gym-state">
+            <svg viewBox="0 0 24 24"><path d="M4 9v6M20 9v6M7 7v10M17 7v10M7 12h10"/></svg>
+            <strong>{{ i18n.noGymTitle }}</strong>
+            <p>{{ i18n.noGymMessage }}</p>
+            <a routerLink="/user/gym" class="btn btn-primary">{{ i18n.noGymCta }}</a>
+        </div>
     } @else {
         <div class="muscle-group-list">
             @for (entry of muscleGroupExerciseCount()!; track entry.muscleGroup.id; let first = $first) {
@@ -33,9 +40,32 @@
     }
 </div>
 
+@if (gymPickerOpen()) {
+    <div class="overlay-backdrop" (click)="cancelGymPicker()">
+        <div class="overlay-card" (click)="$event.stopPropagation()">
+            <div class="overlay-header">
+                <h2>{{ gymPickerI18n.title }}</h2>
+                <button type="button" class="overlay-close" [attr.aria-label]="gymPickerI18n.closeLabel" (click)="cancelGymPicker()">
+                    <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                </button>
+            </div>
+
+            <div class="gym-picker-list">
+                @for (gym of gyms(); track gym.id) {
+                    <button type="button" class="gym-picker-option" (click)="selectGym(gym)">
+                        <span class="gym-picker-dot"></span>
+                        {{ gym.name }}
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+}
+
 <app-dialog-select-cardio-exercise
     [cardioExercises]="cardioExercises()"
     [openModal]="isOpenModalExerciseCardio()"
+    [gymId]="selectedGymId()"
     (openModalChange)="openModalCardioExerciseChange()"
     (showAlert)="showAlert($event)"/>
 

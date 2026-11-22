@@ -2,7 +2,14 @@ export const workoutI18n = {
     selectMuscleGroup: {
         title: 'Sélectionner une séance',
         recommendedBadge: 'Recommandé',
-        exerciseCountLabel: (count: number) => `${ count } exercice${ count <= 1 ? '' : 's' }`
+        exerciseCountLabel: (count: number) => `${ count } exercice${ count <= 1 ? '' : 's' }`,
+        noGymTitle: 'Aucune salle',
+        noGymMessage: 'Vous devez créer une salle avant de pouvoir lancer un entraînement.',
+        noGymCta: 'Créer une salle'
+    },
+    gymPicker: {
+        title: 'Dans quelle salle ?',
+        closeLabel: 'Fermer'
     },
     dialogSelectCardioExercise: {
         title: 'Sélectionner un type d\'entraînement',

@@ -21,16 +21,24 @@ public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
         """)
     Optional<HistoryEntity> findByIdAndWorkoutUserId(@Param("historyId") Long historyId, @Param("userId") Long userId);
 
+    // Prefers the last history recorded at the given gym, but falls back to the last
+    // history at any gym when there's none for that gym yet (e.g. a gym just created,
+    // or history recorded before this user had more than one) — this is a silent
+    // pre-fill suggestion, so it should never come up empty just because the exact gym
+    // has no data yet. Unlike this query, the stats/graphs queries below filter
+    // strictly: there, the gym is an explicit filter the user picked, not a preference.
     @Query("""
             SELECT h FROM HistoryEntity h
             LEFT JOIN h.workout w
             LEFT JOIN h.exercise e
             WHERE e.id = :exerciseId
             AND w.user.id = :userId
-            ORDER BY w.date DESC, h.id ASC
+            ORDER BY CASE WHEN :gymId IS NOT NULL AND w.gym.id = :gymId THEN 0 ELSE 1 END, w.date DESC, h.id ASC
             LIMIT 1
         """)
-    HistoryEntity findFirstByExerciseIdAndWorkoutUserIdOrderByWorkoutDate(@Param("userId") Long userId, @Param("exerciseId") Long exerciseId);
+    HistoryEntity findFirstByExerciseIdAndWorkoutUserIdAndGymIdOrderByWorkoutDate(
+        @Param("userId") Long userId, @Param("exerciseId") Long exerciseId, @Param("gymId") Long gymId
+    );
 
     @Query("""
             SELECT h FROM HistoryEntity h
@@ -61,9 +69,10 @@ public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
             JOIN h.workout w
             WHERE w.user.id = :userId
             AND h.exercise.id = :exerciseId
+            AND (:gymId IS NULL OR w.gym.id = :gymId)
             GROUP BY h.exercise
         """)
-    ExerciseGraphsEntity getExerciseGraphs(@Param("userId") Long userId, @Param("exerciseId") Long exerciseId);
+    ExerciseGraphsEntity getExerciseGraphs(@Param("userId") Long userId, @Param("exerciseId") Long exerciseId, @Param("gymId") Long gymId);
 
     @Query("""
             SELECT h
@@ -71,7 +80,8 @@ public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
             JOIN h.workout w
             WHERE w.user.id = :userId
             AND h.exercise.id = :exerciseId
+            AND (:gymId IS NULL OR w.gym.id = :gymId)
             ORDER BY h.workout.date ASC
         """)
-    List<HistoryEntity> findHistoriesByUserAndExercise(@Param("userId") Long userId, @Param("exerciseId") Long exerciseId);
+    List<HistoryEntity> findHistoriesByUserAndExercise(@Param("userId") Long userId, @Param("exerciseId") Long exerciseId, @Param("gymId") Long gymId);
 }

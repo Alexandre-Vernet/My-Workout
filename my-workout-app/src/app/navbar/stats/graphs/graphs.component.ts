@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, input, OnDestroy, signal, ViewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HistoryService } from '../../../services/history.service';
+import { GymService } from '../../../services/gym.service';
+import { Gym } from '../../../../interfaces/gym';
 import { ExerciseGraphs } from '../../../../interfaces/ExerciseGraphs';
 import { HistoryPoint } from '../../../../interfaces/HistoryPoint';
 import { I18N } from '../../../shared/i18n/i18n';
@@ -36,16 +38,24 @@ export class GraphsComponent implements OnDestroy {
     protected readonly periods: ReadonlyArray<Period> = ['1m', '3m', '6m', '1y', 'all'];
     protected readonly selectedPeriod = signal<Period>('all');
 
+    protected readonly gyms = signal<Gym[]>([]);
+    protected readonly selectedGymId = signal<number | undefined>(undefined);
+
     @ViewChild('barCanvas') private barCanvas!: ElementRef<HTMLCanvasElement>;
 
     private chart: Chart<'line', (number | null)[], string> | null = null;
 
     private readonly historyService = inject(HistoryService);
+    private readonly gymService = inject(GymService);
     private readonly router = inject(Router);
 
     constructor() {
         effect(() => {
-            this.historyService.getExerciseGraphs(this.exerciseId())
+            this.gymService.findAll().subscribe(gyms => this.gyms.set(gyms));
+        });
+
+        effect(() => {
+            this.historyService.getExerciseGraphs(this.exerciseId(), this.selectedGymId())
                 .subscribe({
                     next: (exerciseGraphs) => {
                         this.exerciseGraphs.set(exerciseGraphs);
@@ -66,6 +76,10 @@ export class GraphsComponent implements OnDestroy {
     protected setPeriod(period: Period) {
         this.selectedPeriod.set(period);
         this.renderChart();
+    }
+
+    protected setGym(gymId: number | undefined) {
+        this.selectedGymId.set(gymId);
     }
 
     protected filteredHistoryPoints(): HistoryPoint[] {

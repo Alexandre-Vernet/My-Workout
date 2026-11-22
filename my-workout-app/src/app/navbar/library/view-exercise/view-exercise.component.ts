@@ -38,6 +38,7 @@ export class ViewExerciseComponent {
 
 
     exerciseId = input.required<number>();
+    returnTo = input<string>();
     protected readonly exerciseMuscle = signal<ExerciseMuscle | undefined>(undefined);
     protected readonly user = toSignal(this.authService.getCurrentUser());
     protected readonly imagePath = computed(() => {
@@ -71,9 +72,16 @@ export class ViewExerciseComponent {
     }
 
     // Closes the detail overlay by navigating back up to the library list route
-    // (this component is nested under it — see app.routes.ts).
+    // (this component is nested under it — see app.routes.ts), unless it was opened
+    // from an in-progress workout session (returnTo query param), in which case it
+    // navigates back there instead.
     protected goBack() {
-        this.router.navigate(['..'], { relativeTo: this.route });
+        const returnTo = this.returnTo();
+        if (returnTo) {
+            this.router.navigateByUrl(returnTo);
+        } else {
+            this.router.navigate(['..'], { relativeTo: this.route });
+        }
     }
 
     protected toggleExerciseWorkout() {

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
 import {
     DialogSelectCardioExerciseComponent
@@ -18,10 +18,12 @@ import { NO_EXERCISES_DIALOG } from "../../../shared/utils/confirm-no-exercises-
 import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 import { getMuscleGroupColor } from '../../../shared/utils/muscle-group-color';
 import { I18N } from '../../../shared/i18n/i18n';
+import { GymService } from '../../../services/gym.service';
+import { Gym } from '../../../../interfaces/gym';
 
 @Component({
     selector: 'app-select-muscle-group-workout',
-    imports: [DialogSelectCardioExerciseComponent, FirstLetterUppercasePipe, ConfirmDialogComponent],
+    imports: [DialogSelectCardioExerciseComponent, FirstLetterUppercasePipe, ConfirmDialogComponent, RouterLink],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,9 +32,13 @@ import { I18N } from '../../../shared/i18n/i18n';
 export class SelectMuscleGroupWorkoutComponent {
 
     protected readonly i18n = I18N.workout.selectMuscleGroup;
+    protected readonly gymPickerI18n = I18N.workout.gymPicker;
 
     protected readonly muscleGroupExerciseCount = signal<MuscleGroupExerciseCount[] | null>(null);
     protected readonly cardioExercises = signal<Exercise[]>([]);
+    protected readonly gyms = signal<Gym[]>([]);
+    protected readonly selectedGymId = signal<number | undefined>(undefined);
+    protected readonly gymPickerOpen = signal(false);
 
     protected readonly isOpenModalExerciseCardio = signal(false);
 
@@ -44,6 +50,7 @@ export class SelectMuscleGroupWorkoutComponent {
 
     private readonly muscleGroupService = inject(MuscleGroupService);
     private readonly exerciseService = inject(ExerciseService);
+    private readonly gymService = inject(GymService);
     private readonly alertService = inject(AlertService);
     private readonly router = inject(Router);
 
@@ -54,11 +61,13 @@ export class SelectMuscleGroupWorkoutComponent {
         effect(() => {
             forkJoin([
                 this.muscleGroupService.findAllRecommendedMuscleGroup(),
-                this.exerciseService.findCardioExercises()
+                this.exerciseService.findCardioExercises(),
+                this.gymService.findAll()
             ])
-                .subscribe(([muscleGroupExerciseCount, cardioExercises]) => {
+                .subscribe(([muscleGroupExerciseCount, cardioExercises, gyms]) => {
                     this.muscleGroupExerciseCount.set(muscleGroupExerciseCount);
                     this.cardioExercises.set(cardioExercises);
+                    this.gyms.set(gyms);
                 });
         });
     }
@@ -70,10 +79,40 @@ export class SelectMuscleGroupWorkoutComponent {
     }
 
     protected clickMuscleGroup(muscleGroup: MuscleGroup) {
+        this.pendingMuscleGroup = muscleGroup;
+
+        // Zero gyms: nothing to ask, the workout is simply created without one.
+        // Exactly one: picking it would be pure friction, assume it silently.
+        // Several: ask, since guessing wrong means training logged under the wrong gym.
+        if (this.gyms().length > 1) {
+            this.gymPickerOpen.set(true);
+            return;
+        }
+
+        this.proceedToWorkout(muscleGroup, this.gyms()[0]?.id);
+    }
+
+    protected selectGym(gym: Gym) {
+        this.gymPickerOpen.set(false);
+        if (this.pendingMuscleGroup) {
+            this.proceedToWorkout(this.pendingMuscleGroup, gym.id);
+        }
+    }
+
+    protected cancelGymPicker() {
+        this.gymPickerOpen.set(false);
+        this.pendingMuscleGroup = null;
+    }
+
+    private proceedToWorkout(muscleGroup: MuscleGroup, gymId?: number) {
+        this.selectedGymId.set(gymId);
+
         if (muscleGroup.id === MuscleGroupEnum.CARDIO) {
             this.openModalExerciseCardio(muscleGroup);
         } else {
-            this.router.navigate(['/', MenuUrls.workout, 'workout-session', muscleGroup.id]);
+            this.router.navigate(['/', MenuUrls.workout, 'workout-session', muscleGroup.id], {
+                queryParams: gymId !== undefined ? { gymId } : {}
+            });
         }
     }
 

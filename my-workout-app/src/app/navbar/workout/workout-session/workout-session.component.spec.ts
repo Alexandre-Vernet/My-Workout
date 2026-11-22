@@ -21,7 +21,7 @@ describe('WorkoutSessionComponent', () => {
     const squat: Exercise = { id: 1, name: 'Squat' };
     const legPress: Exercise = { id: 2, name: 'Leg press' };
 
-    function createComponent() {
+    function createComponent(gymId?: number) {
         TestBed.configureTestingModule({
             imports: [WorkoutSessionComponent],
             providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])]
@@ -29,6 +29,9 @@ describe('WorkoutSessionComponent', () => {
 
         fixture = TestBed.createComponent(WorkoutSessionComponent);
         fixture.componentRef.setInput('muscleGroupId', MuscleGroupEnum.JAMBES);
+        if (gymId !== undefined) {
+            fixture.componentRef.setInput('gymId', gymId);
+        }
         component = fixture.componentInstance;
         httpMock = TestBed.inject(HttpTestingController);
         exerciseService = TestBed.inject(ExerciseService);
@@ -39,7 +42,7 @@ describe('WorkoutSessionComponent', () => {
         fixture.detectChanges();
         httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/added/${ MuscleGroupEnum.JAMBES }`)
             .flush(exercises);
-        httpMock.expectOne(`${ historyService.historyUrl }/last/${ exercises[0].id }`).flush(null);
+        httpMock.expectOne(r => r.url === `${ historyService.historyUrl }/last/${ exercises[0].id }`).flush(null);
     }
 
     afterEach(() => {
@@ -53,6 +56,15 @@ describe('WorkoutSessionComponent', () => {
 
             expect(component['exercises']()).toEqual([squat, legPress]);
             expect(component['currentExercise']()).toEqual(squat);
+        });
+
+        it('marks the view for check after pre-filling the last weight/reps, since formWorkout is a plain FormGroup and this app is zoneless', () => {
+            createComponent();
+            const markForCheckSpy = vi.spyOn(component['changeDetectorRef'], 'markForCheck');
+
+            loadWithExercises();
+
+            expect(markForCheckSpy).toHaveBeenCalled();
         });
 
         it('prompts to add exercises when the muscle group is empty', () => {
@@ -136,6 +148,13 @@ describe('WorkoutSessionComponent', () => {
 
             expect(component['activeStep']()).toBe(1);
         });
+
+        it('currentSessionUrl() returns the router\'s current URL, so the exercise detail page can navigate back to this exact session/tab', () => {
+            const router = TestBed.inject(Router);
+            vi.spyOn(router, 'url', 'get').mockReturnValue('/workout/workout-session/5?tab=2');
+
+            expect(component['currentSessionUrl']()).toBe('/workout/workout-session/5?tab=2');
+        });
     });
 
     describe('timer and workout creation', () => {
@@ -187,6 +206,43 @@ describe('WorkoutSessionComponent', () => {
             httpMock.expectOne(workoutService.workoutUrl).flush('error', { status: 500, statusText: 'Server error' });
 
             expect(alertService.alert()?.severity).toBe('error');
+        });
+    });
+
+    describe('gym selection', () => {
+        it('passes the selected gym when fetching the last weight/reps for an exercise', () => {
+            createComponent(3);
+
+            fixture.detectChanges();
+            httpMock.expectOne(`${ exerciseService.exerciseUrl }/user/added/${ MuscleGroupEnum.JAMBES }`).flush([squat]);
+
+            const req = httpMock.expectOne(r => r.url === `${ historyService.historyUrl }/last/${ squat.id }`);
+            expect(req.request.params.get('gymId')).toBe('3');
+            req.flush(null);
+        });
+
+        it('links the created workout to the selected gym', () => {
+            createComponent(3);
+            loadWithExercises();
+            const workoutService = TestBed.inject(WorkoutService);
+
+            component['toggleTimer']();
+
+            const req = httpMock.expectOne(workoutService.workoutUrl);
+            expect(req.request.body.workout.gym).toEqual({ id: 3 });
+            req.flush({ id: 1, date: new Date(), histories: [{ id: 10, exercise: squat }] });
+        });
+
+        it('creates the workout without a gym when none was selected', () => {
+            createComponent();
+            loadWithExercises();
+            const workoutService = TestBed.inject(WorkoutService);
+
+            component['toggleTimer']();
+
+            const req = httpMock.expectOne(workoutService.workoutUrl);
+            expect(req.request.body.workout.gym).toBeUndefined();
+            req.flush({ id: 1, date: new Date(), histories: [{ id: 10, exercise: squat }] });
         });
     });
 

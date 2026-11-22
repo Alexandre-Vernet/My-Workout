@@ -43,8 +43,8 @@ public class HistoryService {
 
 
     @Transactional(readOnly = true)
-    public History findLastHistoryWeightByExerciseId(UserEntity userEntity, Long exerciseId) {
-        HistoryEntity historyEntity = historyRepository.findFirstByExerciseIdAndWorkoutUserIdOrderByWorkoutDate(userEntity.getId(), exerciseId);
+    public History findLastHistoryWeightByExerciseId(UserEntity userEntity, Long exerciseId, Long gymId) {
+        HistoryEntity historyEntity = historyRepository.findFirstByExerciseIdAndWorkoutUserIdAndGymIdOrderByWorkoutDate(userEntity.getId(), exerciseId, gymId);
         return historyMapper.toDto(historyEntity);
     }
 
@@ -69,9 +69,9 @@ public class HistoryService {
     }
 
     @Transactional(readOnly = true)
-    public ExerciseGraphs getExerciseGraphs(UserEntity userEntity, Long exerciseId) {
-        ExerciseGraphsEntity exerciseGraphsEntity = historyRepository.getExerciseGraphs(userEntity.getId(), exerciseId);
-        List<HistoryEntity> historyEntityList = historyRepository.findHistoriesByUserAndExercise(userEntity.getId(), exerciseId);
+    public ExerciseGraphs getExerciseGraphs(UserEntity userEntity, Long exerciseId, Long gymId) {
+        ExerciseGraphsEntity exerciseGraphsEntity = historyRepository.getExerciseGraphs(userEntity.getId(), exerciseId, gymId);
+        List<HistoryEntity> historyEntityList = historyRepository.findHistoriesByUserAndExercise(userEntity.getId(), exerciseId, gymId);
 
         // One point per day (the heaviest set of the day) instead of one point per set: on an
         // exercise trained for months with progressive sets within a session, per-set points

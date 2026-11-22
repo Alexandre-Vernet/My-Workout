@@ -135,7 +135,7 @@ describe('ViewExerciseComponent', () => {
         });
     });
 
-    it('goBack() navigates up to the parent library route', () => {
+    it('goBack() navigates up to the parent library route when there is no returnTo', () => {
         createComponent();
         const router = TestBed.inject(Router);
         const navigateSpy = vi.spyOn(router, 'navigate');
@@ -147,5 +147,20 @@ describe('ViewExerciseComponent', () => {
         component['goBack']();
 
         expect(navigateSpy).toHaveBeenCalledWith(['..'], { relativeTo: component['route'] });
+    });
+
+    it('goBack() navigates to the returnTo URL when the exercise was opened from a workout session', () => {
+        createComponent();
+        fixture.componentRef.setInput('returnTo', '/workout/workout-session/5?tab=2');
+        const router = TestBed.inject(Router);
+        const navigateByUrlSpy = vi.spyOn(router, 'navigateByUrl');
+
+        fixture.detectChanges();
+        httpMock.expectOne(`${ authService.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' });
+        httpMock.expectOne(`${ exerciseService.exerciseUrl }/5`).flush(exerciseMuscle);
+
+        component['goBack']();
+
+        expect(navigateByUrlSpy).toHaveBeenCalledWith('/workout/workout-session/5?tab=2');
     });
 });

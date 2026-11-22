@@ -72,6 +72,24 @@ describe('DialogSelectCardioExerciseComponent', () => {
             expect(component['selectedExercise']()).toBeNull();
         });
 
+        it('links the created workout to the selected gym', () => {
+            fixture.componentRef.setInput('gymId', 4);
+
+            component['createCardioWorkout']();
+
+            const req = httpMock.expectOne(workoutService.workoutUrl);
+            expect(req.request.body.workout.gym).toEqual({ id: 4 });
+            req.flush({ id: 1, date: new Date(), histories: [] });
+        });
+
+        it('creates the workout without a gym when none was selected', () => {
+            component['createCardioWorkout']();
+
+            const req = httpMock.expectOne(workoutService.workoutUrl);
+            expect(req.request.body.workout.gym).toBeUndefined();
+            req.flush({ id: 1, date: new Date(), histories: [] });
+        });
+
         it('shows an error alert when creating the workout fails', () => {
             let shownAlert: unknown;
             component.showAlert.subscribe(alert => shownAlert = alert);

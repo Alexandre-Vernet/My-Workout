@@ -21,6 +21,7 @@ export const statsI18n = {
         formatWeight: (value: number | string) => `${ value } kg`,
         totalWeight: 'Total soulevé',
         totalReps: 'Répétitions totales',
-        maxWeight: 'Charge la plus lourde'
+        maxWeight: 'Charge la plus lourde',
+        allGymsFilter: 'Toutes les salles'
     }
 };
