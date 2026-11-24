@@ -1,5 +1,9 @@
 package com.avernet.myworkoutapi;
 
+import com.avernet.myworkoutapi.auth.AuthResponse;
+import com.avernet.myworkoutapi.auth.AuthService;
+import com.avernet.myworkoutapi.auth.JwtService;
+import com.avernet.myworkoutapi.auth.LoginRequest;
 import com.avernet.myworkoutapi.auth.passwordreset.PasswordResetTokenEntity;
 import com.avernet.myworkoutapi.auth.passwordreset.PasswordResetTokenRepository;
 import com.avernet.myworkoutapi.auth.passwordreset.PasswordResetTokenService;
@@ -42,6 +46,12 @@ public class PasswordResetTokenServiceTest {
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    private AuthService authService;
+
+    @Resource
+    private JwtService jwtService;
 
     @Test
     void generatePasswordResetToken_shouldCreateTokenForExistingUser() {
@@ -93,6 +103,42 @@ public class PasswordResetTokenServiceTest {
         assertEquals(token, updatedPasswordResetTokenEntity.getToken());
         assertEquals(userEntity.getId(), updatedPasswordResetTokenEntity.getUser().getId());
         assertTrue(updatedPasswordResetTokenEntity.getUsed());
+    }
+
+    @Test
+    void resetPassword_shouldRevokeSessionsOpenedBeforeTheReset() {
+        AuthResponse tokensBeforeReset = authService.loginUser(new LoginRequest("user1@gmail.com", "password123"));
+        UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        repository.save(PasswordResetTokenEntity.builder()
+            .token("revoking token")
+            .user(userEntity)
+            .used(false)
+            .expirationDate(LocalDateTime.now().plusMinutes(15))
+            .build());
+
+        service.resetPassword(new ResetPasswordTokenPassword("revoking token", "brand new password"));
+
+        UserEntity resetUserEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        assertFalse(jwtService.isAccessTokenValid(tokensBeforeReset.accessToken(), resetUserEntity));
+        ApiException exception = assertThrows(ApiException.class, () -> authService.refreshToken(tokensBeforeReset.refreshToken()));
+        assertEquals(ErrorCodeEnum.INVALID_TOKEN, exception.getErrorCode());
+    }
+
+    @Test
+    void generatePasswordResetToken_shouldStopCreatingTokensOverTheLimit() {
+        // An address no other test of the shared Spring context requests a reset for: the
+        // limiter keeps its counters for the whole context lifetime.
+        String email = "user2@gmail.com";
+        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+
+        for (int i = 0; i < 4; i++) {
+            service.generatePasswordResetToken(email);
+        }
+
+        long tokensForUser = repository.findAll().stream()
+            .filter(token -> token.getUser().getId().equals(userEntity.getId()))
+            .count();
+        assertEquals(3, tokensForUser);
     }
 
     @Test

@@ -11,6 +11,16 @@
     }
 }
 
+/* Routed page: center the column above phone/tablet width — this also
+   constrains the embedded sections below it, since they're DOM descendants. */
+@media (min-width: 768px) {
+    :host {
+        display: block;
+        max-width: 640px;
+        margin-inline: auto;
+    }
+}
+
 .profile {
     margin: 12px;
     padding-bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-offset) + 16px);

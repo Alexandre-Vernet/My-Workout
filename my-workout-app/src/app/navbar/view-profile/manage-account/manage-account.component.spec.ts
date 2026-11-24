@@ -69,7 +69,7 @@ describe('ManageAccountComponent', () => {
         component['formGroup'].controls.email.setValue('new@example.com');
         component['updateUser']();
 
-        const req = httpMock.expectOne(`${ authService.authUrl }/1`);
+        const req = httpMock.expectOne(authService.authUrl);
         expect(req.request.body).toEqual({ email: 'new@example.com' });
         req.flush({ id: 1, email: 'new@example.com' });
     });
@@ -84,7 +84,7 @@ describe('ManageAccountComponent', () => {
         component.showAlert.subscribe(alert => emitted = alert);
 
         component['updateUser']();
-        httpMock.expectOne(`${ authService.authUrl }/1`).flush({ id: 1, email: 'alex@example.com' });
+        httpMock.expectOne(authService.authUrl).flush({ id: 1, email: 'alex@example.com' });
 
         expect(navigateSpy).toHaveBeenCalledWith(['/auth/login']);
         expect(emitted).toEqual({
@@ -100,7 +100,7 @@ describe('ManageAccountComponent', () => {
         component['formGroup'].controls.email.setValue('taken@example.com');
         component['updateUser']();
 
-        httpMock.expectOne(`${ authService.authUrl }/1`).flush(
+        httpMock.expectOne(authService.authUrl).flush(
             { type: 'BUSINESS', errorCode: 'EMAIL_ALREADY_IN_USE' },
             { status: 409, statusText: 'Conflict' }
         );

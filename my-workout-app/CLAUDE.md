@@ -106,10 +106,11 @@ projet frontend) ; seuls le thème et les tokens d'authentification vivent dans 
   `nginx.conf` sert tout via `try_files` sans en-têtes de cache spécifiques pour les
   fichiers hashés ni pour `index.html`/`ngsw.json` — à garder en tête si une mise à
   jour du service worker semble ne jamais être détectée en prod.
-- `../.github/workflows/` (dépôt parent) — `test.yml` ne lance que les tests du
-  **backend** (`mvn test`), sur `pull_request`. `docker-build-deploy.yml` construit et
-  redéploie l'image sur chaque push sur `main`, **sans faire dépendre le déploiement
-  des tests frontend** : les tests Vitest de ce projet ne sont pas branchés en CI.
+- `../.github/workflows/` (dépôt parent) — `test.yml` lance les tests backend
+  (`mvnw test`) **et** frontend (lint + Vitest + build), sur `pull_request` et en
+  `workflow_call`. `docker-build-deploy.yml` (push sur `main`) appelle d'abord
+  `test.yml` : l'image n'est construite et redéployée que si les tests des deux projets
+  passent. Un test Vitest cassé bloque donc la mise en prod.
 - `AUDIT.md` — rapport d'audit (sécurité, qualité, algorithmes, architecture) réalisé
   sur ce projet ; la quasi-totalité des points qu'il liste a été corrigée depuis. Le
   consulter avant de ré-auditer le projet pour ne pas redécouvrir ce qui est déjà

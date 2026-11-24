@@ -107,3 +107,18 @@
         font-size: .72rem;
     }
 }
+
+/* The compact variant sits in the exercises-table grid, which trims its own
+   columns under 360px (see exercises-table.component.scss) — shrink a bit
+   further here so the value still gets a few readable pixels. */
+@media (max-width: 360px) {
+    .number-stepper.compact {
+        gap: 3px;
+        padding: 2px;
+
+        .stepper-btn {
+            width: 24px;
+            height: 24px;
+        }
+    }
+}

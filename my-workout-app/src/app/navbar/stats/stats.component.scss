@@ -7,6 +7,15 @@
     padding-bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-offset) + 16px);
 }
 
+/* Routed page: center the column above phone/tablet width. */
+@media (min-width: 768px) {
+    :host {
+        display: block;
+        max-width: 640px;
+        margin-inline: auto;
+    }
+}
+
 .stats h1 {
     font-size: 1.4rem;
     font-weight: 800;

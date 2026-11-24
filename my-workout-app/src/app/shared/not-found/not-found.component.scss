@@ -226,7 +226,7 @@ $white: #fff;
         .box__description-container {
             color: var(--not-found-ghost-color-1);
             text-align: center;
-            width: 200px;
+            width: min(200px, calc(100vw - 48px));
             font-size: 16px;
             margin: 0 auto;
 
@@ -257,6 +257,9 @@ $white: #fff;
             padding: 0 70px;
             white-space: nowrap;
             margin-top: 25px;
+            max-width: calc(100vw - 48px);
+            overflow: hidden;
+            text-overflow: ellipsis;
             transition: background .5s ease;
             overflow: hidden;
             -webkit-mask-image: -webkit-radial-gradient(white, black);

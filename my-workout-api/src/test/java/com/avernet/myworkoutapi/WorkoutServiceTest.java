@@ -248,8 +248,8 @@ public class WorkoutServiceTest {
             .build();
         workoutRepository.save(workoutEntity);
 
-        String start = LocalDate.now().toString();
-        String end = LocalDate.now().plusMonths(1).toString();
+        LocalDate start = LocalDate.now();
+        LocalDate end = LocalDate.now().plusMonths(1);
         List<Workout> workoutList = service.findByDate(userEntity, start, end);
         assertNotNull(workoutList);
         assertFalse(workoutList.isEmpty());
@@ -269,8 +269,8 @@ public class WorkoutServiceTest {
             .build();
         workoutRepository.save(workoutEntity);
 
-        String start = LocalDate.now().toString();
-        String end = LocalDate.now().plusMonths(1).toString();
+        LocalDate start = LocalDate.now();
+        LocalDate end = LocalDate.now().plusMonths(1);
         List<Workout> workoutList = service.findByDate(userEntity, start, end);
         assertEquals(0, workoutList.size());
         assertTrue(workoutList.isEmpty());

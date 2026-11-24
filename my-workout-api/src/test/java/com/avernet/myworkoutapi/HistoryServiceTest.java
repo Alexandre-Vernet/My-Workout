@@ -39,6 +39,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -298,6 +299,57 @@ public class HistoryServiceTest {
         assertEquals(55F, exerciseGraphs.maxWeight());
         assertEquals(795, exerciseGraphs.totalWeight());
         assertEquals(150, exerciseGraphs.totalReps());
+    }
+
+    @Test
+    void shouldReturnEmptyGraphForExerciseNeverLogged() {
+        ExerciseGraphs exerciseGraphs = service.getExerciseGraphs(userEntity, exerciseEntity.getId(), null);
+
+        assertEquals(exerciseEntity.getId(), exerciseGraphs.exercise().getId());
+        assertTrue(exerciseGraphs.historyPoints().isEmpty());
+        assertNull(exerciseGraphs.totalWeight());
+        assertNull(exerciseGraphs.maxWeight());
+        assertNull(exerciseGraphs.totalReps());
+    }
+
+    @Test
+    void shouldIgnoreMissingWeightAndRepsInGraphTotals() {
+        WorkoutEntity workoutEntity = workoutRepository.save(WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
+            .date(LocalDateTime.of(2026, 1, 1, 0, 0))
+            .build());
+        historyRepository.save(HistoryEntity.builder().exercise(exerciseEntity).workout(workoutEntity).weight(40F).reps((short) 8).unilateral(false).build());
+        historyRepository.save(HistoryEntity.builder().exercise(exerciseEntity).workout(workoutEntity).weight(null).reps(null).unilateral(false).build());
+
+        ExerciseGraphs exerciseGraphs = service.getExerciseGraphs(userEntity, exerciseEntity.getId(), null);
+
+        assertEquals(40, exerciseGraphs.totalWeight());
+        assertEquals(40F, exerciseGraphs.maxWeight());
+        assertEquals(8, exerciseGraphs.totalReps());
+    }
+
+    @Test
+    void shouldReturnNullWeightTotalsWhenNoWeightLogged() {
+        WorkoutEntity workoutEntity = workoutRepository.save(WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
+            .date(LocalDateTime.of(2026, 1, 1, 0, 0))
+            .build());
+        historyRepository.save(HistoryEntity.builder().exercise(exerciseEntity).workout(workoutEntity).weight(null).reps((short) 12).unilateral(false).build());
+
+        ExerciseGraphs exerciseGraphs = service.getExerciseGraphs(userEntity, exerciseEntity.getId(), null);
+
+        assertNull(exerciseGraphs.totalWeight());
+        assertNull(exerciseGraphs.maxWeight());
+        assertEquals(12, exerciseGraphs.totalReps());
+    }
+
+    @Test
+    void shouldThrowWhenGraphRequestedForUnknownExercise() {
+        assertThrows(ExerciseNotFoundException.class, () -> service.getExerciseGraphs(userEntity, 999_999L, null));
     }
 
     @Test

@@ -39,6 +39,16 @@
     padding-bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-offset) + 16px);
 }
 
+/* This renders inside the library's full-viewport overlay (see list-exercises),
+   so it centers itself here rather than relying on an ancestor's width. */
+@media (min-width: 768px) {
+    :host {
+        display: block;
+        max-width: 640px;
+        margin-inline: auto;
+    }
+}
+
 .exercise-back {
     width: 38px;
     height: 38px;

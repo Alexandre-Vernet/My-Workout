@@ -7,6 +7,7 @@ export const authI18n = {
         emailPlaceholder: 'Email',
         emailInvalid: 'L\'email n\'est pas valide',
         badCredential: 'Email ou mot de passe invalide',
+        tooManyAttempts: 'Trop de tentatives de connexion, réessayez dans quelques minutes',
         passwordPlaceholder: 'Mot de passe',
         submit: 'Connexion',
         forgotPassword: 'Mot de passe oublié',

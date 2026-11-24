@@ -29,6 +29,8 @@ public class UserExerciseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    // "order" is a reserved SQL word. Backticks are Hibernate's own quoting syntax (not
+    // MySQL's): Hibernate turns them into the dialect's quote, i.e. "order" on PostgreSQL.
     @Column(name = "`order`")
     Integer order;
 

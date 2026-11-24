@@ -24,6 +24,17 @@
     gap: 6px;
 }
 
+/* On the narrowest phones, the fixed-width columns leave too little room for
+   the two number-steppers (their decrement/increment buttons alone need
+   ~66px) — trim the secondary columns and the gap to give them space back. */
+@media (max-width: 360px) {
+    .history-head,
+    .history-row {
+        grid-template-columns: 1.3fr 1fr 32px 36px 32px;
+        gap: 4px;
+    }
+}
+
 .history-head {
     padding: 0 2px 8px;
 

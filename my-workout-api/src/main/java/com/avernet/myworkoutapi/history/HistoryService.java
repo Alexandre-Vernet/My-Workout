@@ -8,7 +8,7 @@ import com.avernet.myworkoutapi.exercise.ExerciseRepository;
 import com.avernet.myworkoutapi.history.stats.HistoryPoint;
 import com.avernet.myworkoutapi.history.stats.UserExercisesCountTotalWorkout;
 import com.avernet.myworkoutapi.history.stats.exercisegraphs.ExerciseGraphs;
-import com.avernet.myworkoutapi.history.stats.exercisegraphs.ExerciseGraphsEntity;
+import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.workout.WorkoutEntity;
 import com.avernet.myworkoutapi.workout.WorkoutRepository;
@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class HistoryService {
@@ -70,8 +71,15 @@ public class HistoryService {
 
     @Transactional(readOnly = true)
     public ExerciseGraphs getExerciseGraphs(UserEntity userEntity, Long exerciseId, Long gymId) {
-        ExerciseGraphsEntity exerciseGraphsEntity = historyRepository.getExerciseGraphs(userEntity.getId(), exerciseId, gymId);
+        // Totals are computed from the same rows as the chart rather than by a second SQL
+        // aggregate query on the exact same filter: one round-trip instead of two.
         List<HistoryEntity> historyEntityList = historyRepository.findHistoriesByUserAndExercise(userEntity.getId(), exerciseId, gymId);
+
+        // An exercise the user added but never logged has no history yet: still answer with
+        // the exercise and empty stats rather than failing.
+        ExerciseEntity exerciseEntity = historyEntityList.isEmpty()
+            ? exerciseRepository.findById(exerciseId).orElseThrow(ExerciseNotFoundException::new)
+            : historyEntityList.getFirst().getExercise();
 
         // One point per day (the heaviest set of the day) instead of one point per set: on an
         // exercise trained for months with progressive sets within a session, per-set points
@@ -94,12 +102,29 @@ public class HistoryService {
             .toList();
 
         return new ExerciseGraphs(
-            exerciseMapper.toDto(exerciseGraphsEntity.exercise()),
+            exerciseMapper.toDto(exerciseEntity),
             historyPoints,
-            exerciseGraphsEntity.totalWeight(),
-            exerciseGraphsEntity.maxWeight(),
-            exerciseGraphsEntity.totalReps()
+            sumWeights(historyEntityList),
+            maxWeight(historyEntityList),
+            sumReps(historyEntityList)
         );
+    }
+
+    // The three helpers below keep SQL aggregate semantics (the values the API returned
+    // before): null values are ignored, and the result is null when there is nothing to
+    // aggregate, rather than 0.
+    private static Double sumWeights(List<HistoryEntity> historyEntityList) {
+        List<Float> weights = historyEntityList.stream().map(HistoryEntity::getWeight).filter(Objects::nonNull).toList();
+        return weights.isEmpty() ? null : weights.stream().mapToDouble(Float::doubleValue).sum();
+    }
+
+    private static Float maxWeight(List<HistoryEntity> historyEntityList) {
+        return historyEntityList.stream().map(HistoryEntity::getWeight).filter(Objects::nonNull).max(Float::compare).orElse(null);
+    }
+
+    private static Long sumReps(List<HistoryEntity> historyEntityList) {
+        List<Short> reps = historyEntityList.stream().map(HistoryEntity::getReps).filter(Objects::nonNull).toList();
+        return reps.isEmpty() ? null : reps.stream().mapToLong(Short::longValue).sum();
     }
 
     @Transactional

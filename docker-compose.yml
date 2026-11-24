@@ -1,4 +1,3 @@
-version: '3'
 services:
   my-workout-app:
     image: alexv31/my-workout:app
@@ -18,7 +17,6 @@ services:
       - spring.datasource.username=
       - spring.datasource.password=
       - spring.jpa.hibernate.ddl-auto=
-      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
       - spring.flyway.locations=classpath:db/migration
       - spring.flyway.baseline-on-migrate=
       - server.servlet.context-path=/api
@@ -36,7 +34,6 @@ services:
       - my-workout-network
     ports:
       - "4008:80"
-      - "4009:443"
 
   my-workout-db:
     image: postgres:17
@@ -49,7 +46,6 @@ services:
       - POSTGRES_PASSWORD=my-workout-dev
     ports:
       - "5008:5432"
-      - "5009:443"
 
 volumes:
   postgres_data:

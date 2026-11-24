@@ -59,4 +59,15 @@ describe('LoginComponent', () => {
 
         expect(component['formLogin'].hasError('badCredential')).toBe(true);
     });
+
+    it('flags a locked account instead of bad credentials when the server rate-limits the login', () => {
+        component['signIn']();
+
+        httpMock.expectOne(`${ authService.authUrl }/login`)
+            .flush({ type: 'BUSINESS', errorCode: 'TOO_MANY_ATTEMPTS', message: 'Trop de tentatives' },
+                { status: 429, statusText: 'Too Many Requests' });
+
+        expect(component['formLogin'].hasError('tooManyAttempts')).toBe(true);
+        expect(component['formLogin'].hasError('badCredential')).toBe(false);
+    });
 });

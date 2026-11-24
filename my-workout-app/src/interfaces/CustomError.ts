@@ -11,7 +11,7 @@ export interface CustomError {
             message: string;
         }[];
 
-        type: 'BUSINESS' | 'VALIDATION';
+        type: 'BUSINESS' | 'VALIDATION' | 'TECHNICAL';
         errorCode: string;
         httpStatus: HttpStatusCode;
     }

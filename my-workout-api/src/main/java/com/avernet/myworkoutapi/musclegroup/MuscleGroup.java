@@ -1,7 +1,7 @@
 package com.avernet.myworkoutapi.musclegroup;
 
 public record MuscleGroup(
-    Integer id,
+    Long id,
     MuscleGroupEnum name
 ) {
 }

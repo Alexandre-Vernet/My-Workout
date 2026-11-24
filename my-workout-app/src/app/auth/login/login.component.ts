@@ -5,6 +5,8 @@ import { Router, RouterLink } from '@angular/router';
 import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 import { LoginRequest } from "../../../interfaces/LoginRequest";
 import { I18N } from '../../shared/i18n/i18n';
+import { CustomError } from '../../../interfaces/CustomError';
+import { getErrorCode } from '../../shared/utils/http-error';
 
 @Component({
     selector: 'app-login',
@@ -42,7 +44,13 @@ export class LoginComponent {
         this.authService.login(loginRequest)
             .subscribe({
                 next: () => this.router.navigateByUrl('/'),
-                error: () => this.formLogin.setErrors({ badCredential: true })
+                error: (err: CustomError) => {
+                    if (getErrorCode(err) === 'TOO_MANY_ATTEMPTS') {
+                        this.formLogin.setErrors({ tooManyAttempts: true });
+                    } else {
+                        this.formLogin.setErrors({ badCredential: true });
+                    }
+                }
             });
     }
 }

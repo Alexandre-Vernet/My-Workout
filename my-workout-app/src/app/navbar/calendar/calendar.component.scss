@@ -1,5 +1,15 @@
 @use "../../../skeleton";
 
+/* Routed page: center the column above phone/tablet width (the day-detail
+   sheet stays `position: fixed`, so it's unaffected). */
+@media (min-width: 768px) {
+    :host {
+        display: block;
+        max-width: 640px;
+        margin-inline: auto;
+    }
+}
+
 .app-bar {
     display: flex;
     align-items: center;

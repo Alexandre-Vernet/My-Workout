@@ -1,6 +1,5 @@
 package com.avernet.myworkoutapi.history;
 
-import com.avernet.myworkoutapi.history.stats.exercisegraphs.ExerciseGraphsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -58,26 +57,12 @@ public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
         @Param("endOfDay") LocalDateTime endOfDay
     );
 
-    @Query("""
-            SELECT new com.avernet.myworkoutapi.history.stats.exercisegraphs.ExerciseGraphsEntity(
-                h.exercise,
-                SUM(h.weight),
-                MAX(h.weight),
-                SUM(h.reps)
-            )
-            FROM HistoryEntity h
-            JOIN h.workout w
-            WHERE w.user.id = :userId
-            AND h.exercise.id = :exerciseId
-            AND (:gymId IS NULL OR w.gym.id = :gymId)
-            GROUP BY h.exercise
-        """)
-    ExerciseGraphsEntity getExerciseGraphs(@Param("userId") Long userId, @Param("exerciseId") Long exerciseId, @Param("gymId") Long gymId);
-
+    // FETCH on the workout: the caller reads each history's workout date, which would
+    // otherwise trigger one extra query per history (N+1).
     @Query("""
             SELECT h
             FROM HistoryEntity h
-            JOIN h.workout w
+            JOIN FETCH h.workout w
             WHERE w.user.id = :userId
             AND h.exercise.id = :exerciseId
             AND (:gymId IS NULL OR w.gym.id = :gymId)

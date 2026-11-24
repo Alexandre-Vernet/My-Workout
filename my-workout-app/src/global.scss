@@ -87,3 +87,12 @@ img {
     background: var(--card-background);
     box-shadow: var(--card-shadow);
 }
+
+/* Above phone/small-tablet width, routed pages cap their own width and center
+   themselves (see each page's :host media query) instead of stretching edge to
+   edge; this gives that centered column something to visually sit on. */
+@media (min-width: 768px) {
+    body {
+        background: var(--chips-background-color);
+    }
+}

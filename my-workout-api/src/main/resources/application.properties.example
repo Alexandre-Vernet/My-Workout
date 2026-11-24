@@ -3,7 +3,6 @@ spring.datasource.url=
 spring.datasource.username=
 spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 spring.flyway.locations=classpath:db/migration
 spring.flyway.baseline-on-migrate=false
 

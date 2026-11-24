@@ -53,6 +53,8 @@ public class GymService {
         return gymMapper.toDto(gymEntity);
     }
 
+    // Soft delete on purpose: past workouts keep pointing to this gym (workout.gym_id is
+    // NOT NULL), so the row must stay for the history and the per-gym stats to remain valid.
     @Transactional
     public void delete(UserEntity userEntity, Long gymId) {
         GymEntity gymEntity = gymRepository.findByIdAndUser(gymId, userEntity)

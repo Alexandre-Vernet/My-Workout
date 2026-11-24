@@ -5,6 +5,23 @@
     margin: 12px;
 }
 
+/* Routed page: center the column above phone/tablet width (the exercise
+   detail overlay stays `position: fixed`, so it's unaffected). */
+@media (min-width: 768px) {
+    :host {
+        display: block;
+        max-width: 920px;
+        margin-inline: auto;
+    }
+}
+
+@media (min-width: 768px) {
+    .skeleton-grid,
+    .exercise-grid {
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    }
+}
+
 /* Exercise detail slides in over the library as an overlay (see app.routes.ts: it's a
    nested route rendered in the <router-outlet> below) rather than swapping the page. */
 .exercise-overlay {

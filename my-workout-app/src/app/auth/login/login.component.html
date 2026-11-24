@@ -27,6 +27,9 @@
                 @if (formLogin.hasError('badCredential')) {
                     <p class="field-error">{{ i18n.badCredential }}</p>
                 }
+                @if (formLogin.hasError('tooManyAttempts')) {
+                    <p class="field-error">{{ i18n.tooManyAttempts }}</p>
+                }
             </div>
 
             <div class="field">

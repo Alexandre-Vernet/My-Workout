@@ -65,14 +65,10 @@ export class AuthService {
             );
     }
 
+    // Changing the email or password revokes every token server-side, hence the sign-out.
     updateUser(user: UpdateUserRequest) {
-        return this.getCurrentUser()
-            .pipe(
-                switchMap((u) => this.http.patch<User>(`${ this.authUrl }/${ u.id }`, user)
-                    .pipe(
-                        tap(() => this.signOut())
-                    )),
-            );
+        return this.http.patch<User>(this.authUrl, user)
+            .pipe(tap(() => this.signOut()));
     }
 
     deleteAccount() {

@@ -15,7 +15,7 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
 
     Optional<WorkoutEntity> findByUserIdAndMuscleGroupIdAndDateGreaterThanEqualAndDateLessThan(
         Long userId,
-        Integer muscleGroupId,
+        Long muscleGroupId,
         LocalDateTime startDay,
         LocalDateTime endDay
     );

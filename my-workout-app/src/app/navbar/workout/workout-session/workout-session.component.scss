@@ -28,11 +28,29 @@
     padding-bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-offset) + 16px);
 }
 
+/* Routed page: center the column above phone/tablet width. */
+@media (min-width: 768px) {
+    :host {
+        display: block;
+        max-width: 640px;
+        margin-inline: auto;
+    }
+}
+
 .step-dots {
     display: flex;
-    justify-content: center;
+    /* "safe" keeps the dots centered in the common case but falls back to
+       start-aligned once they overflow, so a session with many exercises
+       stays scrollable from its first dot instead of starting out of view. */
+    justify-content: safe center;
     gap: 10px;
     margin-bottom: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .step-dot {

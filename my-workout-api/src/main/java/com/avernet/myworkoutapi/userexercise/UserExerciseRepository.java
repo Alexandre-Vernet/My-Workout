@@ -24,5 +24,5 @@ public interface UserExerciseRepository extends JpaRepository<UserExerciseEntity
                 WHERE ue.user.id = :userId
                 AND mg.id = :muscleGroupId
         """)
-    Integer getOrder(@Param("userId") Long userId, @Param("muscleGroupId") Integer muscleGroupId);
+    Integer getOrder(@Param("userId") Long userId, @Param("muscleGroupId") Long muscleGroupId);
 }

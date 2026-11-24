@@ -87,11 +87,11 @@ public class WorkoutService {
     }
 
     @Transactional(readOnly = true)
-    public List<Workout> findByDate(UserEntity userEntity, String start, String end) {
+    public List<Workout> findByDate(UserEntity userEntity, LocalDate start, LocalDate end) {
         List<WorkoutEntity> workoutEntityList = workoutRepository.findByUserIdAndDateBetween(
             userEntity.getId(),
-            LocalDate.parse(start).atStartOfDay(),
-            LocalDate.parse(end).atStartOfDay()
+            start.atStartOfDay(),
+            end.atStartOfDay()
         );
         return workoutMapper.toDtoList(workoutEntityList);
     }

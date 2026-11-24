@@ -86,14 +86,14 @@ public class MuscleGroupServiceTest {
 
         List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
         assertEquals(8, muscleGroupExerciseCountList.size());
-        assertEquals(8, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
-        assertEquals(7, muscleGroupExerciseCountList.get(1).getMuscleGroup().id());
-        assertEquals(6, muscleGroupExerciseCountList.get(2).getMuscleGroup().id());
-        assertEquals(5, muscleGroupExerciseCountList.get(3).getMuscleGroup().id());
-        assertEquals(4, muscleGroupExerciseCountList.get(4).getMuscleGroup().id());
-        assertEquals(3, muscleGroupExerciseCountList.get(5).getMuscleGroup().id());
-        assertEquals(2, muscleGroupExerciseCountList.get(6).getMuscleGroup().id());
-        assertEquals(1, muscleGroupExerciseCountList.get(7).getMuscleGroup().id());
+        assertEquals(8L, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
+        assertEquals(7L, muscleGroupExerciseCountList.get(1).getMuscleGroup().id());
+        assertEquals(6L, muscleGroupExerciseCountList.get(2).getMuscleGroup().id());
+        assertEquals(5L, muscleGroupExerciseCountList.get(3).getMuscleGroup().id());
+        assertEquals(4L, muscleGroupExerciseCountList.get(4).getMuscleGroup().id());
+        assertEquals(3L, muscleGroupExerciseCountList.get(5).getMuscleGroup().id());
+        assertEquals(2L, muscleGroupExerciseCountList.get(6).getMuscleGroup().id());
+        assertEquals(1L, muscleGroupExerciseCountList.get(7).getMuscleGroup().id());
     }
 
     @Test()
@@ -124,7 +124,7 @@ public class MuscleGroupServiceTest {
 
         List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
         assertEquals(8, muscleGroupExerciseCountList.size());
-        assertEquals(8, muscleGroupExerciseCountList.getFirst().getMuscleGroup().id());
+        assertEquals(8L, muscleGroupExerciseCountList.getFirst().getMuscleGroup().id());
     }
 
     @Test
@@ -134,13 +134,13 @@ public class MuscleGroupServiceTest {
         List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
 
         assertEquals(8, muscleGroupExerciseCountList.size());
-        assertEquals(1, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
-        assertEquals(2, muscleGroupExerciseCountList.get(1).getMuscleGroup().id());
-        assertEquals(3, muscleGroupExerciseCountList.get(2).getMuscleGroup().id());
-        assertEquals(4, muscleGroupExerciseCountList.get(3).getMuscleGroup().id());
-        assertEquals(5, muscleGroupExerciseCountList.get(4).getMuscleGroup().id());
-        assertEquals(6, muscleGroupExerciseCountList.get(5).getMuscleGroup().id());
-        assertEquals(7, muscleGroupExerciseCountList.get(6).getMuscleGroup().id());
+        assertEquals(1L, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
+        assertEquals(2L, muscleGroupExerciseCountList.get(1).getMuscleGroup().id());
+        assertEquals(3L, muscleGroupExerciseCountList.get(2).getMuscleGroup().id());
+        assertEquals(4L, muscleGroupExerciseCountList.get(3).getMuscleGroup().id());
+        assertEquals(5L, muscleGroupExerciseCountList.get(4).getMuscleGroup().id());
+        assertEquals(6L, muscleGroupExerciseCountList.get(5).getMuscleGroup().id());
+        assertEquals(7L, muscleGroupExerciseCountList.get(6).getMuscleGroup().id());
     }
 
     @Test

@@ -91,14 +91,14 @@ describe('AuthService', () => {
         expect(localStorage.getItem('refresh-token')).toBeNull();
     });
 
-    it('updateUser() signs the user out after a successful update', () => {
-        service.getCurrentUser().subscribe();
-        httpMock.expectOne(`${ service.authUrl }/me`).flush({ id: 1, email: 'alex@example.com' } satisfies User);
-
+    it('updateUser() patches the current account without an id in the URL, then signs the user out', () => {
         localStorage.setItem('access-token', 'a');
         service.updateUser({ email: 'new@example.com' }).subscribe();
 
-        httpMock.expectOne(`${ service.authUrl }/1`).flush({ id: 1, email: 'new@example.com' } satisfies User);
+        const req = httpMock.expectOne(service.authUrl);
+        expect(req.request.method).toBe('PATCH');
+        expect(req.request.body).toEqual({ email: 'new@example.com' });
+        req.flush({ id: 1, email: 'new@example.com' } satisfies User);
 
         expect(service.hasToken()).toBe(false);
     });

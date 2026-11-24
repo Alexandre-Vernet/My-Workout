@@ -2,6 +2,7 @@ package com.avernet.myworkoutapi.auth.passwordreset;
 
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
 import com.avernet.myworkoutapi.exception.ApiException;
+import com.avernet.myworkoutapi.ratelimit.AttemptLimiter;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserRepository;
 import jakarta.annotation.Resource;
@@ -29,9 +30,18 @@ public class PasswordResetTokenService {
     @Resource
     PasswordResetMailService passwordResetMailService;
 
+    @Resource
+    AttemptLimiter passwordResetAttemptLimiter;
 
+
+    // Over the limit, the request is dropped silently, exactly like an unknown email: answering
+    // differently would let anyone probe which emails have an account.
     @Transactional
     public void generatePasswordResetToken(String email) {
+        if (!passwordResetAttemptLimiter.tryAcquire(email)) {
+            return;
+        }
+
         Optional<UserEntity> userEntity = userRepository.findByEmail(email);
         if (userEntity.isEmpty()) {
             return;
@@ -68,6 +78,9 @@ public class PasswordResetTokenService {
         UserEntity userEntity = passwordResetTokenEntity.getUser();
         userEntity.setPassword(passwordEncoder.encode(resetPasswordTokenPassword.password()));
         userEntity.setUpdatedAt(LocalDateTime.now());
+        // A reset is typically done because the account may be compromised: sessions opened
+        // before it (possibly by someone else) must not survive it.
+        userEntity.revokeTokens();
     }
 
     @Transactional(readOnly = true)

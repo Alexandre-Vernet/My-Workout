@@ -1,23 +1,23 @@
 package com.avernet.myworkoutapi.auth;
 
-import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.error.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exception.ApiException;
+import com.avernet.myworkoutapi.ratelimit.AttemptLimiter;
 import com.avernet.myworkoutapi.user.UpdateUser;
-import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.User;
 import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserMapper;
+import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.UserRepository;
+import io.jsonwebtoken.JwtException;
 import jakarta.annotation.Resource;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     @Resource
@@ -43,7 +42,8 @@ public class AuthService {
     @Resource
     UserMapper userMapper;
 
-    private final UserDetailsService userDetailsService;
+    @Resource
+    AttemptLimiter loginAttemptLimiter;
 
 
     public Optional<UserEntity> optionalUser() {
@@ -67,18 +67,23 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public AuthResponse loginUser(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                loginRequest.getEmail(),
-                loginRequest.getPassword()
-            )
-        );
+        String email = loginRequest.getEmail();
+        if (loginAttemptLimiter.isBlocked(email)) {
+            throw new ApiException(ErrorCodeEnum.TOO_MANY_ATTEMPTS, "Trop de tentatives de connexion, réessayez dans quelques minutes", HttpStatus.TOO_MANY_REQUESTS);
+        }
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String jwtToken = jwtService.generateToken(userDetails);
-        String refreshToken = jwtService.generateRefreshToken(userDetails);
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword())
+            );
+        } catch (AuthenticationException e) {
+            loginAttemptLimiter.recordAttempt(email);
+            throw e;
+        }
+        loginAttemptLimiter.reset(email);
 
-        return new AuthResponse(jwtToken, refreshToken);
+        return generateTokens((UserEntity) authentication.getPrincipal());
     }
 
     @Transactional
@@ -105,41 +110,56 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public AuthResponse refreshToken(String refreshToken) {
-        String email = jwtService.extractUsername(refreshToken);
+        try {
+            UserEntity userEntity = userRepository.findByEmail(jwtService.extractUsername(refreshToken))
+                .filter(user -> jwtService.isRefreshTokenValid(refreshToken, user))
+                .orElseThrow(AuthService::invalidToken);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-        if (jwtService.isTokenValid(refreshToken, userDetails)) {
-            String jwtToken = jwtService.generateToken(userDetails);
-            refreshToken = jwtService.generateRefreshToken(userDetails);
-
-            return new AuthResponse(jwtToken, refreshToken);
+            return generateTokens(userEntity);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw invalidToken();
         }
-
-        throw new ApiException(ErrorCodeEnum.INVALID_TOKEN, "Token invalide", HttpStatus.FORBIDDEN);
     }
 
     @Transactional
     public User update(UserEntity userEntity, UpdateUser user) {
         userEntity = userRepository.findById(userEntity.getId()).orElseThrow(UserNotFoundException::new);
+        boolean credentialsChanged = false;
+
         if (user.getEmail() != null && !userEntity.getEmail().equals(user.getEmail())) {
             boolean userExist = userRepository.existsByEmail(user.getEmail());
             if (userExist) {
                 throw new ApiException(ErrorCodeEnum.EMAIL_ALREADY_IN_USE, "Cet email est déjà utilisé", HttpStatus.CONFLICT);
             }
             userEntity.setEmail(user.getEmail());
+            credentialsChanged = true;
         }
 
         if (user.getPassword() != null) {
             userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+            credentialsChanged = true;
+        }
+
+        if (credentialsChanged) {
+            userEntity.revokeTokens();
         }
 
         return userMapper.toDto(userEntity);
     }
 
+    // Reloaded here rather than deleting the principal as-is: it comes from the security
+    // context (detached, collections never loaded), and the cascades on UserEntity need a
+    // managed entity to remove workouts, gyms, added exercises and reset tokens with it.
     @Transactional
-    void deleteUser(UserEntity userEntity) {
-        userRepository.delete(userEntity);
+    public void deleteUser(UserEntity userEntity) {
+        userRepository.findById(userEntity.getId()).ifPresent(userRepository::delete);
     }
 
+    private AuthResponse generateTokens(UserEntity userEntity) {
+        return new AuthResponse(jwtService.generateAccessToken(userEntity), jwtService.generateRefreshToken(userEntity));
+    }
+
+    private static ApiException invalidToken() {
+        return new ApiException(ErrorCodeEnum.INVALID_TOKEN, "Token invalide", HttpStatus.UNAUTHORIZED);
+    }
 }
