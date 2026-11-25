@@ -7,6 +7,7 @@ import { ExerciseService } from "../../../services/exercise.service";
 import { Exercise } from "../../../../interfaces/Exercise";
 import { ActivatedRoute, RouterLink, RouterOutlet } from "@angular/router";
 import { debounceTime, of, switchMap } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PluralPipe } from "../../../shared/pipes/plural.pipe";
 import { getMuscleGroupColor, getMuscleGroupLabel } from "../../../shared/utils/muscle-group-color";
 import { I18N } from "../../../shared/i18n/i18n";
@@ -52,11 +53,13 @@ export class ListExercisesComponent {
     private readonly route = inject(ActivatedRoute);
 
     constructor() {
+        const destroyRef = inject(DestroyRef);
+
         effect(() => {
             document.body.style.overflow = this.detailOpen() ? 'hidden' : '';
         });
 
-        inject(DestroyRef).onDestroy(() => {
+        destroyRef.onDestroy(() => {
             document.body.style.overflow = '';
         });
 
@@ -84,6 +87,7 @@ export class ListExercisesComponent {
             this.searchExercise.valueChanges
                 .pipe(
                     debounceTime(300),
+                    takeUntilDestroyed(destroyRef),
                     switchMap((value: string) => {
                         if (!value || value.length === 0) {
                             return of(this.exercises());
@@ -94,7 +98,7 @@ export class ListExercisesComponent {
                         }
 
                         return this.exerciseService.search(value);
-                    })
+                    }),
                 )
                 .subscribe((exercises) => {
                     this.filterExercises.set(exercises);
