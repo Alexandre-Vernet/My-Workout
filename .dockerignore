@@ -8,3 +8,4 @@ dist
 .env.example
 .gitignore
 .github
+my-workout-api/src/main/resources/application.properties

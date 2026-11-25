@@ -12,7 +12,7 @@ env:
     DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
     SERVER_HOST: ${{ secrets.SERVER_HOST }}
     SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
-    SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+    SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
     SERVER_PORT: ${{ secrets.SERVER_PORT }}
 
 jobs:
@@ -68,7 +68,7 @@ jobs:
                 with:
                     host: ${{ env.SERVER_HOST }}
                     username: ${{ env.SERVER_USERNAME }}
-                    key: ${{ env.SERVER_SSH_KEY }}
+                    password: ${{ env.SERVER_PASSWORD }}
                     port: ${{ env.SERVER_PORT }}
                     script: |
                         docker pull ${{ env.DOCKERHUB_USERNAME }}/${{ env.DOCKERHUB_REPOSITORY_NAME }}:app
