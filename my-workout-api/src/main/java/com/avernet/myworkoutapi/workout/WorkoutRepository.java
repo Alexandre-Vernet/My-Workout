@@ -33,5 +33,7 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
 
     void deleteByIdAndUserId(Long id, Long userId);
 
+    void deleteByUserId(Long userId);
+
     Optional<WorkoutEntity> findByIdAndUser(Long id, UserEntity user);
 }

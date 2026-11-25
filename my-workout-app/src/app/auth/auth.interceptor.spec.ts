@@ -74,7 +74,7 @@ describe('authInterceptor', () => {
         expect(result).toEqual(['exercise']);
     });
 
-    it('fails with an Unauthorized error on a 401 when there is no refresh token to try', () => {
+    it('fails with an Unauthorized error and clears the stored tokens on a 401 when there is no refresh token to try', () => {
         localStorage.setItem('access-token', 'expired-access');
 
         let error: unknown;
@@ -84,5 +84,22 @@ describe('authInterceptor', () => {
         httpMock.expectNone(`${ environment.authUrl() }/refresh`);
 
         expect((error as Error).message).toBe('Unauthorized');
+        expect(localStorage.getItem('access-token')).toBeNull();
+    });
+
+    it('fails with an Unauthorized error and clears the stored tokens when the refresh request itself fails', () => {
+        localStorage.setItem('access-token', 'expired-access');
+        localStorage.setItem('refresh-token', 'expired-refresh');
+
+        let error: unknown;
+        http.get('/api/exercises').subscribe({ error: err => error = err });
+
+        httpMock.expectOne('/api/exercises').flush('unauthorized', { status: 401, statusText: 'Unauthorized' });
+        httpMock.expectOne(`${ environment.authUrl() }/refresh`)
+            .flush('invalid token', { status: 401, statusText: 'Unauthorized' });
+
+        expect((error as Error).message).toBe('Unauthorized');
+        expect(localStorage.getItem('access-token')).toBeNull();
+        expect(localStorage.getItem('refresh-token')).toBeNull();
     });
 });

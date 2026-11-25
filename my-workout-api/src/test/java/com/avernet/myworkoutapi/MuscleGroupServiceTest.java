@@ -3,6 +3,8 @@ package com.avernet.myworkoutapi;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
+import com.avernet.myworkoutapi.gym.GymEntity;
+import com.avernet.myworkoutapi.gym.GymRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupExerciseCount;
@@ -52,6 +54,9 @@ public class MuscleGroupServiceTest {
     @Resource
     private MuscleGroupRepository muscleGroupRepository;
 
+    @Resource
+    private GymRepository gymRepository;
+
 
     @Test()
     void shouldGetMuscleGroup() {
@@ -61,6 +66,7 @@ public class MuscleGroupServiceTest {
     @Test()
     void findAllMuscleGroupAndRecommendedMuscleGroup_shouldRecommendNullLastWorkout() {
         UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        GymEntity gymEntity = gymRepository.save(GymEntity.builder().name("Salle de test").active(true).user(userEntity).build());
 
         for (int i = 1; i < 10; i++) {
             ExerciseEntity exerciseEntity = exerciseRepository.findById((long) i).orElseThrow(ExerciseNotFoundException::new);
@@ -78,6 +84,7 @@ public class MuscleGroupServiceTest {
             WorkoutEntity workoutEntity = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
+                .gym(gymEntity)
                 .date(LocalDateTime.now().minusDays(i))
                 .build();
 
@@ -99,6 +106,7 @@ public class MuscleGroupServiceTest {
     @Test()
     void findAllMuscleGroupAndRecommendedMuscleGroup_shouldNotCrashWithMultipleWorkoutWithSameDateAndSuggestNullLastWorkout() {
         UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        GymEntity gymEntity = gymRepository.save(GymEntity.builder().name("Salle de test").active(true).user(userEntity).build());
 
         for (int i = 1; i < 10; i++) {
             ExerciseEntity exerciseEntity = exerciseRepository.findById((long) i).orElseThrow(ExerciseNotFoundException::new);
@@ -116,6 +124,7 @@ public class MuscleGroupServiceTest {
             WorkoutEntity workoutEntity = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
+                .gym(gymEntity)
                 .date(LocalDateTime.now())
                 .build();
 

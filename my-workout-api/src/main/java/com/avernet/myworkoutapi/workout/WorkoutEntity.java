@@ -48,8 +48,8 @@ public class WorkoutEntity {
     @JoinColumn(name = "muscle_group_id")
     MuscleGroupEntity muscleGroup;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gym_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "gym_id", nullable = false)
     GymEntity gym;
 
 

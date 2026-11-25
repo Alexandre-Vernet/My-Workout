@@ -9,6 +9,7 @@ import com.avernet.myworkoutapi.user.UserEntity;
 import com.avernet.myworkoutapi.user.UserMapper;
 import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.user.UserRepository;
+import com.avernet.myworkoutapi.workout.WorkoutRepository;
 import io.jsonwebtoken.JwtException;
 import jakarta.annotation.Resource;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,9 @@ public class AuthService {
 
     @Resource
     AttemptLimiter loginAttemptLimiter;
+
+    @Resource
+    WorkoutRepository workoutRepository;
 
 
     public Optional<UserEntity> optionalUser() {
@@ -150,8 +154,17 @@ public class AuthService {
     // Reloaded here rather than deleting the principal as-is: it comes from the security
     // context (detached, collections never loaded), and the cascades on UserEntity need a
     // managed entity to remove workouts, gyms, added exercises and reset tokens with it.
+    //
+    // Workouts are deleted explicitly first rather than left to that cascade: UserEntity
+    // cascades both its workouts and its gyms (CascadeType.ALL, orphanRemoval = true), and
+    // workout.gym_id is NOT NULL. When Hibernate processes the gyms collection before it has
+    // processed workouts, it nulls out gym_id on the still-referencing workout rows first
+    // (as a safety no-op for an association it doesn't yet know will itself be deleted),
+    // which violates that constraint. Deleting workouts up front removes the dangling
+    // reference before gyms are ever cascaded.
     @Transactional
     public void deleteUser(UserEntity userEntity) {
+        workoutRepository.deleteByUserId(userEntity.getId());
         userRepository.findById(userEntity.getId()).ifPresent(userRepository::delete);
     }
 
