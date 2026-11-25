@@ -101,7 +101,10 @@ export class GraphsComponent implements OnDestroy {
         const data = points.map(point => point.weight);
         const pointRadius = points.length > 25 ? 0 : 4;
 
-        if (this.chart) {
+        // this.chart.ctx is null when the canvas failed to yield a 2D context (e.g. under
+        // jsdom in tests): calling update() on that broken instance crashes inside Chart.js's
+        // resize/event binding, so fall through and recreate it instead.
+        if (this.chart?.ctx) {
             this.chart.data.labels = labels;
             this.chart.data.datasets[0].data = data;
             this.chart.data.datasets[0].pointRadius = pointRadius;
