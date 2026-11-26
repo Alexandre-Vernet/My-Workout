@@ -1,100 +1,132 @@
 <div
-    class="session"
+    class="stage"
     appSwipe
     [threshold]="65"
     excludeSelector=".swipe-exclude"
     (swipeLeft)="nextStep()"
     (swipeRight)="previousStep()">
     @if (exercises().length === 0) {
-        <div class="session-skeleton">
-            <div class="skeleton-dots">
+        <div class="stage-skeleton">
+            <div class="skeleton-rail">
                 @for (skeleton of [0, 1, 2, 3]; track skeleton) {
-                    <span class="skeleton-fill skeleton-dot"></span>
+                    <span class="skeleton-fill skeleton-chip"></span>
                 }
             </div>
-            <span class="skeleton-fill skeleton-line skeleton-title"></span>
-            <span class="skeleton-fill skeleton-steppers"></span>
-            <span class="skeleton-fill skeleton-table"></span>
-            <span class="skeleton-fill skeleton-timer"></span>
+            <span class="skeleton-fill skeleton-hero"></span>
+            <span class="skeleton-fill skeleton-orb"></span>
+            <span class="skeleton-fill skeleton-history"></span>
         </div>
     } @else {
-        <div class="step-dots swipe-exclude">
+        <div
+            class="exercise-rail swipe-exclude"
+            [style.--progress.%]="exercises().length > 1 ? (activeStep() - 1) / (exercises().length - 1) * 100 : 100">
             @for (exercise of exercises(); track exercise.id; let index = $index) {
                 <button
                     type="button"
-                    class="step-dot"
+                    class="rail-chip"
                     [class.active]="activeStep() === index + 1"
                     [class.done]="index + 1 < activeStep()"
                     (click)="switchPanel(exercise, index + 1)">
-                    {{ index + 1 }}
+                    @if (index + 1 < activeStep()) {
+                        <svg class="rail-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+                    } @else {
+                        <span class="rail-index">{{ index + 1 }}</span>
+                    }
+                    <span class="rail-name">{{ exercise.name }}</span>
                 </button>
             }
         </div>
 
-        <div class="panel-container">
+        <div class="hero-viewport">
             <!--The for forces Angular to refresh the DOM and animate on swipe-->
             @for (_ of [exercises()[0]]; track animationId()) {
-                <div
-                    class="panel"
+                <section
+                    class="hero-card"
                     [class.slide-from-right]="animationDirection() === 'right'"
                     [class.slide-from-left]="animationDirection() === 'left'">
-                    <h3
+                    <a
+                        class="exercise-link"
                         [routerLink]="['/', 'library', 'exercise', currentExercise()!.id]"
                         [queryParams]="{ returnTo: currentSessionUrl() }">
-                        {{ currentExercise()!.name | uppercase }}
-                    </h3>
+                        <span class="exercise-eyebrow">{{ i18n.exerciseProgressLabel(activeStep(), exercises().length) }}</span>
+                        <h2 class="exercise-name">{{ currentExercise()!.name | uppercase }}</h2>
+                        <span class="exercise-hint">
+                            {{ i18n.viewDetailHint }}
+                            <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+                        </span>
+                    </a>
 
-                    <div class="session-field">
-                        <app-number-stepper
-                            [value]="formWorkout.controls.weight.value"
-                            [disabled]="formWorkout.disabled"
-                            [step]="2.5"
-                            [min]="0"
-                            [max]="500"
-                            [suffix]="i18n.weightSuffix"
-                            (valueChange)="onWeightChange($event)"/>
+                    <div class="controls-grid">
+                        <div class="control-block">
+                            <span class="control-label">{{ i18n.weightLabel }}</span>
+                            <app-number-stepper
+                                [value]="formWorkout.controls.weight.value"
+                                [disabled]="formWorkout.disabled"
+                                [step]="2.5"
+                                [min]="0"
+                                [max]="500"
+                                [suffix]="i18n.weightSuffix"
+                                (valueChange)="onWeightChange($event)"/>
+                        </div>
+
+                        <div class="control-block">
+                            <span class="control-label">{{ i18n.repsLabel }}</span>
+                            <app-number-stepper
+                                [value]="formWorkout.controls.reps.value"
+                                [disabled]="formWorkout.disabled"
+                                [step]="1"
+                                [min]="0"
+                                [max]="100"
+                                [suffix]="i18n.repsSuffix(formWorkout.controls.reps.value ?? 0)"
+                                (valueChange)="onRepsChange($event)"/>
+                        </div>
                     </div>
 
-                    <div class="session-field">
-                        <app-number-stepper
-                            [value]="formWorkout.controls.reps.value"
-                            [disabled]="formWorkout.disabled"
-                            [step]="1"
-                            [min]="0"
-                            [max]="100"
-                            [suffix]="i18n.repsSuffix(formWorkout.controls.reps.value ?? 0)"
-                            (valueChange)="onRepsChange($event)"/>
-                    </div>
-
-                    <div class="toggle-row">
-                        <label for="unilateral">{{ i18n.unilateralLabel }}</label>
+                    <label class="unilateral-pill" for="unilateral">
+                        <span class="unilateral-icon">
+                            <svg viewBox="0 0 24 24"><path d="M7 4v16M17 4v16M3 9h4M17 9h4M3 15h4M17 15h4"/></svg>
+                        </span>
+                        <span class="unilateral-text">{{ i18n.unilateralLabel }}</span>
                         <app-toggle-switch
                             inputId="unilateral"
                             [checked]="!!formWorkout.controls.unilateral.value"
                             [disabled]="formWorkout.disabled"
                             (checkedChange)="onUnilateralChange($event)"/>
-                    </div>
-                </div>
+                    </label>
+                </section>
             }
+        </div>
+
+        <div class="timer-dock">
+            <span class="timer-readout">{{ restTimeService.restTime() | restTime }}</span>
+
+            <button
+                type="button"
+                class="timer-orb"
+                [class.running]="isResting()"
+                [class.disabled]="formWorkout.invalid"
+                [attr.aria-label]="isResting() ? i18n.timerStopAriaLabel : i18n.timerStartAriaLabel"
+                (mousedown)="$event.preventDefault()"
+                (click)="toggleTimer()">
+                @if (isResting()) {
+                    <svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+                } @else {
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                }
+            </button>
+
+            <span class="timer-caption" [class.running]="isResting()">
+                <span class="timer-live-dot"></span>
+                {{ isResting() ? i18n.restInProgressLabel : i18n.startSetLabel }}
+            </span>
         </div>
 
         <app-exercises-table
             [muscleGroupId]="muscleGroupEnum"
             [(exercisesMade)]="exercisesMade"
             [exerciseId]="currentExercise()!.id!"
+            [gymId]="gymId()"
             (resetWorkout)="resetWorkout()"/>
-
-        <div class="bottom-page">
-            <span class="stopwatch">{{ restTimeService.restTime() | restTime }}</span>
-
-            <button type="button" class="timer-btn" [class.disabled]="formWorkout.invalid" (click)="toggleTimer()">
-                @if (restTimeService.restTime() !== DEFAULT_VALUE_REST_TIME) {
-                    <svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-                } @else {
-                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                }
-            </button>
-        </div>
     }
 </div>
 

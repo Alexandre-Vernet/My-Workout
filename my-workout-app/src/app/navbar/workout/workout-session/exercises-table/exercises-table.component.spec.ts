@@ -35,10 +35,21 @@ describe('ExercisesTableComponent', () => {
         createComponent();
 
         fixture.detectChanges();
-        httpMock.expectOne(`${ historyService.historyUrl }/today/1/5`)
-            .flush([{ id: 1, weight: 60, reps: 8 }]);
+        const req = httpMock.expectOne(r => r.url === `${ historyService.historyUrl }/today/1/5`);
+        expect(req.request.params.keys().length).toBe(0);
+        req.flush([{ id: 1, weight: 60, reps: 8 }]);
 
         expect(component.exercisesMade()).toEqual([{ id: 1, weight: 60, reps: 8, restTime: '/' }]);
+    });
+
+    it('passes gymId as a query param when provided', () => {
+        createComponent();
+        fixture.componentRef.setInput('gymId', 3);
+
+        fixture.detectChanges();
+        const req = httpMock.expectOne(r => r.url === `${ historyService.historyUrl }/today/1/5`);
+        expect(req.request.params.get('gymId')).toBe('3');
+        req.flush([]);
     });
 
     it('shows an error alert when loading today\'s history fails', () => {

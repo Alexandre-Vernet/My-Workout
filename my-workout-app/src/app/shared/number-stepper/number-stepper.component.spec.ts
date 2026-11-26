@@ -107,6 +107,18 @@ describe('NumberStepperComponent', () => {
         expect(blurred).toBe(true);
     });
 
+    it('increment()/decrement() emit blurred immediately, since the +/- buttons never steal focus and so can never trigger the input\'s native blur', () => {
+        fixture.componentRef.setInput('value', 1);
+        fixture.detectChanges();
+        let blurredCount = 0;
+        component.blurred.subscribe(() => blurredCount++);
+
+        component['increment']();
+        component['decrement']();
+
+        expect(blurredCount).toBe(2);
+    });
+
     it('disables the buttons and input when disabled', () => {
         fixture.componentRef.setInput('disabled', true);
         fixture.detectChanges();

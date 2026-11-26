@@ -1,4 +1,4 @@
-import { getMuscleGroupColor, getMuscleGroupLabel } from './muscle-group-color';
+import { getContrastingTextColor, getMuscleGroupColor, getMuscleGroupLabel } from './muscle-group-color';
 
 describe('getMuscleGroupColor', () => {
     it('returns the mapped color for a known muscle group', () => {
@@ -30,5 +30,15 @@ describe('getMuscleGroupLabel', () => {
 
     it('falls back to an empty string when the name is missing', () => {
         expect(getMuscleGroupLabel(undefined)).toBe('');
+    });
+});
+
+describe('getContrastingTextColor', () => {
+    it('returns white text for a dark background color', () => {
+        expect(getContrastingTextColor('#d50000')).toBe('#ffffff');
+    });
+
+    it('returns dark text for a light/bright background color', () => {
+        expect(getContrastingTextColor('#f6bf26')).toBe('#1a1a1a');
     });
 });

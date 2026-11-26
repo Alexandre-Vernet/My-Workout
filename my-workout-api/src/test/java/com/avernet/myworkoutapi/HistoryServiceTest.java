@@ -213,10 +213,55 @@ public class HistoryServiceTest {
             .build();
         historyRepository.save(historyEntity);
 
-        List<History> history = service.findTodayHistories(userEntity, muscleGroupEntity.getId().longValue(), exerciseEntity.getId());
+        List<History> history = service.findTodayHistories(userEntity, muscleGroupEntity.getId().longValue(), exerciseEntity.getId(), null);
         assertNotNull(history);
         assertFalse(history.isEmpty());
         assertEquals(1, history.size());
+    }
+
+    @Test
+    void shouldFindTodayHistoriesFilteredByGym() {
+        GymEntity gymA = gymRepository.save(GymEntity.builder().name("Salle A").active(true).user(userEntity).build());
+        GymEntity gymB = gymRepository.save(GymEntity.builder().name("Salle B").active(true).user(userEntity).build());
+
+        WorkoutEntity workoutGymA = workoutRepository.save(WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .gym(gymA)
+            .date(LocalDateTime.now())
+            .build());
+        historyRepository.save(HistoryEntity.builder()
+            .exercise(exerciseEntity)
+            .reps((short) 10)
+            .weight(50F)
+            .unilateral(true)
+            .workout(workoutGymA)
+            .build());
+
+        WorkoutEntity workoutGymB = workoutRepository.save(WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .gym(gymB)
+            .date(LocalDateTime.now())
+            .build());
+        historyRepository.save(HistoryEntity.builder()
+            .exercise(exerciseEntity)
+            .reps((short) 10)
+            .weight(80F)
+            .unilateral(true)
+            .workout(workoutGymB)
+            .build());
+
+        List<History> historyGymA = service.findTodayHistories(userEntity, muscleGroupEntity.getId().longValue(), exerciseEntity.getId(), gymA.getId());
+        assertEquals(1, historyGymA.size());
+        assertEquals(50F, historyGymA.getFirst().getWeight());
+
+        List<History> historyGymB = service.findTodayHistories(userEntity, muscleGroupEntity.getId().longValue(), exerciseEntity.getId(), gymB.getId());
+        assertEquals(1, historyGymB.size());
+        assertEquals(80F, historyGymB.getFirst().getWeight());
+
+        List<History> historyAnyGym = service.findTodayHistories(userEntity, muscleGroupEntity.getId().longValue(), exerciseEntity.getId(), null);
+        assertEquals(2, historyAnyGym.size());
     }
 
     @Test
@@ -238,7 +283,7 @@ public class HistoryServiceTest {
             .build();
         historyRepository.save(historyEntity);
 
-        List<History> history = service.findTodayHistories(userEntity, muscleGroupEntity.getId().longValue(), exerciseEntity.getId());
+        List<History> history = service.findTodayHistories(userEntity, muscleGroupEntity.getId().longValue(), exerciseEntity.getId(), null);
         assertTrue(history.isEmpty());
     }
 

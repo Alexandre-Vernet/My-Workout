@@ -18,8 +18,10 @@ export class HistoryService {
         });
     }
 
-    findTodayExercicesHistory(muscleGroupId: number, exerciseId: number) {
-        return this.http.get<History[]>(`${ this.historyUrl }/today/${ muscleGroupId }/${ exerciseId }`);
+    findTodayExercicesHistory(muscleGroupId: number, exerciseId: number, gymId?: number) {
+        return this.http.get<History[]>(`${ this.historyUrl }/today/${ muscleGroupId }/${ exerciseId }`, {
+            params: gymId !== undefined ? { gymId } : {}
+        });
     }
 
 

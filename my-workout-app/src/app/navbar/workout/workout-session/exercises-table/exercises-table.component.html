@@ -1,49 +1,64 @@
-<div class="exercises-table" [style.visibility]="exercisesMade().length > 0 ? 'visible' : 'hidden'">
+<div class="history-card">
     <div class="history-head">
-        <span>{{ i18n.weightHeader }}</span>
-        <span>{{ i18n.repsHeader }}</span>
-        <span>{{ i18n.unilateralHeader }}</span>
-        <span>{{ i18n.restHeader }}</span>
-        <span></span>
-    </div>
-
-    <div class="history-scroll" #historyScroll>
-        @for (history of exercisesMade(); track history.id) {
-            <div class="history-row">
-                <app-number-stepper
-                    [compact]="true"
-                    [suffix]="i18n.weightSuffix"
-                    [min]="0"
-                    [max]="500"
-                    [step]="0.5"
-                    [value]="history.weight ?? null"
-                    (valueChange)="onWeightChange(history, $event)"
-                    (blurred)="updateHistory(history)"/>
-
-                <app-number-stepper
-                    [compact]="true"
-                    [min]="1"
-                    [max]="99"
-                    [step]="1"
-                    [value]="history.reps ?? null"
-                    (valueChange)="onRepsChange(history, $event)"
-                    (blurred)="updateHistory(history)"/>
-
-                <button
-                    type="button"
-                    class="history-check"
-                    [class.checked]="history.unilateral"
-                    (click)="toggleUnilateral(history)"
-                    [attr.aria-label]="i18n.unilateralAriaLabel">
-                    <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-                </button>
-
-                <span class="history-rest">{{ history.restTime }}</span>
-
-                <button type="button" class="history-delete" (click)="deleteHistory(history)" [attr.aria-label]="i18n.deleteAriaLabel">
-                    <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
-                </button>
-            </div>
+        <span class="history-title">{{ i18n.historyTitle }}</span>
+        @if (exercisesMade().length > 0) {
+            <span class="history-count">{{ i18n.historyCountLabel(exercisesMade().length) }}</span>
         }
     </div>
+
+    @if (exercisesMade().length === 0) {
+        <div class="history-empty">
+            <svg viewBox="0 0 24 24"><path d="M12 8v4l3 3M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/></svg>
+            <strong>{{ i18n.emptyStateTitle }}</strong>
+            <p>{{ i18n.emptyStateMessage }}</p>
+        </div>
+    } @else {
+        <div class="history-columns">
+            <span>{{ i18n.weightHeader }}</span>
+            <span>{{ i18n.repsHeader }}</span>
+            <span>{{ i18n.unilateralHeader }}</span>
+            <span>{{ i18n.restHeader }}</span>
+            <span></span>
+        </div>
+
+        <div class="history-scroll" #historyScroll>
+            @for (history of exercisesMade(); track history.id) {
+                <div class="history-row">
+                    <app-number-stepper
+                        [compact]="true"
+                        [suffix]="i18n.weightSuffix"
+                        [min]="0"
+                        [max]="500"
+                        [step]="0.5"
+                        [value]="history.weight ?? null"
+                        (valueChange)="onWeightChange(history, $event)"
+                        (blurred)="updateHistory(history)"/>
+
+                    <app-number-stepper
+                        [compact]="true"
+                        [min]="1"
+                        [max]="99"
+                        [step]="1"
+                        [value]="history.reps ?? null"
+                        (valueChange)="onRepsChange(history, $event)"
+                        (blurred)="updateHistory(history)"/>
+
+                    <button
+                        type="button"
+                        class="history-check"
+                        [class.checked]="history.unilateral"
+                        (click)="toggleUnilateral(history)"
+                        [attr.aria-label]="i18n.unilateralAriaLabel">
+                        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+                    </button>
+
+                    <span class="history-rest">{{ history.restTime }}</span>
+
+                    <button type="button" class="history-delete" (click)="deleteHistory(history)" [attr.aria-label]="i18n.deleteAriaLabel">
+                        <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+                    </button>
+                </div>
+            }
+        </div>
+    }
 </div>

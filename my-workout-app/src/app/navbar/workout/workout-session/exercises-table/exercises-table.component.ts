@@ -29,6 +29,7 @@ export class ExercisesTableComponent {
 
     muscleGroupId = input.required<number>();
     exerciseId = input.required<number>();
+    gymId = input<number | undefined>(undefined);
     exercisesMade = model.required<History[]>();
     resetWorkout = output<void>();
 
@@ -43,9 +44,9 @@ export class ExercisesTableComponent {
             setTimeout(() => this.scrollBottomTable(), 100);
         });
 
-        // Only exerciseId is a tracked dependency here: muscleGroupId is fixed for the
-        // lifetime of a workout session, reloading today's history only needs to react
-        // to the exercise being switched.
+        // Only exerciseId is a tracked dependency here: muscleGroupId and gymId are fixed
+        // for the lifetime of a workout session, reloading today's history only needs to
+        // react to the exercise being switched.
         effect(() => {
             this.exerciseId();
             untracked(() => this.findTodayExercicesHistory());
@@ -112,7 +113,7 @@ export class ExercisesTableComponent {
 
 
     private findTodayExercicesHistory() {
-        this.historyService.findTodayExercicesHistory(this.muscleGroupId(), this.exerciseId())
+        this.historyService.findTodayExercicesHistory(this.muscleGroupId(), this.exerciseId(), this.gymId())
             .subscribe({
                 next: (history) => {
                     if (history) {

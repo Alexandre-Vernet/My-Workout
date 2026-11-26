@@ -30,8 +30,9 @@ public class HistoryController {
     }
 
     @GetMapping("today/{muscleGroupId}/{exerciseId}")
-    List<History> findTodayHistories(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long muscleGroupId, @PathVariable Long exerciseId) {
-        return historyService.findTodayHistories(userEntity, muscleGroupId, exerciseId);
+    List<History> findTodayHistories(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long muscleGroupId, @PathVariable Long exerciseId,
+                                       @RequestParam(required = false) Long gymId) {
+        return historyService.findTodayHistories(userEntity, muscleGroupId, exerciseId, gymId);
     }
 
     @GetMapping("stats")

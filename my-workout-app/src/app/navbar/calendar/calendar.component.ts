@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../../interfaces/Workout';
-import { getMuscleGroupColor, getMuscleGroupLabel } from '../../shared/utils/muscle-group-color';
+import { getContrastingTextColor, getMuscleGroupColor, getMuscleGroupLabel } from '../../shared/utils/muscle-group-color';
 import { MuscleGroup } from '../../../interfaces/MuscleGroup';
 import { AlertService } from '../../services/alert.service';
 import { HistoryDetailComponent } from './history-detail/history-detail.component';
@@ -13,6 +14,7 @@ import { CustomError } from '../../../interfaces/CustomError';
 import { getErrorMessage } from '../../shared/utils/http-error';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import { I18N } from '../../shared/i18n/i18n';
+import { MenuUrls } from '../../shared/menu-urls';
 
 interface CalendarDay {
     readonly day: number;
@@ -23,6 +25,17 @@ interface CalendarDay {
     readonly muted: boolean;
 }
 
+interface MuscleGroupPill {
+    readonly label: string;
+    readonly color: string;
+    readonly textColor: string;
+}
+
+interface SessionWeekGroup {
+    readonly label: string;
+    readonly days: readonly CalendarDay[];
+}
+
 interface PendingWorkoutDeletion {
     readonly id: number;
     readonly message: string;
@@ -30,16 +43,19 @@ interface PendingWorkoutDeletion {
 
 const MAX_VISIBLE_DOTS = 3;
 const SKELETON_DAYS_COUNT = 35;
+const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
 
 @Component({
     selector: 'app-calendar',
-    imports: [HistoryDetailComponent, FirstLetterUppercasePipe, SwipeDirective, ConfirmDialogComponent],
+    imports: [HistoryDetailComponent, FirstLetterUppercasePipe, SwipeDirective, ConfirmDialogComponent, RouterLink],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class CalendarComponent {
+
+    protected readonly menuUrls = MenuUrls;
 
     protected readonly i18n = I18N.calendar.calendar;
     protected readonly weekdays = this.i18n.weekdays;
@@ -158,16 +174,53 @@ export class CalendarComponent {
             .reverse();
     }
 
+    // Session days grouped by Monday-first week, most recent week first, with a
+    // friendly label ("Cette semaine"/"Semaine dernière"/date range) for each group.
+    protected get weekGroups(): SessionWeekGroup[] {
+        const groups: { readonly start: number; readonly days: CalendarDay[] }[] = [];
+
+        for (const day of this.monthSessionDays) {
+            const weekStart = CalendarComponent.startOfWeek(day.date).getTime();
+            const group = groups.find(g => g.start === weekStart);
+            if (group) {
+                group.days.push(day);
+            } else {
+                groups.push({ start: weekStart, days: [day] });
+            }
+        }
+
+        return groups.map(g => ({ label: this.weekLabel(g.start), days: g.days }));
+    }
+
     protected weekdayLabel(date: Date): string {
         return this.weekdays[(date.getDay() + 6) % 7];
     }
 
-    protected dayGroupsLabel(day: CalendarDay): string {
+    // Unique muscle group pills (label + color) for a day, respecting the active filter.
+    protected dayGroupPills(day: CalendarDay): MuscleGroupPill[] {
         const relevantWorkouts = this.activeFilter
             ? day.workouts.filter(w => w.muscleGroup?.name === this.activeFilter?.name)
             : day.workouts;
 
-        return [...new Set(relevantWorkouts.map(w => getMuscleGroupLabel(w.muscleGroup?.name)))].join(' · ');
+        const seenLabels = new Set<string>();
+        const pills: MuscleGroupPill[] = [];
+
+        for (const workout of relevantWorkouts) {
+            const label = getMuscleGroupLabel(workout.muscleGroup?.name);
+            if (seenLabels.has(label)) {
+                continue;
+            }
+
+            seenLabels.add(label);
+            const color = getMuscleGroupColor(workout.muscleGroup?.name);
+            pills.push({ label, color, textColor: getContrastingTextColor(color) });
+        }
+
+        return pills;
+    }
+
+    protected dayAccent(day: CalendarDay): string {
+        return day.dotColors[0] ?? getMuscleGroupColor(null);
     }
 
     private changeMonth(direction: 1 | -1) {
@@ -267,11 +320,36 @@ export class CalendarComponent {
         this.sessionCountLabel.set(this.i18n.sessionCount(daysWithSessions));
     }
 
+    private weekLabel(weekStart: number): string {
+        const diffWeeks = Math.round((CalendarComponent.startOfWeek(new Date()).getTime() - weekStart) / MS_PER_WEEK);
+
+        if (diffWeeks === 0) {
+            return this.i18n.thisWeek;
+        }
+        if (diffWeeks === 1) {
+            return this.i18n.lastWeek;
+        }
+
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+
+        return this.i18n.weekRange(
+            new Date(weekStart).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }),
+            weekEnd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+        );
+    }
+
     private static isSameDay(a: Date, b: Date): boolean {
         return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
     }
 
     private static startOfMonth(date: Date): Date {
         return new Date(date.getFullYear(), date.getMonth(), 1);
+    }
+
+    private static startOfWeek(date: Date): Date {
+        const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+        return start;
     }
 }

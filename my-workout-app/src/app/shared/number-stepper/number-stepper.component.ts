@@ -20,17 +20,23 @@ export class NumberStepperComponent {
     disabled = input(false);
     compact = input(false);
 
-    // Fires when the field loses focus, so callers can commit/persist a value
-    // without reacting to every keystroke or +/- click (see workout-session's
-    // history table, which only saves on blur).
+    // Fires when a value change should be committed/persisted: on blur after
+    // typing (the +/- buttons prevent the input from ever gaining focus via
+    // their (mousedown) handler below, so typing is the only path that can
+    // ever blur it), and right away on +/- since each click is itself a
+    // deliberate, atomic action. This lets callers persist without reacting
+    // to every keystroke while still typing (see workout-session's history
+    // table, which saves on this event rather than on every valueChange).
     blurred = output<void>();
 
     protected increment() {
         this.setValue((this.value() ?? 0) + this.step());
+        this.blurred.emit();
     }
 
     protected decrement() {
         this.setValue((this.value() ?? 0) - this.step());
+        this.blurred.emit();
     }
 
     protected onInput(raw: string) {

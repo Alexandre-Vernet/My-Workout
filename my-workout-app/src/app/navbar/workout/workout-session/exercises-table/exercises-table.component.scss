@@ -9,14 +9,77 @@
     }
 }
 
-.exercises-table {
+@keyframes empty-pulse {
+    0%, 100% {
+        opacity: .5;
+    }
+    50% {
+        opacity: .9;
+    }
+}
+
+.history-card {
     background: var(--card-background);
     border-radius: var(--radius-md);
     box-shadow: var(--card-shadow);
     padding: 10px 12px;
 }
 
-.history-head,
+.history-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.history-title {
+    font-size: .88rem;
+    font-weight: 800;
+}
+
+.history-count {
+    flex-shrink: 0;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--p-primary-color);
+    background: color-mix(in srgb, var(--p-primary-color) 16%, transparent);
+}
+
+.history-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px 10px;
+    text-align: center;
+    color: var(--p-text-muted-color);
+
+    svg {
+        width: 28px;
+        height: 28px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        animation: empty-pulse 2.2s ease-in-out infinite;
+    }
+
+    strong {
+        color: inherit;
+        font-size: .86rem;
+    }
+
+    p {
+        font-size: .76rem;
+        max-width: 260px;
+    }
+}
+
+.history-columns,
 .history-row {
     display: grid;
     grid-template-columns: 1.3fr 1fr 40px 50px 32px;
@@ -28,14 +91,14 @@
    the two number-steppers (their decrement/increment buttons alone need
    ~66px) — trim the secondary columns and the gap to give them space back. */
 @media (max-width: 360px) {
-    .history-head,
+    .history-columns,
     .history-row {
         grid-template-columns: 1.3fr 1fr 32px 36px 32px;
         gap: 4px;
     }
 }
 
-.history-head {
+.history-columns {
     padding: 0 2px 8px;
 
     span {
@@ -47,7 +110,7 @@
 }
 
 .history-scroll {
-    max-height: 190px;
+    max-height: 220px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;

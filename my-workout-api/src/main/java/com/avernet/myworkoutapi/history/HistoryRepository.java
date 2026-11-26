@@ -48,13 +48,15 @@ public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
             AND w.muscleGroup.id = :muscleGroupId
             AND w.date >= :startOfDay
             AND w.date < :endOfDay
+            AND (:gymId IS NULL OR w.gym.id = :gymId)
             ORDER BY h.id ASC
         """)
     List<HistoryEntity> findTodayHistories(
         @Param("userId") Long userId, @Param("muscleGroupId") Long muscleGroupId,
         @Param("exerciseId") Long exerciseId,
         @Param("startOfDay") LocalDateTime startOfDay,
-        @Param("endOfDay") LocalDateTime endOfDay
+        @Param("endOfDay") LocalDateTime endOfDay,
+        @Param("gymId") Long gymId
     );
 
     // FETCH on the workout: the caller reads each history's workout date, which would

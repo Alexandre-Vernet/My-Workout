@@ -48,33 +48,47 @@
         </div>
     </div>
 
-    <div class="month-sessions">
-        <h2 class="month-sessions-title">{{ i18n.monthSessionsTitle }}</h2>
+    <section class="sessions-feed">
+        <h2 class="sessions-feed-title">{{ i18n.monthSessionsTitle }}</h2>
+
         @if (monthSessionDays.length === 0) {
-            <div class="month-sessions-empty">
-                <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+            <div class="sessions-empty">
+                <div class="sessions-empty-icon">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+                </div>
                 <p>{{ i18n.noSessions(!!activeFilter) }}</p>
+                <a class="chip active sessions-empty-cta" [routerLink]="['/', menuUrls.workout]">
+                    {{ i18n.startWorkoutCta }}
+                    <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
             </div>
         } @else {
-            @for (day of monthSessionDays; track day.date.getTime()) {
-                <div class="session-row" (click)="onDayClick(day)">
-                    <div class="session-row-date">
-                        <strong>{{ day.day }}</strong>
-                        <small>{{ weekdayLabel(day.date) }}</small>
-                    </div>
-                    <div class="session-row-info">
-                        <div class="cal-dots">
-                            @for (color of day.dotColors; track $index) {
-                                <span [style.background]="color"></span>
-                            }
-                        </div>
-                        <span class="session-row-groups">{{ dayGroupsLabel(day) }}</span>
-                    </div>
-                    <svg class="session-row-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+            @for (week of weekGroups; track week.label) {
+                <div class="sessions-week">
+                    <div class="sessions-week-label">{{ week.label }}</div>
+                    @for (day of week.days; track day.date.getTime(); let di = $index) {
+                        <button type="button" class="session-card" [class.today]="day.isToday"
+                                [style.animation-delay.ms]="di * 60" [style.--accent]="dayAccent(day)"
+                                (click)="onDayClick(day)">
+                            <span class="session-card-date">
+                                <strong>{{ day.day }}</strong>
+                                <small>{{ weekdayLabel(day.date) }}</small>
+                            </span>
+                            <span class="session-card-pills">
+                                @for (group of dayGroupPills(day); track group.label) {
+                                    <span class="pill" [style.--pill-color]="group.color"
+                                          [style.--pill-text-color]="group.textColor">
+                                        <span class="pill-dot"></span>{{ group.label }}
+                                    </span>
+                                }
+                            </span>
+                            <svg class="session-card-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+                        </button>
+                    }
                 </div>
             }
         }
-    </div>
+    </section>
 }
 
 <div class="sheet-backdrop" [class.open]="sheetOpen()" (click)="closeSheet()"></div>

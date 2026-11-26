@@ -2,6 +2,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    computed,
     effect,
     inject,
     input,
@@ -84,6 +85,10 @@ export class WorkoutSessionComponent {
     protected readonly animationDirection = signal<'left' | 'right'>('right');
     protected readonly animationId = signal(0);
     private currentTab!: number;
+
+    protected readonly isResting = computed(() =>
+        this.restTimeService.restTime() !== DEFAULT_VALUE_REST_TIME
+    );
 
     private readonly activatedRoute = inject(ActivatedRoute);
     private readonly workoutService = inject(WorkoutService);

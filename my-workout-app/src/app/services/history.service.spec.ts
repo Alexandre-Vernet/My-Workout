@@ -40,7 +40,17 @@ describe('HistoryService', () => {
     it('findTodayExercicesHistory() GETs today\'s history for a muscle group and exercise', () => {
         service.findTodayExercicesHistory(2, 5).subscribe();
 
-        httpMock.expectOne(`${ service.historyUrl }/today/2/5`).flush([]);
+        const req = httpMock.expectOne(r => r.url === `${ service.historyUrl }/today/2/5`);
+        expect(req.request.params.keys().length).toBe(0);
+        req.flush([]);
+    });
+
+    it('findTodayExercicesHistory() passes gymId as a query param when provided', () => {
+        service.findTodayExercicesHistory(2, 5, 3).subscribe();
+
+        const req = httpMock.expectOne(r => r.url === `${ service.historyUrl }/today/2/5`);
+        expect(req.request.params.get('gymId')).toBe('3');
+        req.flush([]);
     });
 
     it('getGlobalStatsWithListExercises() GETs the global stats', () => {

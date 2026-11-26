@@ -115,7 +115,7 @@ describe('CalendarComponent', () => {
         });
     });
 
-    describe('monthSessionDays / weekdayLabel / dayGroupsLabel', () => {
+    describe('monthSessionDays / weekdayLabel / dayGroupPills / weekGroups / dayAccent', () => {
         beforeEach(() => {
             component['displayedMonth'] = new Date(2026, 0, 1);
         });
@@ -146,7 +146,7 @@ describe('CalendarComponent', () => {
             expect(component['weekdayLabel'](new Date(2026, 0, 5))).toBe('Lun');
         });
 
-        it('joins unique muscle group labels for a day, respecting the active filter', () => {
+        it('builds unique muscle group pills for a day, respecting the active filter', () => {
             fixture.detectChanges();
             httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`).flush([
                 { id: 1, date: new Date(2026, 0, 5), muscleGroup: { id: 1, name: 'pectoraux' } },
@@ -154,11 +154,62 @@ describe('CalendarComponent', () => {
             ]);
             const day = component['monthSessionDays'][0];
 
-            expect(component['dayGroupsLabel'](day)).toBe('Pecs · Jambes');
+            expect(component['dayGroupPills'](day).map((p: { label: string }) => p.label)).toEqual(['Pecs', 'Jambes']);
 
             component['filterByMuscleGroup']({ id: 2, name: 'jambes' });
 
-            expect(component['dayGroupsLabel'](component['monthSessionDays'][0])).toBe('Jambes');
+            expect(component['dayGroupPills'](component['monthSessionDays'][0]).map((p: { label: string }) => p.label))
+                .toEqual(['Jambes']);
+        });
+
+        it('groups session days by week, most recent week first', () => {
+            fixture.detectChanges();
+            httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`).flush([
+                { id: 1, date: new Date(2026, 0, 5), muscleGroup: { id: 1, name: 'pectoraux' } },
+                { id: 2, date: new Date(2026, 0, 20), muscleGroup: { id: 2, name: 'jambes' } }
+            ]);
+
+            const groups = component['weekGroups'];
+
+            expect(groups.length).toBe(2);
+            expect(groups[0].days.map((d: { day: number }) => d.day)).toEqual([20]);
+            expect(groups[1].days.map((d: { day: number }) => d.day)).toEqual([5]);
+        });
+
+        it('dayAccent() returns the day\'s first dot color', () => {
+            fixture.detectChanges();
+            httpMock.expectOne(r => r.url === `${ workoutService.workoutUrl }/date`).flush([
+                { id: 1, date: new Date(2026, 0, 5), muscleGroup: { id: 1, name: 'pectoraux' } }
+            ]);
+            const day = component['monthSessionDays'][0];
+
+            expect(component['dayAccent'](day)).toBe(day.dotColors[0]);
+        });
+    });
+
+    describe('weekLabel', () => {
+        function startOfWeek(date: Date): Date {
+            const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+            return start;
+        }
+
+        it('labels the current week as "Cette semaine"', () => {
+            const weekStart = startOfWeek(new Date()).getTime();
+
+            expect(component['weekLabel'](weekStart)).toBe('Cette semaine');
+        });
+
+        it('labels the previous week as "Semaine dernière"', () => {
+            const weekStart = startOfWeek(new Date()).getTime() - 7 * 24 * 60 * 60 * 1000;
+
+            expect(component['weekLabel'](weekStart)).toBe('Semaine dernière');
+        });
+
+        it('formats older weeks as a date range', () => {
+            const weekStart = startOfWeek(new Date()).getTime() - 21 * 24 * 60 * 60 * 1000;
+
+            expect(component['weekLabel'](weekStart)).toMatch(/^Semaine du /);
         });
     });
 });

@@ -50,12 +50,12 @@ public class HistoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<History> findTodayHistories(UserEntity userEntity, Long muscleGroupId, Long exerciseId) {
+    public List<History> findTodayHistories(UserEntity userEntity, Long muscleGroupId, Long exerciseId, Long gymId) {
         LocalDate now = LocalDate.now();
         LocalDateTime startOfDay = now.atStartOfDay();
         LocalDateTime endOfDay = now.plusDays(1).atStartOfDay();
 
-        List<HistoryEntity> historyEntity = historyRepository.findTodayHistories(userEntity.getId(), muscleGroupId, exerciseId, startOfDay, endOfDay);
+        List<HistoryEntity> historyEntity = historyRepository.findTodayHistories(userEntity.getId(), muscleGroupId, exerciseId, startOfDay, endOfDay, gymId);
         return historyMapper.toDtoList(historyEntity);
     }
 
