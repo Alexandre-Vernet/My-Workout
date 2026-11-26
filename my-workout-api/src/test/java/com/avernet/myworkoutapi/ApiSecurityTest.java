@@ -107,6 +107,20 @@ class ApiSecurityTest {
         assertThat(mvc.get().uri("/exercises/user/cardio")).hasStatus(HttpStatus.UNAUTHORIZED);
     }
 
+    // The security filter chain rejects an unauthenticated/expired-token request before it ever
+    // reaches a controller, so a WebMvcConfigurer-based CORS registration (which only runs for
+    // dispatched requests) never gets a chance to add Access-Control-Allow-Origin here: the
+    // browser then blocks the response as a CORS failure, hiding the real 401 from the frontend's
+    // interceptor and breaking its refresh-and-retry. CorsConfig must expose a
+    // CorsConfigurationSource wired into SecurityConfig.cors() so this header is present even on
+    // a request the security filter chain itself rejects.
+    @Test
+    void a401FromTheSecurityFilterChainShouldStillCarryCorsHeaders() {
+        assertThat(mvc.get().uri("/auth/me").header(HttpHeaders.ORIGIN, "http://localhost:4200"))
+            .hasStatus(HttpStatus.UNAUTHORIZED)
+            .hasHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:4200");
+    }
+
     // --- Gemini endpoint: must never be reachable through the public /exercises/{id} pattern ---
 
     @Test
