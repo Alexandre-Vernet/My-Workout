@@ -1,0 +1,115 @@
+/* Shared by every app-view-profile section card: a small heading row with a
+   circular tinted icon, so account/theme/actions stay visually consistent. */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.section-icon {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--p-primary-color);
+    background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+
+    svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+}
+
+.toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+}
+
+/* Shared by stats/graphs: a row of summary tiles (count/total + icon), each
+   animating in with a short stagger. */
+@keyframes stats-in {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+}
+
+.stat-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    background: var(--card-background);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--card-shadow);
+    padding: 20px 12px;
+    animation: stats-in .45s cubic-bezier(.22, 1, .36, 1) both;
+
+    strong {
+        font-size: 1.4rem;
+        font-weight: 800;
+    }
+
+    span:last-child {
+        color: var(--p-text-muted-color);
+        font-size: .78rem;
+    }
+
+    @for $i from 1 through 3 {
+        &:nth-child(#{$i}) {
+            animation-delay: #{$i * 0.06}s;
+        }
+    }
+}
+
+.stat-tile.skeleton-fill {
+    height: 112px;
+    border-radius: var(--radius-lg);
+}
+
+.stat-tile-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--p-primary-color);
+    background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+
+    svg {
+        width: 19px;
+        height: 19px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+}

@@ -1,14 +1,12 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Service, signal } from '@angular/core';
 import { Alert } from '../../interfaces/alert';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Service()
 export class AlertService {
 
-    alert$: BehaviorSubject<Alert> = new BehaviorSubject<Alert>(null);
+    readonly alert = signal<Alert | null>(null);
 
-    constructor() {
+    show(alert: Alert | null) {
+        this.alert.set(alert);
     }
 }

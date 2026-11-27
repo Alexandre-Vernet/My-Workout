@@ -1,92 +1,67 @@
-import { AfterViewInit, Component, inject } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { filter, map } from 'rxjs';
 import { MenuUrls } from '../shared/menu-urls';
-import { delay, filter } from 'rxjs';
+import { I18N } from '../shared/i18n/i18n';
+
+interface NavItem {
+    readonly route: string;
+    readonly label: string;
+    readonly icon: 'library' | 'calendar' | 'workout' | 'stats' | 'profile';
+    readonly isMain?: boolean;
+}
 
 @Component({
     selector: 'app-navbar',
     standalone: true,
-    imports: [RouterLink, RouterLinkActive],
+    imports: [RouterLink],
     templateUrl: './navbar.component.html',
-    styleUrls: ['./navbar.component.scss']
+    styleUrl: './navbar.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavbarComponent implements AfterViewInit {
+export class NavbarComponent {
+
+    protected readonly i18n = I18N.navbar;
+
+    protected readonly navItems: readonly NavItem[] = [
+        { route: '/library', label: this.i18n.library, icon: 'library' },
+        { route: '/calendar', label: this.i18n.calendar, icon: 'calendar' },
+        { route: '/workout', label: this.i18n.workout, icon: 'workout', isMain: true },
+        { route: '/stats', label: this.i18n.stats, icon: 'stats' },
+        { route: '/user', label: this.i18n.profile, icon: 'profile' }
+    ];
 
     private readonly router = inject(Router);
 
-    ngAfterViewInit() {
-        const body = document.body;
-        const menu = body.querySelector('.menu') as HTMLElement;
-        const menuItems = menu.querySelectorAll('.menu__item');
-        const menuBorder = menu.querySelector('.menu__border') as HTMLElement;
-        const icons = menu.querySelectorAll('.icon') as NodeListOf<HTMLElement>;
-        let activeItem: HTMLElement;
+    // Reflects the current URL as a signal so the active item (and the sliding
+    // highlight behind it) stays in sync without ever touching the DOM directly.
+    private readonly currentUrl = toSignal(
+        this.router.events.pipe(
+            filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+            map((event) => event.urlAfterRedirects)
+        ),
+        { initialValue: this.router.url }
+    );
 
-        this.router.events
-            .pipe(
-                filter(event => event instanceof NavigationEnd),
-                delay(5)
-            )
-            .subscribe((event: NavigationEnd) => {
-                const url = event.urlAfterRedirects;
+    protected readonly activeIndex = computed(() => {
+        const url = this.currentUrl();
 
-                let activeIndex: number;
-
-                if (url.includes(MenuUrls.library)) {
-                    activeIndex = 0;
-                } else if (url.includes(MenuUrls.calendar)) {
-                    activeIndex = 1;
-                } else if (url.includes(MenuUrls.workout)) {
-                    activeIndex = 2;
-                } else if (url.includes(MenuUrls.stats)) {
-                    activeIndex = 3;
-                } else if (url.includes(MenuUrls.user) || url.includes(MenuUrls.admin)) {
-                    activeIndex = 4;
-                } else {
-                    activeIndex = 2;
-                }
-
-                activeItem = menuItems[activeIndex] as HTMLElement;
-                activeItem.classList.add('active');
-                offsetMenuBorder(activeItem, menuBorder);
-            });
-
-        function clickItem(item: HTMLElement) {
-            menu.style.removeProperty('--timeOut');
-            menuBorder.classList.add('menu__border_transition');
-
-            icons.forEach(icon => {
-                icon.classList.add('icon-stroke-dasharray');
-                icon.classList.add('active');
-            });
-
-            if (activeItem === item) return;
-
-            activeItem.classList.remove('active');
-            item.classList.add('active');
-            item.classList.add('menu__item_active');
-            item.classList.add('menu__item_active_before');
-            activeItem = item;
-
-            offsetMenuBorder(activeItem, menuBorder);
+        if (url.includes(MenuUrls.library)) {
+            return 0;
         }
-
-        function offsetMenuBorder(element: HTMLElement, menuBorder: HTMLElement) {
-            const offsetActiveItem = element?.getBoundingClientRect();
-            const left = Math.floor(
-                offsetActiveItem.left - menu.offsetLeft - (menuBorder.offsetWidth - offsetActiveItem.width) / 2
-            ) + 'px';
-
-            menuBorder.style.transform = `translate3d(${ left }, 0 , 0)`;
+        if (url.includes(MenuUrls.calendar)) {
+            return 1;
         }
-
-        menuItems.forEach(item => {
-            item.addEventListener('click', () => clickItem(item as HTMLElement));
-        });
-
-        window.addEventListener('resize', () => {
-            offsetMenuBorder(activeItem, menuBorder);
-            menu.style.setProperty('--timeOut', 'none');
-        });
-    }
+        if (url.includes(MenuUrls.workout)) {
+            return 2;
+        }
+        if (url.includes(MenuUrls.stats)) {
+            return 3;
+        }
+        if (url.includes(MenuUrls.user) || url.includes(MenuUrls.admin)) {
+            return 4;
+        }
+        return 2;
+    });
 }

@@ -17,16 +17,18 @@ import { StatsComponent } from './navbar/stats/stats.component';
 import { AddExerciseComponent } from './navbar/view-profile/admin/add-exercise/add-exercise.component';
 import { defaultHomePageGuard } from './auth/default-home-page.guard';
 import { NotFoundComponent } from "./shared/not-found/not-found.component";
+import { ListGymComponent } from './navbar/view-profile/list-gym/list-gym.component';
 
 
 export const appRoutes: Route[] = [
     {
+        // ViewExerciseComponent is nested (not a sibling) so ListExercisesComponent stays
+        // mounted underneath it — the exercise detail renders in its child <router-outlet>
+        // as a sliding overlay instead of a full page swap, while keeping a real,
+        // shareable URL and working browser back button.
         path: MenuUrls.library,
+        component: ListExercisesComponent,
         children: [
-            {
-                path: '',
-                component: ListExercisesComponent
-            },
             {
                 path: 'exercise/:exerciseId',
                 component: ViewExerciseComponent
@@ -84,6 +86,10 @@ export const appRoutes: Route[] = [
             {
                 path: 'view-profile',
                 component: ViewProfileComponent
+            },
+            {
+                path: 'gym',
+                component: ListGymComponent
             },
             {
                 path: '**',

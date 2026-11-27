@@ -1,7 +1,7 @@
 import { HttpStatusCode } from "@angular/common/http";
 
-export class CustomError {
-    error: {
+export interface CustomError {
+    error?: {
         /*CustomError business*/
         message: string;
 
@@ -11,7 +11,7 @@ export class CustomError {
             message: string;
         }[];
 
-        type: 'BUSINESS' | 'VALIDATION';
+        type: 'BUSINESS' | 'VALIDATION' | 'TECHNICAL';
         errorCode: string;
         httpStatus: HttpStatusCode;
     }

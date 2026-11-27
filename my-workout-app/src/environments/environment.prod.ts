@@ -11,9 +11,5 @@ export const environment = {
     historyUrl: () => `${ environment.API_URL }/history`,
     workoutUrl: () => `${ environment.API_URL }/workout`,
     passwordResetTokenUrl: () => `${ environment.API_URL }/password-reset-token`,
-    EMAIL_JS: {
-        PUBLIC_KEY: 'd3gvz9u7Hm4sLnK2e',
-        SERVICE_ID: 'service_4b174bh',
-        TEMPLATE_ID: 'template_6oukjrr'
-    }
+    gymUrl: () => `${ environment.API_URL }/gym`,
 };

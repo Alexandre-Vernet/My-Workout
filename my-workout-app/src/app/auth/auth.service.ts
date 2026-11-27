@@ -1,22 +1,30 @@
-import { Injectable } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { of, switchMap, tap } from 'rxjs';
+import { Observable, of, shareReplay, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { User } from '../../interfaces/User';
 import { AuthResponse } from '../../interfaces/AuthResponse';
 import { LoginRequest } from "../../interfaces/LoginRequest";
 import { RegisterRequest } from "../../interfaces/RegisterRequest";
+import { UpdateUserRequest } from "../../interfaces/UpdateUserRequest";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Service()
 export class AuthService {
+    private readonly http = inject(HttpClient);
+
 
     authUrl = environment.authUrl();
 
-    constructor(
-        private readonly http: HttpClient
-    ) {
+    // Cached to avoid hitting /auth/me on every navigation (see guards).
+    private currentUser$: Observable<User> | null = null;
+
+    // Single access point for the access token, to ease a future migration to a backend httpOnly cookie.
+    getAccessToken(): string | null {
+        return localStorage.getItem('access-token');
+    }
+
+    hasToken(): boolean {
+        return !!this.getAccessToken();
     }
 
     login(loginRequest: LoginRequest) {
@@ -25,6 +33,7 @@ export class AuthService {
                 tap(({ accessToken, refreshToken }) => {
                     localStorage.setItem('access-token', accessToken);
                     localStorage.setItem('refresh-token', refreshToken);
+                    this.currentUser$ = null;
                 })
             );
     }
@@ -35,10 +44,14 @@ export class AuthService {
     }
 
     getCurrentUser() {
-        return this.http.get<User>(`${ this.authUrl }/me`);
+        if (!this.currentUser$) {
+            this.currentUser$ = this.http.get<User>(`${ this.authUrl }/me`)
+                .pipe(shareReplay(1));
+        }
+        return this.currentUser$;
     }
 
-    refresh() {
+    refresh(): Observable<AuthResponse | null> {
         const refreshToken = localStorage.getItem('refresh-token');
         if (!refreshToken) {
             return of(null);
@@ -52,14 +65,10 @@ export class AuthService {
             );
     }
 
-    updateUser(user: User) {
-        return this.getCurrentUser()
-            .pipe(
-                switchMap((u) => this.http.patch<User>(`${ this.authUrl }/${ u.id }`, user)
-                    .pipe(
-                        tap(() => this.signOut())
-                    )),
-            );
+    // Changing the email or password revokes every token server-side, hence the sign-out.
+    updateUser(user: UpdateUserRequest) {
+        return this.http.patch<User>(this.authUrl, user)
+            .pipe(tap(() => this.signOut()));
     }
 
     deleteAccount() {
@@ -69,5 +78,6 @@ export class AuthService {
     signOut() {
         localStorage.removeItem('access-token');
         localStorage.removeItem('refresh-token');
+        this.currentUser$ = null;
     }
 }

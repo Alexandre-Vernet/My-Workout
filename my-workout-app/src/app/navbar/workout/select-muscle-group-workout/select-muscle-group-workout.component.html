@@ -1,44 +1,79 @@
-<p-confirmdialog></p-confirmdialog>
-<div class="select-muscle-group-workout">
-    <h1 class="mt-2 mb-3 text-center font-bold">Sélectionner un entraînement</h1>
+<div class="select-workout">
+    <h1>{{ i18n.title }}</h1>
 
-    @if (!muscleGroupExerciseCount) {
-        @for (skeleton of [1, 2, 3, 4, 5, 6, 7]; track skeleton; let first = $first) {
-            <div class="muscle-groups" >
-                <div class="muscle-group-card">
-                    <div class="flex-1 flex align-items-center justify-content-between">
-                        <p-skeleton height="2rem" width="10rem" class="mb-2"/>
-                        @if (first) {
-                            <p-skeleton height="2rem" width="8rem"/>
-                        }
-                    </div>
-                    <p-skeleton height="2rem" width="5rem" class="mb-2"/>
-                </div>
-            </div>
-        }
+    @if (!muscleGroupExerciseCount()) {
+        <div class="muscle-group-list">
+            @for (skeleton of [1, 2, 3, 4, 5, 6, 7]; track skeleton) {
+                <span class="muscle-group-card skeleton-fill"></span>
+            }
+        </div>
+    } @else if (gyms().length === 0) {
+        <div class="no-gym-state">
+            <svg viewBox="0 0 24 24"><path d="M4 9v6M20 9v6M7 7v10M17 7v10M7 12h10"/></svg>
+            <strong>{{ i18n.noGymTitle }}</strong>
+            <p>{{ i18n.noGymMessage }}</p>
+            <a routerLink="/user/gym" class="btn btn-primary">{{ i18n.noGymCta }}</a>
+        </div>
     } @else {
-        @for (muscleGroupExerciseCount of muscleGroupExerciseCount; track muscleGroupExerciseCount.muscleGroup.id; let first = $first) {
-            @let muscleGroup = muscleGroupExerciseCount?.muscleGroup;
-            <div class="muscle-groups" (click)="clickMuscleGroup(muscleGroup)">
-                <div class="card p-4" [class.selected]="first">
-                    <div class="flex-1 flex align-items-center justify-content-between">
-                        <h2 class="text-xl font-bold text-primary">{{ muscleGroup.name | firstLetterUppercase }}</h2>
-                        @if (first) {
-                            <p-tag severity="info">Recommandé</p-tag>
-                        }
-                    </div>
-                    <span
-                        class="text-lg">{{ muscleGroupExerciseCount.exerciseCount }} {{ muscleGroupExerciseCount.exerciseCount <= 1 ? 'exercice' : 'exercices' }}</span>
-                </div>
-            </div>
-        }
+        <div class="muscle-group-list">
+            @for (entry of muscleGroupExerciseCount()!; track entry.muscleGroup.id; let first = $first) {
+                <button
+                    type="button"
+                    class="muscle-group-card"
+                    [class.recommended]="first"
+                    [style.--accent]="getMuscleGroupColor(entry.muscleGroup.name)"
+                    (click)="clickMuscleGroup(entry.muscleGroup)">
+                    <span class="muscle-group-dot"></span>
+                    <span class="muscle-group-info">
+                        <strong>{{ entry.muscleGroup.name | firstLetterUppercase }}</strong>
+                        <span>{{ i18n.exerciseCountLabel(entry.exerciseCount) }}</span>
+                    </span>
+                    @if (first) {
+                        <span class="recommended-badge">{{ i18n.recommendedBadge }}</span>
+                    }
+                    <svg class="muscle-group-chevron" viewBox="0 0 24 24">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </button>
+            }
+        </div>
     }
 </div>
 
+@if (gymPickerOpen()) {
+    <div class="overlay-backdrop" (click)="cancelGymPicker()">
+        <div class="overlay-card" (click)="$event.stopPropagation()">
+            <div class="overlay-header">
+                <h2>{{ gymPickerI18n.title }}</h2>
+                <button type="button" class="overlay-close" [attr.aria-label]="gymPickerI18n.closeLabel" (click)="cancelGymPicker()">
+                    <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                </button>
+            </div>
+
+            <div class="gym-picker-list">
+                @for (gym of gyms(); track gym.id) {
+                    <button type="button" class="gym-picker-option" (click)="selectGym(gym)">
+                        <span class="gym-picker-dot"></span>
+                        {{ gym.name }}
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+}
 
 <app-dialog-select-cardio-exercise
-    [cardioExercises]="cardioExercises"
-    [openModal]="isOpenModalExerciseCardio"
+    [cardioExercises]="cardioExercises()"
+    [openModal]="isOpenModalExerciseCardio()"
+    [gymId]="selectedGymId()"
     (openModalChange)="openModalCardioExerciseChange()"
-    (showAlert)="showAlert($event)"
-></app-dialog-select-cardio-exercise>
+    (showAlert)="showAlert($event)"/>
+
+<app-confirm-dialog
+    [open]="confirmNoExercisesOpen()"
+    [title]="NO_EXERCISES_DIALOG.title"
+    [message]="NO_EXERCISES_DIALOG.message"
+    [confirmLabel]="NO_EXERCISES_DIALOG.confirmLabel"
+    [cancelLabel]="NO_EXERCISES_DIALOG.cancelLabel"
+    (confirmed)="confirmAddExercises()"
+    (cancelled)="cancelAddExercises()"/>

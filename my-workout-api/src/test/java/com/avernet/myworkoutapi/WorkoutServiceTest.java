@@ -1,6 +1,11 @@
 package com.avernet.myworkoutapi;
 
+import com.avernet.myworkoutapi.error.ErrorCodeEnum;
+import com.avernet.myworkoutapi.exception.ApiException;
 import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
+import com.avernet.myworkoutapi.gym.Gym;
+import com.avernet.myworkoutapi.gym.GymEntity;
+import com.avernet.myworkoutapi.gym.GymRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupNotFoundException;
 import com.avernet.myworkoutapi.user.UserNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
@@ -36,6 +41,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -65,14 +71,20 @@ public class WorkoutServiceTest {
     @Resource
     private HistoryMapper historyMapper;
 
+    @Resource
+    private GymRepository gymRepository;
+
 
     UserEntity userEntity;
     MuscleGroupEntity muscleGroupEntity;
+    GymEntity gymEntity;
 
     @BeforeEach
     void setup() {
         userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
         muscleGroupEntity = muscleGroupRepository.findById(1L).orElseThrow(MuscleGroupNotFoundException::new);
+        // gym_id is NOT NULL on workout: every test needs one to attach, by default.
+        gymEntity = gymRepository.save(GymEntity.builder().name("Salle par défaut").active(true).user(userEntity).build());
     }
 
 
@@ -82,6 +94,7 @@ public class WorkoutServiceTest {
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.now())
             .histories(List.of())
             .build();
@@ -114,6 +127,75 @@ public class WorkoutServiceTest {
     }
 
     @Test
+    @Transactional
+    void createWorkout_shouldLinkGymToWorkout() {
+        GymEntity gymEntity = gymRepository.save(GymEntity.builder().name("Salle test").active(true).user(userEntity).build());
+
+        WorkoutEntity workoutEntity = WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .date(LocalDateTime.now())
+            .histories(List.of())
+            .build();
+
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
+
+        HistoryEntity historyEntity = HistoryEntity.builder()
+            .exercise(exerciseEntity)
+            .weight(50F)
+            .reps((short) 10)
+            .unilateral(true)
+            .workout(workoutEntity)
+            .build();
+
+        Workout workout = workoutMapper.toDto(workoutEntity);
+        workout.setGym(new Gym(gymEntity.getId(), null, null, null));
+        History history = historyMapper.toDto(historyEntity);
+
+        WorkoutRequest workoutRequest = new WorkoutRequest(workout, history);
+
+        Workout workoutCreated = service.createWorkout(userEntity, workoutRequest);
+        WorkoutEntity workoutEntityCreated = workoutRepository.findById(workoutCreated.getId()).orElse(null);
+
+        assertNotNull(workoutEntityCreated);
+        assertNotNull(workoutEntityCreated.getGym());
+        assertEquals(gymEntity.getId(), workoutEntityCreated.getGym().getId());
+    }
+
+    @Test
+    @Transactional
+    void createWorkout_shouldRejectAnotherUsersGym() {
+        UserEntity otherUser = userRepository.findById(2L).orElseThrow(UserNotFoundException::new);
+        GymEntity otherUserGym = gymRepository.save(GymEntity.builder().name("Salle d'un autre").active(true).user(otherUser).build());
+
+        WorkoutEntity workoutEntity = WorkoutEntity.builder()
+            .user(userEntity)
+            .muscleGroup(muscleGroupEntity)
+            .date(LocalDateTime.now())
+            .histories(List.of())
+            .build();
+
+        ExerciseEntity exerciseEntity = exerciseRepository.findById(1L).orElseThrow(ExerciseNotFoundException::new);
+
+        HistoryEntity historyEntity = HistoryEntity.builder()
+            .exercise(exerciseEntity)
+            .weight(50F)
+            .reps((short) 10)
+            .unilateral(true)
+            .workout(workoutEntity)
+            .build();
+
+        Workout workout = workoutMapper.toDto(workoutEntity);
+        workout.setGym(new Gym(otherUserGym.getId(), null, null, null));
+        History history = historyMapper.toDto(historyEntity);
+
+        WorkoutRequest workoutRequest = new WorkoutRequest(workout, history);
+
+        ApiException exception = assertThrows(ApiException.class, () -> service.createWorkout(userEntity, workoutRequest));
+        assertEquals(ErrorCodeEnum.GYM_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
     void shouldFindExistingWorkoutIfAlreadyExist() {
         LocalDate localDate = LocalDate.now();
         LocalDateTime startDay = localDate.atStartOfDay();
@@ -121,6 +203,7 @@ public class WorkoutServiceTest {
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(startDay)
             .histories(List.of())
             .build();
@@ -160,12 +243,13 @@ public class WorkoutServiceTest {
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.now())
             .build();
         workoutRepository.save(workoutEntity);
 
-        String start = LocalDate.now().toString();
-        String end = LocalDate.now().plusMonths(1).toString();
+        LocalDate start = LocalDate.now();
+        LocalDate end = LocalDate.now().plusMonths(1);
         List<Workout> workoutList = service.findByDate(userEntity, start, end);
         assertNotNull(workoutList);
         assertFalse(workoutList.isEmpty());
@@ -175,16 +259,18 @@ public class WorkoutServiceTest {
     @Test
     void shouldNotFindOthersWorkoutUserByDate() {
         UserEntity otherUser = userRepository.findById(2L).orElseThrow(UserNotFoundException::new);
+        GymEntity otherUserGym = gymRepository.save(GymEntity.builder().name("Salle par défaut").active(true).user(otherUser).build());
 
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(otherUser)
             .muscleGroup(muscleGroupEntity)
+            .gym(otherUserGym)
             .date(LocalDateTime.now())
             .build();
         workoutRepository.save(workoutEntity);
 
-        String start = LocalDate.now().toString();
-        String end = LocalDate.now().plusMonths(1).toString();
+        LocalDate start = LocalDate.now();
+        LocalDate end = LocalDate.now().plusMonths(1);
         List<Workout> workoutList = service.findByDate(userEntity, start, end);
         assertEquals(0, workoutList.size());
         assertTrue(workoutList.isEmpty());
@@ -200,6 +286,7 @@ public class WorkoutServiceTest {
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.now())
             .build();
 
@@ -240,6 +327,7 @@ public class WorkoutServiceTest {
         WorkoutEntity workoutEntity = WorkoutEntity.builder()
             .user(userEntity)
             .muscleGroup(muscleGroupEntity)
+            .gym(gymEntity)
             .date(LocalDateTime.now())
             .build();
         workoutRepository.save(workoutEntity);

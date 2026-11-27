@@ -1,76 +1,58 @@
-import { Component, inject, Input, Output } from '@angular/core';
-import { Button } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
-import { FloatLabel } from 'primeng/floatlabel';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
+import { ChangeDetectionStrategy, Component, inject, model, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import emailjs from '@emailjs/browser';
-import { environment } from '../../../environments/environment';
 import { AlertService } from '../../services/alert.service';
-import { Subject } from 'rxjs';
-import { NgClass } from '@angular/common';
 import { PasswordResetTokenService } from "../password-reset-token.service";
+import { getErrorMessage } from "../../shared/utils/http-error";
+import { I18N } from '../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-forgot-password',
-    imports: [Button, Dialog, FloatLabel, InputText, Message, ReactiveFormsModule, NgClass],
+    imports: [ReactiveFormsModule],
     templateUrl: './forgot-password.component.html',
     styleUrl: './forgot-password.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class ForgotPasswordComponent {
 
-    @Input() showDialogForgotPassword = false;
-    @Output() showDialogForgotPasswordChange = new Subject<void>();
+    showDialogForgotPassword = model(false);
 
-    email = new FormControl('', Validators.email);
+    protected readonly email = new FormControl('', Validators.email);
 
-    isLoading = false;
+    protected readonly isLoading = signal(false);
+    protected readonly i18n = I18N.auth.forgotPassword;
 
     private readonly passwordResetTokenService = inject(PasswordResetTokenService);
     private readonly alertService = inject(AlertService);
 
-    forgotPassword() {
-        this.isLoading = true;
+    protected forgotPassword() {
+        this.isLoading.set(true);
 
-        const email = this.email.value;
-        const { appName, logoUrl } = environment;
+        const email = this.email.value ?? '';
 
         this.passwordResetTokenService.forgotPassword(email)
             .subscribe({
-                next: ({ link }) => {
-                    emailjs.send(environment.EMAIL_JS.SERVICE_ID, environment.EMAIL_JS.TEMPLATE_ID, {
-                            linkResetPassword: link,
-                            email,
-                            appName,
-                            logoUrl
-                        },
-                        environment.EMAIL_JS.PUBLIC_KEY
-                    ).then(
-                        () => {
-                            this.closeModal();
-                            this.isLoading = false;
+                next: () => {
+                    this.closeModal();
+                    this.isLoading.set(false);
 
-                            this.alertService.alert$.next({
-                                severity: 'success',
-                                message: 'Un email vous a été envoyé pour réinitialiser votre mot de passe'
-                            });
-                        },
-                        () => {
-                            this.isLoading = false;
+                    this.alertService.show({
+                        severity: 'success',
+                        message: this.i18n.successMessage
+                    });
+                },
+                error: (err) => {
+                    this.isLoading.set(false);
 
-                            this.alertService.alert$.next({
-                                severity: 'error',
-                                message: 'Une erreur s`est produite lors de l`envoi de l`email'
-                            });
-                        }
-                    );
+                    this.alertService.show({
+                        severity: 'error',
+                        message: getErrorMessage(err, this.i18n.errorFallback)
+                    });
                 }
             });
     }
 
-    closeModal() {
-        this.showDialogForgotPasswordChange.next();
+    protected closeModal() {
+        this.showDialogForgotPassword.set(false);
     }
 }

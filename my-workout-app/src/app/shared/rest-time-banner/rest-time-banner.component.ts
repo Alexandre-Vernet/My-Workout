@@ -1,45 +1,32 @@
-import { Component, DestroyRef, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { DEFAULT_VALUE_REST_TIME, RestTimeService } from "../../services/rest-time.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { Message } from "primeng/message";
 import { NavigationEnd, Router } from "@angular/router";
-import { filter } from "rxjs";
+import { filter, map } from "rxjs";
+import { RestTimePipe } from "../pipes/rest-time.pipe";
+import { I18N } from '../i18n/i18n';
 
 @Component({
     selector: 'app-rest-time-banner',
-    imports: [
-        Message
-    ],
+    imports: [RestTimePipe],
     templateUrl: './rest-time-banner.component.html',
     styleUrl: './rest-time-banner.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RestTimeBannerComponent implements OnInit {
+export class RestTimeBannerComponent {
+    private readonly router = inject(Router);
+    protected readonly restTimeService = inject(RestTimeService);
+    protected readonly i18n = I18N.common.restTimeBanner;
 
     protected readonly DEFAULT_VALUE_REST_TIME = DEFAULT_VALUE_REST_TIME;
 
-    showBanner = false;
-    restTime = '';
-
-
-    constructor(
-        private readonly router: Router,
-        private readonly restTimeService: RestTimeService,
-        private readonly destroyRef: DestroyRef,
-    ) {
-    }
-
-    ngOnInit() {
-        this.router.events
-            .pipe(
-                filter(event => event instanceof NavigationEnd),
-                takeUntilDestroyed(this.destroyRef)
-            )
-            .subscribe((event: NavigationEnd) => this.showBanner = !event.url.includes('workout-session'));
-
-        this.restTimeService.restTime$
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(restTime => this.restTime = restTime);
-    }
+    protected readonly showBanner = toSignal(
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationEnd),
+            map((event: NavigationEnd) => !event.url.includes('workout-session'))
+        ),
+        { initialValue: false }
+    );
 
     protected stopTimer() {
         this.restTimeService.stopTimer();

@@ -41,7 +41,7 @@ public class AuthController {
         return authService.refreshToken(refreshToken);
     }
 
-    @PatchMapping("{id}")
+    @PatchMapping
     User update(@AuthenticationPrincipal UserEntity userEntity, @Valid @RequestBody UpdateUser updateUser) {
         return authService.update(userEntity, updateUser);
     }

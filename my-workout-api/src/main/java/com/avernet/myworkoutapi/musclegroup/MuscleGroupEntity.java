@@ -26,7 +26,7 @@ import java.util.List;
 public class MuscleGroupEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "name")

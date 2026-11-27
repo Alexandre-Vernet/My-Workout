@@ -1,21 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 
-@Injectable({
-    providedIn: 'root',
-})
+@Service()
 export class PasswordResetTokenService {
+    private readonly http = inject(HttpClient);
+
 
     passwordResetTokenUrl = environment.passwordResetTokenUrl();
 
-    constructor(
-        private readonly http: HttpClient
-    ) {
-    }
-
     forgotPassword(email: string) {
-        return this.http.get<{ link: string }>(`${ this.passwordResetTokenUrl }/forgot-password`, {
+        return this.http.get<void>(`${ this.passwordResetTokenUrl }/forgot-password`, {
             params: { email }
         });
     }

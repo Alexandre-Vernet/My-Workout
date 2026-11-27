@@ -1,6 +1,6 @@
 import { MuscleGroup } from './MuscleGroup';
 
-export class MuscleGroupExerciseCount {
+export interface MuscleGroupExerciseCount {
     exerciseCount: number;
     muscleGroup: MuscleGroup;
 }

@@ -1,70 +1,64 @@
-import { Component, inject, Output } from '@angular/core';
-import { Button } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
-import { Subject } from 'rxjs';
-import { ConfirmationService } from 'primeng/api';
+import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { AuthService } from '../../../auth/auth.service';
 import { Router } from '@angular/router';
 import { Alert } from '../../../../interfaces/alert';
-import { ConfirmDialog } from 'primeng/confirmdialog';
 import { MenuUrls } from '../../../shared/menu-urls';
+import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
+import { CustomError } from '../../../../interfaces/CustomError';
+import { getErrorMessage } from '../../../shared/utils/http-error';
+import { I18N } from '../../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-account-actions',
-    imports: [Button, Ripple, ConfirmDialog],
+    imports: [ConfirmDialogComponent],
     templateUrl: './account-actions.component.html',
     styleUrl: './account-actions.component.scss',
-    standalone: true,
-    providers: [ConfirmationService]
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class AccountActionsComponent {
 
-    @Output() showAlert = new Subject<Alert>();
+    showAlert = output<Alert>();
+
+    protected readonly i18n = I18N.viewProfile.accountActions;
+    protected readonly confirmDeleteOpen = signal(false);
 
     private readonly authService = inject(AuthService);
     private readonly router = inject(Router);
-    private readonly confirmationService = inject(ConfirmationService);
 
-    signOut() {
+    protected signOut() {
         this.authService.signOut();
         this.router.navigate([MenuUrls.library]);
     }
 
-    openDialogConfirmDeleteAccount() {
-        this.confirmationService.confirm({
-            message: 'Voulez-vous vraiment supprimer votre compte ainsi que toutes vos données ?',
-            header: 'Confirmation',
-            icon: 'pi pi-info-circle',
-            dismissableMask: true,
-            rejectLabel: 'Annuler',
-            rejectButtonProps: {
-                label: 'Cancel',
-                severity: 'secondary',
-                outlined: true
-            },
-            acceptButtonProps: {
-                label: 'Supprimer',
-                severity: 'danger'
-            },
-            accept: () => this.deleteAccount()
-        });
+    protected openDialogConfirmDeleteAccount() {
+        this.confirmDeleteOpen.set(true);
     }
 
-    deleteAccount() {
+    protected onConfirmDelete() {
+        this.confirmDeleteOpen.set(false);
+        this.deleteAccount();
+    }
+
+    protected onCancelDelete() {
+        this.confirmDeleteOpen.set(false);
+    }
+
+    private deleteAccount() {
         this.authService.deleteAccount()
             .subscribe({
                 next: () => {
-                    this.showAlert.next({
-                        message: 'Votre compte a bien été supprimé',
+                    this.showAlert.emit({
+                        message: this.i18n.deleteSuccess,
                         severity: 'success'
                     });
 
                     this.signOut();
                 },
-                error: (err) => {
-                    this.showAlert.next({
+                error: (err: CustomError) => {
+                    this.showAlert.emit({
                         severity: 'error',
-                        message: err?.error?.message ?? 'Erreur lors de la suppression de votre compte'
+                        message: getErrorMessage(err, this.i18n.deleteError)
                     });
                 }
             });

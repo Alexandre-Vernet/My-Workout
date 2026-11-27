@@ -1,0 +1,87 @@
+<header class="app-bar">
+    <div class="app-bar-title">
+        <h1>{{ i18n.title }}</h1>
+        <small>{{ gyms().length }} {{ i18n.gymWord }}{{ gyms() | plural }}</small>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="openAddForm()">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        {{ i18n.addLabel }}
+    </button>
+</header>
+
+@if (loading()) {
+    <div class="gym-list">
+        @for (skeleton of skeletonCards; track $index) {
+            <span class="gym-card skeleton-fill"></span>
+        }
+    </div>
+} @else if (gyms().length === 0) {
+    <div class="gym-empty">
+        <svg viewBox="0 0 24 24"><path d="M6 21V3h8l4 4v14z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>
+        <strong>{{ i18n.emptyTitle }}</strong>
+        <p>{{ i18n.emptyMessage }}</p>
+    </div>
+} @else {
+    <div class="gym-list">
+        @for (gym of gyms(); track gym.id; let i = $index) {
+            <div class="gym-card" [class.removing]="removingGymId() === gym.id" [style.animation-delay.ms]="i * 40">
+                <span class="gym-card-dot"></span>
+                <span class="gym-card-name">{{ gym.name }}</span>
+                <div class="gym-card-actions">
+                    <button type="button" class="icon-btn" [attr.aria-label]="i18n.renameAriaLabel" (click)="openRenameForm(gym)">
+                        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    </button>
+                    <button type="button" class="icon-btn danger" [attr.aria-label]="i18n.deleteAriaLabel" (click)="openDeleteConfirm(gym)">
+                        <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (formOpen()) {
+    <div class="overlay-backdrop" (click)="closeForm()">
+        <div class="overlay-card" (click)="$event.stopPropagation()">
+            <div class="overlay-header">
+                <h2>{{ formTitle() }}</h2>
+                <button type="button" class="overlay-close" [attr.aria-label]="i18n.closeFormAriaLabel" (click)="closeForm()">
+                    <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                </button>
+            </div>
+
+            <form [formGroup]="formGroup" class="gym-form">
+                <div class="field">
+                    <input id="gym-name" formControlName="name" placeholder=" " autocomplete="off"/>
+                    <label for="gym-name">{{ i18n.nameLabel }}</label>
+                </div>
+                @if (formGroup.controls.name.touched && formGroup.controls.name.hasError('required')) {
+                    <p class="field-error">{{ i18n.requiredError }}</p>
+                }
+                @if (formGroup.controls.name.touched && formGroup.controls.name.hasError('maxlength')) {
+                    <p class="field-error">{{ i18n.nameMaxLengthError }}</p>
+                }
+                @if (formGroup.controls.name.hasError('duplicateGym')) {
+                    <p class="field-error">{{ i18n.nameAlreadyExistError }}</p>
+                }
+
+                <div class="dialog-actions">
+                    <button type="button" class="btn btn-secondary" (click)="closeForm()">{{ i18n.cancelLabel }}</button>
+                    <button type="button" class="btn btn-primary" [disabled]="formGroup.invalid" (click)="submitForm()">
+                        {{ submitLabel() }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+<app-confirm-dialog
+    [open]="!!pendingDeletion()"
+    [title]="i18n.deleteConfirmTitle"
+    [message]="deleteConfirmMessage()"
+    [confirmLabel]="i18n.deleteConfirmLabel"
+    [cancelLabel]="i18n.deleteCancelLabel"
+    [danger]="true"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"/>

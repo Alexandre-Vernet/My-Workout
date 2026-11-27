@@ -1,55 +1,233 @@
 @use "../../../../chips";
+@use "../../../../skeleton";
 
 .library {
-    margin: 10px;
+    margin: 12px;
+}
 
-    .search-exercise {
-        width: 100%;
+/* Routed page: center the column above phone/tablet width (the exercise
+   detail overlay stays `position: fixed`, so it's unaffected). */
+@media (min-width: 768px) {
+    :host {
+        display: block;
+        max-width: 920px;
+        margin-inline: auto;
+    }
+}
 
-        input {
-            width: 100%;
-        }
+@media (min-width: 768px) {
+    .skeleton-grid,
+    .exercise-grid {
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    }
+}
+
+/* Exercise detail slides in over the library as an overlay (see app.routes.ts: it's a
+   nested route rendered in the <router-outlet> below) rather than swapping the page. */
+.exercise-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: var(--card-background);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.22, 1, .36, 1);
+    pointer-events: none;
+
+    &.open {
+        transform: translateX(0);
+        pointer-events: auto;
+    }
+}
+
+.library-header {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 16px;
+}
+
+.library-header h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.library-count {
+    color: var(--p-text-muted-color);
+    font-size: .85rem;
+}
+
+.search-exercise {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--chips-background-color);
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-md);
+    padding: 11px 16px;
+    margin-bottom: 14px;
+    transition: border-color .25s;
+
+    &:focus-within {
+        border-color: var(--p-primary-400);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--p-primary-color) 15%, transparent);
     }
 
-    .card {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        width: 100%;
-        border: 1px solid rgba(1, 1, 1, .1);
-        border-radius: 10px;
-        gap: 5px;
-
-        .image {
-            width: 25%;
-        }
-
-        .exercise-info {
-            display: flex;
-            flex-direction: column;
-
-            .exercise-name {
-                font-weight: bold;
-            }
-
-            .muscle-group {
-
-                ul {
-                    list-style: none;
-                    display: flex;
-                    flex-wrap: wrap;
-
-                    li {
-                        color: grey;
-
-                        &:not(:last-child)::after {
-                            content: "•";
-                            margin: 0 6px;
-                        }
-                    }
-                }
-            }
-        }
+    svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        color: var(--p-text-muted-color);
+        flex-shrink: 0;
     }
 
+    input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        background: transparent;
+        outline: none;
+        color: inherit;
+        font: inherit;
+    }
+}
+
+.chips-container {
+    margin-bottom: 16px;
+}
+
+.skeleton-grid,
+.exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.skeleton-card {
+    height: 150px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+/* Browsing view: one horizontally-scrolling carousel per muscle group. */
+.lib-browse {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.lib-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.lib-section-head h2 {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: .95rem;
+    font-weight: 700;
+}
+
+.lib-section-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.lib-section-count {
+    color: var(--p-text-muted-color);
+    font-size: .8rem;
+}
+
+.lib-carousel {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    .exercise-card {
+        flex: 0 0 148px;
+        height: 190px;
+    }
+}
+
+.exercise-grid .exercise-card {
+    height: 170px;
+}
+
+/* Editorial card shared by the carousels and the filtered/search grid: the exercise
+   image floats over a muscle-group-colored tile so the tile still reads well even
+   when the demo gif itself is mostly white/transparent. */
+.exercise-card {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    color: inherit;
+    text-decoration: none;
+    transition: transform .2s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s ease;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-elevated);
+    }
+
+    &:active {
+        transform: scale(.96);
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 45%, rgba(10, 10, 15, .82) 100%);
+    }
+
+    img {
+        position: absolute;
+        top: 8%;
+        left: 8%;
+        width: 84%;
+        height: 84%;
+        object-fit: contain;
+    }
+}
+
+.exercise-card-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: .7rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: rgba(255, 255, 255, .22);
+    backdrop-filter: blur(6px);
+}
+
+.exercise-card-name {
+    position: relative;
+    z-index: 2;
+    padding: 10px 12px;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: .85rem;
+    line-height: 1.3;
 }

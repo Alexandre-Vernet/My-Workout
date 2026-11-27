@@ -5,6 +5,8 @@ import com.avernet.myworkoutapi.exercisemuscle.ExerciseMuscleAddedToWorkout;
 import com.avernet.myworkoutapi.user.UserEntity;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,8 +45,11 @@ public class ExerciseController {
         return exerciseService.findExercisesMuscle(exerciseId);
     }
 
+    // Same bound as Exercise.name: the value is interpolated into the Gemini prompt, so it is
+    // kept as short as an exercise name actually is.
     @GetMapping("description")
-    ExerciseDescriptionResponse generateExerciseDescription(@RequestParam("exerciseName") String exerciseName) {
+    ExerciseDescriptionResponse generateExerciseDescription(@RequestParam("exerciseName") @NotBlank(message = "Champ requis")
+                                                            @Size(max = Exercise.NAME_MAX_LENGTH, message = "40 caractères max.") String exerciseName) {
         return exerciseService.generateExerciseDescription(exerciseName);
     }
 
@@ -64,7 +69,7 @@ public class ExerciseController {
     }
 
     @GetMapping("user/added/{muscleGroupId}")
-    List<Exercise> findAddedExercisesByMuscleGroupId(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Integer muscleGroupId) {
+    List<Exercise> findAddedExercisesByMuscleGroupId(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long muscleGroupId) {
         return exerciseService.findAddedExercisesByMuscleGroupId(userEntity, muscleGroupId);
     }
 }

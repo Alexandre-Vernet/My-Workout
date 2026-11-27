@@ -1,6 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ConfirmationService } from 'primeng/api';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ChangeThemeComponent } from './change-theme/change-theme.component';
 import { ManageAccountComponent } from './manage-account/manage-account.component';
 import { Alert } from '../../../interfaces/alert';
@@ -8,29 +7,26 @@ import { AccountActionsComponent } from './account-actions/account-actions.compo
 import { AlertService } from '../../services/alert.service';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
-import { User } from '../../../interfaces/User';
+import { I18N } from '../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-view-profile',
-    imports: [ReactiveFormsModule, FormsModule, ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink],
+    imports: [ChangeThemeComponent, ManageAccountComponent, AccountActionsComponent, RouterLink],
     templateUrl: './view-profile.component.html',
     styleUrl: './view-profile.component.scss',
-    standalone: true,
-    providers: [ConfirmationService]
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
-export class ViewProfileComponent implements OnInit {
-
-    user: User;
+export class ViewProfileComponent {
 
     private readonly alertService = inject(AlertService);
     private readonly authService = inject(AuthService);
 
-    ngOnInit() {
-        this.authService.getCurrentUser()
-            .subscribe((user) => this.user = user);
-    }
+    protected readonly i18n = I18N.viewProfile.viewProfile;
+    protected readonly user = toSignal(this.authService.getCurrentUser());
+    protected readonly initial = computed(() => this.user()?.email.charAt(0).toUpperCase() ?? '');
 
-    displayAlert(alert: Alert) {
-        this.alertService.alert$.next(alert);
+    protected displayAlert(alert: Alert) {
+        this.alertService.show(alert);
     }
 }

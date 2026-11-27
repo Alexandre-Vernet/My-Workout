@@ -1,30 +1,59 @@
-<div class="view-profile">
-    <div class="flex-1 flex justify-center align-items-center flex-column gap-3">
-        <i class="pi pi-user mt-2 mb-5" style="font-size: 6rem; color: var(--p-primary-900)"></i>
-    </div>
-
-    @if (user?.admin) {
-        <div class="card m-2 p-3 border-round-2xl">
-            <a routerLink="/admin/add-exercise" class="text-primary">
-                <div class="flex-1 flex justify-center align-items-center gap-3">
-                    <i class="pi pi-lock" style="font-size: 1.2rem"></i>
-                    <span class="text-primary text-xl stats">Admin</span>
-                </div>
-            </a>
+<div class="profile">
+    @if (user()) {
+        <header class="profile-hero">
+            <span class="profile-avatar">{{ initial() }}</span>
+            <div class="profile-identity">
+                <strong>{{ user()!.email }}</strong>
+                @if (user()!.admin) {
+                    <span class="profile-badge">{{ i18n.adminBadge }}</span>
+                }
+            </div>
+        </header>
+    } @else {
+        <div class="profile-hero skeleton">
+            <span class="profile-avatar skeleton-fill"></span>
+            <div class="profile-identity">
+                <span class="skeleton-fill skeleton-line"></span>
+            </div>
         </div>
     }
 
-    <div class="card m-2 p-3 border-round-2xl">
-        <app-manage-account (showAlert)="displayAlert($event)"></app-manage-account>
-    </div>
+    @if (user()?.admin) {
+        <a routerLink="/admin/add-exercise" class="profile-card profile-admin-link">
+            <span class="profile-section-icon">
+                <svg viewBox="0 0 24 24">
+                    <rect x="5" y="11" width="14" height="10" rx="2"/>
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                </svg>
+            </span>
+            <span class="profile-admin-label">{{ i18n.adminLink }}</span>
+            <svg class="profile-chevron" viewBox="0 0 24 24">
+                <path d="M9 18l6-6-6-6"/>
+            </svg>
+        </a>
+    }
 
+    <a routerLink="/user/gym" class="profile-card profile-admin-link">
+            <span class="profile-section-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M4 9v6M20 9v6M7 7v10M17 7v10M7 12h10"/>
+                </svg>
+            </span>
+        <span class="profile-admin-label">{{ i18n.gymLink }}</span>
+        <svg class="profile-chevron" viewBox="0 0 24 24">
+            <path d="M9 18l6-6-6-6"/>
+        </svg>
+    </a>
 
-    <div class="card m-2 p-3 border-round-2xl">
-        <app-change-theme></app-change-theme>
-    </div>
+    <section class="profile-card">
+        <app-manage-account (showAlert)="displayAlert($event)"/>
+    </section>
 
+    <section class="profile-card">
+        <app-change-theme/>
+    </section>
 
-    <div class="card m-2 p-3 border-round-2xl">
-        <app-account-actions (showAlert)="displayAlert($event)"></app-account-actions>
-    </div>
+    <section class="profile-card">
+        <app-account-actions (showAlert)="displayAlert($event)"/>
+    </section>
 </div>

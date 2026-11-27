@@ -1,7 +1,97 @@
-.padding-bottom-80 {
+@use "../../../../skeleton";
+@use "../../../../sections";
+@use "../../../../chips";
+
+.graph {
+    margin: 12px;
+    padding-bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-offset) + 16px);
+}
+
+/* Routed page: center the column above phone/tablet width, and let the
+   chart use the extra room. */
+@media (min-width: 768px) {
+    :host {
+        display: block;
+        max-width: 760px;
+        margin-inline: auto;
+    }
+
+    .chart-card {
+        height: 320px;
+    }
+}
+
+.graph-back {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--chips-background-color);
+    background: var(--card-background);
+    color: inherit;
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: stretch;
-    flex-wrap: wrap;
-    flex: 1 1 0;
+    margin-bottom: 14px;
+    transition: transform .15s cubic-bezier(.34, 1.56, .64, 1);
+
+    &:active {
+        transform: scale(.88);
+    }
+
+    svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+}
+
+.graph h1 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+}
+
+.chips-container {
+    margin-bottom: 14px;
+}
+
+.chart-card {
+    position: relative;
+    height: 240px;
+    background: var(--card-background);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--card-shadow);
+    padding: 16px 12px;
+    margin-bottom: 16px;
+
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+}
+
+.stats-summary {
+    margin-bottom: 16px;
+}
+
+.skeleton-back {
+    display: block;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    margin-bottom: 14px;
+}
+
+.skeleton-title {
+    height: 22px;
+    margin-bottom: 16px;
+}
+
+.skeleton-tile {
+    height: 112px;
+    border-radius: var(--radius-lg);
 }

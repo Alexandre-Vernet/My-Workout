@@ -1,22 +1,25 @@
 package com.avernet.myworkoutapi.auth;
 
+import com.avernet.myworkoutapi.user.UserEntity;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 
 @Service
 public class JwtService {
+
+    static final String TOKEN_TYPE_CLAIM = "type";
+    static final String TOKEN_VERSION_CLAIM = "ver";
+
+    enum TokenType { ACCESS, REFRESH }
+
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
@@ -26,62 +29,62 @@ public class JwtService {
     @Value("${security.jwt.refresh.expiration-time}")
     private long jwtRefreshExpiration;
 
+    /**
+     * @throws JwtException if the token is malformed, expired or not signed with our key
+     */
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return extractAllClaims(token).getSubject();
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+    public String generateAccessToken(UserEntity user) {
+        return buildToken(user, TokenType.ACCESS, jwtExpiration);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return buildToken(new HashMap<>(), userDetails, jwtExpiration);
+    public String generateRefreshToken(UserEntity user) {
+        return buildToken(user, TokenType.REFRESH, jwtRefreshExpiration);
     }
 
-    public String generateRefreshToken(UserDetails userDetails) {
-        return buildToken(new HashMap<>(), userDetails, jwtRefreshExpiration);
+    public boolean isAccessTokenValid(String token, UserEntity user) {
+        return isTokenValid(token, user, TokenType.ACCESS);
     }
 
-    private String buildToken(
-        Map<String, Object> extraClaims,
-        UserDetails userDetails,
-        long expiration
-    ) {
+    public boolean isRefreshTokenValid(String token, UserEntity user) {
+        return isTokenValid(token, user, TokenType.REFRESH);
+    }
+
+    private String buildToken(UserEntity user, TokenType tokenType, long expiration) {
+        long now = System.currentTimeMillis();
         return Jwts
             .builder()
-            .claims(extraClaims)
-            .subject(userDetails.getUsername())
-            .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + expiration))
-            .signWith((SecretKey) getSignInKey(), Jwts.SIG.HS256)
+            .subject(user.getUsername())
+            .claim(TOKEN_TYPE_CLAIM, tokenType.name())
+            .claim(TOKEN_VERSION_CLAIM, user.getTokenVersion())
+            .issuedAt(new Date(now))
+            .expiration(new Date(now + expiration))
+            .signWith(getSignInKey(), Jwts.SIG.HS256)
             .compact();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && isTokenExpired(token);
-    }
-
-    private boolean isTokenExpired(String token) {
-        return !extractExpiration(token).before(new Date());
-    }
-
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    // Expiration and signature are already enforced by the parser (it throws), so only the
+    // claims tying the token to this user's current state are left to check here.
+    private boolean isTokenValid(String token, UserEntity user, TokenType expectedType) {
+        Claims claims = extractAllClaims(token);
+        return user.getUsername().equals(claims.getSubject())
+            && expectedType.name().equals(claims.get(TOKEN_TYPE_CLAIM, String.class))
+            && claims.get(TOKEN_VERSION_CLAIM) instanceof Number version
+            && version.intValue() == user.getTokenVersion();
     }
 
     private Claims extractAllClaims(String token) {
         return Jwts
             .parser()
-            .verifyWith((SecretKey) getSignInKey())
+            .verifyWith(getSignInKey())
             .build()
             .parseSignedClaims(token)
             .getPayload();
     }
 
-    private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+    private SecretKey getSignInKey() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 }

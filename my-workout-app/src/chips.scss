@@ -10,18 +10,38 @@
         list-style: none;
         display: flex;
         flex-direction: row;
-        gap: 7px;
+        gap: 8px;
+        padding: 2px;
 
         li {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             background: var(--chips-background-color);
-            padding: .5em .7em;
-            border-radius: 24px;
+            padding: .55em 1.1em;
+            border-radius: 999px;
             white-space: nowrap;
+            font-size: .85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .25s ease, color .25s ease, transform .15s ease, box-shadow .25s ease;
+
+            &:active {
+                transform: scale(.94);
+            }
 
             &.active {
                 background: var(--p-primary-color);
-                color: black;
+                color: var(--p-primary-contrast-color, #000000);
+                box-shadow: var(--shadow-elevated);
             }
+        }
+
+        .chip-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
     }
 }

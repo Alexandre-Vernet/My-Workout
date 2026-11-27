@@ -1,6 +1,11 @@
-./node_modules
+**/node_modules
+**/target
+my-workout-app/www
+.angular
+**/.angular
 dist
 .env
 .env.example
 .gitignore
 .github
+my-workout-api/src/main/resources/application.properties

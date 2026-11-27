@@ -1,0 +1,28 @@
+.history-exercise-name {
+    display: inline-block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--p-primary-color);
+}
+
+.history-sets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.history-set {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--chips-background-color);
+    font-size: .8rem;
+    color: var(--p-text-muted-color);
+}
+
+.history-set-unilateral {
+    font-style: italic;
+}

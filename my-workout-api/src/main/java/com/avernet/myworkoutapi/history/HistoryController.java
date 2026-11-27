@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,13 +24,15 @@ public class HistoryController {
     HistoryService historyService;
 
     @GetMapping("last/{exerciseId}")
-    History findLastHistoryWeightByExerciseId(@AuthenticationPrincipal UserEntity userEntity,  @PathVariable Long exerciseId) {
-        return historyService.findLastHistoryWeightByExerciseId(userEntity, exerciseId);
+    History findLastHistoryWeightByExerciseId(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long exerciseId,
+                                                @RequestParam(required = false) Long gymId) {
+        return historyService.findLastHistoryWeightByExerciseId(userEntity, exerciseId, gymId);
     }
 
     @GetMapping("today/{muscleGroupId}/{exerciseId}")
-    List<History> findTodayHistories(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long muscleGroupId, @PathVariable Long exerciseId) {
-        return historyService.findTodayHistories(userEntity, muscleGroupId, exerciseId);
+    List<History> findTodayHistories(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long muscleGroupId, @PathVariable Long exerciseId,
+                                       @RequestParam(required = false) Long gymId) {
+        return historyService.findTodayHistories(userEntity, muscleGroupId, exerciseId, gymId);
     }
 
     @GetMapping("stats")
@@ -38,17 +41,18 @@ public class HistoryController {
     }
 
     @GetMapping("exercise-graph/{exerciseId}")
-    ExerciseGraphs getExerciseGraphs(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long exerciseId) {
-        return historyService.getExerciseGraphs(userEntity, exerciseId);
+    ExerciseGraphs getExerciseGraphs(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long exerciseId,
+                                      @RequestParam(required = false) Long gymId) {
+        return historyService.getExerciseGraphs(userEntity, exerciseId, gymId);
     }
 
     @PatchMapping("{historyId}")
-    History update(@PathVariable Long historyId, @RequestBody History history) {
-        return historyService.update(historyId, history);
+    History update(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long historyId, @RequestBody History history) {
+        return historyService.update(userEntity, historyId, history);
     }
 
     @DeleteMapping("{historyId}")
-    void delete(@PathVariable Long historyId) {
-        historyService.delete(historyId);
+    void delete(@AuthenticationPrincipal UserEntity userEntity, @PathVariable Long historyId) {
+        historyService.delete(userEntity, historyId);
     }
 }

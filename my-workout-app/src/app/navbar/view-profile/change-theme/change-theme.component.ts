@@ -1,41 +1,48 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ToggleSwitch } from 'primeng/toggleswitch';
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { ThemeService } from '../../../shared/theme/theme.service';
-import { presets } from '../../../shared/theme/presets';
-import { FormsModule } from '@angular/forms';
+import { presets, PresetName } from '../../../shared/theme/presets';
+import { ToggleSwitchComponent } from '../../../shared/toggle-switch/toggle-switch.component';
+import { I18N } from '../../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-change-theme',
-    imports: [ToggleSwitch, FormsModule],
+    imports: [ToggleSwitchComponent],
     templateUrl: './change-theme.component.html',
     styleUrl: './change-theme.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class ChangeThemeComponent implements OnInit {
+export class ChangeThemeComponent {
 
-    presets = presets;
-    presetsArray = Object.entries(this.presets).map(([key, value]) => ({
+    protected readonly i18n = I18N.viewProfile.changeTheme;
+
+    protected readonly presets = presets;
+    protected readonly presetsArray = Object.entries(this.presets).map(([key, value]) => ({
         key,
         value
     }));
 
-    selectedTheme: string;
-    isCheckedDarkMode: boolean;
+    protected selectedTheme: string | null = null;
+    protected isCheckedDarkMode = false;
 
     private readonly themeService = inject(ThemeService);
 
-    ngOnInit() {
-        this.selectedTheme = localStorage.getItem('theme');
-        this.isCheckedDarkMode = this.themeService.isDarkMode();
+    constructor() {
+        effect(() => {
+            this.selectedTheme = localStorage.getItem('theme');
+            this.isCheckedDarkMode = this.themeService.isDarkMode();
+        });
     }
 
 
-    updatePreset(presetName: string) {
-        const preset = this.presets[presetName].preset;
+    protected updatePreset(presetName: string) {
+        const preset = this.presets[presetName as PresetName].preset;
         this.themeService.updateTheme(preset, presetName);
+        this.selectedTheme = presetName;
     }
 
-    toggleDarkMode() {
-        this.themeService.toggleDarkMode(this.isCheckedDarkMode);
+    protected toggleDarkMode(isCheckedDarkMode: boolean) {
+        this.isCheckedDarkMode = isCheckedDarkMode;
+        this.themeService.toggleDarkMode(isCheckedDarkMode);
     }
 }

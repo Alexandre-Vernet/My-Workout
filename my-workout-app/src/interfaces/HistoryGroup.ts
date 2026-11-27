@@ -1,7 +1,7 @@
 import {Exercise} from './Exercise';
 import { History } from './History';
 
-export class HistoryGroup {
+export interface HistoryGroup {
     exercise?: Exercise;
     histories: History[];
 }

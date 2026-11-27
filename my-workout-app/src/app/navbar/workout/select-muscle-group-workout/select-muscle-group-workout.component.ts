@@ -1,15 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { MuscleGroupService } from '../../../services/muscle-group.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MenuUrls } from '../../../shared/menu-urls';
-import { Tag } from 'primeng/tag';
-import { Skeleton } from 'primeng/skeleton';
 import {
     DialogSelectCardioExerciseComponent
 } from '../dialog-select-cardio-exercise/dialog-select-cardio-exercise.component';
 import { Alert } from '../../../../interfaces/alert';
-import { ConfirmationService } from 'primeng/api';
-import { ConfirmDialog } from 'primeng/confirmdialog';
 import { AlertService } from '../../../services/alert.service';
 import { MuscleGroupExerciseCount } from '../../../../interfaces/MuscleGroupExerciseCount';
 import { FirstLetterUppercasePipe } from '../../../shared/pipes/first-letter-uppercase.pipe';
@@ -18,88 +14,134 @@ import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { ExerciseService } from "../../../services/exercise.service";
 import { Exercise } from "../../../../interfaces/Exercise";
 import { forkJoin } from "rxjs";
+import { NO_EXERCISES_DIALOG } from "../../../shared/utils/confirm-no-exercises-dialog";
+import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
+import { getMuscleGroupColor } from '../../../shared/utils/muscle-group-color';
+import { I18N } from '../../../shared/i18n/i18n';
+import { GymService } from '../../../services/gym.service';
+import { Gym } from '../../../../interfaces/gym';
 
 @Component({
-    selector: 'select-muscle-group-workout',
-    imports: [Tag, Skeleton, DialogSelectCardioExerciseComponent, ConfirmDialog, FirstLetterUppercasePipe],
+    selector: 'app-select-muscle-group-workout',
+    imports: [DialogSelectCardioExerciseComponent, FirstLetterUppercasePipe, ConfirmDialogComponent, RouterLink],
     templateUrl: './select-muscle-group-workout.component.html',
     styleUrl: './select-muscle-group-workout.component.scss',
-    standalone: true,
-    providers: [ConfirmationService]
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
-export class SelectMuscleGroupWorkoutComponent implements OnInit {
+export class SelectMuscleGroupWorkoutComponent {
 
-    muscleGroupExerciseCount: MuscleGroupExerciseCount[] = [];
-    cardioExercises: Exercise[];
+    protected readonly i18n = I18N.workout.selectMuscleGroup;
+    protected readonly gymPickerI18n = I18N.workout.gymPicker;
 
-    isOpenModalExerciseCardio = false;
+    protected readonly muscleGroupExerciseCount = signal<MuscleGroupExerciseCount[] | null>(null);
+    protected readonly cardioExercises = signal<Exercise[]>([]);
+    protected readonly gyms = signal<Gym[]>([]);
+    protected readonly selectedGymId = signal<number | undefined>(undefined);
+    protected readonly gymPickerOpen = signal(false);
+
+    protected readonly isOpenModalExerciseCardio = signal(false);
+
+    protected readonly NO_EXERCISES_DIALOG = NO_EXERCISES_DIALOG;
+    protected readonly confirmNoExercisesOpen = signal(false);
+    protected readonly getMuscleGroupColor = getMuscleGroupColor;
+
+    private pendingMuscleGroup: MuscleGroup | null = null;
 
     private readonly muscleGroupService = inject(MuscleGroupService);
     private readonly exerciseService = inject(ExerciseService);
+    private readonly gymService = inject(GymService);
     private readonly alertService = inject(AlertService);
-    private readonly confirmationService = inject(ConfirmationService);
     private readonly router = inject(Router);
 
-    ngOnInit() {
-        forkJoin([
-            this.muscleGroupService.findAllRecommendedMuscleGroup(),
-            this.exerciseService.findCardioExercises()
-        ])
-            .subscribe(([muscleGroupExerciseCount, cardioExercises]) => {
-                this.muscleGroupExerciseCount = muscleGroupExerciseCount;
-                this.cardioExercises = cardioExercises;
-            });
+    constructor() {
+        // Deferred to the first change detection flush (like the lifecycle hook it
+        // replaces) rather than fired here, so tests that never call
+        // fixture.detectChanges() don't leave an unflushed HTTP request behind.
+        effect(() => {
+            forkJoin([
+                this.muscleGroupService.findAllRecommendedMuscleGroup(),
+                this.exerciseService.findCardioExercises(),
+                this.gymService.findAll()
+            ])
+                .subscribe(([muscleGroupExerciseCount, cardioExercises, gyms]) => {
+                    this.muscleGroupExerciseCount.set(muscleGroupExerciseCount);
+                    this.cardioExercises.set(cardioExercises);
+                    this.gyms.set(gyms);
+                });
+        });
     }
 
-    openModalCardioExerciseChange() {
-        this.isOpenModalExerciseCardio = false;
+    protected openModalCardioExerciseChange() {
+        this.isOpenModalExerciseCardio.set(false);
         this.muscleGroupService.findAllRecommendedMuscleGroup()
-            .subscribe(muscleGroupExerciseCount => this.muscleGroupExerciseCount = muscleGroupExerciseCount);
+            .subscribe(muscleGroupExerciseCount => this.muscleGroupExerciseCount.set(muscleGroupExerciseCount));
     }
 
     protected clickMuscleGroup(muscleGroup: MuscleGroup) {
-        if (muscleGroup.id === MuscleGroupEnum.CARDIO) {
-            this.openModalExerciseCardio(muscleGroup);
-        } else {
-            this.router.navigate(['/', MenuUrls.workout, 'workout-session', muscleGroup.id]);
+        this.pendingMuscleGroup = muscleGroup;
+
+        // Zero gyms: nothing to ask, the workout is simply created without one.
+        // Exactly one: picking it would be pure friction, assume it silently.
+        // Several: ask, since guessing wrong means training logged under the wrong gym.
+        if (this.gyms().length > 1) {
+            this.gymPickerOpen.set(true);
+            return;
+        }
+
+        this.proceedToWorkout(muscleGroup, this.gyms()[0]?.id);
+    }
+
+    protected selectGym(gym: Gym) {
+        this.gymPickerOpen.set(false);
+        if (this.pendingMuscleGroup) {
+            this.proceedToWorkout(this.pendingMuscleGroup, gym.id);
         }
     }
 
+    protected cancelGymPicker() {
+        this.gymPickerOpen.set(false);
+        this.pendingMuscleGroup = null;
+    }
+
+    private proceedToWorkout(muscleGroup: MuscleGroup, gymId?: number) {
+        this.selectedGymId.set(gymId);
+
+        if (muscleGroup.id === MuscleGroupEnum.CARDIO) {
+            this.openModalExerciseCardio(muscleGroup);
+        } else {
+            this.router.navigate(['/', MenuUrls.workout, 'workout-session', muscleGroup.id], {
+                queryParams: gymId !== undefined ? { gymId } : {}
+            });
+        }
+    }
 
     protected showAlert(alert: Alert) {
         window.scrollTo(0, 0);
-        this.alertService.alert$.next(alert);
+        this.alertService.show(alert);
+    }
+
+    protected confirmAddExercises() {
+        this.confirmNoExercisesOpen.set(false);
+        if (this.pendingMuscleGroup) {
+            this.router.navigate(['/', 'library'], { queryParams: { muscleGroup: this.pendingMuscleGroup.id } });
+        }
+    }
+
+    protected cancelAddExercises() {
+        this.confirmNoExercisesOpen.set(false);
+        this.router.navigate(['/', 'workout']);
     }
 
     private openModalExerciseCardio(muscleGroup: MuscleGroup) {
         // If user has no exercise cardio, show dialog to add these exercises
-        const cardioExercise = this.muscleGroupExerciseCount.some(m => m.muscleGroup.id === MuscleGroupEnum.CARDIO);
+        const cardioExercise = this.muscleGroupExerciseCount()?.some(m => m.muscleGroup.id === MuscleGroupEnum.CARDIO);
         if (!cardioExercise) {
-            this.showDialogNoExercisesAdded(muscleGroup);
+            this.pendingMuscleGroup = muscleGroup;
+            this.confirmNoExercisesOpen.set(true);
             return;
         }
 
-        this.isOpenModalExerciseCardio = true;
-    }
-
-    private showDialogNoExercisesAdded(muscleGroup: MuscleGroup) {
-        this.confirmationService.confirm({
-            header: 'Attention',
-            message: `Vous n'avez ajouté aucun exercice à votre bibliothèque.<br/>Commencez par en ajouter pour pouvoir lancer un entraînement.`,
-            closable: true,
-            closeOnEscape: true,
-            dismissableMask: true,
-            icon: 'pi pi-exclamation-triangle',
-            acceptButtonProps: {
-                label: 'Ajouter'
-            },
-            rejectButtonProps: {
-                label: 'Annuler',
-                severity: 'secondary',
-                outlined: true
-            },
-            accept: () => this.router.navigate(['/', 'library', 'list-exercises-muscle-group', muscleGroup.id]),
-            reject: () => this.router.navigate(['/', 'workout'])
-        });
+        this.isOpenModalExerciseCardio.set(true);
     }
 }

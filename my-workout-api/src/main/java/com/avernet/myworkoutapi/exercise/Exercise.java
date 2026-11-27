@@ -19,12 +19,18 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class Exercise {
+    public static final int NAME_MAX_LENGTH = 40;
+    // Matches the exercises.description column, so an oversized payload is rejected as a
+    // validation error instead of failing later on the database constraint.
+    public static final int DESCRIPTION_MAX_LENGTH = 2000;
+
     Long id;
 
     @NotBlank
-    @Size(max = 40)
+    @Size(max = NAME_MAX_LENGTH)
     String name;
 
+    @Size(max = DESCRIPTION_MAX_LENGTH, message = "2000 caractères max.")
     String description;
 
     List<Muscle> muscles;

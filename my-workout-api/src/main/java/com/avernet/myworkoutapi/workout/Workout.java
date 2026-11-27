@@ -1,5 +1,6 @@
 package com.avernet.myworkoutapi.workout;
 
+import com.avernet.myworkoutapi.gym.Gym;
 import com.avernet.myworkoutapi.history.History;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroup;
 import com.avernet.myworkoutapi.user.User;
@@ -23,5 +24,6 @@ public class Workout {
     LocalDateTime date;
     User user;
     MuscleGroup muscleGroup;
+    Gym gym;
     List<History> histories = new ArrayList<>();
 }

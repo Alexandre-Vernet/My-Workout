@@ -1,66 +1,67 @@
-import { Component, inject, Input, Output } from '@angular/core';
-import { Dialog } from 'primeng/dialog';
-import { Subject } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, model, output, signal } from '@angular/core';
 import { Exercise } from '../../../../interfaces/Exercise';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { Workout } from '../../../../interfaces/Workout';
 import { WorkoutService } from '../../../services/workout.service';
 import { History } from '../../../../interfaces/History';
 import { Alert } from '../../../../interfaces/alert';
-import { ConfirmationService } from 'primeng/api';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { InputNumber } from 'primeng/inputnumber';
-import { Button } from 'primeng/button';
-import { FormsModule } from '@angular/forms';
-import { FloatLabel } from 'primeng/floatlabel';
 import { MuscleGroupEnum } from '../../../../interfaces/MuscleGroupEnum';
+import { CustomError } from '../../../../interfaces/CustomError';
+import { getErrorMessage } from '../../../shared/utils/http-error';
+import { NumberStepperComponent } from '../../../shared/number-stepper/number-stepper.component';
+import { I18N } from '../../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-dialog-select-cardio-exercise',
-    imports: [Dialog, ConfirmDialog, InputNumber, Button, FormsModule, FloatLabel],
+    imports: [NumberStepperComponent],
     templateUrl: './dialog-select-cardio-exercise.component.html',
     styleUrl: './dialog-select-cardio-exercise.component.scss',
-    standalone: true,
-    providers: [ConfirmationService]
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class DialogSelectCardioExerciseComponent {
 
-    @Input() openModal: boolean;
-    @Output() openModalChange = new Subject<void>();
-    @Input() workoutDate: Date;
-    @Input() cardioExercises: Exercise[] = [];
-    @Output() createdWorkout = new Subject<Workout>();
-    @Output() showAlert = new Subject<Alert>();
+    protected readonly i18n = I18N.workout.dialogSelectCardioExercise;
 
-    selectedExercise: Exercise;
-    inputDuration: number;
+    openModal = model(false);
+    workoutDate = input<Date>();
+    cardioExercises = input<Exercise[]>([]);
+    gymId = input<number>();
+    createdWorkout = output<Workout>();
+    showAlert = output<Alert>();
+
+    protected readonly selectedExercise = signal<Exercise | null>(null);
+    protected inputDuration: number | null = null;
 
     private readonly workoutService = inject(WorkoutService);
+    private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
 
-    onHideModal() {
+    protected onHideModal() {
         this.resetDuration();
-        this.openModalChange.next();
+        this.openModal.set(false);
     }
 
-    showInputDuration(exercise: Exercise) {
-        this.selectedExercise = exercise;
+    protected showInputDuration(exercise: Exercise) {
+        this.selectedExercise.set(exercise);
     }
 
-    createCardioWorkout() {
+    protected createCardioWorkout() {
         const muscleGroup: MuscleGroup = {
             id: MuscleGroupEnum.CARDIO
         };
 
+        const gymId = this.gymId();
         const workout: Workout = {
             muscleGroup,
-            date: this.workoutDate ?? new Date(),
+            date: this.workoutDate() ?? new Date(),
+            gym: gymId !== undefined ? { id: gymId } : undefined
         };
 
         const history: History = {
             duration: Number(this.inputDuration),
             exercise: {
-                id: this.selectedExercise.id
+                id: this.selectedExercise()?.id
             }
         };
 
@@ -68,32 +69,34 @@ export class DialogSelectCardioExerciseComponent {
             .subscribe({
                 next: (workout) => {
                     const h: History = {
-                        exercise: this.selectedExercise
+                        exercise: this.selectedExercise() ?? undefined
                     };
+                    workout.histories = workout.histories ?? [];
                     workout.histories.push(h);
-                    this.createdWorkout.next(workout);
+                    this.createdWorkout.emit(workout);
 
-                    this.showAlert.next({
+                    this.showAlert.emit({
                         severity: 'success',
-                        message: `L'entraînement ${ this.selectedExercise.name } a été créé avec succès`
+                        message: this.i18n.createdSuccessMessage(this.selectedExercise()?.name)
                     });
                 },
-                error: (err) => {
-                    this.showAlert.next({
+                error: (err: CustomError) => {
+                    this.showAlert.emit({
                         severity: 'error',
-                        message: err?.error?.message ?? 'Impossible de créer l\'entraînement'
+                        message: getErrorMessage(err, this.i18n.createErrorMessage)
                     });
                 },
                 complete: () => {
                     this.resetDuration();
-                    this.openModalChange.next();
+                    this.openModal.set(false);
                 }
             });
 
     }
 
     private resetDuration() {
-        this.selectedExercise = null;
+        this.selectedExercise.set(null);
         this.inputDuration = null;
+        this.changeDetectorRef.markForCheck();
     }
 }

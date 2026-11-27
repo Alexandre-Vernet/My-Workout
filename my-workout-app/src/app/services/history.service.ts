@@ -1,28 +1,27 @@
-import { Injectable } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { History } from '../../interfaces/History';
 import { HttpClient } from '@angular/common/http';
 import { ExerciseGraphs } from '../../interfaces/ExerciseGraphs';
 import { UserExercisesCountTotalWorkout } from '../../interfaces/UserExercisesCountTotalWorkout';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Service()
 export class HistoryService {
+    private readonly http = inject(HttpClient);
+
 
     historyUrl = environment.historyUrl();
 
-    constructor(
-        private readonly http: HttpClient
-    ) {
+    findLastHistoryWeightByExerciseId(exerciseId: number, gymId?: number) {
+        return this.http.get<History>(`${ this.historyUrl }/last/${ exerciseId }`, {
+            params: gymId !== undefined ? { gymId } : {}
+        });
     }
 
-    findLastHistoryWeightByExerciseId(exerciseId: number) {
-        return this.http.get<History>(`${ this.historyUrl }/last/${ exerciseId }`);
-    }
-
-    findTodayExercicesHistory(muscleGroupId: number, exerciseId: number) {
-        return this.http.get<History[]>(`${ this.historyUrl }/today/${ muscleGroupId }/${ exerciseId }`);
+    findTodayExercicesHistory(muscleGroupId: number, exerciseId: number, gymId?: number) {
+        return this.http.get<History[]>(`${ this.historyUrl }/today/${ muscleGroupId }/${ exerciseId }`, {
+            params: gymId !== undefined ? { gymId } : {}
+        });
     }
 
 
@@ -30,8 +29,10 @@ export class HistoryService {
         return this.http.get<UserExercisesCountTotalWorkout>(`${ this.historyUrl }/stats`);
     }
 
-    getExerciseGraphs(exerciseId: number) {
-        return this.http.get<ExerciseGraphs>(`${ this.historyUrl }/exercise-graph/${ exerciseId }`);
+    getExerciseGraphs(exerciseId: number, gymId?: number) {
+        return this.http.get<ExerciseGraphs>(`${ this.historyUrl }/exercise-graph/${ exerciseId }`, {
+            params: gymId !== undefined ? { gymId } : {}
+        });
     }
 
     update(history: History) {

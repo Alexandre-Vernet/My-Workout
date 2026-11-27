@@ -1,20 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Exercise } from '../../interfaces/Exercise';
 import { ExerciseMuscle } from '../../interfaces/ExerciseMuscle';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Service()
 export class ExerciseService {
+    private readonly http = inject(HttpClient);
+
 
     exerciseUrl = environment.exerciseUrl();
-
-    constructor(
-        private readonly http: HttpClient,
-    ) {
-    }
 
     findAll() {
         return this.http.get<Exercise[]>(`${ this.exerciseUrl }`);

@@ -1,106 +1,103 @@
 import {
-    AfterViewInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
-    DestroyRef, effect,
-    ElementRef,
-    inject, input,
-    OnInit,
-    ViewChild,
-    ViewEncapsulation
+    computed,
+    effect,
+    inject,
+    input,
+    signal
 } from '@angular/core';
-import { BehaviorSubject, filter, map } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Step, StepList, StepPanel, StepPanels, Stepper } from 'primeng/stepper';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Exercise } from '../../../../interfaces/Exercise';
-import { InputNumber } from 'primeng/inputnumber';
-import { TableModule } from 'primeng/table';
-import { ConfirmationService } from 'primeng/api';
-import { ConfirmDialog } from 'primeng/confirmdialog';
 import { HistoryService } from '../../../services/history.service';
 import { History } from '../../../../interfaces/History';
-import { Skeleton } from 'primeng/skeleton';
 import { ExercisesTableComponent } from './exercises-table/exercises-table.component';
-import { Elastic } from '../../../../interfaces/elastic';
-import { Popover } from 'primeng/popover';
 import { WorkoutService } from '../../../services/workout.service';
 import { Workout } from '../../../../interfaces/Workout';
 import { MuscleGroup } from '../../../../interfaces/MuscleGroup';
 import { AlertService } from '../../../services/alert.service';
-import { convertWeightElastic } from '../../../shared/utils/convert-weight-elastic';
-import { PreventFocusOnButtonClickDirective } from '../../../shared/directives/prevent-focus-on-button-click.directive';
-import { NgClass, UpperCasePipe } from '@angular/common';
+import { UpperCasePipe } from '@angular/common';
 import { CustomError } from "../../../../interfaces/CustomError";
 import { MuscleGroupEnum } from "../../../../interfaces/MuscleGroupEnum";
 import { DEFAULT_VALUE_REST_TIME, RestTimeService } from "../../../services/rest-time.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ToggleSwitch } from "primeng/toggleswitch";
 import { ExerciseService } from '../../../services/exercise.service';
+import { NO_EXERCISES_DIALOG } from '../../../shared/utils/confirm-no-exercises-dialog';
+import { getErrorMessage } from '../../../shared/utils/http-error';
+import { RestTimePipe } from "../../../shared/pipes/rest-time.pipe";
+import { SwipeDirective } from '../../../shared/directives/swipe.directive';
+import { NumberStepperComponent } from '../../../shared/number-stepper/number-stepper.component';
+import { ToggleSwitchComponent } from '../../../shared/toggle-switch/toggle-switch.component';
+import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
+import { I18N } from '../../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-workout-session',
-    imports: [Stepper, StepList, Step, StepPanels, StepPanel, FormsModule, InputNumber, TableModule, ConfirmDialog, Skeleton, ExercisesTableComponent, Popover, RouterLink, PreventFocusOnButtonClickDirective, NgClass, UpperCasePipe, ReactiveFormsModule, ToggleSwitch],
+    imports: [
+        ExercisesTableComponent,
+        RouterLink,
+        UpperCasePipe,
+        RestTimePipe,
+        SwipeDirective,
+        NumberStepperComponent,
+        ToggleSwitchComponent,
+        ConfirmDialogComponent
+    ],
     templateUrl: './workout-session.component.html',
     styleUrl: './workout-session.component.scss',
-    standalone: true,
-    providers: [ConfirmationService],
-    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
-export class WorkoutSessionComponent implements OnInit, AfterViewInit {
+export class WorkoutSessionComponent {
 
+    protected readonly i18n = I18N.workout.workoutSession;
     protected readonly DEFAULT_VALUE_REST_TIME = DEFAULT_VALUE_REST_TIME;
+    protected readonly NO_EXERCISES_DIALOG = NO_EXERCISES_DIALOG;
+    protected readonly confirmNoExercisesOpen = signal(false);
 
     muscleGroupId = input.required<number>();
-    tab = input<number>(1, {
-        transform: (value: string) => value !== null ? Number(value) : null
+    tab = input<number, string>(1, {
+        transform: (value: string) => value !== null ? Number(value) : 1
+    });
+    gymId = input<number | undefined, string | undefined>(undefined, {
+        transform: (value: string | undefined) => value !== undefined && value !== null ? Number(value) : undefined
     });
 
-    workout: Workout;
-    exercises: Exercise[] = [];
-    exercisesMade = new BehaviorSubject<History[]>([]);
-    currentExercise: Exercise;
-    muscleGroupEnum: MuscleGroupEnum;
+    protected readonly exercises = signal<Exercise[]>([]);
+    protected readonly exercisesMade = signal<History[]>([]);
+    protected readonly currentExercise = signal<Exercise | undefined>(undefined);
+    protected muscleGroupEnum!: MuscleGroupEnum;
 
-    activeStep: number = 1;
-    restTime = DEFAULT_VALUE_REST_TIME;
+    protected readonly activeStep = signal(1);
 
-    formWorkout = new FormGroup({
-        weight: new FormControl<number>({
-                value: null,
-                disabled: this.restTime !== DEFAULT_VALUE_REST_TIME
-            },
+    protected readonly formWorkout = new FormGroup({
+        weight: new FormControl<number | null>({ value: null, disabled: false },
             [Validators.min(0), Validators.max(1000)]
         ),
-        reps: new FormControl<number>({
-                value: 8,
-                disabled: this.restTime !== DEFAULT_VALUE_REST_TIME
-            },
+        reps: new FormControl<number>({ value: 8, disabled: false },
             [Validators.required, Validators.min(1), Validators.max(100)]
         ),
         unilateral: new FormControl<boolean>(false, [Validators.required])
     });
 
+    protected readonly animationDirection = signal<'left' | 'right'>('right');
+    protected readonly animationId = signal(0);
+    private currentTab!: number;
 
-    weightToElastics: Elastic[] = [];
-
-    @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
-    @ViewChild('stepper', { static: false }) stepper!: ElementRef<HTMLDivElement>;
-    swipeStartX = 0;
-    swipeEndX = 0;
-
-    animationDirection: 'left' | 'right' = 'right';
-    animationId = 0;
-    private currentTab: number;
+    protected readonly isResting = computed(() =>
+        this.restTimeService.restTime() !== DEFAULT_VALUE_REST_TIME
+    );
 
     private readonly activatedRoute = inject(ActivatedRoute);
     private readonly workoutService = inject(WorkoutService);
     private readonly exerciseService = inject(ExerciseService);
     private readonly historyService = inject(HistoryService);
     private readonly alertService = inject(AlertService);
-    private readonly confirmationService = inject(ConfirmationService);
     private readonly router = inject(Router);
-    private readonly restTimeService = inject(RestTimeService);
-    private readonly destroyRef = inject(DestroyRef);
+    private readonly changeDetectorRef = inject(ChangeDetectorRef);
+    protected readonly restTimeService = inject(RestTimeService);
 
     constructor() {
         effect(() => {
@@ -108,55 +105,17 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                 this.setTabUrl(1);
             }
             this.currentTab = this.tab() ?? 1;
-            this.activeStep = this.currentTab;
+            this.activeStep.set(this.currentTab);
+        });
+
+        effect(() => {
+            this.muscleGroupEnum = this.muscleGroupId();
+            this.findExercises();
         });
     }
 
-    ngOnInit() {
-        this.muscleGroupEnum = this.muscleGroupId();
-        this.workout = null;
-        this.findExercises();
-
-        this.restTimeService.restTime$
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(restTime => this.restTime = restTime);
-    }
-
-    ngAfterViewInit() {
-        const swipeZoneElement = this.swipeZone.nativeElement;
-
-        swipeZoneElement.addEventListener('touchstart', (e: TouchEvent) => {
-            this.swipeStartX = e.changedTouches[0].screenX;
-        });
-
-        swipeZoneElement.addEventListener('touchend', (e: TouchEvent) => {
-            this.swipeEndX = e.changedTouches[0].screenX;
-            this.handleSwipe(e);
-        });
-    }
-
-    handleSwipe(event: TouchEvent) {
-        const stepperEl = this.stepper.nativeElement;
-        const eventTarget = event.target as Node;
-
-        // Ignore swipe from stepper
-        if (stepperEl.contains(eventTarget)) {
-            return;
-        }
-
-        const deltaX = this.swipeEndX - this.swipeStartX;
-
-        if (Math.abs(deltaX) < 65) return; // Ignore small swipes
-
-        if (deltaX < 0) {
-            this.nextStep();
-        } else {
-            this.previousStep();
-        }
-    }
-
-    toggleTimer() {
-        if (this.restTime !== DEFAULT_VALUE_REST_TIME) {
+    protected toggleTimer() {
+        if (this.restTimeService.restTime() !== DEFAULT_VALUE_REST_TIME) {
             this.stopTimer();
         } else {
             this.restTimeService.saveRestTimeInfo({
@@ -168,25 +127,47 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
         }
     }
 
-    switchPanel(exercise: Exercise, index?: number) {
+    protected switchPanel(exercise: Exercise, index?: number) {
         if (this.currentTab === index) {
             return;
         }
-        this.animationId++;
-        this.currentExercise = exercise;
+        this.animationId.update(id => id + 1);
+        this.currentExercise.set(exercise);
         this.fillInputWeightRepsLastSavedValue();
-        this.exercisesMade.next([]);
+        this.exercisesMade.set([]);
         this.stopTimer();
         this.setTabUrl(index);
     }
 
-
-    convertWeightToElastics() {
-        this.weightToElastics = convertWeightElastic(this.formWorkout.controls.weight.value);
+    // Read at click time (via the template method call) rather than cached, so it
+    // always reflects the tab query param set by setTabUrl() for the step currently shown.
+    protected currentSessionUrl(): string {
+        return this.router.url;
     }
 
-    resetWorkout() {
-        this.workout = null;
+    protected onWeightChange(value: number | null) {
+        this.formWorkout.controls.weight.setValue(value);
+    }
+
+    protected onRepsChange(value: number | null) {
+        this.formWorkout.controls.reps.setValue(value ?? 1);
+    }
+
+    protected onUnilateralChange(value: boolean) {
+        this.formWorkout.controls.unilateral.setValue(value);
+    }
+
+    protected resetWorkout() {
+    }
+
+    protected confirmAddExercises() {
+        this.confirmNoExercisesOpen.set(false);
+        this.router.navigate(['/', 'library'], { queryParams: { muscleGroup: this.muscleGroupEnum } });
+    }
+
+    protected cancelAddExercises() {
+        this.confirmNoExercisesOpen.set(false);
+        this.redirectWorkoutHome();
     }
 
     private findExercises() {
@@ -194,7 +175,7 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             .pipe(
                 map(exercises => {
                     if (!exercises || exercises.length === 0) {
-                        this.showDialogNoExercisesAdded(this.muscleGroupEnum);
+                        this.confirmNoExercisesOpen.set(true);
                         return null;
                     }
 
@@ -204,11 +185,11 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
             )
             .subscribe({
                 next: (exercises) => {
-                    this.exercises = exercises;
-                    this.currentExercise = exercises[this.activeStep - 1];
-                    if (!this.currentExercise) {
-                        this.currentExercise = this.exercises[0];
-                        this.switchPanel(this.currentExercise);
+                    this.exercises.set(exercises);
+                    const initialExercise = exercises[this.activeStep() - 1] ?? exercises[0];
+                    this.currentExercise.set(initialExercise);
+                    if (!exercises[this.activeStep() - 1]) {
+                        this.switchPanel(initialExercise);
                     }
                     this.fillInputWeightRepsLastSavedValue();
                 },
@@ -216,41 +197,37 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
                     if (err?.error?.errorCode === 'muscleGroupDoesntExist') {
                         this.redirectWorkoutHome();
                     }
-                    this.alertService.alert$.next({
+                    this.alertService.show({
                         severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'afficher les exercices'
+                        message: getErrorMessage(err, this.i18n.fetchExercisesErrorMessage)
                     });
                 }
             });
     }
 
 
-    private nextStep() {
-        if (this.activeStep < this.exercises.length) {
-            const oldStep = this.activeStep;
-            this.activeStep++;
-            this.animationDirection = this.activeStep > oldStep ? 'right' : 'left';
+    protected nextStep() {
+        if (this.activeStep() < this.exercises().length) {
+            this.activeStep.update(step => step + 1);
+            this.animationDirection.set('right');
 
-            const nextExercise = this.exercises[this.activeStep - 1];
-            this.switchPanel(nextExercise, this.activeStep);
-            this.animationDirection = 'right';
+            const nextExercise = this.exercises()[this.activeStep() - 1];
+            this.switchPanel(nextExercise, this.activeStep());
         }
     }
 
-    private previousStep() {
-        if (this.activeStep > 1) {
-            const oldStep = this.activeStep;
-            this.activeStep--;
-            this.animationDirection = this.activeStep < oldStep ? 'left' : 'right';
+    protected previousStep() {
+        if (this.activeStep() > 1) {
+            this.activeStep.update(step => step - 1);
+            this.animationDirection.set('left');
 
-            const previousExercise = this.exercises[this.activeStep - 1];
-            this.switchPanel(previousExercise, this.activeStep);
-            this.animationDirection = 'left';
+            const previousExercise = this.exercises()[this.activeStep() - 1];
+            this.switchPanel(previousExercise, this.activeStep());
         }
     }
 
-    private setTabUrl(index: number) {
-        if (index !== null) {
+    private setTabUrl(index?: number) {
+        if (index !== undefined) {
             this.router.navigate([], {
                 relativeTo: this.activatedRoute,
                 queryParams: { tab: index },
@@ -260,15 +237,18 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     private fillInputWeightRepsLastSavedValue() {
-        this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise.id)
+        this.historyService.findLastHistoryWeightByExerciseId(this.currentExercise()!.id!, this.gymId())
             .subscribe(history => {
                 this.formWorkout.patchValue({
                     weight: history?.weight,
                     reps: history?.reps ?? 8,
                     unilateral: history?.unilateral ?? false
                 });
-
-                this.convertWeightToElastics();
+                // formWorkout is a plain FormGroup, not a signal: in this zoneless app,
+                // nothing else guarantees a render after this async response lands, so
+                // the pre-filled value can silently stay invisible until some unrelated
+                // signal write happens to trigger one (see CLAUDE.md on signals vs RxJS).
+                this.changeDetectorRef.markForCheck();
             });
     }
 
@@ -278,81 +258,59 @@ export class WorkoutSessionComponent implements OnInit, AfterViewInit {
     }
 
     private stopTimer() {
-        if (this.exercisesMade.getValue().length > 0) {
-            const minutes = this.restTime.split(':')[0].trim();
-            const seconds = this.restTime.split(':')[1].trim();
-            const centiseconds = this.restTime.split(':')[2].trim();
-            this.exercisesMade.getValue()[this.exercisesMade.getValue().length - 1].restTime = `${ minutes }:${ seconds }:${ centiseconds }`;
+        if (this.exercisesMade().length > 0) {
+            const { minutes, seconds, centiseconds } = this.restTimeService.restTime();
+            const formattedRestTime = `${ minutes.toString().padStart(2, '0') }:${ seconds.toString().padStart(2, '0') }:${ centiseconds.toString().padStart(2, '0') }`;
+
+            this.exercisesMade.update(list => {
+                const last = list[list.length - 1];
+                return [...list.slice(0, -1), { ...last, restTime: formattedRestTime }];
+            });
         }
 
         this.restTimeService.stopTimer();
         this.formWorkout.enable();
     }
 
-
-    private showDialogNoExercisesAdded(muscleGroupId: number) {
-        this.confirmationService.confirm({
-            header: 'Attention',
-            message: `Vous n'avez ajouté aucun exercice à votre bibliothèque.<br/>Commencez par en ajouter pour pouvoir lancer un entraînement.`,
-            closable: true,
-            closeOnEscape: true,
-            dismissableMask: true,
-            icon: 'pi pi-exclamation-triangle',
-            acceptButtonProps: {
-                label: 'Ajouter'
-            },
-            rejectButtonProps: {
-                label: 'Annuler',
-                severity: 'secondary',
-                outlined: true
-            },
-            accept: () => {
-                this.router.navigate(['/', 'library', 'list-exercises-muscle-group', muscleGroupId]);
-            },
-            reject: () => this.redirectWorkoutHome()
-        });
-    }
-
     private createWorkout() {
         const { weight, reps, unilateral } = this.formWorkout.getRawValue();
         const history: History = {
-            exercise: this.currentExercise,
-            weight,
-            reps,
-            unilateral
+            exercise: this.currentExercise()!,
+            weight: weight ?? undefined,
+            reps: reps ?? undefined,
+            unilateral: unilateral ?? undefined
         };
 
         const muscleGroup: MuscleGroup = {
             id: this.muscleGroupEnum
         };
 
+        const gymId = this.gymId();
         const workout: Workout = {
             muscleGroup,
-            date: new Date()
+            date: new Date(),
+            gym: gymId !== undefined ? { id: gymId } : undefined
         };
 
         this.workoutService.create(workout, history)
             .subscribe({
                 next: (workout) => {
-                    this.workout = workout;
-                    const lastHistoryId = workout.histories[workout.histories.length - 1].id;
+                    const histories = workout.histories ?? [];
+                    const lastHistoryId = histories[histories.length - 1].id;
                     const exerciseMade: History = {
                         id: lastHistoryId,
-                        weight,
-                        reps,
-                        unilateral,
+                        weight: weight ?? undefined,
+                        reps: reps ?? undefined,
+                        unilateral: unilateral ?? undefined,
                         restTime: '/'
                     };
 
-                    this.exercisesMade.next([
-                        ...this.exercisesMade.value,
-                        exerciseMade
-                    ]);
+                    this.exercisesMade.update(list => [...list, exerciseMade]);
                 },
-                error: () => {
-                    this.alertService.alert$.next({
+                error: (err: CustomError) => {
+                    this.alertService.show({
                         severity: 'error',
-                        message: 'Erreur lors de l\'enregistrement'
+                        message: getErrorMessage(err, this.i18n.saveErrorMessage)
                     });
                 }
             });

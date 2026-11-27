@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 public class ApiErrorResponse {
 
-    TypeError type = TypeError.BUSINESS;
+    TypeError type;
 
     ErrorCodeEnum errorCode;
 
@@ -21,6 +21,11 @@ public class ApiErrorResponse {
     LocalDateTime timestamp = LocalDateTime.now();
 
     public ApiErrorResponse(ErrorCodeEnum errorCode, String message, HttpStatus httpStatus) {
+        this(TypeError.BUSINESS, errorCode, message, httpStatus);
+    }
+
+    public ApiErrorResponse(TypeError type, ErrorCodeEnum errorCode, String message, HttpStatus httpStatus) {
+        this.type = type;
         this.errorCode = errorCode;
         this.message = message;
         this.httpStatus = httpStatus;

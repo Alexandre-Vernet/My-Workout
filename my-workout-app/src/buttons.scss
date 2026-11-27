@@ -1,0 +1,92 @@
+@keyframes btn-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px 20px;
+    font: inherit;
+    font-weight: 700;
+    font-size: .92rem;
+    cursor: pointer;
+    position: relative;
+    transition: transform .15s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s ease, opacity .2s ease;
+    -webkit-tap-highlight-color: transparent;
+
+    svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(.96);
+    }
+
+    &:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.btn-primary {
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--p-primary-400), var(--p-primary-600));
+    box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--p-primary-color) 70%, transparent);
+}
+
+.btn-secondary {
+    color: inherit;
+    background: transparent;
+    border: 1.5px solid var(--chips-background-color);
+}
+
+.btn-danger {
+    color: #ffffff;
+    background: var(--p-red-500);
+    box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--p-red-500) 60%, transparent);
+}
+
+/* Hides the label/icon instead of shrinking the button, and spins a ring made of
+   currentColor so it reads correctly on every severity without extra markup. */
+.btn.loading {
+    color: transparent;
+    pointer-events: none;
+
+    svg {
+        visibility: hidden;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid color-mix(in srgb, currentColor 25%, transparent);
+        border-top-color: currentColor;
+        color: var(--p-primary-700);
+        animation: btn-spin .6s linear infinite;
+    }
+
+    &.btn-primary::after,
+    &.btn-danger::after {
+        color: #ffffff;
+    }
+}

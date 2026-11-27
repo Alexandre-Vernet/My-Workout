@@ -1,5 +1,5 @@
 package com.avernet.myworkoutapi.error;
 
 public enum TypeError {
-    VALIDATION, BUSINESS
+    VALIDATION, BUSINESS, TECHNICAL
 }

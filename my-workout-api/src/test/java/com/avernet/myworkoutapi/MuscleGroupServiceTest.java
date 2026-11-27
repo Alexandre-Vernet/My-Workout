@@ -3,6 +3,8 @@ package com.avernet.myworkoutapi;
 import com.avernet.myworkoutapi.exercise.ExerciseEntity;
 import com.avernet.myworkoutapi.exercise.ExerciseNotFoundException;
 import com.avernet.myworkoutapi.exercise.ExerciseRepository;
+import com.avernet.myworkoutapi.gym.GymEntity;
+import com.avernet.myworkoutapi.gym.GymRepository;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEntity;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupEnum;
 import com.avernet.myworkoutapi.musclegroup.MuscleGroupExerciseCount;
@@ -52,6 +54,9 @@ public class MuscleGroupServiceTest {
     @Resource
     private MuscleGroupRepository muscleGroupRepository;
 
+    @Resource
+    private GymRepository gymRepository;
+
 
     @Test()
     void shouldGetMuscleGroup() {
@@ -61,6 +66,7 @@ public class MuscleGroupServiceTest {
     @Test()
     void findAllMuscleGroupAndRecommendedMuscleGroup_shouldRecommendNullLastWorkout() {
         UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        GymEntity gymEntity = gymRepository.save(GymEntity.builder().name("Salle de test").active(true).user(userEntity).build());
 
         for (int i = 1; i < 10; i++) {
             ExerciseEntity exerciseEntity = exerciseRepository.findById((long) i).orElseThrow(ExerciseNotFoundException::new);
@@ -78,6 +84,7 @@ public class MuscleGroupServiceTest {
             WorkoutEntity workoutEntity = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
+                .gym(gymEntity)
                 .date(LocalDateTime.now().minusDays(i))
                 .build();
 
@@ -86,19 +93,20 @@ public class MuscleGroupServiceTest {
 
         List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
         assertEquals(8, muscleGroupExerciseCountList.size());
-        assertEquals(8, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
-        assertEquals(7, muscleGroupExerciseCountList.get(1).getMuscleGroup().id());
-        assertEquals(6, muscleGroupExerciseCountList.get(2).getMuscleGroup().id());
-        assertEquals(5, muscleGroupExerciseCountList.get(3).getMuscleGroup().id());
-        assertEquals(4, muscleGroupExerciseCountList.get(4).getMuscleGroup().id());
-        assertEquals(3, muscleGroupExerciseCountList.get(5).getMuscleGroup().id());
-        assertEquals(2, muscleGroupExerciseCountList.get(6).getMuscleGroup().id());
-        assertEquals(1, muscleGroupExerciseCountList.get(7).getMuscleGroup().id());
+        assertEquals(8L, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
+        assertEquals(7L, muscleGroupExerciseCountList.get(1).getMuscleGroup().id());
+        assertEquals(6L, muscleGroupExerciseCountList.get(2).getMuscleGroup().id());
+        assertEquals(5L, muscleGroupExerciseCountList.get(3).getMuscleGroup().id());
+        assertEquals(4L, muscleGroupExerciseCountList.get(4).getMuscleGroup().id());
+        assertEquals(3L, muscleGroupExerciseCountList.get(5).getMuscleGroup().id());
+        assertEquals(2L, muscleGroupExerciseCountList.get(6).getMuscleGroup().id());
+        assertEquals(1L, muscleGroupExerciseCountList.get(7).getMuscleGroup().id());
     }
 
     @Test()
     void findAllMuscleGroupAndRecommendedMuscleGroup_shouldNotCrashWithMultipleWorkoutWithSameDateAndSuggestNullLastWorkout() {
         UserEntity userEntity = userRepository.findById(1L).orElseThrow(UserNotFoundException::new);
+        GymEntity gymEntity = gymRepository.save(GymEntity.builder().name("Salle de test").active(true).user(userEntity).build());
 
         for (int i = 1; i < 10; i++) {
             ExerciseEntity exerciseEntity = exerciseRepository.findById((long) i).orElseThrow(ExerciseNotFoundException::new);
@@ -116,6 +124,7 @@ public class MuscleGroupServiceTest {
             WorkoutEntity workoutEntity = WorkoutEntity.builder()
                 .user(userEntity)
                 .muscleGroup(muscleGroupEntity)
+                .gym(gymEntity)
                 .date(LocalDateTime.now())
                 .build();
 
@@ -124,7 +133,7 @@ public class MuscleGroupServiceTest {
 
         List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
         assertEquals(8, muscleGroupExerciseCountList.size());
-        assertEquals(8, muscleGroupExerciseCountList.getFirst().getMuscleGroup().id());
+        assertEquals(8L, muscleGroupExerciseCountList.getFirst().getMuscleGroup().id());
     }
 
     @Test
@@ -134,13 +143,13 @@ public class MuscleGroupServiceTest {
         List<MuscleGroupExerciseCount> muscleGroupExerciseCountList = service.findAllMuscleGroupAndRecommendedMuscleGroup(userEntity);
 
         assertEquals(8, muscleGroupExerciseCountList.size());
-        assertEquals(1, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
-        assertEquals(2, muscleGroupExerciseCountList.get(1).getMuscleGroup().id());
-        assertEquals(3, muscleGroupExerciseCountList.get(2).getMuscleGroup().id());
-        assertEquals(4, muscleGroupExerciseCountList.get(3).getMuscleGroup().id());
-        assertEquals(5, muscleGroupExerciseCountList.get(4).getMuscleGroup().id());
-        assertEquals(6, muscleGroupExerciseCountList.get(5).getMuscleGroup().id());
-        assertEquals(7, muscleGroupExerciseCountList.get(6).getMuscleGroup().id());
+        assertEquals(1L, muscleGroupExerciseCountList.get(0).getMuscleGroup().id());
+        assertEquals(2L, muscleGroupExerciseCountList.get(1).getMuscleGroup().id());
+        assertEquals(3L, muscleGroupExerciseCountList.get(2).getMuscleGroup().id());
+        assertEquals(4L, muscleGroupExerciseCountList.get(3).getMuscleGroup().id());
+        assertEquals(5L, muscleGroupExerciseCountList.get(4).getMuscleGroup().id());
+        assertEquals(6L, muscleGroupExerciseCountList.get(5).getMuscleGroup().id());
+        assertEquals(7L, muscleGroupExerciseCountList.get(6).getMuscleGroup().id());
     }
 
     @Test

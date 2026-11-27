@@ -1,73 +1,79 @@
 import {
+    ChangeDetectionStrategy,
     Component,
-    DestroyRef,
     ElementRef,
+    effect,
     inject,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
-    SimpleChanges,
-    ViewChild,
-    ViewEncapsulation
+    input,
+    model,
+    output,
+    untracked,
+    ViewChild
 } from '@angular/core';
-import { TableModule } from 'primeng/table';
 import { HistoryService } from '../../../../services/history.service';
-import { InputNumber } from 'primeng/inputnumber';
 import { History } from '../../../../../interfaces/History';
 import { AlertService } from '../../../../services/alert.service';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AsyncPipe } from '@angular/common';
-import { Checkbox } from "primeng/checkbox";
+import { getErrorMessage } from '../../../../shared/utils/http-error';
+import { NumberStepperComponent } from '../../../../shared/number-stepper/number-stepper.component';
+import { I18N } from '../../../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-exercises-table',
-    imports: [TableModule, InputNumber, FormsModule, AsyncPipe, ReactiveFormsModule, Checkbox],
+    imports: [NumberStepperComponent],
     templateUrl: './exercises-table.component.html',
     styleUrl: './exercises-table.component.scss',
-    encapsulation: ViewEncapsulation.None
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExercisesTableComponent implements OnInit, OnChanges {
-    @Input() muscleGroupId: number;
-    @Input() exerciseId: number;
-    @Input() exercisesMade = new BehaviorSubject<History[]>([]);
-    @Output() resetWorkout = new Subject<void>();
+export class ExercisesTableComponent {
+    protected readonly i18n = I18N.workout.exercisesTable;
 
-    @ViewChild('exerciseTable', { read: ElementRef }) exerciseTable!: ElementRef;
+    muscleGroupId = input.required<number>();
+    exerciseId = input.required<number>();
+    gymId = input<number | undefined>(undefined);
+    exercisesMade = model.required<History[]>();
+    resetWorkout = output<void>();
 
-    private destroyRef = inject(DestroyRef);
+    @ViewChild('historyScroll') private historyScroll!: ElementRef<HTMLElement>;
 
     private readonly historyService = inject(HistoryService);
     private readonly alertService = inject(AlertService);
 
-    ngOnInit() {
-        this.findTodayExercicesHistory();
-        this.exercisesMade
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => setTimeout(() => this.scrollBottomTable(), 100));
+    constructor() {
+        effect(() => {
+            this.exercisesMade();
+            setTimeout(() => this.scrollBottomTable(), 100);
+        });
+
+        // Only exerciseId is a tracked dependency here: muscleGroupId and gymId are fixed
+        // for the lifetime of a workout session, reloading today's history only needs to
+        // react to the exercise being switched.
+        effect(() => {
+            this.exerciseId();
+            untracked(() => this.findTodayExercicesHistory());
+        });
     }
 
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes['exerciseId'].currentValue !== changes['exerciseId'].previousValue) {
-            this.findTodayExercicesHistory();
-        }
-    }
-
-    scrollBottomTable() {
-        const tableBody: HTMLElement = this.exerciseTable?.nativeElement.querySelector('.p-datatable-table-container');
-        if (tableBody) {
-            tableBody.scrollTop = tableBody.scrollHeight;
+    private scrollBottomTable() {
+        const container = this.historyScroll?.nativeElement;
+        if (container) {
+            container.scrollTop = container.scrollHeight;
         }
     }
 
     // Allow ony 1/2 fractions
-    onWeightChange(history: History, value: number) {
-        history.weight = Math.round(value * 2) / 2;
+    protected onWeightChange(history: History, value: number | null) {
+        history.weight = value !== null ? Math.round(value * 2) / 2 : undefined;
     }
 
-    updateHistory(history: History, value?: boolean) {
+    protected onRepsChange(history: History, value: number | null) {
+        history.reps = value ?? undefined;
+    }
+
+    protected toggleUnilateral(history: History) {
+        this.updateHistory(history, !history.unilateral);
+    }
+
+    protected updateHistory(history: History, value?: boolean) {
         if (typeof value === 'boolean') {
             history.unilateral = value;
         }
@@ -75,52 +81,52 @@ export class ExercisesTableComponent implements OnInit, OnChanges {
         this.historyService.update(history)
             .subscribe({
                 next: () =>
-                    this.alertService.alert$.next({
+                    this.alertService.show({
                         severity: 'success',
-                        message: 'Mise à jour réussie'
+                        message: this.i18n.updateSuccessMessage
                     }),
                 error: (err) =>
-                    this.alertService.alert$.next({
+                    this.alertService.show({
                         severity: 'error',
-                        message: err.error.message ?? 'Impossible de mettre à jour'
+                        message: getErrorMessage(err, this.i18n.updateErrorMessage)
                     })
             });
     }
 
-    deleteHistory(history: History) {
+    protected deleteHistory(history: History) {
         this.historyService.delete(history)
             .subscribe({
                 next: () => {
-                    this.exercisesMade.next(this.exercisesMade.getValue().filter(e => e.id !== history.id));
+                    this.exercisesMade.update(list => list.filter(e => e.id !== history.id));
 
-                    if (this.exercisesMade.getValue().length === 0) {
-                        this.resetWorkout.next();
+                    if (this.exercisesMade().length === 0) {
+                        this.resetWorkout.emit();
                     }
                 },
                 error: (err) =>
-                    this.alertService.alert$.next({
+                    this.alertService.show({
                         severity: 'error',
-                        message: err.error.message ?? 'Erreur lors de la suppression'
+                        message: getErrorMessage(err, this.i18n.deleteErrorMessage)
                     })
             });
     }
 
 
     private findTodayExercicesHistory() {
-        this.historyService.findTodayExercicesHistory(this.muscleGroupId, this.exerciseId)
+        this.historyService.findTodayExercicesHistory(this.muscleGroupId(), this.exerciseId(), this.gymId())
             .subscribe({
                 next: (history) => {
                     if (history) {
-                        this.exercisesMade.next(history.map(h => ({
+                        this.exercisesMade.set(history.map(h => ({
                                 ...h,
                                 restTime: '/'
                             })
                         ));
                     }
                 },
-                error: (err) => this.alertService.alert$.next({
+                error: (err) => this.alertService.show({
                     severity: 'error',
-                    message: err.error.message ?? 'Erreur lors de la récupération de l\'historique'
+                    message: getErrorMessage(err, this.i18n.fetchHistoryErrorMessage)
                 })
             });
     }

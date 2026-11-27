@@ -1,14 +1,14 @@
-import { Component, DestroyRef, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NavbarComponent } from './navbar/navbar.component';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { PrimeNG } from 'primeng/config';
 import { ThemeService } from './shared/theme/theme.service';
-import { filter } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { AlertComponent } from './shared/alert/alert.component';
 import { SwPush, SwUpdate } from '@angular/service-worker';
-import { environment } from 'src/environments/environment';
+import { environment } from '../environments/environment';
 import { RestTimeBannerComponent } from "./shared/rest-time-banner/rest-time-banner.component";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { I18N } from './shared/i18n/i18n';
 
 @Component({
     selector: 'app-root',
@@ -19,21 +19,32 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
         RouterOutlet,
         RestTimeBannerComponent
     ],
-    styleUrls: ['app.component.scss']
+    styleUrls: ['app.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
+    private readonly sw = inject(SwPush);
+    private readonly swUpdate = inject(SwUpdate);
+    private readonly router = inject(Router);
+    private readonly themeService = inject(ThemeService);
 
-    hideNavbar = false;
+    private readonly i18n = I18N.common.app;
 
-    constructor(
-        private readonly sw: SwPush,
-        private readonly swUpdate: SwUpdate,
-        private router: Router,
-        private primeng: PrimeNG,
-        private readonly themeService: ThemeService,
-        private readonly destroyRef: DestroyRef
-    ) {
+    protected readonly hideNavbar = toSignal(
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationEnd),
+            map(event => event.url.includes('auth') || event.url.includes('desktop'))
+        ),
+        { initialValue: false }
+    );
+
+    constructor() {
+        effect(() => {
+            this.themeService.loadTheme();
+            this.themeService.loadDarkMode();
+        });
+
         if (environment.production) {
             // Force refresh PWA
             this.swUpdate.checkForUpdate();
@@ -47,28 +58,15 @@ export class AppComponent implements OnInit {
 
             if (!('serviceWorker' in navigator)) {
                 setTimeout(() => {
-                    alert('Service workers are not supported in this browser');
+                    alert(this.i18n.serviceWorkerNotSupported);
                 }, 1000);
             }
 
             if (!this.sw.isEnabled) {
                 setTimeout(() => {
-                    alert('Service workers are not enabled');
+                    alert(this.i18n.serviceWorkerNotEnabled);
                 }, 1000);
             }
         }
-    }
-
-    ngOnInit() {
-        this.primeng.ripple.set(true);
-        this.themeService.loadTheme();
-        this.themeService.loadDarkMode();
-
-        this.router.events
-            .pipe(
-                filter(event => event instanceof NavigationEnd),
-                takeUntilDestroyed(this.destroyRef)
-            )
-            .subscribe((event: NavigationEnd) => this.hideNavbar = event.url.includes('auth') || event.url.includes('desktop'));
     }
 }

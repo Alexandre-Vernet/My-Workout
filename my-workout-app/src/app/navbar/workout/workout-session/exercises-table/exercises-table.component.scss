@@ -1,11 +1,172 @@
-.exercises-table {
-    height: 180px;
+@keyframes history-row-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.update-weight {
-    width: 50px;
+@keyframes empty-pulse {
+    0%, 100% {
+        opacity: .5;
+    }
+    50% {
+        opacity: .9;
+    }
 }
 
-.update-reps {
-    width: 40px;
+.history-card {
+    background: var(--card-background);
+    border-radius: var(--radius-md);
+    box-shadow: var(--card-shadow);
+    padding: 10px 12px;
+}
+
+.history-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.history-title {
+    font-size: .88rem;
+    font-weight: 800;
+}
+
+.history-count {
+    flex-shrink: 0;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--p-primary-color);
+    background: color-mix(in srgb, var(--p-primary-color) 16%, transparent);
+}
+
+.history-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px 10px;
+    text-align: center;
+    color: var(--p-text-muted-color);
+
+    svg {
+        width: 28px;
+        height: 28px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        animation: empty-pulse 2.2s ease-in-out infinite;
+    }
+
+    strong {
+        color: inherit;
+        font-size: .86rem;
+    }
+
+    p {
+        font-size: .76rem;
+        max-width: 260px;
+    }
+}
+
+.history-columns,
+.history-row {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 40px 50px 32px;
+    align-items: center;
+    gap: 6px;
+}
+
+/* On the narrowest phones, the fixed-width columns leave too little room for
+   the two number-steppers (their decrement/increment buttons alone need
+   ~66px) — trim the secondary columns and the gap to give them space back. */
+@media (max-width: 360px) {
+    .history-columns,
+    .history-row {
+        grid-template-columns: 1.3fr 1fr 32px 36px 32px;
+        gap: 4px;
+    }
+}
+
+.history-columns {
+    padding: 0 2px 8px;
+
+    span {
+        color: var(--p-text-muted-color);
+        font-size: .72rem;
+        font-weight: 700;
+        text-align: center;
+    }
+}
+
+.history-scroll {
+    max-height: 220px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.history-row {
+    animation: history-row-in .25s ease both;
+
+    &:not(:last-child) {
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--chips-background-color);
+    }
+}
+
+.history-check,
+.history-delete {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto;
+    border: none;
+    border-radius: 50%;
+    background: var(--chips-background-color);
+    color: var(--p-text-muted-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform .15s cubic-bezier(.34, 1.56, .64, 1), background .2s ease, color .2s ease;
+
+    &:active {
+        transform: scale(.88);
+    }
+
+    svg {
+        width: 15px;
+        height: 15px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2.4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+}
+
+.history-check.checked {
+    background: var(--p-primary-color);
+    color: #ffffff;
+}
+
+.history-delete {
+    color: var(--p-red-400);
+}
+
+.history-rest {
+    text-align: center;
+    font-size: .82rem;
+    color: var(--p-text-muted-color);
 }

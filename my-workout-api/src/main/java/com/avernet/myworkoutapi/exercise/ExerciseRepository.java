@@ -88,5 +88,5 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Long> 
                 AND mg.id = :muscleGroupId
                 ORDER BY ue.order ASC, e.id ASC
         """)
-    List<UserExerciseEntity> findAddedExercisesByMuscleGroupId(@Param("userId") Long userId, @Param("muscleGroupId") Integer muscleGroupId);
+    List<UserExerciseEntity> findAddedExercisesByMuscleGroupId(@Param("userId") Long userId, @Param("muscleGroupId") Long muscleGroupId);
 }

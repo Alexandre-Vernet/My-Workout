@@ -1,67 +1,106 @@
-import { Component, input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, effect, input, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseService } from '../../../services/exercise.service';
 import { AlertService } from '../../../services/alert.service';
-import { Button } from 'primeng/button';
-import { Tag } from 'primeng/tag';
-import { Skeleton } from 'primeng/skeleton';
 import { AuthService } from '../../../auth/auth.service';
-import { User } from '../../../../interfaces/User';
 import { ExerciseMuscle } from '../../../../interfaces/ExerciseMuscle';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
+import { CustomError } from '../../../../interfaces/CustomError';
+import { DifficultyEnum } from '../../../../interfaces/DifficultyEnum';
 import { DifficultyLabelPipe } from "../../../shared/pipes/difficulty-label.pipe";
 import { MechanicLabelPipe } from "../../../shared/pipes/mechanic-label.pipe";
+import { getErrorMessage } from "../../../shared/utils/http-error";
+import { getMuscleGroupColor } from "../../../shared/utils/muscle-group-color";
+import { I18N } from "../../../shared/i18n/i18n";
+
+type DetailTab = 'info' | 'execution';
+
+const DIFFICULTY_COLOR: Record<DifficultyEnum, string> = {
+    [DifficultyEnum.BEGINNER]: 'var(--p-green-500)',
+    [DifficultyEnum.INTERMEDIATE]: 'var(--p-orange-500)',
+    [DifficultyEnum.ADVANCED]: 'var(--p-red-500)'
+};
 
 @Component({
     selector: 'app-view-exercise',
-    imports: [Button, Tag, Skeleton, Tabs, TabList, Tab, TabPanels, TabPanel, DifficultyLabelPipe, MechanicLabelPipe],
+    imports: [DifficultyLabelPipe, MechanicLabelPipe],
     templateUrl: './view-exercise.component.html',
     styleUrl: './view-exercise.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class ViewExerciseComponent implements OnInit {
+export class ViewExerciseComponent {
+    private readonly exerciseService = inject(ExerciseService);
+    private readonly alertService = inject(AlertService);
+    private readonly authService = inject(AuthService);
+    private readonly router = inject(Router);
+    private readonly route = inject(ActivatedRoute);
+
 
     exerciseId = input.required<number>();
-    exerciseMuscle: ExerciseMuscle;
-    user: User;
-    imagePath = '';
+    returnTo = input<string>();
+    protected readonly exerciseMuscle = signal<ExerciseMuscle | undefined>(undefined);
+    protected readonly user = toSignal(this.authService.getCurrentUser());
+    protected readonly imagePath = computed(() => {
+        const exerciseMuscle = this.exerciseMuscle();
+        return exerciseMuscle ? `/assets/images/${ exerciseMuscle.exercise?.id }.gif` : '';
+    });
 
-    constructor(
-        private readonly exerciseService: ExerciseService,
-        private readonly alertService: AlertService,
-        private readonly authService: AuthService,
-        private readonly router: Router
-    ) {
+    protected readonly activeTab = signal<DetailTab>('info');
+    protected readonly i18n = I18N.library.viewExercise;
+
+    constructor() {
+        effect(() => {
+            this.exerciseService.findExerciseMuscle(this.exerciseId())
+                .subscribe({
+                    next: (exerciseMuscle) => this.exerciseMuscle.set(exerciseMuscle),
+                    error: () => this.router.navigate(['not-found'])
+                });
+        });
     }
 
-    ngOnInit() {
-        this.authService.getCurrentUser()
-            .subscribe(user => this.user = user);
-
-        this.exerciseService.findExerciseMuscle(this.exerciseId())
-            .subscribe({
-                next: (exerciseMuscle) => {
-                    this.exerciseMuscle = exerciseMuscle;
-                    this.imagePath = `/assets/images/${ exerciseMuscle.exercise.id }.gif`;
-                },
-                error: () => this.router.navigate(['not-found'])
-            });
+    protected get heroColor(): string {
+        return getMuscleGroupColor(this.exerciseMuscle()!.muscles?.[0]?.muscleGroup?.name);
     }
 
-    toggleExerciseWorkout() {
-        this.exerciseService.toggleExerciseWorkout(this.exerciseMuscle.exercise)
+    protected difficultyColor(difficulty: string | undefined): string {
+        return DIFFICULTY_COLOR[difficulty as DifficultyEnum] ?? 'var(--p-text-muted-color)';
+    }
+
+    protected setActiveTab(tab: DetailTab) {
+        this.activeTab.set(tab);
+    }
+
+    // Closes the detail overlay by navigating back up to the library list route
+    // (this component is nested under it — see app.routes.ts), unless it was opened
+    // from an in-progress workout session (returnTo query param), in which case it
+    // navigates back there instead.
+    protected goBack() {
+        const returnTo = this.returnTo();
+        if (returnTo) {
+            this.router.navigateByUrl(returnTo);
+        } else {
+            this.router.navigate(['..'], { relativeTo: this.route });
+        }
+    }
+
+    protected toggleExerciseWorkout() {
+        this.exerciseService.toggleExerciseWorkout(this.exerciseMuscle()!.exercise!)
             .subscribe({
-                next: () => this.exerciseMuscle.addedToWorkout = !this.exerciseMuscle.addedToWorkout,
-                error: (err) => {
-                    this.alertService.alert$.next({
+                next: () => this.exerciseMuscle.update(exerciseMuscle => ({
+                    ...exerciseMuscle!,
+                    addedToWorkout: !exerciseMuscle!.addedToWorkout
+                })),
+                error: (err: CustomError) => {
+                    this.alertService.show({
                         severity: 'error',
-                        message: err?.error?.message ?? 'Impossible d\'enregistrer cet exercice'
+                        message: getErrorMessage(err, this.i18n.toggleWorkoutError)
                     });
                 }
             });
     }
 
-    updateExercise() {
-        this.router.navigate(['admin', 'update-exercise', this.exerciseMuscle.exercise.id]);
+    protected updateExercise() {
+        this.router.navigate(['admin', 'update-exercise', this.exerciseMuscle()!.exercise?.id]);
     }
 }

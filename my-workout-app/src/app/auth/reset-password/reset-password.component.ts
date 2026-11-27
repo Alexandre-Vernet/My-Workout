@@ -1,45 +1,34 @@
-import { Component, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgClass } from '@angular/common';
-import { Button } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
-import { FloatLabel } from 'primeng/floatlabel';
-import { Message } from 'primeng/message';
-import { Password } from 'primeng/password';
+import { CustomError } from "../../../interfaces/CustomError";
+import { getErrorMessage } from "../../shared/utils/http-error";
 import { PasswordResetTokenService } from "../password-reset-token.service";
+import { I18N } from '../../shared/i18n/i18n';
 
 @Component({
     selector: 'app-reset-password',
     templateUrl: './reset-password.component.html',
     styleUrls: ['./reset-password.component.scss'],
-    imports: [
-        ReactiveFormsModule,
-        NgClass,
-        Button,
-        Dialog,
-        FloatLabel,
-        Message,
-        Password
-    ],
+    imports: [ReactiveFormsModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class ResetPasswordComponent implements OnInit {
+export class ResetPasswordComponent {
+    private readonly passwordResetTokenService = inject(PasswordResetTokenService);
+    private readonly router = inject(Router);
+
     token = input.required<string>();
 
-    formResetPassword = new FormGroup({
+    protected readonly formResetPassword = new FormGroup({
         newPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
         confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
     });
 
-    constructor(
-        private readonly passwordResetTokenService: PasswordResetTokenService,
-        private readonly router: Router,
-    ) {
-    }
+    protected readonly i18n = I18N.auth.resetPassword;
 
-    ngOnInit() {
-        this.isTokenValid(this.token());
+    constructor() {
+        effect(() => this.isTokenValid(this.token()));
     }
 
     private isTokenValid(token: string) {
@@ -54,27 +43,29 @@ export class ResetPasswordComponent implements OnInit {
             });
     }
 
-    redirectToSignIn() {
+    protected redirectToSignIn() {
         this.router.navigate(['/auth/login']);
     }
 
-    submitForm() {
+    protected submitForm() {
         if (this.formResetPassword.valid) {
             const { newPassword, confirmPassword } = this.formResetPassword.value;
             if (newPassword !== confirmPassword) {
-                this.formResetPassword.setErrors({ error: 'Passwords do not match' });
+                this.formResetPassword.setErrors({ error: this.i18n.passwordsDoNotMatch });
                 return;
             }
-            this.resetPassword(newPassword);
+            this.resetPassword(newPassword ?? '');
         }
         return;
     }
 
-    resetPassword(password: string) {
+    private resetPassword(password: string) {
         this.passwordResetTokenService.resetPassword(this.token(), password)
             .subscribe({
                 next: () => this.redirectToSignIn(),
-                error: (err) => this.formResetPassword.setErrors({ error: err.error.message ?? 'Une erreur s\'est produite' })
+                error: (err: CustomError) => this.formResetPassword.setErrors({
+                    error: getErrorMessage(err, this.i18n.errorFallback)
+                })
             });
     }
 }

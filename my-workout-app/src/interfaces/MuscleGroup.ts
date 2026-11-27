@@ -8,7 +8,7 @@ interface MuscleGroupInfo {
     color: string;
 }
 
-type MuscleGroupKey =
+export type MuscleGroupKey =
     | 'pectoraux'
     | 'abdominaux'
     | 'cardio'

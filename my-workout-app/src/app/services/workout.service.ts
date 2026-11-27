@@ -1,22 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Workout } from '../../interfaces/Workout';
-import { DateUtils } from '../shared/utils/date-utils';
+import { toLocalDate } from '../shared/utils/date-utils';
 import { WorkoutGroupedHistories } from '../../interfaces/WorkoutGroupedHistories';
 import { History } from '../../interfaces/History';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Service()
 export class WorkoutService {
+    private readonly http = inject(HttpClient);
+
 
     workoutUrl = environment.workoutUrl();
-
-    constructor(
-        private readonly http: HttpClient
-    ) {
-    }
 
     create(workout: Workout, history: History) {
         return this.http.post<Workout>(this.workoutUrl, { workout, history });
@@ -33,8 +28,8 @@ export class WorkoutService {
     findByDate(start: Date, end: Date) {
         return this.http.get<Workout[]>(`${ this.workoutUrl }/date`, {
             params: {
-                start: DateUtils.toLocalDate(start),
-                end: DateUtils.toLocalDate(end)
+                start: toLocalDate(start),
+                end: toLocalDate(end)
             }
         });
     }

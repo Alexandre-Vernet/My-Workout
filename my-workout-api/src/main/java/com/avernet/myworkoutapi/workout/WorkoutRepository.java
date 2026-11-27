@@ -15,7 +15,7 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
 
     Optional<WorkoutEntity> findByUserIdAndMuscleGroupIdAndDateGreaterThanEqualAndDateLessThan(
         Long userId,
-        Integer muscleGroupId,
+        Long muscleGroupId,
         LocalDateTime startDay,
         LocalDateTime endDay
     );
@@ -32,6 +32,8 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, Long> {
     Long countByUserId(Long userId);
 
     void deleteByIdAndUserId(Long id, Long userId);
+
+    void deleteByUserId(Long userId);
 
     Optional<WorkoutEntity> findByIdAndUser(Long id, UserEntity user);
 }

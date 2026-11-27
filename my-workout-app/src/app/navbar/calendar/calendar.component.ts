@@ -1,283 +1,355 @@
-import { AfterViewInit, Component, ElementRef, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
-import { CalendarOptions, EventClickArg, EventInput, EventMountArg } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import { FormsModule } from '@angular/forms';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../../interfaces/Workout';
-import { Dialog } from 'primeng/dialog';
-import { Button } from 'primeng/button';
-import { removeAccents } from '../../shared/utils/remove-accents';
-import { MuscleGroup, muscleGroupMap } from '../../../interfaces/MuscleGroup';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
-import {
-    DialogSelectCardioExerciseComponent
-} from '../workout/dialog-select-cardio-exercise/dialog-select-cardio-exercise.component';
-import { Alert } from '../../../interfaces/alert';
+import { getContrastingTextColor, getMuscleGroupColor, getMuscleGroupLabel } from '../../shared/utils/muscle-group-color';
+import { MuscleGroup } from '../../../interfaces/MuscleGroup';
 import { AlertService } from '../../services/alert.service';
-import { ExerciseService } from '../../services/exercise.service';
 import { HistoryDetailComponent } from './history-detail/history-detail.component';
-import { Exercise } from '../../../interfaces/Exercise';
-import { DatePipe } from '@angular/common';
 import { WorkoutGroupedHistories } from '../../../interfaces/WorkoutGroupedHistories';
 import { FirstLetterUppercasePipe } from '../../shared/pipes/first-letter-uppercase.pipe';
+import { SwipeDirective } from '../../shared/directives/swipe.directive';
+import { CustomError } from '../../../interfaces/CustomError';
+import { getErrorMessage } from '../../shared/utils/http-error';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+import { I18N } from '../../shared/i18n/i18n';
+import { MenuUrls } from '../../shared/menu-urls';
+
+interface CalendarDay {
+    readonly day: number;
+    readonly date: Date;
+    readonly isToday: boolean;
+    readonly workouts: readonly Workout[];
+    readonly dotColors: readonly string[];
+    readonly muted: boolean;
+}
+
+interface MuscleGroupPill {
+    readonly label: string;
+    readonly color: string;
+    readonly textColor: string;
+}
+
+interface SessionWeekGroup {
+    readonly label: string;
+    readonly days: readonly CalendarDay[];
+}
+
+interface PendingWorkoutDeletion {
+    readonly id: number;
+    readonly message: string;
+}
+
+const MAX_VISIBLE_DOTS = 3;
+const SKELETON_DAYS_COUNT = 35;
+const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
 
 @Component({
     selector: 'app-calendar',
-    imports: [FullCalendarModule, FormsModule, ConfirmDialog, Dialog, Button, DialogSelectCardioExerciseComponent, HistoryDetailComponent, DatePipe, FirstLetterUppercasePipe],
+    imports: [HistoryDetailComponent, FirstLetterUppercasePipe, SwipeDirective, ConfirmDialogComponent, RouterLink],
     templateUrl: './calendar.component.html',
     styleUrl: './calendar.component.scss',
-    standalone: true,
-    encapsulation: ViewEncapsulation.None,
-    providers: [ConfirmationService]
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
-export class CalendarComponent implements OnInit, AfterViewInit {
+export class CalendarComponent {
 
-    @ViewChild('calendarComponent', { static: false }) calendarComponent!: FullCalendarComponent;
-    calendarOptions: CalendarOptions = {
-        timeZone: 'local',
-        locale: 'fr',
-        plugins: [dayGridPlugin, interactionPlugin],
-        initialView: 'dayGridMonth',
-        weekends: true,
-        firstDay: 1,
-        height: 600,
-        buttonText: {
-            today: 'Aujourd\'hui'
-        },
-        headerToolbar: {
-            left: 'title,prev,next',
-            center: '',
-            right: 'today'
-        },
-        eventClick: this.eventClick.bind(this),
-        eventDidMount: this.customizeCalendar.bind(this),
-        dateClick: this.dateClick.bind(this),
-        events: ((info, success, failure) => {
-            const { start, end } = info;
+    protected readonly menuUrls = MenuUrls;
 
-            this.workoutService.findByDate(start, end)
-                .subscribe({
-                    next: (workouts) => {
-                        this.workouts = workouts;
+    protected readonly i18n = I18N.calendar.calendar;
+    protected readonly weekdays = this.i18n.weekdays;
 
-                        this.filterWorkouts = this.activeFilter
-                            ? workouts.filter(w => w.muscleGroup.name === this.activeFilter.name)
-                            : workouts;
+    protected displayedMonth = CalendarComponent.startOfMonth(new Date());
+    protected readonly calendarDays = signal<(CalendarDay | null)[]>([]);
+    protected monthLabel = '';
+    protected readonly sessionCountLabel = signal('');
+    protected readonly transitionClass = signal<'' | 'slide-prev' | 'slide-next'>('');
 
-                        this.getMuscleGroups();
+    protected readonly sheetOpen = signal(false);
+    protected sheetDateLabel = '';
+    protected readonly sheetWorkouts = signal<WorkoutGroupedHistories[]>([]);
 
-                        const events: EventInput[] = this.filterWorkouts.map(w => {
-                            const start = new Date(w.date);
-                            const end = new Date(start);
-                            end.setSeconds(end.getSeconds() + 1);
+    private workouts: Workout[] = [];
+    protected activeFilter: MuscleGroup | null = null;
+    protected readonly muscleGroups = signal<MuscleGroup[]>([]);
+    protected readonly loading = signal(true);
 
-                            return {
-                                id: w.id.toString(),
-                                title: w.muscleGroup.name,
-                                start,
-                                end
-                            };
-                        });
-
-                        success(events);
-                    },
-                    error: (err) => failure(err)
-                });
-        })
-    };
-
-    workouts: Workout[] = [];
-    filterWorkouts: Workout[] = [];
-    activeFilter: MuscleGroup;
-
-    showWorkout: WorkoutGroupedHistories;
-    showModalViewWorkout = false;
-
-    muscleGroups: MuscleGroup[] = [];
-
-    cardioExercises: Exercise[] = [];
-
-    @ViewChild('swipeZone', { static: true }) swipeZone!: ElementRef<HTMLDivElement>;
-    swipeStartX = 0;
-    swipeEndX = 0;
-
-    setWorkoutDate: Date;
-    isOpenModalExerciseCardio = false;
+    protected readonly skeletonDays = Array.from({ length: SKELETON_DAYS_COUNT });
+    protected readonly pendingWorkoutDeletion = signal<PendingWorkoutDeletion | null>(null);
 
     private readonly workoutService = inject(WorkoutService);
-    private readonly exerciseService = inject(ExerciseService);
-    private readonly confirmationService = inject(ConfirmationService);
     private readonly alertService = inject(AlertService);
 
-    ngOnInit() {
-        setTimeout(() => this.calendarComponent.getApi().refetchEvents(), 0);
+    constructor() {
+        effect(() => this.loadMonth());
     }
 
-    ngAfterViewInit() {
-        const el = this.swipeZone.nativeElement;
-
-        el.addEventListener('touchstart', (e: TouchEvent) => {
-            this.swipeStartX = e.changedTouches[0].screenX;
-        });
-
-        el.addEventListener('touchend', (e: TouchEvent) => {
-            this.swipeEndX = e.changedTouches[0].screenX;
-            this.handleSwipe();
-        });
+    protected previousMonth() {
+        this.changeMonth(-1);
     }
 
-    handleSwipe() {
-        const deltaX = this.swipeEndX - this.swipeStartX;
-
-        if (Math.abs(deltaX) < 50) return; // Ignore small swipes
-
-        if (deltaX < 0) {
-            this.nextMonth();
-        } else {
-            this.previousMonth();
-        }
+    protected nextMonth() {
+        this.changeMonth(1);
     }
 
-    openModalDeleteWorkout(id: number, muscleGroupName: string, date: Date) {
-        const formattedDate = new Date(date);
-        this.confirmationService.confirm({
-            header: 'Attention',
-            message: `Voulez-vous vraiment supprimer l'entraînement ${ muscleGroupName } du ${ formattedDate.toLocaleDateString() } ?`,
-            closable: true,
-            closeOnEscape: true,
-            dismissableMask: true,
-            icon: 'pi pi-exclamation-triangle',
-            acceptButtonProps: {
-                label: 'Supprimer'
-            },
-            rejectButtonProps: {
-                label: 'Annuler',
-                severity: 'secondary',
-                outlined: true
-            },
-            accept: () => {
-                this.workoutService.delete(id)
-                    .subscribe({
-                        next: () => {
-                            this.workouts = this.workouts.filter(w => w.id !== id);
-                            this.calendarComponent.getApi().refetchEvents();
-                            this.getMuscleGroups();
-
-                            this.alertService.alert$.next({
-                                severity: 'success',
-                                message: 'Suppression effectuée'
-                            });
-                        },
-                        error: (err) => {
-                            this.alertService.alert$.next({
-                                severity: 'error',
-                                message: err?.error?.message ?? 'Impossible de supprimer l\'entraînement'
-                            });
-                        }
-                    });
-                this.showModalViewWorkout = false;
-            }
-        });
-    }
-
-    createdWorkout(workout: Workout) {
-        this.workouts.push(workout);
-        this.calendarComponent.getApi().refetchEvents();
-
-        this.alertService.alert$.next({
-            severity: 'success',
-            message: `${ workout.histories[0].exercise.name } a été ajouté au calendrier`
-        });
-    }
-
-    showAlert(alert: Alert) {
-        window.scrollTo(0, 0);
-        this.alertService.alert$.next(alert);
-    }
-
-
-    private getMuscleGroups() {
-        this.muscleGroups = [];
-        // Filter by name because all cardio exercises has the same id
-        this.workouts.forEach(w => {
-            if (!this.muscleGroups.some(mg => mg.name === w.muscleGroup.name)) {
-                this.muscleGroups.push(w.muscleGroup);
-            }
-        });
-
-        this.muscleGroups.sort((a, b) => a.name.localeCompare(b.name));
-    }
-
-    filterByMuscleGroup(muscleGroup: MuscleGroup) {
+    protected filterByMuscleGroup(muscleGroup: MuscleGroup) {
         if (muscleGroup.name === this.activeFilter?.name) {
-            this.filterWorkouts = this.workouts;
-            this.calendarComponent.getApi().refetchEvents();
-            this.activeFilter = null;
+            this.clearMuscleGroupFilter();
             return;
         }
 
-        this.filterWorkouts = this.workouts.filter(w => w.muscleGroup.name === muscleGroup.name);
-        this.calendarComponent.getApi().refetchEvents();
         this.activeFilter = muscleGroup;
+        this.buildCalendarDays();
     }
 
-    private customizeCalendar(info: EventMountArg) {
-        const eventNameFormated = removeAccents(info.event.title);
-        const label: string = muscleGroupMap[eventNameFormated]?.label ?? info.event.title;
-        const color: string = muscleGroupMap[eventNameFormated]?.color || '#d77c05';
+    protected clearMuscleGroupFilter() {
+        this.activeFilter = null;
+        this.buildCalendarDays();
+    }
 
-        const spanEventName = info.el.querySelector('span.text-sm') as HTMLElement;
-        if (spanEventName) {
-            spanEventName.textContent = label;
+    protected onDayClick(calendarDay: CalendarDay) {
+        if (calendarDay.workouts.length === 0) {
+            return;
         }
 
-        info.el.classList.add('event-color-style');
-        info.el.style.borderLeftColor = color;
-
+        this.openDaySheet(calendarDay);
     }
 
-    private eventClick(info: EventClickArg) {
-        const workoutId = Number(info.event.id);
-        this.workoutService.findById(workoutId)
-            .subscribe(workout => {
-                this.showModalViewWorkout = true;
-                this.showWorkout = workout;
-            });
+    protected closeSheet() {
+        this.sheetOpen.set(false);
     }
 
-    private dateClick(info: DateClickArg) {
-        this.exerciseService.findCardioExercises()
+    protected openModalDeleteWorkout(id: number, muscleGroupName: string, date: Date) {
+        this.sheetOpen.set(false);
+        const formattedDate = new Date(date).toLocaleDateString();
+        this.pendingWorkoutDeletion.set({
+            id,
+            message: this.i18n.deleteConfirm(muscleGroupName, formattedDate)
+        });
+    }
+
+    protected confirmDeleteWorkout() {
+        const pending = this.pendingWorkoutDeletion();
+        this.pendingWorkoutDeletion.set(null);
+        if (!pending) {
+            return;
+        }
+
+        this.workoutService.delete(pending.id)
             .subscribe({
-                next: (cardioExercises) => {
-                    if (cardioExercises.length > 0) {
-                        this.cardioExercises = cardioExercises;
-                        this.isOpenModalExerciseCardio = true;
-                        this.setWorkoutDate = info.date;
-                        this.setWorkoutDate.setHours(new Date().getHours(), new Date().getMinutes(), 0, 0);
-                    } else {
-                        this.alertService.alert$.next({
-                            severity: 'error',
-                            message: 'Aucun exercice cardio n\'a été ajouté, ajoutez en un depuis la bibliothèque'
-                        });
-                    }
+                next: () => {
+                    this.workouts = this.workouts.filter(w => w.id !== pending.id);
+                    this.getMuscleGroups();
+                    this.buildCalendarDays();
+
+                    this.alertService.show({
+                        severity: 'success',
+                        message: this.i18n.deleteSuccess
+                    });
+                },
+                error: (err: CustomError) => {
+                    this.alertService.show({
+                        severity: 'error',
+                        message: getErrorMessage(err, this.i18n.deleteError)
+                    });
                 }
             });
     }
 
-    private previousMonth() {
-        const btnPreviousMonth = document.querySelector('.fc-prev-button') as HTMLButtonElement;
-        if (btnPreviousMonth) {
-            btnPreviousMonth.click();
-        }
+    protected cancelDeleteWorkout() {
+        this.pendingWorkoutDeletion.set(null);
     }
 
-    private nextMonth() {
-        const btnNextMonth = document.querySelector('.fc-next-button') as HTMLButtonElement;
-        if (btnNextMonth) {
-            btnNextMonth.click();
+    protected groupColor(muscleGroupName: string | null | undefined): string {
+        return getMuscleGroupColor(muscleGroupName);
+    }
+
+    // Days with a session, most recent first, respecting the active muscle group filter
+    // (a day fully filtered out by `buildCalendarDays()` is flagged `muted`).
+    protected get monthSessionDays(): CalendarDay[] {
+        return this.calendarDays()
+            .filter((day): day is CalendarDay => day !== null && day.workouts.length > 0 && !day.muted)
+            .slice()
+            .reverse();
+    }
+
+    // Session days grouped by Monday-first week, most recent week first, with a
+    // friendly label ("Cette semaine"/"Semaine dernière"/date range) for each group.
+    protected get weekGroups(): SessionWeekGroup[] {
+        const groups: { readonly start: number; readonly days: CalendarDay[] }[] = [];
+
+        for (const day of this.monthSessionDays) {
+            const weekStart = CalendarComponent.startOfWeek(day.date).getTime();
+            const group = groups.find(g => g.start === weekStart);
+            if (group) {
+                group.days.push(day);
+            } else {
+                groups.push({ start: weekStart, days: [day] });
+            }
         }
+
+        return groups.map(g => ({ label: this.weekLabel(g.start), days: g.days }));
+    }
+
+    protected weekdayLabel(date: Date): string {
+        return this.weekdays[(date.getDay() + 6) % 7];
+    }
+
+    // Unique muscle group pills (label + color) for a day, respecting the active filter.
+    protected dayGroupPills(day: CalendarDay): MuscleGroupPill[] {
+        const relevantWorkouts = this.activeFilter
+            ? day.workouts.filter(w => w.muscleGroup?.name === this.activeFilter?.name)
+            : day.workouts;
+
+        const seenLabels = new Set<string>();
+        const pills: MuscleGroupPill[] = [];
+
+        for (const workout of relevantWorkouts) {
+            const label = getMuscleGroupLabel(workout.muscleGroup?.name);
+            if (seenLabels.has(label)) {
+                continue;
+            }
+
+            seenLabels.add(label);
+            const color = getMuscleGroupColor(workout.muscleGroup?.name);
+            pills.push({ label, color, textColor: getContrastingTextColor(color) });
+        }
+
+        return pills;
+    }
+
+    protected dayAccent(day: CalendarDay): string {
+        return day.dotColors[0] ?? getMuscleGroupColor(null);
+    }
+
+    private changeMonth(direction: 1 | -1) {
+        this.transitionClass.set(direction === 1 ? 'slide-next' : 'slide-prev');
+        setTimeout(() => this.transitionClass.set(''), 320);
+
+        this.displayedMonth = new Date(this.displayedMonth.getFullYear(), this.displayedMonth.getMonth() + direction, 1);
+        this.loadMonth();
+    }
+
+    private openDaySheet(calendarDay: CalendarDay) {
+        this.sheetDateLabel = calendarDay.date.toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long'
+        });
+
+        forkJoin(calendarDay.workouts.map(w => this.workoutService.findById(w.id!)))
+            .subscribe(groupedHistories => {
+                this.sheetWorkouts.set(groupedHistories);
+                this.sheetOpen.set(true);
+            });
+    }
+
+    private loadMonth() {
+        const year = this.displayedMonth.getFullYear();
+        const month = this.displayedMonth.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const start = new Date(year, month, 1);
+        const end = new Date(year, month, daysInMonth);
+
+        this.monthLabel = this.displayedMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+
+        this.workoutService.findByDate(start, end)
+            .subscribe({
+                next: (workouts) => {
+                    this.workouts = workouts;
+                    this.getMuscleGroups();
+                    this.buildCalendarDays();
+                    this.loading.set(false);
+                },
+                error: (err: CustomError) => {
+                    this.loading.set(false);
+                    this.alertService.show({
+                        severity: 'error',
+                        message: getErrorMessage(err, this.i18n.loadError)
+                    });
+                }
+            });
+    }
+
+    private getMuscleGroups() {
+        const muscleGroups: MuscleGroup[] = [];
+        // Filter by name because all cardio exercises has the same id
+        this.workouts.forEach(w => {
+            if (w.muscleGroup && !muscleGroups.some(mg => mg.name === w.muscleGroup?.name)) {
+                muscleGroups.push(w.muscleGroup);
+            }
+        });
+
+        muscleGroups.sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
+        this.muscleGroups.set(muscleGroups);
+    }
+
+    private buildCalendarDays() {
+        const year = this.displayedMonth.getFullYear();
+        const month = this.displayedMonth.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const startOffset = (new Date(year, month, 1).getDay() + 6) % 7; // Monday-first
+        const today = new Date();
+
+        const days: (CalendarDay | null)[] = new Array(startOffset).fill(null);
+        let daysWithSessions = 0;
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day);
+            const workoutsThatDay = this.workouts.filter(w => CalendarComponent.isSameDay(new Date(w.date), date));
+            const visibleWorkouts = this.activeFilter
+                ? workoutsThatDay.filter(w => w.muscleGroup?.name === this.activeFilter?.name)
+                : workoutsThatDay;
+
+            if (workoutsThatDay.length > 0) {
+                daysWithSessions++;
+            }
+
+            days.push({
+                day,
+                date,
+                isToday: CalendarComponent.isSameDay(date, today),
+                workouts: workoutsThatDay,
+                dotColors: visibleWorkouts.slice(0, MAX_VISIBLE_DOTS).map(w => getMuscleGroupColor(w.muscleGroup?.name)),
+                muted: workoutsThatDay.length > 0 && this.activeFilter !== null && visibleWorkouts.length === 0
+            });
+        }
+
+        this.calendarDays.set(days);
+        this.sessionCountLabel.set(this.i18n.sessionCount(daysWithSessions));
+    }
+
+    private weekLabel(weekStart: number): string {
+        const diffWeeks = Math.round((CalendarComponent.startOfWeek(new Date()).getTime() - weekStart) / MS_PER_WEEK);
+
+        if (diffWeeks === 0) {
+            return this.i18n.thisWeek;
+        }
+        if (diffWeeks === 1) {
+            return this.i18n.lastWeek;
+        }
+
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+
+        return this.i18n.weekRange(
+            new Date(weekStart).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }),
+            weekEnd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+        );
+    }
+
+    private static isSameDay(a: Date, b: Date): boolean {
+        return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    }
+
+    private static startOfMonth(date: Date): Date {
+        return new Date(date.getFullYear(), date.getMonth(), 1);
+    }
+
+    private static startOfWeek(date: Date): Date {
+        const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+        return start;
     }
 }

@@ -1,4 +1,4 @@
-export class WorkoutSummary {
+export interface WorkoutSummary {
     id?: number;
     date: Date;
 }

@@ -161,7 +161,7 @@ public class ExerciseService {
     }
 
     @Transactional(readOnly = true)
-    public List<Exercise> findAddedExercisesByMuscleGroupId(UserEntity userEntity, Integer muscleGroupId) {
+    public List<Exercise> findAddedExercisesByMuscleGroupId(UserEntity userEntity, Long muscleGroupId) {
         List<UserExerciseEntity> exerciseEntityList = exerciseRepository.findAddedExercisesByMuscleGroupId(userEntity.getId(), muscleGroupId);
         return exerciseMapper.toDtoUserExercise(exerciseEntityList);
     }
