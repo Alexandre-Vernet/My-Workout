@@ -25,23 +25,21 @@ projet frontend) ; seuls le thème et les tokens d'authentification vivent dans 
   - `password-reset-token.service.ts`, `login/`, `register/`, `forgot-password/`,
     `reset-password/`, `auth.component.ts` (coquille `router-outlet`, aucune logique).
 - `src/app/services/` — un service HTTP par domaine métier (`ExerciseService`,
-  `HistoryService`, `MuscleService`, `MuscleGroupService`, `WorkoutService`) : de
-  simples enveloppes autour de `HttpClient` qui construisent l'URL/les params et
-  renvoient l'`Observable`, sans logique métier.
+  `GymService`, `HistoryService`, `MuscleService`, `MuscleGroupService`,
+  `WorkoutService`) : de simples enveloppes autour de `HttpClient` qui construisent
+  l'URL/les params et renvoient l'`Observable`, sans logique métier.
   - `alert.service.ts` / `rest-time.service.ts` : état partagé réactif, exposé en
     `signal()` directement (pas de `Subject`/`BehaviorSubject`) — voir
     [État : signaux et RxJS](#état--signaux-et-rxjs-où-tracer-la-limite).
 - `src/app/navbar/` — pages de l'app (une page = un composant, jamais de logique dans
   `app.component.ts`) : `calendar/` (+ `history-detail/`), `library/`
   (`list-exercises/`, `view-exercise/`), `stats/` (+ `graphs/`), `view-profile/`
-  (`manage-account/`, `change-theme/`, `account-actions/`, `admin/add-exercise/`),
-  `workout/` (`select-muscle-group-workout/`, `workout-session/` + sa
-  `exercises-table/`, `dialog-select-cardio-exercise/`). `navbar.component.ts` est le
-  menu de navigation (bottom nav flottante, voir [Refonte visuelle](#refonte-visuelle)) :
-  l'item actif est un `computed()` dérivé du signal de route (`toSignal(router.events)`),
-  jamais de `document.querySelector`/`getBoundingClientRect` — ce composant a servi de
-  premier exemple pour la refonte, s'en inspirer pour les écrans restants plutôt que
-  de l'ancien pattern DOM qu'il remplace.
+  (`manage-account/`, `change-theme/`, `account-actions/`, `list-gym/`,
+  `admin/add-exercise/`), `workout/` (`select-muscle-group-workout/`,
+  `workout-session/` + sa `exercises-table/`, `dialog-select-cardio-exercise/`).
+  `navbar.component.ts` est le menu de navigation (bottom nav flottante) : l'item
+  actif est un `computed()` dérivé du signal de route (`toSignal(router.events)`),
+  jamais de `document.querySelector`/`getBoundingClientRect`.
 - `src/app/shared/` :
   - `alert/` : `AlertComponent` lit directement le signal de `AlertService` et gère
     l'auto-fermeture via un `effect()` (voir règle sur `effect()` plus bas).
@@ -68,8 +66,7 @@ projet frontend) ; seuls le thème et les tokens d'authentification vivent dans 
     (dialogue "aucun exercice ajouté" partagé entre `workout-session` et
     `select-muscle-group-workout`), `muscle-group-color.ts` (`getMuscleGroupColor`/
     `getMuscleGroupLabel` : seul point de lookup dans `muscleGroupMap`, réutilisé par
-    `calendar`, `list-exercises` et `view-exercise` — voir
-    [Refonte visuelle](#refonte-visuelle)).
+    `calendar`, `list-exercises` et `view-exercise`).
   - `not-found/`, `menu-urls.ts` (enum des segments de route utilisés par le menu).
 - `src/interfaces/` — types de données : une interface par fichier, nommé comme le
   type exporté, en **PascalCase** (`Exercise.ts`, `MuscleGroup.ts`, `Workout.ts`...).
@@ -91,15 +88,18 @@ projet frontend) ; seuls le thème et les tokens d'authentification vivent dans 
   **zoneless** (`provideZonelessChangeDetection()`, pas de `zone.js`) ;
   `provideServiceWorker(...)`.
 - `src/global.scss` — reset, classes utilitaires ponctuelles (`.display-none`,
-  `.disabled`, `.text-no-wrap`...) et variables CSS de thème (`:root` / `.dark-mode`),
-  dont les tokens de la refonte visuelle (`--radius-lg/md/sm`, `--shadow-elevated`,
-  `--surface-glass` — voir [Refonte visuelle](#refonte-visuelle)). PrimeFlex (classes
-  utilitaires façon Tailwind) est chargé en CDN dans `index.html`, pas importé ici.
+  `.disabled`, `.text-no-wrap`...) et variables CSS de thème (`:root` / `.dark-mode`,
+  dont `--radius-lg/md/sm`, `--shadow-elevated`, `--surface-glass`). PrimeFlex
+  (classes utilitaires façon Tailwind) est chargé en CDN dans `index.html`, pas
+  importé ici.
 - `src/chips.scss` — partiel SCSS partagé (`@use`) par les chips de filtre par groupe
   musculaire de `calendar` et `list-exercises` (`.chips-container > ul > li`) : un seul
   endroit à modifier pour les deux écrans, ne pas dupliquer ce style en local.
 - `public/manifest.webmanifest`, `public/icons/` (dossiers `android/`, `ios/`,
   `windows/`) — voir [PWA](#pwa).
+- `scripts/capture-screenshots.mjs`, `docs/screenshots/` — génération des captures
+  d'écran du README du dépôt parent, voir
+  [README : une capture d'écran par fonctionnalité](#readme--une-capture-décran-par-fonctionnalité).
 - `ngsw-config.json` — cache du service worker (groupe `app` en prefetch pour
   html/css/js/manifest, groupe `assets` en lazy pour les images/fonts).
 - `Dockerfile` / `nginx.conf` — image de prod (build Angular servi par nginx) ;
@@ -164,7 +164,7 @@ réintroduire).
 
 ## Stack
 
-- Angular 21, composants **standalone** (pas de `NgModule`).
+- Angular 22, composants **standalone** (pas de `NgModule`).
 - Détection de changements **zoneless** (`provideZonelessChangeDetection()`) — pas de
   `zone.js` dans le projet. Tout composant utilise `ChangeDetectionStrategy.OnPush` ;
   voir [État : signaux et RxJS](#état--signaux-et-rxjs-où-tracer-la-limite) pour ce
@@ -189,6 +189,10 @@ réintroduire).
 - ESLint (`@angular-eslint`) via `ng lint`.
 - **PWA** : service worker (`@angular/service-worker`) + manifeste installable. Voir
   la section [PWA](#pwa) plus bas.
+- Playwright (devDependency) : pas un outil de test (ça reste Vitest, voir plus haut),
+  utilisé uniquement par `scripts/capture-screenshots.mjs` pour piloter un vrai
+  navigateur mobile et générer les captures d'écran du README — voir
+  [README : une capture par fonctionnalité](#readme--une-capture-décran-par-fonctionnalité).
 
 ## Routing : `withComponentInputBinding()`
 
@@ -486,6 +490,35 @@ composant :
   `ngx-translate`, pas de pipe `| translate`) : l'app ne vise qu'une seule langue
   (français), l'objectif est d'avoir un **point d'édition unique** pour tout le texte
   affiché, pas un système multilingue — ne pas sur-architecturer au-delà de ce besoin.
+
+### README : une capture d'écran par fonctionnalité
+
+Le produit est documenté dans `README.md`/`README.fr.md`, à la racine du dépôt
+parent (pas dans ce projet frontend) : chaque fonctionnalité utilisateur significative
+(une page de la bottom nav, un flux comme l'authentification ou la gestion des
+salles...) y a sa propre section, illustrée d'au moins une capture d'écran réelle de
+l'app — jamais une description de fonctionnalité sans capture, et jamais une capture
+qui ne correspond plus à l'UI actuelle.
+
+- Les captures vivent dans `my-workout-app/docs/screenshots/*.png` et sont référencées
+  depuis les deux README en chemin relatif (`my-workout-app/docs/screenshots/xxx.png`),
+  pas en les hébergeant ailleurs.
+- Elles sont générées par `scripts/capture-screenshots.mjs` (Playwright, voir
+  [Stack](#stack)) plutôt que prises à la main : le script enregistre un compte de
+  test, crée une salle, ajoute des exercices à la bibliothèque, réalise une vraie
+  séance (le timer logge réellement des séries) puis recadence quelques séances
+  passées directement en base (l'API horodate toujours "aujourd'hui" à la création,
+  impossible donc d'obtenir un historique étalé autrement) pour que le calendrier et
+  les graphiques de progression aient un rendu réaliste plutôt qu'un point unique.
+- Après toute modification visuelle d'un écran déjà illustré (refonte de composant,
+  changement de palette, nouvel état...), relancer le script et remplacer la capture
+  concernée plutôt que laisser le README montrer une UI obsolète.
+- Après l'ajout d'une fonctionnalité utilisateur nouvelle, ajouter une section README
+  (dans les deux langues) et une capture dans le même changement — ne pas le reporter
+  à une tâche de documentation séparée.
+- `node scripts/capture-screenshots.mjs` suppose `ng serve` (port 4200),
+  `my-workout-api` (port 8080) et le Postgres local du `docker-compose` du dépôt
+  parent déjà démarrés.
 
 ## Nommage
 
